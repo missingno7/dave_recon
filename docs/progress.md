@@ -242,13 +242,38 @@ Evidence: `docs/egadave-format.{json,md}`,
 
 All 28 tests passing throughout every change.
 
+### 2026-09-19 (cont.) — External RE import complete; g_levels contradiction caught
+
+`yo-yo-yo-jbo/dangerous_dave` (an independent RE of the same unpacked
+executable, SHA1-confirmed identical) was fetched and its facts
+individually verified against our own bytes rather than trusted —
+discovered and documented that it mixes three unlabeled address
+conventions (literal file offsets, IDA `sub_` addresses, raw DS-relative
+`word_` operands). Of 10 imported facts: **7 verified** instruction-for-
+instruction (game-init, level-completion dispatcher, warp-transition,
+score/lives-cap logic, two data tables), **2 contradicted**, **1
+could_not_check**. Every verified address was already present in our own
+call-graph census — a strong two-way cross-check.
+
+One contradiction is substantive: the external project's claimed `g_levels`
+base address (file offset `0x26E0A`) is wrong — that offset is actually a
+text string in our bytes ("ENTER FILENAME..."-style prompt), and is
+arithmetically inconsistent with the *same* external project's own
+separately-verified level-6 warp-bug address. Recorded as a new open
+frontier (`docs/blockers.json`: "Re-derive g_levels' true base address")
+rather than silently accepted. Evidence:
+`docs/external-re-evidence.{json,md}`.
+
 ### Next milestones
 
-1. Finish importing/verifying `yo-yo-yo-jbo/dangerous_dave` facts.
-2. Use the call-graph census + external hints to find more matching-C
-   candidates (prioritize small leaf functions, no indirect control flow).
-3. Resolve the switch's case bodies + jump table following `F_6D64`
-   (file offset ~0x6d8a-0x6dba).
+1. Land more `MATCHING_C` promotions — prioritize the 4 functions with
+   now-known semantics from the external-RE import (game-init,
+   level-completion, warp-transition, score/lives-cap) and the switch case
+   bodies following `F_6D64`.
+2. Independently re-derive `g_levels`' true base address (both this
+   project's and the external project's guesses are now known-wrong).
+3. Resolve the census's 8 unresolved indirect control-flow targets
+   (mostly switch jump tables) and its 1 overlap anomaly.
 4. Continue the library scan against any newly-classified RAW_UNKNOWN
    regions as more of the code segment is mapped.
 5. Confirm the `_TEXT`/`_DATA` boundary using the improved census.

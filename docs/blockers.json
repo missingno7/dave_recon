@@ -88,19 +88,29 @@
     },
     {
       "target": "Import and verify yo-yo-yo-jbo/dangerous_dave RE facts",
+      "category": "CLOSED",
+      "state": "closed for the 10 facts checked; revisit if the external project adds more",
+      "matches": "docs/external-re-evidence.json: fetched the external repo, independently re-hashed its own committed DAVE.EXE (not trusted from its README), and documented that it mixes three different unlabeled address conventions (literal file offsets, IDA sub_ addresses needing -0x10000 then +0x200, raw DS-relative word_ operands). Of 10 imported facts: 7 verified instruction-for-instruction (game-init function, level-completion dispatcher, warp-transition function, score/lives-cap logic, two data tables), 2 contradicted, 1 could_not_check. Every verified fact's address was already present in our own call-graph census -- a strong two-way cross-check.",
+      "first_unresolved_fact": "One contradiction is substantive and unresolved: the external project's claimed g_levels base address (file offset 0x26E0A) is wrong -- that offset is a text string ('ENTER FILENAME...'-style prompt) in our bytes, and is arithmetically inconsistent with the SAME external project's own separately-verified level-6 warp-bug address. The true base of g_levels has not yet been independently re-derived by this project.",
+      "evidence": ["docs/external-re-evidence.json", "docs/external-re-evidence.md"],
+      "unblock": "Independently re-derive g_levels' real base address (e.g. by tracing data references from the level-loading function this import identified) rather than trusting either project's unverified guess -- tracked as its own frontier below.",
+      "leverage": "Surfaced 4 new semantically-identified matching-C candidates with known purpose (game-init/level-completion and related functions), not just address boundaries -- a significant accelerant for the matching-C queue."
+    },
+    {
+      "target": "Re-derive g_levels' true base address",
       "category": "PRODUCTIVE_FRONTIER",
-      "state": "in progress",
-      "matches": "https://github.com/yo-yo-yo-jbo/dangerous_dave analyzes an unpacked DAVE.EXE with SHA1 9e572f0320ca759bea8f24a0ebcfcb1b68474e13 -- identical to build/DAVE_unpacked.exe. Its function/data facts (level loading, warp-zone logic, game init, score/lives, level arrays, etc.) refer to the exact same bytes we have and can be mechanically verified rather than rediscovered.",
-      "first_unresolved_fact": "No addresses have been imported or cross-checked yet as of this writing; a follow-up pass has been requested to produce docs/external-re-evidence.json.",
-      "evidence": [],
-      "unblock": "For each address/fact the external project documents, independently verify against our bytes/xrefs (do not accept the name/semantics as truth) before recording it as a provenance-tagged hint in docs/external-re-evidence.json.",
-      "leverage": "Avoids re-deriving semantics the external project already worked out; accelerates the function census and matching-C candidate selection significantly."
+      "state": "not started",
+      "matches": "Both this project and the external yo-yo-yo-jbo project's unverified claim (file offset 0x26E0A) are now known to disagree with directly observed bytes and with the external project's own separately-verified level-6 warp-bug address (0x2932B).",
+      "first_unresolved_fact": "No independent re-derivation attempted yet.",
+      "evidence": ["docs/external-re-evidence.json (EXT_LEVELS_BASE_ADDRESS)"],
+      "unblock": "Trace data references from the level-loading/warp functions already identified via the external-RE import to find the real g_levels base, then verify the level-6 warp-bug address (0x2932B) falls at exactly base + (-1 * 0x500 mod 0x10000) as the external project's own verified behavior implies.",
+      "leverage": "Unlocks structured classification of the game's ~1280-byte-per-level data (10 levels x 1280 bytes = 12800 bytes), a meaningful chunk of the still-RAW_UNKNOWN data region."
     },
     {
       "target": "Continue matching-C promotions inside game code",
       "category": "PRODUCTIVE_FRONTIER",
       "state": "in progress -- 1 of 172 census functions promoted",
-      "matches": "tools/match_function.py proven end-to-end on F_6D64. Immediate next candidate: the case bodies + jump table following F_6D64 (file offset ~0x6d8a-0x6dba, one of the 8 unresolved indirect targets from the census). Beyond that, docs/function-census.json's 171 remaining functions (ranked by confidence/simplicity) and any candidates surfaced by the yo-yo-yo-jbo import are the working queue.",
+      "matches": "tools/match_function.py proven end-to-end on F_6D64. Immediate next candidates: the case bodies + jump table following F_6D64 (file offset ~0x6d8a-0x6dba, one of the census's unresolved indirect targets), and the 4 functions the yo-yo-yo-jbo import verified semantics for (game-init, level-completion dispatcher, warp-transition, score/lives-cap logic -- see docs/external-re-evidence.json) which now have known purpose, not just address boundaries. Beyond those, docs/function-census.json's remaining functions (ranked by confidence/simplicity) are the working queue.",
       "first_unresolved_fact": "No ranked prioritization of the remaining 171 functions by ease-of-matching (leaf, no indirect control flow, few external calls, simple arithmetic) has been done yet.",
       "evidence": ["docs/function-census.json", "docs/matching-evidence.json"],
       "unblock": "Rank remaining census functions by the ease-of-matching heuristics in docs/matching-phase.md and work through them with tools/match_function.py, smallest/cleanest first.",
