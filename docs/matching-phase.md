@@ -20,32 +20,32 @@ disagree.
   file-offset/load-module-offset coordinate bug (`_main` is at file offset
   `0x439`, not `0x639` — see `tools/coordinates.py` and
   `tests/test_coordinates.py`).
+- **CS.LIB library scan**: 42 exact library-module matches (2,732 bytes)
+  found and promoted to `KNOWN_LIBRARY` via `tools/library_scanner.py`.
+- **Function census rooted at `_main @ 0x439`**: rebuilt as a call-graph
+  walk, 172 functions found (`docs/function-census.json`).
+- **First `MATCHING_C` promotion inside game code**: `F_6D64` (38-byte
+  switch dispatch head), via the new reusable `tools/match_function.py`.
+- **EGADAVE.DAV**: fully solved, exact byte-for-byte round-trip proven.
 
 ## PRODUCTIVE FRONTIERS (work here)
 
-1. **Function census rooted at `_main @ 0x439`.** Current census
-   (`tools/function_census.py`) is a naive prologue scan; it needs to become
-   a conservative call-graph walk (direct CALL targets, RET boundaries,
-   known prologue/library signatures, cross-references) per
-   `docs/blockers.json`.
-2. **Import and verify `yo-yo-yo-jbo/dangerous_dave` RE facts.** That
-   project analyzes the same unpacked executable (identical SHA1). Its
-   documented addresses/facts are hints to mechanically verify against our
-   bytes, never accepted as truth on their own.
-3. **Scan Turbo C++ 1.00 libraries for more exact library contributions.**
-   The technique that identified `STARTUP_C0S` (byte-match modulo fixups)
-   generalizes to other runtime helpers. Likely the highest-leverage
-   mechanical step available — removes `RAW_UNKNOWN` with zero semantic
-   guessing.
-4. **First matching-C promotions inside actual game code.** Candidates
-   already flagged in `docs/function-census.json` (`F_A460`, `F_A469`,
-   `F_850A`, `F_04FC`, `F_088E`). Build a reusable
-   candidate→compile→OMF-parse→bind→compare tool, generalizing
-   `tools/recover_startup_binding.py`.
-5. **Confirm the `_TEXT`/`_DATA` boundary** near file offset `0xB483`.
-6. **EGADAVE.DAV structured round-trip.** Independent of the executable
-   track — parse the offset table, decode under the planar-tile hypothesis,
-   round-trip to byte-identical.
+1. **Continue matching-C promotions.** 1 of 172 census functions promoted
+   so far. Next candidate: `F_6D64`'s own case bodies/jump table (file
+   offset ~`0x6d8a`-`0x6dba`). Beyond that, rank the remaining census
+   functions by ease-of-matching (leaf, no indirect control flow, few
+   external calls, simple arithmetic, table indexing) and work through them
+   with `tools/match_function.py`.
+2. **Import and verify `yo-yo-yo-jbo/dangerous_dave` RE facts.** In
+   progress — that project analyzes the same unpacked executable (identical
+   SHA1). Its documented addresses/facts are hints to mechanically verify
+   against our bytes, never accepted as truth on their own.
+3. **Confirm the `_TEXT`/`_DATA` boundary**, now informed by the call-graph
+   census and library scan results rather than the old naive-scan guess.
+4. **Re-run the library scanner** against newly-classified regions
+   periodically as more of the code segment is mapped.
+5. **Resolve the census's 8 unresolved indirect control-flow targets**
+   (likely switch jump tables) and its 1 overlap anomaly.
 
 ## DEFERRED / NOT CURRENTLY BLOCKING
 

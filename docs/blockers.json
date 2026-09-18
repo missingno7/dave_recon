@@ -20,105 +20,110 @@
       "target": "Historical compiler identity",
       "category": "CLOSED",
       "state": "closed",
-      "matches": "Borland Turbo C++ 1.00 (May 1990), confirmed two independent ways: (1) a 'Turbo C++ - Copyright 1990 Borland Intl.' runtime string embedded in build/DAVE_unpacked.exe, (2) the pinned TCC.EXE's own OMF self-identification string 'TC86 Borland Turbo C++ 1.00' when compiling a probe. Toolchain installed under toolchain/, pinned by SHA-256 in layout/toolchain.json.",
+      "matches": "Borland Turbo C++ 1.00 (May 1990), confirmed two independent ways: a 'Turbo C++ - Copyright 1990 Borland Intl.' runtime string embedded in build/DAVE_unpacked.exe, and the pinned TCC.EXE's own OMF self-identification string 'TC86 Borland Turbo C++ 1.00' when compiling a probe.",
       "evidence": ["docs/toolchain-identification.md", "layout/toolchain.json", "tests/test_toolchain_probe.py"]
     },
     {
       "target": "Memory model",
       "category": "CLOSED",
       "state": "closed",
-      "matches": "Small model (-ms). Comparing the game's C startup code against all 5 Turbo C++ 1.00 memory-model startup objects, C0S.OBJ (small) is the unique model where every byte differing from the raw library object is explained by a linker fixup, with zero unexplained differences.",
+      "matches": "Small model (-ms). C0S.OBJ is the unique memory-model startup object where every byte differing from the raw library object is explained by a linker fixup, with zero unexplained differences.",
       "evidence": ["docs/startup-binding-evidence.json", "tools/recover_startup_binding.py", "tests/test_startup_library.py"]
     },
     {
       "target": "Stack overflow checking flag (-N vs -N-)",
       "category": "CLOSED",
       "state": "closed",
-      "matches": "-N (checking ON). The real _main @ file offset 0x439 opens with 55 8B EC 39 26 9A 00 72 03 E8 (push bp; mov bp,sp; cmp [stackbase],sp; jb +3; call <handler>) with zero locals. Compiling tests/fixtures/probe2.c under -ms -N reproduces the identical push-bp/mov-bp,sp/cmp/jb/call structure (differing only by an inserted 'sub sp,N' for probe2's own locals, which _main lacks). Compiling with -N- omits the check triplet entirely, ruling it out.",
+      "matches": "-N (checking ON), confirmed by reproducing the real _main prologue's push-bp/mov-bp,sp/cmp/jb/call structure with a compiled probe under -ms -N.",
       "evidence": ["docs/flag-investigation.md", "tests/test_flag_investigation.py"]
     },
     {
       "target": "Executable ownership manifest bootstrap",
       "category": "CLOSED",
       "state": "closed",
-      "matches": "layout/manifest.json owns all 172848 bytes of build/DAVE_unpacked.exe, no gaps/overlaps, verified by tools/reconstruct.py to rebuild an exact MD5 match. Now includes a KNOWN_LIBRARY region (STARTUP_C0S, 569 bytes) alongside MZ_HEADER/RELOCATION_TABLE/HEADER_PADDING/RAW_UNKNOWN.",
+      "matches": "layout/manifest.json owns all 172848 bytes of build/DAVE_unpacked.exe across 62 regions, no gaps/overlaps, verified by tools/reconstruct.py to rebuild an exact MD5 match.",
       "evidence": ["layout/manifest.json", "tools/reconstruct.py", "tests/test_ownership_bootstrap.py"]
     },
     {
-      "target": "C0S startup-library identification (STARTUP_C0S region)",
+      "target": "C0S startup-library identification and _main coordinate bug fix",
       "category": "CLOSED",
       "state": "closed",
-      "matches": "File offset [0x200,0x439) is unmodified Turbo C++ 1.00 C0S.OBJ (small-model C startup), promoted from RAW_UNKNOWN to KNOWN_LIBRARY in layout/manifest.json. This also fixed the earlier _main coordinate bug: C0S's self-relative CALL fixup (opcode at file offset 0x2FC, disp16 0x013A) resolves via tools/coordinates.py to file offset 0x439 (load-module offset 0x239) -- NOT 0x639, which was a stale result from adding the 0x200 MZ-header size a second time to an already-file-relative value. tools/coordinates.py now centralizes this conversion and tests/test_coordinates.py regression-tests the exact numbers so this class of bug cannot silently reappear.",
+      "matches": "File offset [0x200,0x439) is unmodified Turbo C++ 1.00 C0S.OBJ, promoted to KNOWN_LIBRARY. Also fixed a coordinate bug: _main is at file offset 0x439 (load-module offset 0x239), not 0x639 (a stale result from adding the 0x200 MZ-header size twice). tools/coordinates.py centralizes this conversion; tests/test_coordinates.py regression-tests the exact numbers.",
       "evidence": ["docs/startup-binding-evidence.json", "layout/manifest.json", "tools/coordinates.py", "tests/test_coordinates.py"]
     },
     {
-      "target": "Function census rooted at _main @ 0x439",
-      "category": "PRODUCTIVE_FRONTIER",
-      "state": "in progress",
-      "matches": "tools/function_census.py (now using tools/coordinates.py, asserts RAW_LOAD_MODULE_START == 0x439) scans for '55 8B EC' prologues and walks to RET/RETF, finding 193 candidate functions spanning file offset 0x439-0xB483 (~45KB), zero overlaps/truncations. No prologue matches occur past ~0xB483, suggesting _TEXT ends there and _DATA/_BSS follows (unproven -- see below).",
-      "first_unresolved_fact": "The census is a naive prologue scan, not a call-graph traversal from the trusted _main root as docs/matching-phase.md now requires. It will miss frameless/leaf functions and cannot yet distinguish real functions from coincidental byte patterns in data.",
-      "evidence": ["docs/function-census.json", "docs/function-census.md"],
-      "unblock": "Rebuild the census as a conservative call-graph walk starting from _main @ 0x439: follow direct near CALL targets recursively, use RET boundaries and known prologue/library signatures, and cross-reference against external RE addresses (see 'Import yo-yo-yo-jbo RE facts' below) rather than relying on linear/pattern scanning alone.",
-      "leverage": "Every function pulled out of RAW_UNKNOWN via a verified boundary is progress; this is the main lever for reducing the ~99% RAW_UNKNOWN figure."
+      "target": "Scan Turbo C++ 1.00 libraries for exact library contributions",
+      "category": "CLOSED",
+      "state": "closed for CS.LIB (small model); other models confirmed contributing nothing",
+      "matches": "tools/library_scanner.py generalized the STARTUP_C0S match-modulo-fixups technique across CS.LIB's 312 member modules (anchored on census function boundaries, with a memmem fallback requiring uniqueness). Found 42 exact matches (2732 bytes, file offsets 0x9613-0xb49b: ATEXIT, CLOSE, FFLUSH, FLUSHALL, WRITE, READ, MEMCPY, MEMSET, STRCPY, INPORT, OUTPORT, long-arithmetic helpers, etc.), most laid out back-to-back exactly as real linked runtime code -- strong structural evidence, not coincidence. All promoted to KNOWN_LIBRARY. CC/CM/CL/CH.LIB (other memory models) confirmed to contribute nothing further, consistent with the small-model finding.",
+      "evidence": ["docs/library-scan-evidence.json", "docs/library-scan-evidence.md", "layout/manifest.json"],
+      "unblock": "Re-run against newly-classified RAW_UNKNOWN regions as more of the code segment is mapped -- this is not a one-shot scan, revisit periodically (tracked as a lightweight follow-up under the function-census frontier, not a separate blocker).",
+      "leverage": "3301 of the manifest's 3339 non-code-metadata classified bytes so far came from this technique -- the single highest-yield mechanical step used to date."
     },
     {
-      "target": "Confirm _TEXT/_DATA segment boundary near file offset 0xB483",
-      "category": "PRODUCTIVE_FRONTIER",
-      "state": "open investigation",
-      "matches": "Absence of prologue-shaped bytes past ~0xB483 in the naive census is circumstantial evidence only.",
-      "first_unresolved_fact": "Not proven; could hide frameless code or hand-written ASM that a prologue scan cannot see.",
-      "evidence": ["docs/function-census.json"],
-      "unblock": "Cross-reference every CALL/JMP target found in the 0x439-0xB483 region against this boundary; look for positive evidence of _DATA (ASCII strings, structured tables) starting near 0xB483 rather than relying only on absence-of-code.",
-      "leverage": "Converts an inferred code/data split into a confirmed one, unblocking the data/asset census track for the tail of RAW_LOAD_MODULE."
+      "target": "EGADAVE.DAV structured round-trip reconstruction",
+      "category": "CLOSED",
+      "state": "closed",
+      "matches": "Format fully determined: uint32 resource count (401) + offset table, two resource kinds by size (FIXED_TILE_16x16, 128 bytes; SPRITE_VAR, variable with a 4-byte width/height header, padded width rounded to a multiple of 8, always declared_height+1 stored rows), 4 EGA bitplanes in I,R,G,B order MSB-first, standard 16-color EGA/CGA palette. Visually confirmed via rendered PNGs (recognizable tiles and Dave sprite frames) and cross-checked against public ModdingWiki documentation. tools/egadave_decode.py / tools/egadave_encode.py round-trip the ENTIRE file exactly: re-encoded MD5 == 15e4cfe305600a8acd39d4bc7fe9c591, zero raw fallbacks.",
+      "evidence": ["docs/egadave-format.json", "docs/egadave-format.md", "tests/test_egadave_roundtrip.py"]
+    },
+    {
+      "target": "First matching-C promotion inside actual game code",
+      "category": "CLOSED",
+      "state": "one function landed; this frontier stays open under a new name for further promotions",
+      "matches": "F_6D64 (file offset [0x6d64,0x6d8a), 38 bytes): a compiled switch(param) dispatch head (4-case jump table via near-to-far pointer setup). src/F_6D64.c reproduces the declared extent byte-for-byte with zero unexplained differences (only fixup-covered bytes differ). Honestly scoped: the case-body content in the source is explicitly documented as a placeholder chosen only to make the non-fixup branch displacement byte match -- only the 38-byte dispatch head is claimed, not the case bodies/jump table that follow (file offset ~0x6d8a-0x6dba), which remain RAW_UNKNOWN. New reusable tool tools/match_function.py (candidate.c -> compile -> OMF -> bind fixups -> full-extent byte compare) generalizes tools/recover_startup_binding.py's proof standard for arbitrary candidate functions, not just library modules.",
+      "evidence": ["docs/matching-evidence.json", "docs/matching-evidence.md", "layout/manifest.json", "src/F_6D64.c"],
+      "unblock": "See 'Continue matching-C promotions' below for the ongoing frontier this seeds.",
+      "leverage": "Proves the full promotion loop (tools/match_function.py) end-to-end on real game code, not just linked-in library code -- the central methodology this whole project phase depends on."
+    },
+    {
+      "target": "Function census rooted at _main @ 0x439 (call-graph walk)",
+      "category": "CLOSED",
+      "state": "closed for this pass; census will need periodic re-runs as more code is classified",
+      "matches": "Rebuilt as a conservative call-graph walk (previous naive linear prologue scan kept as a frozen baseline at docs/function-census-prologue-scan.json for cross-reference). New docs/function-census.json: 172 functions reached from the _main root, each with file_offset/load_module_offset, callers, direct_callees, likely_type, confidence, matching_status, and blockers. 8 unresolved indirect control-flow targets and 1 overlap anomaly are flagged explicitly rather than hidden.",
+      "evidence": ["docs/function-census.json", "docs/function-census.md"],
+      "first_unresolved_fact": "The 1 overlap anomaly and 8 unresolved indirect targets (likely switch jump tables, e.g. the one immediately after F_6D64) are not yet individually resolved.",
+      "unblock": "Investigate the overlap anomaly and each unresolved indirect target one at a time; re-run the census after each new KNOWN_LIBRARY/MATCHING_C promotion or _TEXT/_DATA boundary finding to keep it current.",
+      "leverage": "This is the map that all further matching-C candidate selection and library scanning draws from."
     },
     {
       "target": "Import and verify yo-yo-yo-jbo/dangerous_dave RE facts",
       "category": "PRODUCTIVE_FRONTIER",
-      "state": "not started",
+      "state": "in progress",
       "matches": "https://github.com/yo-yo-yo-jbo/dangerous_dave analyzes an unpacked DAVE.EXE with SHA1 9e572f0320ca759bea8f24a0ebcfcb1b68474e13 -- identical to build/DAVE_unpacked.exe. Its function/data facts (level loading, warp-zone logic, game init, score/lives, level arrays, etc.) refer to the exact same bytes we have and can be mechanically verified rather than rediscovered.",
-      "first_unresolved_fact": "No addresses have been imported or cross-checked yet.",
+      "first_unresolved_fact": "No addresses have been imported or cross-checked yet as of this writing; a follow-up pass has been requested to produce docs/external-re-evidence.json.",
       "evidence": [],
-      "unblock": "For each address/fact the external project documents, independently verify against our bytes/xrefs (do not accept the name/semantics as truth) before recording it as a provenance-tagged hint in a new docs/external-re-evidence.json.",
+      "unblock": "For each address/fact the external project documents, independently verify against our bytes/xrefs (do not accept the name/semantics as truth) before recording it as a provenance-tagged hint in docs/external-re-evidence.json.",
       "leverage": "Avoids re-deriving semantics the external project already worked out; accelerates the function census and matching-C candidate selection significantly."
     },
     {
-      "target": "Scan Turbo C++ 1.00 libraries for additional exact library contributions",
+      "target": "Continue matching-C promotions inside game code",
       "category": "PRODUCTIVE_FRONTIER",
-      "state": "not started",
-      "matches": "The same fixup-modulo-exact-match technique that identified STARTUP_C0S (tools/recover_startup_binding.py) should generalize to other unchanged runtime routines (memory/string/arithmetic/I/O helpers, exit routines, the stack-check handler itself) linked in from CC.LIB/CS.LIB's constituent modules.",
-      "first_unresolved_fact": "No systematic scan has been run yet; only the single C0S.OBJ startup module has been checked.",
-      "evidence": [],
-      "unblock": "Build a generalized library matcher: split CS.LIB into its member OMF modules (tools/omf.py already has split_library-equivalent capability to extend), and for each RAW_UNKNOWN byte range in layout/manifest.json, test whether any library module matches modulo fixups the same way STARTUP_C0S did.",
-      "leverage": "Potentially removes substantial RAW_UNKNOWN byte ranges with zero semantic guessing -- likely the highest-leverage single mechanical step available right now."
+      "state": "in progress -- 1 of 172 census functions promoted",
+      "matches": "tools/match_function.py proven end-to-end on F_6D64. Immediate next candidate: the case bodies + jump table following F_6D64 (file offset ~0x6d8a-0x6dba, one of the 8 unresolved indirect targets from the census). Beyond that, docs/function-census.json's 171 remaining functions (ranked by confidence/simplicity) and any candidates surfaced by the yo-yo-yo-jbo import are the working queue.",
+      "first_unresolved_fact": "No ranked prioritization of the remaining 171 functions by ease-of-matching (leaf, no indirect control flow, few external calls, simple arithmetic) has been done yet.",
+      "evidence": ["docs/function-census.json", "docs/matching-evidence.json"],
+      "unblock": "Rank remaining census functions by the ease-of-matching heuristics in docs/matching-phase.md and work through them with tools/match_function.py, smallest/cleanest first.",
+      "leverage": "Every additional MATCHING_C promotion is direct, compounding progress on the project's central deliverable."
     },
     {
-      "target": "First matching-C promotions inside game code (not just linked library)",
-      "category": "PRODUCTIVE_FRONTIER",
-      "state": "not started",
-      "matches": "Census spot-checks flagged candidates: F_A460 (9 bytes, IN AX,DX)/F_A469 (11 bytes, IN AL,DX + XOR AH,AH) look like Turbo C++ 1.00's inport()/inportb(); F_850A (12 bytes) wraps INT 21h AH=9; F_04FC/F_088E repeat 'imul dx' idioms suggesting struct-array indexing.",
-      "first_unresolved_fact": "None compiled/OMF-bound/byte-compared yet -- disassembly-pattern guesses only.",
-      "evidence": ["docs/function-census.json"],
-      "unblock": "Build a reusable candidate.c -> TCC 1.00 -> OBJ -> OMF extraction -> fixup binding -> full-extent byte comparison tool (generalizing tools/recover_startup_binding.py's proof standard), then run the smallest/cleanest candidates through it first.",
-      "leverage": "Establishes the first true matching-C proof loop for original game code, the central deliverable of this whole project phase."
-    },
-    {
-      "target": "EGADAVE.DAV structured round-trip reconstruction",
+      "target": "Confirm _TEXT/_DATA segment boundary",
       "category": "PRODUCTIVE_FRONTIER",
       "state": "open investigation",
-      "matches": "Offset table observed at file start; 128-byte stride after the first entry is consistent with 16x16x4bpp EGA planar tiles. Not yet decoded or round-tripped.",
-      "first_unresolved_fact": "No chunk has been decoded, rendered, or re-encoded yet.",
-      "evidence": ["docs/specimen-manifest.json"],
-      "unblock": "Parse the offset table, decode resources under the planar-tile hypothesis, verify visually/structurally, then build an encoder and prove an exact round-trip (EGADAVE.DAV -> structured -> re-encoded EGADAVE.DAV, byte-identical) before pursuing prettier tooling. Independent of the executable-side matching-C work.",
-      "leverage": "Unlocks the entire asset/data reconstruction track in parallel with code matching."
+      "matches": "The call-graph census and library scanner together now account for real code up to file offset 0xb49b; the previous naive-scan-based 0xB483 boundary guess should be re-examined against the call-graph results.",
+      "first_unresolved_fact": "Not proven; could hide frameless code or hand-written ASM.",
+      "evidence": ["docs/function-census.json", "docs/library-scan-evidence.json"],
+      "unblock": "Cross-reference every CALL/JMP target discovered by the call-graph census against candidate boundary offsets; look for positive evidence of _DATA (ASCII strings, structured tables) rather than relying only on absence-of-code.",
+      "leverage": "Converts an inferred code/data split into a confirmed one, unblocking the data/asset census track for the tail of RAW_LOAD_MODULE (currently ~169KB, 97.8% of the image, still RAW_UNKNOWN)."
     },
     {
       "target": "TASM (Turbo Assembler) acquisition",
       "category": "DEFERRED_NOT_BLOCKING",
       "state": "deferred",
-      "matches": "The acquired Turbo C++ 1.0 disk set only included TASM2MSG.EXE, not TASM.EXE.",
-      "evidence": ["docs/toolchain-identification.md"],
-      "unblock": "Acquire only once a concrete hand-written-ASM extent is identified that specifically requires it; do not block matching-C work on this.",
-      "leverage": "Only relevant to MATCHING_ASM promotion, which has no identified candidates yet."
+      "matches": "The acquired Turbo C++ 1.0 disk set only included TASM2MSG.EXE, not TASM.EXE. Empirically confirmed relevant: attempting to compile a candidate for F_850A required inline assembly, and TCC's attempt to invoke tasm.exe failed since it isn't installed.",
+      "evidence": ["docs/toolchain-identification.md", "docs/matching-evidence.md"],
+      "unblock": "Acquire only once a concrete hand-written-ASM (or inline-asm-requiring) extent is worth promoting; do not block matching-C work on this -- skip such candidates for now (e.g. F_850A) and work others.",
+      "leverage": "Only relevant to MATCHING_ASM promotion and any MATCHING_C candidate that happens to require inline asm."
     },
     {
       "target": "Exact LZEXE 0.91 recompression (packing reconstruction, Level 2)",

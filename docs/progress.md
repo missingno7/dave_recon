@@ -157,3 +157,98 @@ Function census: not started.
    `F_A469`) — first real matching-C proof inside game code (not just the
    linked-in runtime library).
 3. EGADAVE.DAV: confirm the 16x16x4bpp EGA planar tile hypothesis.
+
+## 2026-09-19 — Coordinate bug fixed; EGADAVE.DAV solved; library scanning + first MATCHING_C; call-graph census
+
+Bootstrap is over — the project moved into productive matching-C
+reconstruction this session. Byte accounting for `build/DAVE_unpacked.exe`
+(172,848 bytes, 62 owned regions, all gap/overlap tests passing, exact
+reconstruction confirmed at every step):
+
+| Kind | Bytes | % |
+|---|---|---|
+| MZ_HEADER | 28 | 0.02% |
+| RELOCATION_TABLE | 108 | 0.06% |
+| PADDING | 376 | 0.22% |
+| KNOWN_LIBRARY | 3,301 | 1.91% |
+| MATCHING_C | 38 | 0.02% |
+| RAW_UNKNOWN | 168,997 | 97.77% |
+
+**Coordinate bug fixed permanently.** The earlier "`_main` at file offset
+0x639" result was wrong by exactly the 0x200-byte MZ header size, added
+twice. Re-derived directly from raw bytes (CALL opcode at file offset
+0x2FC, disp16 0x013A): `_main` is at file offset **0x439** (load-module
+offset 0x239), confirmed by the expected `55 8B EC` prologue there.
+`tools/coordinates.py` now centralizes `file_offset <-> load_module_offset`
+conversion and `tests/test_coordinates.py` regression-tests the exact
+numbers so this class of bug cannot silently reappear.
+
+**Stack-check flag confirmed empirically**: `-N` (checking ON), not `-N-` —
+`docs/flag-investigation.md`, `tests/test_flag_investigation.py`.
+
+**`docs/blockers.json` / `docs/matching-phase.md` cleaned up**: removed
+stale/duplicate/contradictory entries, restructured with explicit CLOSED /
+PRODUCTIVE_FRONTIER / DEFERRED_NOT_BLOCKING / TRUE_BLOCKER categories.
+
+**Library contribution scanner** (`tools/library_scanner.py`): generalized
+the STARTUP_C0S "match modulo fixups" technique across CS.LIB's 312 member
+modules. Found **42 exact matches** (2,732 bytes, file offsets
+0x9613-0xb49b: ATEXIT, CLOSE, FFLUSH, WRITE, READ, MEMCPY, MEMSET, STRCPY,
+INPORT, OUTPORT, long-arithmetic helpers, etc.), most laid out back-to-back
+exactly as real linked runtime code — strong evidence these are genuine
+matches, not coincidence. All promoted to `KNOWN_LIBRARY` in
+`layout/manifest.json`. CC/CM/CL/CH.LIB (other memory models) confirmed to
+contribute nothing further, consistent with the small-model finding.
+Evidence: `docs/library-scan-evidence.{json,md}`.
+
+**First `MATCHING_C` promotion inside actual game code**: `F_6D64` (file
+offset [0x6d64,0x6d8a), 38 bytes) — a compiled `switch(param)` dispatch
+head (4-case jump table via near-to-far pointer setup). `src/F_6D64.c`
+reproduces the declared extent byte-for-byte with zero unexplained
+differences (only fixup-covered bytes differ). Honestly scoped: the source
+file's case-body *content* is explicitly documented as placeholder (only
+sized to make the dispatch head's non-fixup branch displacement match) —
+only the 38-byte dispatch head is claimed as matching, not the case bodies
+or jump table that follow (file offset ~0x6d8a-0x6dba), which remain
+`RAW_UNKNOWN` and are flagged as the natural next candidate. New reusable
+tool: `tools/match_function.py` (candidate.c -> compile -> OMF -> bind
+fixups -> full-extent byte compare). Evidence:
+`docs/matching-evidence.{json,md}`.
+
+**Function census rebuilt as a call-graph walk** rooted at the trusted
+`_main @ 0x439` anchor (previous census was a naive linear prologue scan,
+now kept as a frozen baseline at
+`docs/function-census-prologue-scan.{json,md}` for cross-reference).
+New `docs/function-census.json`: **172 functions**, with callers,
+direct callees, confidence, matching_status, and blockers per function;
+8 unresolved indirect control-flow targets and 1 overlap anomaly flagged
+honestly rather than hidden. Import/verification of
+`yo-yo-yo-jbo/dangerous_dave`'s documented facts (same SHA1 specimen) is
+in progress as a follow-up (`docs/external-re-evidence.json`, pending).
+
+**EGADAVE.DAV: fully solved, exact round-trip.** Format: `uint32` resource
+count (401) + offset table, then two resource kinds by size —
+`FIXED_TILE_16x16` (128 bytes, indices 0-52) and `SPRITE_VAR` (variable,
+4-byte width/height header, indices 53-400, padded width rounded to a
+multiple of 8, always `declared_height + 1` stored rows). 4 EGA bitplanes
+in I,R,G,B order, MSB-first, standard 16-color EGA/CGA palette. Visually
+confirmed against rendered PNGs (recognizable tiles and Dave sprite
+frames), and independently cross-checked against public ModdingWiki
+documentation of the format. `tools/egadave_decode.py` /
+`tools/egadave_encode.py` round-trip **the entire file exactly**
+(re-encoded MD5 == `15e4cfe305600a8acd39d4bc7fe9c591`, zero raw fallbacks).
+Evidence: `docs/egadave-format.{json,md}`,
+`tests/test_egadave_roundtrip.py`.
+
+All 28 tests passing throughout every change.
+
+### Next milestones
+
+1. Finish importing/verifying `yo-yo-yo-jbo/dangerous_dave` facts.
+2. Use the call-graph census + external hints to find more matching-C
+   candidates (prioritize small leaf functions, no indirect control flow).
+3. Resolve the switch's case bodies + jump table following `F_6D64`
+   (file offset ~0x6d8a-0x6dba).
+4. Continue the library scan against any newly-classified RAW_UNKNOWN
+   regions as more of the code segment is mapped.
+5. Confirm the `_TEXT`/`_DATA` boundary using the improved census.
