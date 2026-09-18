@@ -60,8 +60,34 @@
       "artifact": "raw/STARTUP_C0S.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_439_9613",
+      "id": "RAW_LOAD_MODULE_439_9613_439_6D64",
       "start": 1081,
+      "end": 28004,
+      "kind": "RAW_UNKNOWN",
+      "classification": "unclassified",
+      "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
+      "artifact": "raw/RAW_LOAD_MODULE.bin"
+    },
+    {
+      "id": "F_6D64",
+      "start": 28004,
+      "end": 28042,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/F_6D64.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "b3f653ea93e2b846bee6c933cf8240ec8fd9cdbce81717b23dc75e13e3a8854a",
+      "description": "Dispatch head of a compiled switch(param) with 4 cases (jump-table-based); see src/F_6D64.c for full provenance notes. The census boundary here (docs/function-census.json's F_6D64) cuts off at the indirect jmp because the naive scan looks for RET, not JMP; the real case bodies + jump table continue at file offset ~0x6d8a-0x6dba and remain RAW_UNKNOWN.",
+      "matching_status": "EXACT_MODULO_FIXUPS",
+      "matching_status_note": "tools/match_function.py: compiling src/F_6D64.c with the pinned Turbo C++ 1.00 toolchain (s model, flags '') reproduces file offset [0x6d64,0x6d8a) with zero unexplained differences (16 fixup-covered bytes; fixup targets -- addresses of externally-resolved symbols/segments -- are not independently re-derived, matching the same standard used for STARTUP_C0S and the library_scanner.py promotions).",
+      "artifact": "raw/F_6D64.bin"
+    },
+    {
+      "id": "RAW_LOAD_MODULE_439_9613_6D8A_9613",
+      "start": 28042,
       "end": 38419,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",

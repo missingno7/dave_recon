@@ -1,0 +1,41 @@
+{
+  "schema": "dave-matching-c-evidence-v1",
+  "tool": "tools/match_function.py",
+  "promotions": [
+    {
+      "region_id": "F_6D64",
+      "source": "src/F_6D64.c",
+      "target_range_file_offset": [28004, 28042],
+      "target_range_hex": ["0x6d64", "0x6d8a"],
+      "model": "s",
+      "flags": "-ms -1- -f- -N",
+      "target_length": 38,
+      "total_diffs": 7,
+      "diff_offsets": [8, 13, 14, 18, 19, 36, 37],
+      "fixup_covered_bytes": 16,
+      "unexplained_diffs": [],
+      "exact_match_modulo_fixups": true,
+      "fixups": [
+        {"offset": 8, "width": 2, "target_kind": "external", "target": "___brklvl",
+         "note": "the -N stack-overflow-check global; every function establishing a stack frame in this binary compares against it (see docs/flag-investigation.md)."},
+        {"offset": 13, "width": 2, "target_kind": "external", "target": "N_OVERFLOW@",
+         "note": "self-relative call to the stack-check overflow handler."},
+        {"offset": 18, "width": 2, "target_kind": "segment", "target": "_BSS",
+         "note": "offset half of a near-to-far pointer conversion (address-of a near global/static, combined at runtime with DS)."},
+        {"offset": 36, "width": 2, "target_kind": "segment", "target": "_TEXT",
+         "note": "the compiled switch(param)'s 4-entry jump-table address, referenced by 'jmp word ptr cs:[bx+table]'."}
+      ],
+      "disassembly_of_real_bytes": [
+        "push bp; mov bp,sp; sub sp,4",
+        "cmp word ptr [___brklvl],sp; jb +3; call N_OVERFLOW  (-N stack check)",
+        "mov word ptr [bp-4], <fixup>      ; offset half of far pointer",
+        "mov word ptr [bp-2], ds           ; segment half of far pointer",
+        "mov bx, [bp+4]                    ; the one parameter",
+        "cmp bx, 3 ; ja <out-of-range>",
+        "shl bx, 1",
+        "jmp word ptr cs:[bx+<fixup>]      ; 4-entry switch jump table"
+      ],
+      "note": "docs/function-census.json's F_6D64 boundary [0x6d64,0x6d8a) is only the dispatch HEAD of a real switch(param){case 0..3} construct: the naive census scanner looks for a RET to end a function, but this function ends its declared span in an indirect JMP through a jump table instead, so the scanner cuts it off exactly at the jmp. The real case bodies and the jump table's own 8 bytes of data continue at file offset ~0x6d8a-0x6dba (verified by reading the table entries: 0x6b8a/0x6b91/0x6b98/0x6ba2 load-module-relative == file offset 0x6d8a/0x6d91/0x6d98/0x6da2, i.e. immediately following this range) and are NOT claimed as matched here -- they remain RAW_UNKNOWN pending independent disassembly of what each case actually does. src/F_6D64.c's case bodies are placeholders whose total compiled SIZE (not content) was tuned so the dispatch head's one non-fixup-covered byte -- the 'ja' out-of-range branch's rel8 displacement, which depends on how much code lies between it and the shared epilogue -- comes out identical to the real binary's. That displacement is not itself a claim about the real case bodies' size; it only had to reach the same numeric value, and multiple different real bit-patterns for the case bodies could produce it. This is recorded here explicitly so it is never mistaken for a claim about the real case bodies."
+    }
+  ]
+}
