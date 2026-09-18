@@ -6,7 +6,15 @@ emits, for OMF inspection/comparison. No cached .OBJ is ever reused — each
 call runs a fresh DOSBox-X session.
 
 Usage:
-    python tools/compile_probe.py path/to/probe.c [--model c|s|m|l|h] [--flags "..."]
+    python tools/compile_probe.py path/to/probe.c [--model s|c|m|l|h] [--flags "..."]
+
+Default model is "s" (small): docs/startup-binding-evidence.json proves the
+game's own C0 startup module is Turbo C++ 1.00's small-model C0S.OBJ (every
+byte differing from that raw library object is explained by a linker
+fixup, uniquely among all 5 memory models). Compact ("c") was only ever an
+untested starting guess borrowed from the sibling empires_reconstruction
+project (which targets a different game/compiler) and must not be used as
+the default here.
 
 Writes build/<stem>/PROBE.OBJ (or FAILED.TXT + BUILD.LOG on failure) and
 prints the OMF THEADR comment (compiler self-identification string) plus a
@@ -36,7 +44,15 @@ def run(source: pathlib.Path, model: str, extra_flags: str):
     work.mkdir(parents=True)
     shutil.copyfile(source, work / f"{stem}.C")
 
-    flags = f"-c {MODEL_FLAG[model]} -1- -f- -N- {extra_flags}".strip()
+    # -N (stack overflow checking ON) is an empirically confirmed match: the
+    # real _main @ file offset 0x439 opens with 55 8B EC 39 26 9A 00 72 03 E8
+    # (push bp; mov bp,sp; cmp [stackbase],sp; jb +3; call <stack-overflow
+    # handler>), which is exactly Turbo C++ 1.00's -N stack-check stub with
+    # zero locals (no `sub sp,N` between the frame setup and the check).
+    # Confirmed by compiling tests/fixtures/probe2.c with -N and comparing
+    # instruction-for-instruction (see docs/flag-investigation.md). Do not
+    # revert this to -N- without fresh evidence.
+    flags = f"-c {MODEL_FLAG[model]} -1- -f- -N {extra_flags}".strip()
     bat = work / "GO.BAT"
     bat.write_text(
         "@ECHO OFF\r\n"
@@ -69,7 +85,7 @@ def run(source: pathlib.Path, model: str, extra_flags: str):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("source", type=pathlib.Path)
-    parser.add_argument("--model", default="c", choices=list(MODEL_FLAG))
+    parser.add_argument("--model", default="s", choices=list(MODEL_FLAG))
     parser.add_argument("--flags", default="")
     args = parser.parse_args()
 

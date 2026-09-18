@@ -20,15 +20,21 @@ Writes docs/function-census.json.
 """
 import json
 import pathlib
+import sys
 
 from capstone import Cs, CS_ARCH_X86, CS_MODE_16
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import coordinates as coord  # noqa: E402
+
 EXE = ROOT / "build" / "DAVE_unpacked.exe"
 
-RAW_LOAD_MODULE_START = 1081       # file offset, per layout/manifest.json
+RAW_LOAD_MODULE_START = 1081       # file offset, per layout/manifest.json (== 0x439)
 RAW_LOAD_MODULE_END = 172848       # file offset (end of file)
-SEGMENT_BASE = 512                  # file offset of CS:IP=0000:0000 (program entry point)
+SEGMENT_BASE = coord.MZ_HEADER_SIZE  # file offset of CS:IP=0000:0000 (program entry point)
+
+assert RAW_LOAD_MODULE_START == 0x439, "RAW_LOAD_MODULE_START must match the manifest's _main anchor"
 
 PROLOGUE = b"\x55\x8b\xec"          # push bp; mov bp, sp
 
