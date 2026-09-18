@@ -438,6 +438,12 @@ def main():
                          help="promote accepted matches into layout/manifest.json")
     parser.add_argument("--min-size", type=int, default=MEMMEM_MIN_SIZE,
                          help="minimum _TEXT size to attempt the memmem fallback path")
+    parser.add_argument("--write-evidence", action="store_true",
+                         help="(re)write docs/library-scan-evidence.{json,md} even if this "
+                              "run found nothing new -- off by default so a routine rerun "
+                              "against an already-promoted library (which naturally finds "
+                              "0 accepted matches, since they are no longer RAW_UNKNOWN) "
+                              "cannot silently clobber a prior run's recorded evidence")
     args = parser.parse_args()
 
     result = scan(args.library, args.min_size)
@@ -450,7 +456,11 @@ def main():
         print(f"Applied {len(result['accepted'])} matches; "
               f"manifest now has {apply_result['region_count']} regions.")
 
-    write_evidence(result, applied)
+    if result["accepted"] or args.write_evidence:
+        write_evidence(result, applied)
+    else:
+        print("No accepted matches this run; leaving existing evidence docs "
+              "untouched (pass --write-evidence to force).")
 
 
 if __name__ == "__main__":
