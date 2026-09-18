@@ -1,0 +1,101 @@
+{
+  "format": "dave-egadave-format-v1",
+  "specimen": {
+    "path": "assets/EGADAVE.DAV",
+    "size": 86332,
+    "md5": "15e4cfe305600a8acd39d4bc7fe9c591"
+  },
+  "status": "REBUILDABLE, EXACT_MATCH proven for the whole file (see tests/test_egadave_roundtrip.py)",
+  "provenance": [
+    "Independently re-derived byte-for-byte from assets/EGADAVE.DAV.",
+    "Cross-checked against public prior art: https://moddingwiki.shikadi.net/wiki/Dangerous_Dave_Tileset_Format (format credited there to Levellass's reverse engineering) and https://moddingwiki.shikadi.net/wiki/Raw_EGA_data.",
+    "Every field/rule below was mechanically verified against the actual specimen bytes, not merely copied from the public source. Fields not confirmed by our own byte-level checks are marked accordingly."
+  ],
+  "header": {
+    "offset": 0,
+    "type": "uint32_le",
+    "field": "count",
+    "value_in_specimen": 401,
+    "description": "Number of resources in the file."
+  },
+  "offset_table": {
+    "start": 4,
+    "entry_type": "uint32_le",
+    "entry_count": "count",
+    "entry_semantics": "absolute file offset of resource i's first byte",
+    "verified_invariants": [
+      "offsets[0] == 4 + count*4 (resource data begins immediately after the table, no gap)",
+      "offsets[i] strictly increasing for all i",
+      "size(i) = offsets[i+1]-offsets[i] for i<count-1, else file_size-offsets[i]",
+      "offsets[count-1] + size(count-1) == file_size (no trailing unaccounted bytes)"
+    ]
+  },
+  "resource_kinds": [
+    {
+      "kind": "FIXED_TILE_16x16",
+      "discriminator": "size == 128",
+      "verified_index_range_in_specimen": [0, 52],
+      "header_bytes": 0,
+      "declared_width": 16,
+      "declared_height": 16,
+      "padded_width": 16,
+      "stored_rows": 16,
+      "planes": 4,
+      "plane_order": ["I", "R", "G", "B"],
+      "bit_order": "MSB_FIRST",
+      "layout": "row_planar",
+      "bytes_per_row_per_plane": 2,
+      "total_bytes": 128,
+      "confirmation": "Rendered to PNG and visually verified to be coherent tile art (e.g. a 3D-bevelled block tile, a gem/diamond tile), not noise."
+    },
+    {
+      "kind": "SPRITE_VAR",
+      "discriminator": "size != 128",
+      "verified_index_range_in_specimen": [53, 400],
+      "header_bytes": 4,
+      "header_fields": [
+        {"name": "declared_width", "offset": 0, "type": "uint16_le", "unit": "pixels"},
+        {"name": "declared_height", "offset": 2, "type": "uint16_le", "unit": "pixels"}
+      ],
+      "padded_width_formula": "ceil(declared_width/8)*8",
+      "stored_rows_formula": "declared_height + 1",
+      "stored_rows_formula_confidence": "exact, verified with zero exceptions across all 348 SPRITE_VAR resources in the specimen; underlying reason for the +1 row is NOT understood, only the rule itself",
+      "padding_columns_are_zero": false,
+      "padding_columns_note": "Columns beyond declared_width up to padded_width-1 are frequently non-zero in the specimen (~90% of sampled padding bits set); they must be preserved bit-for-bit, so decoders/encoders must operate on the full padded_width x stored_rows raster, not just the declared visible region.",
+      "planes": 4,
+      "plane_order": ["I", "R", "G", "B"],
+      "bit_order": "MSB_FIRST",
+      "layout": "row_planar",
+      "bytes_per_row_per_plane_formula": "padded_width/8",
+      "total_bytes_formula": "4 (header) + (padded_width/8) * 4 * stored_rows",
+      "verified_size_formula_match": "exact for all 348 SPRITE_VAR resources, zero exceptions",
+      "distinct_declared_dimension_pairs_in_specimen": 36,
+      "most_common_declared_dimension": {"width": 23, "height": 16, "count": 148},
+      "confirmation": "Resources 53-56 (same declared 23x16 size) decode to the same recognizable sprite shifted 1 pixel right per successive resource, matching public prior art's description of 4 horizontally pre-shifted EGA copies per sprite frame; resource 57 (same declared size) decodes to a visibly different pose."
+    }
+  ],
+  "pixel_encoding": {
+    "index_formula": "(I<<3) | (R<<2) | (G<<1) | B",
+    "palette": "standard_16_color_ega_cga",
+    "palette_rgb": [
+      [0, 0, 0], [0, 0, 170], [0, 170, 0], [0, 170, 170],
+      [170, 0, 0], [170, 0, 170], [170, 85, 0], [170, 170, 170],
+      [85, 85, 85], [85, 85, 255], [85, 255, 85], [85, 255, 255],
+      [255, 85, 85], [255, 85, 255], [255, 255, 85], [255, 255, 255]
+    ]
+  },
+  "tooling": {
+    "decoder": "tools/egadave_decode.py",
+    "encoder": "tools/egadave_encode.py",
+    "tests": "tests/test_egadave_roundtrip.py",
+    "decoded_output_dir": "build/egadave_decoded/ (git-ignored)",
+    "raw_unknown_fallback": "Any resource that fails the structural assertions above is copied through verbatim as kind RAW_UNKNOWN (per project RAW_UNKNOWN philosophy) instead of being silently guessed; raw_fallback_count is 0 for the current specimen."
+  },
+  "roundtrip_result": {
+    "method": "decode assets/EGADAVE.DAV fully with tools/egadave_decode.py, then re-encode with tools/egadave_encode.py",
+    "result": "EXACT_MATCH",
+    "rebuilt_md5": "15e4cfe305600a8acd39d4bc7fe9c591",
+    "resources_covered": 401,
+    "resources_raw_fallback": 0
+  }
+}
