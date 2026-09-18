@@ -1,0 +1,780 @@
+{
+  "library": "CS.LIB",
+  "library_sha256": "219850daec6a99bee933a03f0318d2ab4a30c92616c3e1546f89e852af6e2a67",
+  "module_count": 312,
+  "parse_errors": [],
+  "accepted": [
+    {
+      "module": "ATEXIT",
+      "method": "census_size_anchor",
+      "census_function": "F_9613",
+      "start": 38419,
+      "end": 38455,
+      "size": 36,
+      "fixup_covered_bytes": 8,
+      "unexplained_diffs": 0,
+      "module_sha256": "6f9f8d9c20b25a62f849b359f486e8dbfce3513a0007abbccc278eb9e504bd6a"
+    },
+    {
+      "module": "CLOSE",
+      "method": "census_size_anchor",
+      "census_function": "F_9637",
+      "start": 38455,
+      "end": 38498,
+      "size": 43,
+      "fixup_covered_bytes": 6,
+      "unexplained_diffs": 0,
+      "module_sha256": "cb5b55920f3798f625783a150b391324ffeab82ad4c0019bfe335bcf418775cd"
+    },
+    {
+      "module": "FFLUSH",
+      "method": "census_size_anchor",
+      "census_function": "F_97B0",
+      "start": 38832,
+      "end": 38962,
+      "size": 130,
+      "fixup_covered_bytes": 4,
+      "unexplained_diffs": 0,
+      "module_sha256": "2fc20aeb67a06b34207b51f90a45aae03a16bda633d17c142abdec83266100df"
+    },
+    {
+      "module": "FLUSHALL",
+      "method": "census_size_anchor",
+      "census_function": "F_9832",
+      "start": 38962,
+      "end": 39016,
+      "size": 54,
+      "fixup_covered_bytes": 4,
+      "unexplained_diffs": 0,
+      "module_sha256": "7bef2be6ceb1cbb14655f2c46956f5636d8b25f2850a09a1914b45d120f9c10b"
+    },
+    {
+      "module": "GETDATE",
+      "method": "memmem",
+      "start": 39281,
+      "end": 39319,
+      "size": 38,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "3dc560b45dab43c855e096567d75db7449dae57c4f33bac5f401d2559fe8d92f"
+    },
+    {
+      "module": "PUTS",
+      "method": "census_size_anchor",
+      "census_function": "F_9BF9",
+      "start": 39929,
+      "end": 39992,
+      "size": 63,
+      "fixup_covered_bytes": 10,
+      "unexplained_diffs": 0,
+      "module_sha256": "d84753abf27aaa5cfb8bd9d8adb754adf2dee858b4d1d7ba23f4585fb9f6efdc"
+    },
+    {
+      "module": "SETVBUF",
+      "method": "census_size_anchor",
+      "census_function": "F_9CD4",
+      "start": 40148,
+      "end": 40352,
+      "size": 204,
+      "fixup_covered_bytes": 22,
+      "unexplained_diffs": 0,
+      "module_sha256": "95f8119b88aea1fb5a62f721fbfd5d5395949d0fdd09076bc3d976edca72576d"
+    },
+    {
+      "module": "TELL",
+      "method": "census_size_anchor",
+      "census_function": "F_9E19",
+      "start": 40473,
+      "end": 40497,
+      "size": 24,
+      "fixup_covered_bytes": 2,
+      "unexplained_diffs": 0,
+      "module_sha256": "2f23d235dcf2ac822e0437295d5e9ce4ef459ff6a0be2e9a556bd0ecb52de343"
+    },
+    {
+      "module": "TOUPPER",
+      "method": "census_size_anchor",
+      "census_function": "F_A11E",
+      "start": 41246,
+      "end": 41290,
+      "size": 44,
+      "fixup_covered_bytes": 2,
+      "unexplained_diffs": 0,
+      "module_sha256": "42190b331cd3793aa550f2919467bef08ede88cacfbf45e6359fb76a907c9c44"
+    },
+    {
+      "module": "WRITE",
+      "method": "census_size_anchor",
+      "census_function": "F_A14A",
+      "start": 41290,
+      "end": 41529,
+      "size": 239,
+      "fixup_covered_bytes": 10,
+      "unexplained_diffs": 0,
+      "module_sha256": "205d11c4217719d0917497a23cc58c6943c8d7e7a32486410f2d7526ac70421f"
+    },
+    {
+      "module": "BIOSKEY",
+      "method": "census_size_anchor",
+      "census_function": "F_A2D6",
+      "start": 41686,
+      "end": 41721,
+      "size": 35,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "e02dcd90466d33c0a587a070e9c05f49480804fabbbb0677450eeec04371e08c"
+    },
+    {
+      "module": "CHMODA",
+      "method": "census_size_anchor",
+      "census_function": "F_A368",
+      "start": 41832,
+      "end": 41859,
+      "size": 27,
+      "fixup_covered_bytes": 2,
+      "unexplained_diffs": 0,
+      "module_sha256": "a6db96d73a5a8b8feae0624f4024542068854fb510844acdd53ac071d4f774fe"
+    },
+    {
+      "module": "CLOSEA",
+      "method": "census_size_anchor",
+      "census_function": "F_A383",
+      "start": 41859,
+      "end": 41889,
+      "size": 30,
+      "fixup_covered_bytes": 4,
+      "unexplained_diffs": 0,
+      "module_sha256": "9bb2cbb78e8febd8bfb4998d1ed82e7db009172c74145421ba2fb573d9869f84"
+    },
+    {
+      "module": "FLENGTH",
+      "method": "census_size_anchor",
+      "census_function": "F_A3A1",
+      "start": 41889,
+      "end": 41954,
+      "size": 65,
+      "fixup_covered_bytes": 2,
+      "unexplained_diffs": 0,
+      "module_sha256": "2f033b8778913b8967bff4e3a1a7c1bb136763dc17b510b6deb33863cdaaa5cf"
+    },
+    {
+      "module": "GETENV",
+      "method": "census_size_anchor",
+      "census_function": "F_A3E2",
+      "start": 41954,
+      "end": 42048,
+      "size": 94,
+      "fixup_covered_bytes": 2,
+      "unexplained_diffs": 0,
+      "module_sha256": "70c40dbd777106e5e620ad62db2cfbabe6bc398cde2fe1ab7e744a2d797324c2"
+    },
+    {
+      "module": "GETVECT",
+      "method": "memmem",
+      "start": 42048,
+      "end": 42080,
+      "size": 32,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "1ef03d359521225235dd744c365fd2b9d2a025c1d85a78a96f84412da9215639"
+    },
+    {
+      "module": "INPORT",
+      "method": "memmem",
+      "start": 42080,
+      "end": 42100,
+      "size": 20,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "d35898491de7322460bb2a9e7a80f82b60ab587e3e87e35b9e41657ba490e8e7"
+    },
+    {
+      "module": "IOCTL",
+      "method": "census_size_anchor",
+      "census_function": "F_A474",
+      "start": 42100,
+      "end": 42139,
+      "size": 39,
+      "fixup_covered_bytes": 2,
+      "unexplained_diffs": 0,
+      "module_sha256": "e1dcb72e9dfd4e8d92870860c414bd1745f47a506755d68ba619d0f7469fbdb5"
+    },
+    {
+      "module": "IOERROR",
+      "method": "census_size_anchor",
+      "census_function": "F_A49B",
+      "start": 42139,
+      "end": 42200,
+      "size": 61,
+      "fixup_covered_bytes": 8,
+      "unexplained_diffs": 0,
+      "module_sha256": "f14622342f9984aaaf8d66506d0922da4c6deb7e911cbdeda56b1e860bbefe54"
+    },
+    {
+      "module": "ISATTY",
+      "method": "census_size_anchor",
+      "census_function": "F_A4D8",
+      "start": 42200,
+      "end": 42217,
+      "size": 17,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "86515c40858129410b15be639f5c379e126daa8b8ddd114d1262fade8baa7f9c"
+    },
+    {
+      "module": "LSEEK",
+      "method": "census_size_anchor",
+      "census_function": "F_A4E9",
+      "start": 42217,
+      "end": 42258,
+      "size": 41,
+      "fixup_covered_bytes": 4,
+      "unexplained_diffs": 0,
+      "module_sha256": "3f5bf5c518674194c5e7e8ca3079a560555fc1284f967ec8c0939c5af3751be4"
+    },
+    {
+      "module": "LTOA",
+      "method": "memmem",
+      "start": 42258,
+      "end": 42485,
+      "size": 227,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "cd08f5a3d6afe3a2c46817a457fc8e4504fffc7e3e6d97befdf1779358c9eef5"
+    },
+    {
+      "module": "MEMCPY",
+      "method": "census_size_anchor",
+      "census_function": "F_A5F5",
+      "start": 42485,
+      "end": 42518,
+      "size": 33,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "e0aa859a297d20a1142b58f09d0797b7d3774c38e78c76563ffca18b6e89bdfa"
+    },
+    {
+      "module": "MEMSET",
+      "method": "memmem",
+      "start": 42518,
+      "end": 42582,
+      "size": 64,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "2a1304030782818bf3b5aec62d7fe084ce6835cd6f1b7d36ac344cb71b985211"
+    },
+    {
+      "module": "MOVEDATA",
+      "method": "census_size_anchor",
+      "census_function": "F_A656",
+      "start": 42582,
+      "end": 42616,
+      "size": 34,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "b88ff2c7f5223fb147adc714b3e70f15c8be388ee735bab91aeed163a69134fa"
+    },
+    {
+      "module": "MOVMEM",
+      "method": "memmem",
+      "start": 42616,
+      "end": 42714,
+      "size": 98,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "3ec433796948782228818e6243b06990f5ad35daaa00ee4f04e14963f40d75dc"
+    },
+    {
+      "module": "OPENA",
+      "method": "census_size_anchor",
+      "census_function": "F_A832",
+      "start": 43058,
+      "end": 43134,
+      "size": 76,
+      "fixup_covered_bytes": 4,
+      "unexplained_diffs": 0,
+      "module_sha256": "be30c4371d41f8999ef0c3b0e97d10fce0d073795e438fe242d1e1a9c3f1579d"
+    },
+    {
+      "module": "OUTPORT",
+      "method": "memmem",
+      "start": 43134,
+      "end": 43158,
+      "size": 24,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "0794250a054f2ff99685ea8263dbcfd38882248a5af62e0f50e73e4769d85f04"
+    },
+    {
+      "module": "READ",
+      "method": "census_size_anchor",
+      "census_function": "F_A896",
+      "start": 43158,
+      "end": 43339,
+      "size": 181,
+      "fixup_covered_bytes": 12,
+      "unexplained_diffs": 0,
+      "module_sha256": "f17c83166ebf670edacb23c4ea1224fca0e105be94e7cc7726690c9d458c08d5"
+    },
+    {
+      "module": "READA",
+      "method": "census_size_anchor",
+      "census_function": "F_A94B",
+      "start": 43339,
+      "end": 43365,
+      "size": 26,
+      "fixup_covered_bytes": 2,
+      "unexplained_diffs": 0,
+      "module_sha256": "b421e15b3295e784bb166a6e9c4d29ee118db14aa5260046220fb6c1f58851dc"
+    },
+    {
+      "module": "SETBLOCK",
+      "method": "census_size_anchor",
+      "census_function": "F_A965",
+      "start": 43365,
+      "end": 43393,
+      "size": 28,
+      "fixup_covered_bytes": 2,
+      "unexplained_diffs": 0,
+      "module_sha256": "36fe986d2daee512cb28d007c5e1a4d534391a70c4214adee8fbc2c80c42e5b2"
+    },
+    {
+      "module": "SETDATE",
+      "method": "memmem",
+      "start": 43393,
+      "end": 43431,
+      "size": 38,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "230990968938d0fff54871439b0e54f68caacff7b3a0e523a06122692dbf54b0"
+    },
+    {
+      "module": "STRCPY",
+      "method": "census_size_anchor",
+      "census_function": "F_A9A7",
+      "start": 43431,
+      "end": 43467,
+      "size": 36,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "4b5b6fb7e8aeda0fe5a7d1936012960ce7602c4e4ddf1fe2dd925febabd1e704"
+    },
+    {
+      "module": "STRLEN",
+      "method": "census_size_anchor",
+      "census_function": "F_A9CB",
+      "start": 43467,
+      "end": 43493,
+      "size": 26,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "c86c24eb9e004a56d1fb484f3fc8262a9add516d6f53e488cba1621611c3daec"
+    },
+    {
+      "module": "STRNCPY",
+      "method": "census_size_anchor",
+      "census_function": "F_A9E5",
+      "start": 43493,
+      "end": 43537,
+      "size": 44,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "b5f27768d52f85b541a3a50db7572a51958c1acd4559f6fb19ea26399f49b689"
+    },
+    {
+      "module": "WRITEA",
+      "method": "census_size_anchor",
+      "census_function": "F_AC5F",
+      "start": 44127,
+      "end": 44198,
+      "size": 71,
+      "fixup_covered_bytes": 8,
+      "unexplained_diffs": 0,
+      "module_sha256": "aa63b0fd01f22e682901797bbefd82f311159d06d6b900cf096b44acd9b274a1"
+    },
+    {
+      "module": "H_LDIV",
+      "method": "memmem",
+      "start": 45203,
+      "end": 45377,
+      "size": 174,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "dd552b953d0a5646b876f59c98612e1feecfb227f3f40b26be35ecae85cc12f6"
+    },
+    {
+      "module": "H_LLSH",
+      "method": "memmem",
+      "start": 45377,
+      "end": 45410,
+      "size": 33,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "48e325bcfddf2b872402fe574162fc4087339cc63749a46b35dd354071d80f44"
+    },
+    {
+      "module": "H_PADD",
+      "method": "memmem",
+      "start": 45410,
+      "end": 45506,
+      "size": 96,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "cfa0d77df049247250e07b293fefbf86f513c168fdda2d484dfb09e4d0f270db"
+    },
+    {
+      "module": "H_SCOPY",
+      "method": "memmem",
+      "start": 45506,
+      "end": 45537,
+      "size": 31,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "d51adc315d9cd5f5e6783f860e5dd19f49816c012e50826bf6c1cc83b1a2f758"
+    },
+    {
+      "module": "N_LXMUL",
+      "method": "memmem",
+      "start": 46179,
+      "end": 46202,
+      "size": 23,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "ebcdfb160506af57dea99fc55c9fcb7a3e69a978f30bab4e65df9c8d8cafa446"
+    },
+    {
+      "module": "N_PCMP",
+      "method": "memmem",
+      "start": 46202,
+      "end": 46235,
+      "size": 33,
+      "fixup_covered_bytes": 0,
+      "unexplained_diffs": 0,
+      "module_sha256": "2af2480cb78276f2e66f6451000b0f183cf9ad07b301838dc412b2062adccbb7"
+    }
+  ],
+  "rejected_count": 249,
+  "rejected_sample": [
+    {
+      "module": "ASSERT",
+      "method": "census_size_anchor",
+      "census_function": "F_A383",
+      "offset": 41859,
+      "size": 30,
+      "unexplained_diff_count": 18
+    },
+    {
+      "module": "ATEXIT",
+      "method": "census_size_anchor",
+      "census_function": "F_A9A7",
+      "offset": 43431,
+      "size": 36,
+      "unexplained_diff_count": 23
+    },
+    {
+      "module": "CALLOC",
+      "method": "census_size_anchor",
+      "census_function": "F_A678",
+      "offset": 42616,
+      "size": 75,
+      "unexplained_diff_count": 61
+    },
+    {
+      "module": "CHMOD",
+      "method": "census_size_anchor",
+      "census_function": "F_882C",
+      "offset": 34860,
+      "size": 69,
+      "unexplained_diff_count": 58
+    },
+    {
+      "module": "CLOSE",
+      "method": "census_size_anchor",
+      "census_function": "F_69FB",
+      "offset": 27131,
+      "size": 43,
+      "unexplained_diff_count": 32
+    },
+    {
+      "module": "CLOSEALL",
+      "method": "census_size_anchor",
+      "census_function": "F_882C",
+      "offset": 34860,
+      "size": 69,
+      "unexplained_diff_count": 59
+    },
+    {
+      "module": "CLRSCR",
+      "method": "census_size_anchor",
+      "census_function": "F_A4E9",
+      "offset": 42217,
+      "size": 41,
+      "unexplained_diff_count": 24
+    },
+    {
+      "module": "CLRSCR",
+      "method": "census_size_anchor",
+      "census_function": "F_ADEE",
+      "offset": 44526,
+      "size": 41,
+      "unexplained_diff_count": 24
+    },
+    {
+      "module": "COLOR",
+      "method": "census_size_anchor",
+      "census_function": "F_1B84",
+      "offset": 7044,
+      "size": 82,
+      "unexplained_diff_count": 56
+    },
+    {
+      "module": "COLOR",
+      "method": "census_size_anchor",
+      "census_function": "F_1BD6",
+      "offset": 7126,
+      "size": 82,
+      "unexplained_diff_count": 56
+    },
+    {
+      "module": "COLOR",
+      "method": "census_size_anchor",
+      "census_function": "F_8994",
+      "offset": 35220,
+      "size": 82,
+      "unexplained_diff_count": 56
+    },
+    {
+      "module": "CTRLBRK",
+      "method": "census_size_anchor",
+      "census_function": "F_9930",
+      "offset": 39216,
+      "size": 65,
+      "unexplained_diff_count": 50
+    },
+    {
+      "module": "CTRLBRK",
+      "method": "census_size_anchor",
+      "census_function": "F_A3A1",
+      "offset": 41889,
+      "size": 65,
+      "unexplained_diff_count": 49
+    },
+    {
+      "module": "DOSENV",
+      "method": "census_size_anchor",
+      "census_function": "F_1321",
+      "offset": 4897,
+      "size": 222,
+      "unexplained_diff_count": 205
+    },
+    {
+      "module": "EXECL",
+      "method": "census_size_anchor",
+      "census_function": "F_69B9",
+      "offset": 27065,
+      "size": 26,
+      "unexplained_diff_count": 17
+    },
+    {
+      "module": "EXECL",
+      "method": "census_size_anchor",
+      "census_function": "F_9997",
+      "offset": 39319,
+      "size": 26,
+      "unexplained_diff_count": 15
+    },
+    {
+      "module": "EXECL",
+      "method": "census_size_anchor",
+      "census_function": "F_A5B6",
+      "offset": 42422,
+      "size": 26,
+      "unexplained_diff_count": 16
+    },
+    {
+      "module": "EXECL",
+      "method": "census_size_anchor",
+      "census_function": "F_A94B",
+      "offset": 43339,
+      "size": 26,
+      "unexplained_diff_count": 17
+    },
+    {
+      "module": "EXECL",
+      "method": "census_size_anchor",
+      "census_function": "F_A9CB",
+      "offset": 43467,
+      "size": 26,
+      "unexplained_diff_count": 17
+    },
+    {
+      "module": "EXECLE",
+      "method": "census_size_anchor",
+      "census_function": "F_69FB",
+      "offset": 27131,
+      "size": 43,
+      "unexplained_diff_count": 32
+    },
+    {
+      "module": "EXECLE",
+      "method": "census_size_anchor",
+      "census_function": "F_9637",
+      "offset": 38455,
+      "size": 43,
+      "unexplained_diff_count": 32
+    },
+    {
+      "module": "EXECLPE",
+      "method": "census_size_anchor",
+      "census_function": "F_A11E",
+      "offset": 41246,
+      "size": 44,
+      "unexplained_diff_count": 35
+    },
+    {
+      "module": "EXECLPE",
+      "method": "census_size_anchor",
+      "census_function": "F_A9E5",
+      "offset": 43493,
+      "size": 44,
+      "unexplained_diff_count": 33
+    },
+    {
+      "module": "EXECV",
+      "method": "census_size_anchor",
+      "census_function": "F_A6DA",
+      "offset": 42714,
+      "size": 25,
+      "unexplained_diff_count": 18
+    },
+    {
+      "module": "EXECVE",
+      "method": "census_size_anchor",
+      "census_function": "F_A368",
+      "offset": 41832,
+      "size": 27,
+      "unexplained_diff_count": 18
+    },
+    {
+      "module": "EXECVP",
+      "method": "census_size_anchor",
+      "census_function": "F_A965",
+      "offset": 43365,
+      "size": 28,
+      "unexplained_diff_count": 19
+    },
+    {
+      "module": "EXECVP",
+      "method": "census_size_anchor",
+      "census_function": "F_B1C5",
+      "offset": 45509,
+      "size": 28,
+      "unexplained_diff_count": 21
+    },
+    {
+      "module": "EXECVPE",
+      "method": "census_size_anchor",
+      "census_function": "F_A965",
+      "offset": 43365,
+      "size": 28,
+      "unexplained_diff_count": 19
+    },
+    {
+      "module": "EXECVPE",
+      "method": "census_size_anchor",
+      "census_function": "F_B1C5",
+      "offset": 45509,
+      "size": 28,
+      "unexplained_diff_count": 21
+    },
+    {
+      "module": "EXIT",
+      "method": "census_size_anchor",
+      "census_function": "F_9613",
+      "offset": 38419,
+      "size": 36,
+      "unexplained_diff_count": 24
+    },
+    {
+      "module": "EXIT",
+      "method": "census_size_anchor",
+      "census_function": "F_A9A7",
+      "offset": 43431,
+      "size": 36,
+      "unexplained_diff_count": 23
+    },
+    {
+      "module": "FCLOSE",
+      "method": "census_size_anchor",
+      "census_function": "F_6293",
+      "offset": 25235,
+      "size": 120,
+      "unexplained_diff_count": 100
+    },
+    {
+      "module": "FCLOSE",
+      "method": "census_size_anchor",
+      "census_function": "F_8D17",
+      "offset": 36119,
+      "size": 120,
+      "unexplained_diff_count": 103
+    },
+    {
+      "module": "FCORELFT",
+      "method": "census_size_anchor",
+      "census_function": "F_77E1",
+      "offset": 30689,
+      "size": 80,
+      "unexplained_diff_count": 64
+    },
+    {
+      "module": "FFLUSH",
+      "method": "census_size_anchor",
+      "census_function": "F_0BB2",
+      "offset": 2994,
+      "size": 130,
+      "unexplained_diff_count": 120
+    },
+    {
+      "module": "FGETPOS",
+      "method": "census_size_anchor",
+      "census_function": "F_7878",
+      "offset": 30840,
+      "size": 37,
+      "unexplained_diff_count": 30
+    },
+    {
+      "module": "FGETPOS",
+      "method": "census_size_anchor",
+      "census_function": "F_A5D0",
+      "offset": 42448,
+      "size": 37,
+      "unexplained_diff_count": 28
+    },
+    {
+      "module": "FGETS",
+      "method": "census_size_anchor",
+      "census_function": "F_9743",
+      "offset": 38723,
+      "size": 109,
+      "unexplained_diff_count": 98
+    },
+    {
+      "module": "FNMERGE",
+      "method": "census_size_anchor",
+      "census_function": "F_124B",
+      "offset": 4683,
+      "size": 110,
+      "unexplained_diff_count": 93
+    },
+    {
+      "module": "FOPEN",
+      "method": "census_size_anchor",
+      "census_function": "F_5815",
+      "offset": 22549,
+      "size": 471,
+      "unexplained_diff_count": 440
+    }
+  ],
+  "applied": true
+}
