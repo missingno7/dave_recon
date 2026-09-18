@@ -1,0 +1,88 @@
+{
+  "format": "dave-specimen-manifest-v1",
+  "phase": "phase-0-specimen-identification",
+  "game": "Dangerous Dave",
+  "files": [
+    {
+      "path": "assets/DAVE.EXE",
+      "role": "main_executable",
+      "size": 76586,
+      "md5": "10ac35dd6bc6314cd5caf08a4ffb4275",
+      "sha256": "1ae779823df27f2c6ae03b2e7d2a8c154d4189a5074d444827783fb2f1f92a0a",
+      "container_format": "MZ",
+      "packed": true,
+      "packer": {
+        "name": "LZEXE",
+        "version": "0.91",
+        "evidence": [
+          "ASCII signature 'LZ91' at file offset 0x1c (28), the location e_lfarlc points to instead of a real relocation table",
+          "e_crlc == 0 in the outer MZ header (no relocations declared for the packed stub)",
+          "e_cparhdr == 2 (header is only 32 bytes, consistent with the minimal LZEXE stub header)",
+          "e_ip/e_cs == 0x000E / 0x1298 point into the LZEXE decompression stub, not the real game entry point"
+        ]
+      },
+      "mz_header_outer": {
+        "e_magic": "MZ",
+        "e_cblp": 298,
+        "e_cp": 150,
+        "e_crlc": 0,
+        "e_cparhdr": 2,
+        "e_minalloc": 7395,
+        "e_maxalloc": 65535,
+        "e_ss": 10814,
+        "e_sp": 128,
+        "e_csum": 0,
+        "e_ip": 14,
+        "e_cs": 4760,
+        "e_lfarlc": 28,
+        "e_ovno": 0,
+        "declared_image_size_bytes": 76586,
+        "note": "declared image size matches actual file size, as expected for an LZEXE-packed file (the packed stub + compressed body is itself a well-formed tiny MZ file)"
+      },
+      "overlays": "none observed",
+      "version_strings": "not yet extracted (next step now that unpacking is done)",
+      "unpacked": {
+        "path": "build/DAVE_unpacked.exe",
+        "producer": "tools/lzexe_unpack.py",
+        "size": 172848,
+        "md5": "86feba8cc84fc1f0d829fd731f6dbe20",
+        "sha1": "9e572f0320ca759bea8f24a0ebcfcb1b68474e13",
+        "independent_cross_check": "SHA1 matches an independently published UNLZEXE-decompressed DAVE.EXE (Internet Archive item 'Dangerous Dave (LZW decompressed)') byte-for-byte.",
+        "mz_header_unpacked": {
+          "e_cblp": 304, "e_cp": 338, "e_crlc": 27, "e_cparhdr": 32,
+          "e_minalloc": 1332, "e_maxalloc": 65535, "e_ss": 12095, "e_sp": 128,
+          "e_ip": 0, "e_cs": 0, "e_lfarlc": 28, "e_ovno": 0,
+          "header_size_bytes": 512,
+          "entry_point_file_offset": 512,
+          "entry_bytes_disassemble_sane": "mov dx,imm16; mov cs:[disp],dx; mov ah,30h; int 21h (DOS get-version) ... — confirms this is a real, sane program start, not garbage"
+        }
+      }
+    },
+    {
+      "path": "assets/EGADAVE.DAV",
+      "role": "external_resource_data",
+      "size": 86332,
+      "md5": "15e4cfe305600a8acd39d4bc7fe9c591",
+      "sha256": "0eb13af0a62aa6a4c49eb2b18619dc73300ab6d433cbd78c7d845e8b3e088552",
+      "container_format": "custom (unidentified beyond initial offset-table observation)",
+      "packed": "unknown",
+      "initial_observation": "First bytes decode as a sequence of little-endian 32-bit values (0x191, 0x648, 0x6c8, 0x748, 0x7c8, 0x848, 0x8c8, 0x948, ...) consistent with a resource/chunk offset table; entries after the first increment by a constant 0x80 (128 bytes) each.",
+      "tile_size_hypothesis": "128 bytes/chunk == 16 rows x 4 EGA bitplanes x 2 bytes/row, i.e. a 16x16-pixel, 4-bitplane (16-color) EGA planar tile. This is the standard EGA tile encoding and matches the observed constant stride exactly. Not yet confirmed by decoding actual pixel content — still a hypothesis pending a rendering check.",
+      "next_step": "Decode a chunk under the 16x16x4bpp planar hypothesis and render it (or eyeball plane bit-patterns) to confirm it forms a coherent game tile rather than coincidental stride matching; cross-reference against any existing public Dangerous Dave format documentation."
+    }
+  ],
+  "version_identification": {
+    "status": "provisional, strong evidence found",
+    "notes": [
+      "String extraction from build/DAVE_unpacked.exe found: '(C) 1990 SOFTDISK, INC.', 'BY JOHN ROMERO', and 'Turbo C++ - Copyright 1990 Borland Intl.' (this last one is the Turbo C++ runtime startup copyright string embedded by the linker, not an application string — see toolchain notes below).",
+      "This confirms: 1990 Softdisk-published Dangerous Dave, authored by John Romero, and gives strong direct evidence the toolchain is Borland Turbo C++ (likely v1.0 or v1.01, both copyright-dated 1990) rather than plain Turbo C.",
+      "Not yet determined: which specific episode/release this EXE corresponds to (shareware ep.1-only vs registered ep.1-3), or the exact Turbo C++ point version/patch.",
+      "This manifest must be updated, not silently replaced, if a version mismatch is later discovered."
+    ]
+  },
+  "open_questions": [
+    "Which Dangerous Dave release/episode does this specimen correspond to?",
+    "Is EGADAVE.DAV specific to this release, or shared across all Dangerous Dave releases?",
+    "Are there other original distribution files (e.g. other .DAV files for other episodes, README, install files) that belong in the specimen set but are not yet present in this working directory?"
+  ]
+}

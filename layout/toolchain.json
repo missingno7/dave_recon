@@ -1,0 +1,40 @@
+{
+  "description": "Borland Turbo C++ 1.0 (May 1990), obtained from Internet Archive's Vintage Software Collection (archive.org/details/borland-turbo-c-plus-plus, 8x 360K floppy images, internal file timestamps 1990-05-04). Matches the embedded runtime string 'Turbo C++ - Copyright 1990 Borland Intl.' found in build/DAVE_unpacked.exe.",
+  "status": "pinned",
+  "source": {
+    "archive_item": "https://archive.org/details/borland-turbo-c-plus-plus",
+    "note": "Raw FAT12 floppy images extracted with a from-scratch Python FAT12 reader (no mtools available); disk4/TCC.ZIP, disk5/BIN1.ZIP+BIN2.ZIP, disk6/*.ZIP, disk7/*.ZIP unzipped directly."
+  },
+  "candidates": [
+    {"name": "Turbo C++ 1.0", "year": 1990, "rationale": "Embedded copyright string is dated 1990; archive.org item's file timestamps are 1990-05-04, consistent with the 1.0 release (May 1990)."}
+  ],
+  "rejected_for_now": [
+    {"name": "Turbo C++ 1.01", "year": 1990, "rationale": "1.01 shipped Feb 1991 per public records; the acquired disk set's 1990-05-04 timestamps match 1.0, not 1.01. Revisit only if 1.0 codegen comparisons fail."},
+    {"name": "Borland C++ 3.0", "year": 1991, "rationale": "Would embed a 'Borland C++' (not 'Turbo C++') runtime string and a later copyright year; does not match build/DAVE_unpacked.exe."}
+  ],
+  "dosbox_default": "C:/DOSBox-X/dosbox-x.exe",
+  "dosbox_fallback": "C:/Program Files (x86)/DOSBox-0.74-3/DOSBox.exe",
+  "flags": null,
+  "flags_note": "Memory model and optimization flags not yet determined empirically; empires_reconstruction (Turbo C 2.0) used '-c -mc -1- -f- -N-' (compact model) as a starting point. Dangerous Dave's memory model is unknown until the first codegen comparison.",
+  "files": [
+    {"path": "TCC.EXE", "sha256": "1d08bb9fbd575782fee50391573e2e0c73747b823c7d8cbe9f7b2f13f751e7d4", "role": "compiler driver"},
+    {"path": "TLINK.EXE", "sha256": "9e6e32c0efa26010748aba9fa2de75f7fd693fc7dc69ed97229795f160b9ed51", "role": "linker"},
+    {"path": "TLIB.EXE", "sha256": "c3b5e314c1102b037a5d4008ecd83df33e09f55cd7cc2320af85f8944b3a7199", "role": "librarian"}
+  ],
+  "libraries_by_model": {
+    "compact": {"startup": {"path": "C0C.OBJ", "sha256": "c43dcdacab63701f02ace65da66c3d870a16289d4753aef3010f51af8bf2ecc1"},
+                "runtime": {"path": "CC.LIB", "sha256": "354102ee5ec73c4d420ca846919afe85842a195c01a18ee0ff7c33710deb597f"}},
+    "small":   {"startup": {"path": "C0S.OBJ", "sha256": "a7e0df59484415a55d9c2179ce0096ab4f60e352f36f5adbfb67c493d2d1f5ee"},
+                "runtime": {"path": "CS.LIB", "sha256": "219850daec6a99bee933a03f0318d2ab4a30c92616c3e1546f89e852af6e2a67"}},
+    "medium":  {"startup": {"path": "C0M.OBJ", "sha256": "ed3037de57bd1893945413b59613204571adb4f22db5b1d255644f01e93e7ec7"},
+                "runtime": {"path": "CM.LIB", "sha256": "7c927df3952c5ab767bea6b0e4d8452770de4220911b137e15f924a478ec56e6"}},
+    "large":   {"startup": {"path": "C0L.OBJ", "sha256": "b51e146481a6764978b27a31e537a88ab2fb2f79da50b6a263833c6a644fbff1"},
+                "runtime": {"path": "CL.LIB", "sha256": "cf45945fa4017ae11b321fc56a17af547123b050e653e9f940af0040dd41d0f0"}},
+    "huge":    {"startup": {"path": "C0H.OBJ", "sha256": "24c43a0a1222c985843f4e1ba579e4643b5531756c257f59dc139f451d75d94d"},
+                "runtime": {"path": "CH.LIB", "sha256": "175cd83aa046684e8751ce40b7154401cf6451e6a8c80f531b36882d445eb959"}}
+  },
+  "missing": [
+    "TASM.EXE (Turbo Assembler) was not included in this Turbo C++ 1.0 disk set (only TASM2MSG.EXE, a message-file converter utility, was present). Needed once we start promoting MATCHING_ASM regions; not needed for initial MATCHING_C work."
+  ],
+  "note": "toolchain/ (git-ignored) now holds BIN/, LIB/, INCLUDE/ populated directly from the archive.org disk images. tools/setup_toolchain.py's --from/--pin flow can be used to re-verify or re-populate from a fresh copy of the same source later."
+}

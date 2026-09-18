@@ -1,0 +1,91 @@
+{
+  "format": "dave-mechanical-frontiers-v1",
+  "phase": "phase-0-phase-1 specimen and ownership bootstrap",
+  "globally_saturated": false,
+  "frontiers": [
+    {
+      "target": "Confirm DAVE.EXE release/version identity",
+      "state": "mostly resolved",
+      "matches": "String extraction from the unpacked image found '(C) 1990 SOFTDISK, INC.' and 'BY JOHN ROMERO', confirming this is the original 1990 Softdisk Dangerous Dave. File hashes recorded in docs/specimen-manifest.json.",
+      "first_unresolved_fact": "Which specific episode/distribution variant (shareware episode-1-only vs full registered 3-episode release) this exact DAVE.EXE corresponds to is still undetermined.",
+      "evidence": ["docs/specimen-manifest.json"],
+      "unblock": "Compare against any available community fingerprint list for Dangerous Dave shareware vs registered release hashes/sizes; check whether level-count references in the unpacked image (e.g. 'guide dave through 10' string) match episode 1's known 10 levels.",
+      "leverage": "Establishes which exact release this whole project targets; prevents silently mixing evidence from a different release."
+    },
+    {
+      "target": "Historical compiler identity for DAVE.EXE",
+      "state": "closed",
+      "matches": "Compiler version confirmed by direct self-identification: compiling tests/fixtures/probe1.c with the pinned TCC.EXE produces an OMF THEADR/COMENT record containing the literal string 'TC86 Borland Turbo C++ 1.00', matching the 'Turbo C++ - Copyright 1990 Borland Intl.' runtime string already found embedded in build/DAVE_unpacked.exe. See docs/toolchain-identification.md. Toolchain (TCC.EXE/TLINK.EXE/TLIB.EXE + per-model libraries) obtained from archive.org's Vintage Software Collection and pinned by SHA-256 in layout/toolchain.json; DOSBox-X (C:/DOSBox-X/dosbox-x.exe) drives compilation via tools/compile_probe.py. Regression-tested in tests/test_toolchain_probe.py.",
+      "first_unresolved_fact": "Compiler identity is settled. Not yet determined: Dangerous Dave's actual memory model and optimization flags (compact model / -1- -f- -N- used only as an untested starting guess), and whether TASM (not present in this disk set) is needed for any hand-written ASM.",
+      "evidence": ["docs/toolchain-identification.md", "layout/toolchain.json", "tools/compile_probe.py", "tests/test_toolchain_probe.py"],
+      "unblock": "N/A for compiler identity — closed. Next: function census on RAW_LOAD_MODULE to find real isolated functions to compare codegen against, to pin down memory model/flags.",
+      "leverage": "Toolchain is now installed, pinned, and proven end-to-end (compile -> OMF parse) — unblocks all future matching-C probe work without further acquisition steps."
+    },
+    {
+      "target": "Initial function census over RAW_LOAD_MODULE (starting with _main)",
+      "state": "in progress",
+      "matches": "STARTUP_C0S's self-relative CALL fixup to external '_main' (offset 253 in C0S.OBJ's _TEXT, file offset 765) resolves to load-module offset 0x439 = file offset 0x639 -- this is the linker-computed, unambiguous address of the game's main() function.",
+      "first_unresolved_fact": "Linear disassembly starting exactly at file offset 0x639 does not show the standard 'push bp; mov bp,sp' prologue that this exact pinned compiler (TCC 1.00, small model, flags -1- -f- -N-) reliably emits for any function using bp-relative locals (confirmed empirically: tests/fixtures/probe2.c compiles to '55 8b ec 83 ec 1a ...' under identical flags). The bytes immediately preceding 0x639 ('...52 e8 de9f 83 c4 06') look like they could alternatively be read as ending with 'add sp,6' bleeding 2 bytes into what I assumed was 0x639's start, i.e. a possible off-by-N instruction-boundary misalignment somewhere in this region. Not yet resolved.",
+      "evidence": ["build/DAVE_unpacked.exe file offset 0x639", "tests/fixtures/probe2.c compiled prologue"],
+      "unblock": "Systematic function-boundary analysis: sweep backward/forward from known anchors (the STARTUP_C0S->'_main' call, and other C0S external call targets like '_exit') using RET/RETF opcode boundaries and call-target cross-references rather than naive linear disassembly from one computed address; verify against several more compiled probes matching the addressing idioms observed (e.g. imul by small odd constants suggesting sizeof(struct)==9 or 7 array indexing).",
+      "leverage": "This is the entry point for the entire function census (Phase 2) and the first real matching-C candidate; resolving it unlocks systematic disassembly of the whole 171,767-byte RAW_LOAD_MODULE region."
+    },
+    {
+      "target": "Obtain TASM (Turbo Assembler) for MATCHING_ASM promotion",
+      "state": "open, not started",
+      "matches": "None — the acquired Turbo C++ 1.0 disk set only included TASM2MSG.EXE (a message-file converter), not TASM.EXE itself.",
+      "first_unresolved_fact": "TASM was historically sold both bundled with certain Turbo C++ SKUs and as a standalone product; the exact TASM version paired with this specific Turbo C++ 1.0 release is unknown.",
+      "evidence": ["docs/toolchain-identification.md"],
+      "unblock": "Locate a legitimately obtainable TASM 1.x/2.x installation (e.g. archive.org) once a candidate hand-written-ASM region is identified during function census, and confirm its version the same way TCC was confirmed (self-identifying strings in generated .OBJ if any, or matching known TASM release timelines to 1990).",
+      "leverage": "Only needed once MATCHING_ASM promotion begins; MATCHING_C work is unblocked without it."
+    },
+    {
+      "target": "Byte-exact LZEXE 0.91 unpacking of DAVE.EXE",
+      "state": "closed",
+      "matches": "tools/lzexe_unpack.py produces build/DAVE_unpacked.exe (172848 bytes, MD5 86feba8cc84fc1f0d829fd731f6dbe20, SHA1 9e572f0320ca759bea8f24a0ebcfcb1b68474e13).",
+      "first_unresolved_fact": "None remaining for the unpack direction. Resolved: the SHA1 matches an independently produced UNLZEXE-decompressed DAVE.EXE published by a third party (Internet Archive item 'Dangerous Dave (LZW decompressed)'), which is a genuine external cross-check, not self-consistency.",
+      "evidence": ["docs/lzexe-unpacking.md", "tools/lzexe_unpack.py", "docs/specimen-manifest.json"],
+      "unblock": "N/A — closed.",
+      "leverage": "Unblocks the entire ownership/function-census/matching pipeline, which now operates on build/DAVE_unpacked.exe."
+    },
+    {
+      "target": "Re-derive the exact LZEXE-packed DAVE.EXE bytes (packing reconstruction, Level 2)",
+      "state": "open investigation, not started",
+      "matches": "None yet — only the unpack direction is proven.",
+      "first_unresolved_fact": "LZEXE 0.91's own compressor's LZ77 match-parse heuristics and its exact policy for splitting large relocation-table gaps into 0xFFF-paragraph segment jumps are not recorded anywhere in the unpacked image and are not yet reimplemented.",
+      "evidence": ["docs/lzexe-unpacking.md section 5"],
+      "unblock": "Reimplement (or otherwise recover) LZEXE 0.91's compressor algorithm and test it by re-packing build/DAVE_unpacked.exe and comparing against assets/DAVE.EXE byte-for-byte.",
+      "leverage": "Closes the gap between 'unpacked reconstruction matches' and 'original distributed DAVE.EXE matches exactly' (see docs/build-reconstruction.md Level 2)."
+    },
+    {
+      "target": "EGADAVE.DAV format identification",
+      "state": "open investigation",
+      "matches": "Initial byte inspection shows what appears to be a little-endian 32-bit offset table at the start of the file, with a repeating +0x80 stride after the first entry.",
+      "first_unresolved_fact": "We have not decoded any chunk's contents (no confirmed tile/sprite/font/level structure), so the offset-table hypothesis is unconfirmed.",
+      "evidence": ["docs/specimen-manifest.json"],
+      "unblock": "Decode the first few chunks assuming EGA planar 8x8 tile format (a common Dangerous Dave community claim) and check whether the pixel data looks like plausible game graphics; cross-reference any existing public Dangerous Dave format documentation.",
+      "leverage": "Unlocks asset-side classification and reconstruction (Phase 2 data/asset track) independent of the executable-side work."
+    },
+    {
+      "target": "Historical compiler/toolchain identification for DAVE.EXE",
+      "state": "not started",
+      "matches": "None yet — no function census or disassembly has been performed on the unpacked image.",
+      "first_unresolved_fact": "We do not yet have any disassembled code region to compare against candidate compiler output, because unpacking has not been finalized/accepted.",
+      "evidence": [],
+      "unblock": "Complete unpacking, perform an initial function census, then compile small C probes (arithmetic, loops, switch statements, struct access) under several candidate Borland/Turbo C versions and memory models and compare resulting OMF/machine code against the least ambiguous original functions (e.g. a probable startup/runtime routine).",
+      "leverage": "Determines feasibility and parameters (compiler version, memory model, flags) for all future matching-C promotion work."
+    },
+    {
+      "target": "Executable ownership manifest bootstrap",
+      "state": "closed",
+      "matches": "layout/manifest.json owns all 172848 bytes of build/DAVE_unpacked.exe across 4 regions (MZ_HEADER 28B, RELOCATION_TABLE 108B, HEADER_PADDING 376B all-zero, RAW_LOAD_MODULE 172336B). tools/reconstruct.py validates contiguity/no-overlap/no-gap and rebuilds the image to exact MD5 match; verified by tests/test_ownership_bootstrap.py.",
+      "first_unresolved_fact": "N/A for the bootstrap milestone itself. The RAW_LOAD_MODULE region (172336 of 172848 bytes, ~99.7%) is entirely semantically unknown RAW_UNKNOWN — the real work (function census, classification, matching) has not started.",
+      "evidence": ["layout/manifest.json", "tools/reconstruct.py", "tools/extract_raw.py", "tests/test_ownership_bootstrap.py"],
+      "unblock": "N/A — bootstrap closed. Next: function census over RAW_LOAD_MODULE (see 'Historical compiler/toolchain identification' frontier, which depends on this).",
+      "leverage": "Milestone-1 gate satisfied: 100% of executable bytes owned, no gaps, no overlaps, reconstructed unpacked image == reference unpacked image."
+    }
+  ],
+  "end_state": "Independent source modules (matching C, matching ASM, structured data/assets) compile, assemble, and link with a historically faithful toolchain such that the resulting unpacked executable image is byte-identical to the original, addresses emerge from module composition rather than being copied, and the image can subsequently be re-packed with LZEXE 0.91 to reproduce the original DAVE.EXE exactly. EGADAVE.DAV resources are simultaneously reconstructed from human-readable canonical sources (images, tables) plus deterministic encoders.",
+  "whole_build_reconstruction_complete": false,
+  "structural_milestones": []
+}

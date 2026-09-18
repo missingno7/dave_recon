@@ -1,0 +1,23 @@
+# Original game files (verification fixtures, not redistributed)
+/assets/*
+!/assets/.gitkeep
+!/assets/graphics/
+!/assets/fonts/
+/DAVE.EXE
+/EGADAVE.DAV
+
+# Local pinned compiler/assembler/linker toolchain (installed by tools/setup_toolchain.py)
+/toolchain/*
+!/toolchain/.gitkeep
+
+# Generated build output
+/build/*
+!/build/.gitkeep
+
+# Per-region raw byte extracts for still-unowned RAW regions
+/raw/*
+!/raw/.gitkeep
+
+# Python
+__pycache__/
+*.pyc

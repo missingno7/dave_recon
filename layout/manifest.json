@@ -1,0 +1,72 @@
+{
+  "format": "dave-owned-exe-v1",
+  "range_convention": "[start,end) file offsets into the UNPACKED DAVE.EXE image",
+  "unpacked_original": {
+    "path": "build/DAVE_unpacked.exe",
+    "producer": "tools/lzexe_unpack.py from assets/DAVE.EXE",
+    "size": 172848,
+    "md5": "86feba8cc84fc1f0d829fd731f6dbe20",
+    "sha1": "9e572f0320ca759bea8f24a0ebcfcb1b68474e13",
+    "sha1_provenance": "Matches an independently published UNLZEXE-decompressed DAVE.EXE (Internet Archive item \"Dangerous Dave (LZW decompressed)\") byte-for-byte, giving external cross-validation beyond internal self-consistency."
+  },
+  "packed_original": {
+    "path": "assets/DAVE.EXE",
+    "size": 76586,
+    "md5": "10ac35dd6bc6314cd5caf08a4ffb4275",
+    "sha256": "1ae779823df27f2c6ae03b2e7d2a8c154d4189a5074d444827783fb2f1f92a0a",
+    "note": "Final oracle for the packed distribution file; see docs/build-reconstruction.md for why unpacked-image matching is tracked as a separate, prerequisite level."
+  },
+  "frames": {},
+  "regions": [
+    {
+      "id": "MZ_HEADER",
+      "start": 0,
+      "end": 28,
+      "kind": "MZ_HEADER",
+      "classification": "executable_metadata",
+      "source": "tools/mz.py (structured codec) + docs/specimen-manifest.json",
+      "description": "The 14-word (28-byte) MZ header proper: e_magic, e_cblp, e_cp, e_crlc, e_cparhdr, e_minalloc, e_maxalloc, e_ss, e_sp, e_csum, e_ip, e_cs, e_lfarlc, e_ovno."
+    },
+    {
+      "id": "RELOCATION_TABLE",
+      "start": 28,
+      "end": 136,
+      "kind": "RELOCATION_TABLE",
+      "classification": "executable_metadata",
+      "source": "tools/lzexe_unpack.py (reconstructed during LZEXE unpacking)",
+      "description": "27 far-pointer relocation entries (4 bytes each: offset, segment), reconstructed by tools/lzexe_unpack.py from LZEXE's packed relocation encoding. e_crlc=27, e_lfarlc=28."
+    },
+    {
+      "id": "HEADER_PADDING",
+      "start": 136,
+      "end": 512,
+      "kind": "PADDING",
+      "classification": "executable_metadata",
+      "description": "Zero-filled padding from the end of the relocation table to the end of the MZ header area (e_cparhdr=32 paragraphs = 512 bytes). Verified all-zero.",
+      "expected_bytes": "zero-fill"
+    },
+    {
+      "id": "STARTUP_C0S",
+      "start": 512,
+      "end": 1081,
+      "kind": "KNOWN_LIBRARY",
+      "classification": "code",
+      "library": "Borland Turbo C++ 1.00 runtime (small memory model)",
+      "library_module": "C0S.OBJ",
+      "module_sha256": "a7e0df59484415a55d9c2179ce0096ab4f60e352f36f5adbfb67c493d2d1f5ee",
+      "description": "The program's C startup module (crt0-equivalent): sets up DS/ES, computes heap/stack, calls _main, calls _exit. Entry point CS:IP = 0000:0000 lands here. Identified by tools/recover_startup_binding.py: comparing this region's 569 bytes against C0S.OBJ's _TEXT segment, every one of the 35 differing bytes falls exactly on a fixup (relocation) location recorded in C0S.OBJ's own FIXUPP records (0 unexplained diffs) -- the small memory model is the unique model for which this holds (all other models leave dozens of unexplained diffs). See docs/startup-binding-evidence.json.",
+      "matching_status": "EXACT_MODULO_FIXUPS",
+      "matching_status_note": "All non-fixup bytes are byte-identical to the unmodified library object. Fixup-target bytes (real addresses of _DATA/_BSS/_main/_exit/etc., patched in by the linker) are not yet independently re-derived -- that requires a full link-layout reconstruction (segment ordering, sizes) which has not been attempted yet. This is a genuine, falsifiable match (see tools/recover_startup_binding.py's per-model comparison), not a raw copy relabeled.",
+      "artifact": "raw/STARTUP_C0S.bin"
+    },
+    {
+      "id": "RAW_LOAD_MODULE",
+      "start": 1081,
+      "end": 172848,
+      "kind": "RAW_UNKNOWN",
+      "classification": "unclassified",
+      "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
+      "artifact": "raw/RAW_LOAD_MODULE.bin"
+    }
+  ]
+}
