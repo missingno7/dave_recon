@@ -23,12 +23,30 @@
     },
     {
       "target": "Initial function census over RAW_LOAD_MODULE (starting with _main)",
-      "state": "in progress",
-      "matches": "STARTUP_C0S's self-relative CALL fixup to external '_main' (offset 253 in C0S.OBJ's _TEXT, file offset 765) resolves to load-module offset 0x439 = file offset 0x639 -- this is the linker-computed, unambiguous address of the game's main() function.",
-      "first_unresolved_fact": "Linear disassembly starting exactly at file offset 0x639 does not show the standard 'push bp; mov bp,sp' prologue that this exact pinned compiler (TCC 1.00, small model, flags -1- -f- -N-) reliably emits for any function using bp-relative locals (confirmed empirically: tests/fixtures/probe2.c compiles to '55 8b ec 83 ec 1a ...' under identical flags). The bytes immediately preceding 0x639 ('...52 e8 de9f 83 c4 06') look like they could alternatively be read as ending with 'add sp,6' bleeding 2 bytes into what I assumed was 0x639's start, i.e. a possible off-by-N instruction-boundary misalignment somewhere in this region. Not yet resolved.",
-      "evidence": ["build/DAVE_unpacked.exe file offset 0x639", "tests/fixtures/probe2.c compiled prologue"],
-      "unblock": "Systematic function-boundary analysis: sweep backward/forward from known anchors (the STARTUP_C0S->'_main' call, and other C0S external call targets like '_exit') using RET/RETF opcode boundaries and call-target cross-references rather than naive linear disassembly from one computed address; verify against several more compiled probes matching the addressing idioms observed (e.g. imul by small odd constants suggesting sizeof(struct)==9 or 7 array indexing).",
-      "leverage": "This is the entry point for the entire function census (Phase 2) and the first real matching-C candidate; resolving it unlocks systematic disassembly of the whole 171,767-byte RAW_LOAD_MODULE region."
+      "state": "closed",
+      "matches": "RESOLVED: the '_main at file offset 0x639' anchor was wrong by exactly 512 bytes due to an address-space double-conversion bug -- the self-relative CALL fixup's resolved value (load-module offset 0x439) was already a file offset (relative to CS:IP=0000:0000 at file offset 512, per docs/startup-binding-evidence.json), and 512 was mistakenly added to it a second time. Re-derived directly from raw bytes: the CALL instruction is E8 at file offset 764 with disp16=0x013A at file offset 765-766 (not 765-767 as originally logged); target = IP_after(255, seg-relative) + 314 = 569 (seg-relative) = file offset 1081 = 0x439. File offset 1081 is exactly the STARTUP_C0S/RAW_LOAD_MODULE manifest boundary and disassembles to the expected '55 8B EC' (push bp; mov bp,sp) prologue followed by a Turbo C stack-check idiom. Full initial census (tools/function_census.py) then found 193 candidate functions spanning file offset 1081-46179 (~45KB), with zero overlaps and zero truncated functions; no further prologue matches occur anywhere in the remaining ~126KB of RAW_LOAD_MODULE, suggesting the _TEXT code segment ends around file offset ~46179 and the rest is _DATA/_BSS. See docs/function-census.md and docs/function-census.json.",
+      "first_unresolved_fact": "N/A for this milestone -- closed. Follow-on frontiers (segment-boundary confirmation, semantic naming, matching-C promotion of specific functions) are tracked as new entries below.",
+      "evidence": ["docs/function-census.md", "docs/function-census.json", "tools/function_census.py", "build/DAVE_unpacked.exe file offset 0x439 (1081)"],
+      "unblock": "N/A -- closed.",
+      "leverage": "Unblocks systematic per-function classification and matching-C promotion work across the ~45KB code region; also strongly suggests the code/data segment split point (~file offset 46179), which was previously completely unknown."
+    },
+    {
+      "target": "Confirm _TEXT/_DATA segment boundary at approximately file offset 46179",
+      "state": "open investigation, not started",
+      "matches": "docs/function-census.json's 193-function census (built from a '55 8B EC' prologue scan) finds zero candidate function starts anywhere past file offset 46179 in the 172,336-byte RAW_LOAD_MODULE region, which is circumstantial (absence-of-pattern) evidence that Turbo C++'s _TEXT segment ends near there and DGROUP (_DATA+_BSS) follows.",
+      "first_unresolved_fact": "No OMF segment directory survives in the linked/packed executable, so this boundary is inferred only from the absence of prologue-shaped bytes, not proven. It's also possible some code region uses a different calling idiom (frameless leaf functions, hand-written ASM) that the scan cannot see, which could hide code further into the file.",
+      "evidence": ["docs/function-census.json", "docs/function-census.md"],
+      "unblock": "Cross-reference against every CALL/JMP target discovered within the 1081-46179 code region (see 'unmatched_call_targets' in docs/function-census.json) to confirm none point past 46179; separately, look for recognizable ASCII string data or structured table patterns starting near 46179 as positive evidence of _DATA rather than just absence of code patterns.",
+      "leverage": "Would convert an inferred code/data split into a confirmed one, unblocking safe wholesale treatment of the tail ~126KB as data-track work (Phase 2 data/asset census) rather than code."
+    },
+    {
+      "target": "Classify and semantically name the 193 census functions; promote first matching-C candidates",
+      "state": "open investigation, not started",
+      "matches": "docs/function-census.json provides id/start/end/size/has_sub_sp/calls/notes for 193 functions. Several strong candidates were spot-checked: F_A460 (9 bytes, IN AX,DX) and F_A469 (11 bytes, IN AL,DX + XOR AH,AH) look exactly like Turbo C++ 1.00 runtime's inport()/inportb(); F_850A (12 bytes) wraps INT 21h AH=9 (DOS print string), consistent with a runtime string-output helper; F_04FC and F_088E contain many repeated 'imul dx' idioms (struct-array indexing) and are promising candidates for the game's own actor/sprite/tile access code.",
+      "first_unresolved_fact": "None of these have been compiled/OMF-bound/byte-compared yet -- they are disassembly-pattern guesses only, not proven matches.",
+      "evidence": ["docs/function-census.json", "docs/function-census.md"],
+      "unblock": "Pick the smallest, cleanest candidates first (F_A460/F_A469 inport/inportb are the best starting points since Turbo C++ 1.00's runtime source for these is well-known/tiny) and run them through the same compile -> OMF-parse -> bind -> exact-byte-compare loop as tools/recover_startup_binding.py, following docs/matching-phase.md's proof standard.",
+      "leverage": "First real matching-C promotions inside RAW_LOAD_MODULE (as opposed to the already-closed STARTUP_C0S library-recognition milestone), establishing the end-to-end proof loop for game code, not just linked-in runtime library code."
     },
     {
       "target": "Obtain TASM (Turbo Assembler) for MATCHING_ASM promotion",

@@ -126,3 +126,34 @@ Function census: not started.
 3. First matching-C promotion once a memory-model/flags match is found.
 4. EGADAVE.DAV: confirm the 16x16x4bpp EGA planar tile hypothesis by
    decoding and rendering an actual chunk.
+
+## 2026-09-19 — First function census: 193 functions found
+
+- Resolved a `_main` address-derivation bug (a 512-byte double-counted
+  segment base): the game's `main()` actually starts at file offset 1081
+  (0x439), exactly at the `STARTUP_C0S`/`RAW_LOAD_MODULE` manifest boundary
+  — not at the previously miscalculated 0x639. Disassembly there shows the
+  expected Turbo C++ prologue (`55 8B EC`) followed by a stack-check idiom.
+- `tools/function_census.py` scanned for `push bp; mov bp,sp` prologues and
+  walked to each function's `RET`/`RETF`, finding **193 candidate
+  functions** spanning file offsets 1081–46179 (~45 KB), zero overlaps, zero
+  truncations. No further prologue matches occur in the remaining ~126 KB,
+  suggesting the `_TEXT` code segment ends near 46179 and the rest is
+  `_DATA`/`_BSS` (tracked as a new open frontier, not yet proven).
+- Spot-checked candidates: `F_A460`/`F_A469` (9/11 bytes) look like Turbo
+  C++ 1.00's `inport`/`inportb`; `F_850A` (12 bytes) wraps `INT 21h AH=9`
+  (DOS print string); `F_04FC`/`F_088E` repeat `imul dx` idioms consistent
+  with struct-array indexing (candidates for the game's own sprite/tile
+  code). None compiled/bound/compared yet — disassembly-pattern guesses
+  only, tracked in `docs/blockers.json`.
+- Full writeup: `docs/function-census.md`; machine-readable data:
+  `docs/function-census.json`. All 7 tests still passing;
+  `layout/manifest.json` untouched.
+
+### Next milestones
+
+1. Confirm the `_TEXT`/`_DATA` boundary near file offset 46179.
+2. Compile and byte-compare `inport`/`inportb` candidates (`F_A460`,
+   `F_A469`) — first real matching-C proof inside game code (not just the
+   linked-in runtime library).
+3. EGADAVE.DAV: confirm the 16x16x4bpp EGA planar tile hypothesis.
