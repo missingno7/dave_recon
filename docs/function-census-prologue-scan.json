@@ -1,0 +1,3136 @@
+{
+  "schema": "dave-function-census-prologue-scan-v1",
+  "source": "build/DAVE_unpacked.exe",
+  "region": {
+    "start": 1081,
+    "end": 172848
+  },
+  "method": "scan for 55 8B EC (push bp; mov bp,sp) prologue bytes as candidate function starts; linear capstone disassembly forward from each start until the first RET/RETF, capped at the next candidate start.",
+  "function_count": 193,
+  "functions": [
+    {
+      "id": "F_0439",
+      "start": 1081,
+      "end": 1234,
+      "size": 153,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        1234,
+        1276,
+        2526,
+        4897,
+        5541,
+        6016,
+        6390,
+        7446,
+        11655,
+        12315,
+        13100,
+        13515,
+        14317,
+        15267,
+        16341,
+        18983,
+        20891,
+        31833,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 52
+    },
+    {
+      "id": "F_04D2",
+      "start": 1234,
+      "end": 1276,
+      "size": 42,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        25480,
+        28004,
+        30223,
+        38499,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 20
+    },
+    {
+      "id": "F_04FC",
+      "start": 1276,
+      "end": 2027,
+      "size": 751,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        2027,
+        2190,
+        6390,
+        11655,
+        12315,
+        13100,
+        26764,
+        27540,
+        28098,
+        28785,
+        30769,
+        41686,
+        42422,
+        42518,
+        42616,
+        43467,
+        45506,
+        46335
+      ],
+      "notes": [
+        "0x0517: imul dx",
+        "0x0560: imul dx",
+        "0x056e: imul dx",
+        "0x057c: imul dx",
+        "0x058a: imul dx",
+        "0x059c: imul dx",
+        "0x05a7: imul dx",
+        "0x05bc: imul dx",
+        "0x05cb: imul dx",
+        "0x05e7: imul dx",
+        "0x05f8: imul dx",
+        "0x0611: imul dx",
+        "0x0629: imul dx",
+        "0x0640: imul dx",
+        "0x069f: imul dx",
+        "0x06fb: imul dx",
+        "0x070f: imul dx",
+        "0x0720: imul dx"
+      ],
+      "insn_count": 327
+    },
+    {
+      "id": "F_07EB",
+      "start": 2027,
+      "end": 2190,
+      "size": 163,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        28677,
+        30840,
+        41246,
+        41686,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 76
+    },
+    {
+      "id": "F_088E",
+      "start": 2190,
+      "end": 2526,
+      "size": 336,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        28401,
+        28785,
+        30270,
+        30474,
+        45506,
+        46335
+      ],
+      "notes": [
+        "0x0915: imul dx",
+        "0x093d: imul dx",
+        "0x0969: imul dx"
+      ],
+      "insn_count": 138
+    },
+    {
+      "id": "F_09DE",
+      "start": 2526,
+      "end": 2994,
+      "size": 468,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        2190,
+        5119,
+        7044,
+        13365,
+        18839,
+        20073,
+        21338,
+        26764,
+        30769,
+        37590,
+        39992,
+        40009,
+        40402,
+        41686,
+        45203,
+        45506,
+        46179,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 201
+    },
+    {
+      "id": "F_0BB2",
+      "start": 2994,
+      "end": 3124,
+      "size": 130,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        3124,
+        3579,
+        7126,
+        14111,
+        46335
+      ],
+      "notes": [
+        "0x0bcb: imul word ptr [0x208]",
+        "0x0bee: imul word ptr [0x208]",
+        "0x0c12: imul word ptr [0x208]"
+      ],
+      "insn_count": 49
+    },
+    {
+      "id": "F_0C34",
+      "start": 3124,
+      "end": 3579,
+      "size": 455,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        7044,
+        7126,
+        30270,
+        42422,
+        42616,
+        43467,
+        45210,
+        45506,
+        46179,
+        46335
+      ],
+      "notes": [
+        "0x0cbb: imul word ptr [0x4f86]"
+      ],
+      "insn_count": 191
+    },
+    {
+      "id": "F_0DFB",
+      "start": 3579,
+      "end": 3671,
+      "size": 92,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7044,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 43
+    },
+    {
+      "id": "F_0E57",
+      "start": 3671,
+      "end": 3807,
+      "size": 136,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        5119,
+        28401,
+        28677,
+        28785,
+        30363,
+        30399,
+        30433,
+        41246,
+        42616,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 57
+    },
+    {
+      "id": "F_0EDF",
+      "start": 3807,
+      "end": 4683,
+      "size": 876,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        5119,
+        6953,
+        28401,
+        28785,
+        37590,
+        41686,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 405
+    },
+    {
+      "id": "F_124B",
+      "start": 4683,
+      "end": 4793,
+      "size": 110,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        1234,
+        5119,
+        28401,
+        28677,
+        28785,
+        30399,
+        30433,
+        41246,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 51
+    },
+    {
+      "id": "F_12B9",
+      "start": 4793,
+      "end": 4897,
+      "size": 104,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        5119,
+        28004,
+        28401,
+        28677,
+        28785,
+        30399,
+        30433,
+        41686,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 48
+    },
+    {
+      "id": "F_1321",
+      "start": 4897,
+      "end": 5119,
+      "size": 222,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        24729,
+        27358,
+        32256,
+        45410,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 85
+    },
+    {
+      "id": "F_13FF",
+      "start": 5119,
+      "end": 5486,
+      "size": 367,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        2190,
+        2994,
+        14190,
+        19868,
+        28004,
+        28785,
+        36570,
+        37393,
+        37590,
+        38353,
+        45506,
+        46335
+      ],
+      "notes": [
+        "0x153b: imul dx"
+      ],
+      "insn_count": 149
+    },
+    {
+      "id": "F_156E",
+      "start": 5486,
+      "end": 5541,
+      "size": 55,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        41686,
+        42582,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 26
+    },
+    {
+      "id": "F_15A5",
+      "start": 5541,
+      "end": 6016,
+      "size": 475,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7126,
+        7274,
+        13365,
+        14111,
+        19868,
+        30769,
+        36570,
+        42616,
+        46335
+      ],
+      "notes": [
+        "0x15d0: imul word ptr [0x208]",
+        "0x1607: imul word ptr [0x4f86]",
+        "0x162d: imul word ptr [0x4f86]",
+        "0x1748: imul dx",
+        "0x1761: imul dx"
+      ],
+      "insn_count": 165
+    },
+    {
+      "id": "F_1780",
+      "start": 6016,
+      "end": 6192,
+      "size": 176,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7126,
+        14111,
+        30270,
+        46335
+      ],
+      "notes": [
+        "0x17e6: imul word ptr [0x208]"
+      ],
+      "insn_count": 61
+    },
+    {
+      "id": "F_1830",
+      "start": 6192,
+      "end": 6390,
+      "size": 198,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7126,
+        46335
+      ],
+      "notes": [
+        "0x184b: imul dx",
+        "0x185e: imul dx",
+        "0x186e: imul dx",
+        "0x187e: imul dx",
+        "0x188b: imul dx",
+        "0x189a: imul dx",
+        "0x18a9: imul dx",
+        "0x18b8: imul dx"
+      ],
+      "insn_count": 75
+    },
+    {
+      "id": "F_18F6",
+      "start": 6390,
+      "end": 6800,
+      "size": 410,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7126,
+        11576,
+        46335
+      ],
+      "notes": [
+        "0x1910: imul dx",
+        "0x1923: imul dx",
+        "0x1935: imul dx",
+        "0x1945: imul dx",
+        "0x195a: imul dx",
+        "0x197a: imul dx",
+        "0x1989: imul dx",
+        "0x199e: imul dx",
+        "0x19ac: imul dx",
+        "0x19bb: imul dx",
+        "0x19ff: imul dx",
+        "0x1a17: imul dx",
+        "0x1a39: imul dx",
+        "0x1a50: imul dx",
+        "0x1a66: imul dx",
+        "0x1a73: imul dx"
+      ],
+      "insn_count": 170
+    },
+    {
+      "id": "F_1A90",
+      "start": 6800,
+      "end": 6862,
+      "size": 62,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        34346,
+        34860,
+        35220,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 33
+    },
+    {
+      "id": "F_1ACE",
+      "start": 6862,
+      "end": 6953,
+      "size": 91,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        34473,
+        34929,
+        35302,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 42
+    },
+    {
+      "id": "F_1B29",
+      "start": 6953,
+      "end": 7044,
+      "size": 91,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        34085,
+        34680,
+        35069,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 42
+    },
+    {
+      "id": "F_1B84",
+      "start": 7044,
+      "end": 7126,
+      "size": 82,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        35743,
+        36119,
+        36446,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 39
+    },
+    {
+      "id": "F_1BD6",
+      "start": 7126,
+      "end": 7208,
+      "size": 82,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        35464,
+        35942,
+        36245,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 39
+    },
+    {
+      "id": "F_1C28",
+      "start": 7208,
+      "end": 7274,
+      "size": 66,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        34346,
+        34860,
+        35220,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 33
+    },
+    {
+      "id": "F_1C6A",
+      "start": 7274,
+      "end": 7446,
+      "size": 172,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        34085,
+        34473,
+        34680,
+        34929,
+        35069,
+        35302,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 57
+    },
+    {
+      "id": "F_1D16",
+      "start": 7446,
+      "end": 11217,
+      "size": 3771,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        6192,
+        7208,
+        7274,
+        11295,
+        11376,
+        11480,
+        18096,
+        30270,
+        30363,
+        30769,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 1379
+    },
+    {
+      "id": "F_2C1F",
+      "start": 11295,
+      "end": 11376,
+      "size": 81,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        46335
+      ],
+      "notes": [],
+      "insn_count": 28
+    },
+    {
+      "id": "F_2C70",
+      "start": 11376,
+      "end": 11480,
+      "size": 104,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        46335
+      ],
+      "notes": [],
+      "insn_count": 46
+    },
+    {
+      "id": "F_2CD8",
+      "start": 11480,
+      "end": 11576,
+      "size": 96,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        46335
+      ],
+      "notes": [],
+      "insn_count": 43
+    },
+    {
+      "id": "F_2D38",
+      "start": 11576,
+      "end": 11655,
+      "size": 79,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        46335
+      ],
+      "notes": [],
+      "insn_count": 36
+    },
+    {
+      "id": "F_2D87",
+      "start": 11655,
+      "end": 12315,
+      "size": 660,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7126,
+        18495,
+        18566,
+        45410,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 264
+    },
+    {
+      "id": "F_301B",
+      "start": 12315,
+      "end": 12805,
+      "size": 490,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        11576,
+        12805,
+        46335
+      ],
+      "notes": [
+        "0x3035: imul dx",
+        "0x3048: imul dx",
+        "0x3058: imul dx",
+        "0x3065: imul dx",
+        "0x3098: imul dx",
+        "0x30c2: imul dx",
+        "0x30d7: imul dx",
+        "0x30e5: imul dx",
+        "0x30f3: imul dx",
+        "0x3103: imul dx",
+        "0x3113: imul dx",
+        "0x3124: imul dx",
+        "0x3156: imul dx",
+        "0x3180: imul dx",
+        "0x3195: imul dx",
+        "0x31a3: imul dx",
+        "0x31b1: imul dx",
+        "0x31c1: imul dx",
+        "0x31d1: imul dx",
+        "0x31e2: imul dx"
+      ],
+      "insn_count": 199
+    },
+    {
+      "id": "F_3205",
+      "start": 12805,
+      "end": 13100,
+      "size": 295,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7126,
+        46335
+      ],
+      "notes": [
+        "0x321a: imul dx",
+        "0x3236: imul dx",
+        "0x324e: imul dx",
+        "0x3264: imul dx",
+        "0x3271: imul dx",
+        "0x328e: imul dx",
+        "0x32a4: imul dx",
+        "0x32b1: imul dx",
+        "0x32c6: imul dx",
+        "0x32e0: imul dx",
+        "0x32ed: imul dx",
+        "0x330c: imul dx",
+        "0x3319: imul dx"
+      ],
+      "insn_count": 117
+    },
+    {
+      "id": "F_332C",
+      "start": 13100,
+      "end": 13365,
+      "size": 265,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        37590,
+        46335
+      ],
+      "notes": [
+        "0x3352: imul dx",
+        "0x3365: imul dx",
+        "0x3373: imul dx",
+        "0x3382: imul dx",
+        "0x3398: imul dx",
+        "0x33a6: imul dx",
+        "0x33b4: imul dx",
+        "0x33cf: imul dx",
+        "0x33f1: imul dx",
+        "0x33fe: imul dx",
+        "0x340b: imul dx",
+        "0x3424: imul dx"
+      ],
+      "insn_count": 108
+    },
+    {
+      "id": "F_3435",
+      "start": 13365,
+      "end": 13515,
+      "size": 150,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        7208,
+        7274,
+        13100,
+        26764,
+        30270,
+        30769,
+        41686,
+        45506,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 72
+    },
+    {
+      "id": "F_34CB",
+      "start": 13515,
+      "end": 14111,
+      "size": 596,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        7126,
+        7208,
+        7274,
+        13365,
+        19868,
+        20073,
+        30270,
+        30769,
+        36570,
+        37590,
+        42616,
+        46335
+      ],
+      "notes": [
+        "0x3659: imul word ptr [0x208]"
+      ],
+      "insn_count": 213
+    },
+    {
+      "id": "F_371F",
+      "start": 14111,
+      "end": 14190,
+      "size": 79,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7126,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 34
+    },
+    {
+      "id": "F_376E",
+      "start": 14190,
+      "end": 14317,
+      "size": 127,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7126,
+        46335
+      ],
+      "notes": [
+        "0x377f: imul word ptr [0x208]"
+      ],
+      "insn_count": 58
+    },
+    {
+      "id": "F_37ED",
+      "start": 14317,
+      "end": 15267,
+      "size": 950,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        3124,
+        6192,
+        7126,
+        7208,
+        18424,
+        18495,
+        30270,
+        46335
+      ],
+      "notes": [
+        "0x3939: imul dx",
+        "0x3951: imul dx",
+        "0x39a1: imul dx",
+        "0x39f4: imul dx",
+        "0x3a01: imul dx",
+        "0x3a14: imul dx",
+        "0x3a55: imul dx",
+        "0x3a9d: imul dx",
+        "0x3ab1: imul dx",
+        "0x3af3: imul dx",
+        "0x3b0c: imul dx",
+        "0x3b24: imul dx",
+        "0x3b40: imul dx",
+        "0x3b4d: imul dx",
+        "0x3b60: imul dx"
+      ],
+      "insn_count": 367
+    },
+    {
+      "id": "F_3BA3",
+      "start": 15267,
+      "end": 16341,
+      "size": 1074,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        3579,
+        7126,
+        7208,
+        7274,
+        13365,
+        19868,
+        20073,
+        26764,
+        28004,
+        28785,
+        30270,
+        30363,
+        30769,
+        36570,
+        37590,
+        41686,
+        42616,
+        45506,
+        46335
+      ],
+      "notes": [
+        "0x3bd3: imul word ptr [0x208]",
+        "0x3cb1: imul dx"
+      ],
+      "insn_count": 423
+    },
+    {
+      "id": "F_3FD5",
+      "start": 16341,
+      "end": 18096,
+      "size": 1755,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        3124,
+        7126,
+        7208,
+        7274,
+        14111,
+        30270,
+        30363,
+        37590,
+        46335
+      ],
+      "notes": [
+        "0x4111: imul dx",
+        "0x4121: imul dx",
+        "0x4131: imul dx",
+        "0x413f: imul word ptr [0x208]",
+        "0x4188: imul word ptr [0x208]",
+        "0x41b7: imul word ptr [0x208]",
+        "0x429d: imul dx",
+        "0x42ad: imul dx",
+        "0x42bd: imul dx",
+        "0x42cb: imul word ptr [0x208]",
+        "0x4314: imul word ptr [0x208]",
+        "0x4343: imul word ptr [0x208]",
+        "0x442a: imul dx",
+        "0x443a: imul dx",
+        "0x444a: imul dx",
+        "0x4458: imul word ptr [0x208]",
+        "0x44a1: imul word ptr [0x208]",
+        "0x44d0: imul word ptr [0x208]",
+        "0x45b8: imul dx",
+        "0x45c8: imul dx",
+        "0x45d8: imul dx",
+        "0x45e6: imul word ptr [0x208]",
+        "0x462f: imul word ptr [0x208]",
+        "0x465e: imul word ptr [0x208]"
+      ],
+      "insn_count": 647
+    },
+    {
+      "id": "F_46B0",
+      "start": 18096,
+      "end": 18424,
+      "size": 328,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7208,
+        7274,
+        19868,
+        30399,
+        30433,
+        30769,
+        36570,
+        46335
+      ],
+      "notes": [
+        "0x470b: imul dx",
+        "0x4723: imul dx",
+        "0x47a7: imul dx",
+        "0x47bf: imul dx"
+      ],
+      "insn_count": 124
+    },
+    {
+      "id": "F_47F8",
+      "start": 18424,
+      "end": 18495,
+      "size": 71,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        46335
+      ],
+      "notes": [
+        "0x4812: imul dx",
+        "0x4822: imul dx"
+      ],
+      "insn_count": 33
+    },
+    {
+      "id": "F_483F",
+      "start": 18495,
+      "end": 18566,
+      "size": 71,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        46335
+      ],
+      "notes": [
+        "0x4859: imul dx",
+        "0x4869: imul dx"
+      ],
+      "insn_count": 33
+    },
+    {
+      "id": "F_4886",
+      "start": 18566,
+      "end": 18839,
+      "size": 273,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7126,
+        11576,
+        46335
+      ],
+      "notes": [
+        "0x48c5: imul dx",
+        "0x48d8: imul dx",
+        "0x48e7: imul dx",
+        "0x48f7: imul dx",
+        "0x4907: imul dx",
+        "0x4917: imul dx",
+        "0x4927: imul dx",
+        "0x4936: imul dx"
+      ],
+      "insn_count": 106
+    },
+    {
+      "id": "F_4997",
+      "start": 18839,
+      "end": 18983,
+      "size": 144,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        3671,
+        3807,
+        4683,
+        4793,
+        5119,
+        13365,
+        20073,
+        21338,
+        24021,
+        30363,
+        41686,
+        42616,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 60
+    },
+    {
+      "id": "F_4A27",
+      "start": 18983,
+      "end": 19852,
+      "size": 869,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        18495,
+        18566,
+        18839,
+        26764,
+        30270,
+        42616,
+        45506,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 296
+    },
+    {
+      "id": "F_4D9C",
+      "start": 19868,
+      "end": 20073,
+      "size": 205,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        7126,
+        7274,
+        12805,
+        46335
+      ],
+      "notes": [
+        "0x4df7: imul dx",
+        "0x4e17: imul dx",
+        "0x4e2f: imul dx",
+        "0x4e45: imul dx",
+        "0x4e52: imul dx"
+      ],
+      "insn_count": 85
+    },
+    {
+      "id": "F_4E69",
+      "start": 20073,
+      "end": 20891,
+      "size": 818,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        7126,
+        14111,
+        39992,
+        40009,
+        42616,
+        45203,
+        45506,
+        46179,
+        46335
+      ],
+      "notes": [
+        "0x4eee: imul dx",
+        "0x4f09: imul dx",
+        "0x4f22: imul dx",
+        "0x4f3b: imul dx",
+        "0x4f87: imul dx",
+        "0x4f96: imul dx",
+        "0x4fcd: imul bx",
+        "0x4fdb: imul dx",
+        "0x4feb: imul dx",
+        "0x5005: imul dx",
+        "0x5013: imul dx",
+        "0x5050: imul dx",
+        "0x5143: imul word ptr [0x208]",
+        "0x516a: imul word ptr [0x208]"
+      ],
+      "insn_count": 305
+    },
+    {
+      "id": "F_519B",
+      "start": 20891,
+      "end": 21338,
+      "size": 447,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        21338,
+        25235,
+        27234,
+        27358,
+        27540,
+        30166,
+        34070,
+        42582,
+        45506,
+        45759,
+        46335
+      ],
+      "notes": [
+        "0x524d: imul dx",
+        "0x525c: imul dx",
+        "0x5264: imul dx",
+        "0x5273: imul dx",
+        "0x527e: imul bx",
+        "0x528d: imul dx",
+        "0x5298: imul bx",
+        "0x52a7: imul dx",
+        "0x52b2: imul bx",
+        "0x52c7: imul bx",
+        "0x52d5: imul dx",
+        "0x52e6: imul dx",
+        "0x52f4: imul dx",
+        "0x5305: imul dx",
+        "0x5313: imul dx",
+        "0x5324: imul dx",
+        "0x5332: imul dx",
+        "0x5343: imul dx"
+      ],
+      "insn_count": 191
+    },
+    {
+      "id": "F_535A",
+      "start": 21338,
+      "end": 21443,
+      "size": 105,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        28004,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 31
+    },
+    {
+      "id": "F_53C3",
+      "start": 21443,
+      "end": 21948,
+      "size": 505,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        26187,
+        26354,
+        27174,
+        28345,
+        28401,
+        28785,
+        30769,
+        30840,
+        45506,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 219
+    },
+    {
+      "id": "F_55BC",
+      "start": 21948,
+      "end": 22093,
+      "size": 145,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        28345,
+        28401,
+        28677,
+        28785,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 66
+    },
+    {
+      "id": "F_564D",
+      "start": 22093,
+      "end": 22549,
+      "size": 456,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        28785,
+        30840,
+        42383,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 216
+    },
+    {
+      "id": "F_5815",
+      "start": 22549,
+      "end": 23020,
+      "size": 471,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        22093,
+        27174,
+        28345,
+        28401,
+        28677,
+        28785,
+        30840,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 203
+    },
+    {
+      "id": "F_59EC",
+      "start": 23020,
+      "end": 23312,
+      "size": 292,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        26187,
+        42048,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 84
+    },
+    {
+      "id": "F_5B10",
+      "start": 23312,
+      "end": 24021,
+      "size": 709,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        23020,
+        28785,
+        30840,
+        31547,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 311
+    },
+    {
+      "id": "F_5DD5",
+      "start": 24021,
+      "end": 24729,
+      "size": 708,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        4897,
+        5119,
+        21443,
+        21948,
+        22549,
+        23312,
+        25107,
+        27174,
+        28004,
+        28098,
+        28677,
+        30399,
+        30433,
+        30840,
+        46335
+      ],
+      "notes": [
+        "0x5eab: imul dx",
+        "0x5ed9: imul dx",
+        "0x5f0b: imul dx"
+      ],
+      "insn_count": 265
+    },
+    {
+      "id": "F_6099",
+      "start": 24729,
+      "end": 25107,
+      "size": 378,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        45377,
+        45410,
+        45506,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 141
+    },
+    {
+      "id": "F_6213",
+      "start": 25107,
+      "end": 25235,
+      "size": 128,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42582,
+        43146,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 57
+    },
+    {
+      "id": "F_6293",
+      "start": 25235,
+      "end": 25355,
+      "size": 120,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        42048,
+        42063,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 117
+    },
+    {
+      "id": "F_6388",
+      "start": 25480,
+      "end": 25519,
+      "size": 39,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42063,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 16
+    },
+    {
+      "id": "F_63AF",
+      "start": 25519,
+      "end": 25843,
+      "size": 324,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        45506,
+        46335
+      ],
+      "notes": [
+        "0x6465: imul dx"
+      ],
+      "insn_count": 128
+    },
+    {
+      "id": "F_6505",
+      "start": 25861,
+      "end": 26169,
+      "size": 308,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        45506,
+        46335
+      ],
+      "notes": [
+        "0x65c8: imul dx"
+      ],
+      "insn_count": 122
+    },
+    {
+      "id": "F_664B",
+      "start": 26187,
+      "end": 26354,
+      "size": 167,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        42089,
+        43146,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 68
+    },
+    {
+      "id": "F_66F2",
+      "start": 26354,
+      "end": 26746,
+      "size": 392,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        26187,
+        42089,
+        45506,
+        46335
+      ],
+      "notes": [
+        "0x67b5: imul dx"
+      ],
+      "insn_count": 153
+    },
+    {
+      "id": "F_688C",
+      "start": 26764,
+      "end": 27057,
+      "size": 293,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        25519,
+        25861,
+        26354,
+        45506,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 123
+    },
+    {
+      "id": "F_69B9",
+      "start": 27065,
+      "end": 27091,
+      "size": 26,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        46335
+      ],
+      "notes": [],
+      "insn_count": 9
+    },
+    {
+      "id": "F_69D3",
+      "start": 27091,
+      "end": 27131,
+      "size": 40,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        27358,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 15
+    },
+    {
+      "id": "F_69FB",
+      "start": 27131,
+      "end": 27174,
+      "size": 43,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        27540,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 19
+    },
+    {
+      "id": "F_6A26",
+      "start": 27174,
+      "end": 27234,
+      "size": 60,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        41686,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 30
+    },
+    {
+      "id": "F_6A62",
+      "start": 27234,
+      "end": 27358,
+      "size": 124,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        1234,
+        28004,
+        39929,
+        44756,
+        46202,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 57
+    },
+    {
+      "id": "F_6ADE",
+      "start": 27358,
+      "end": 27540,
+      "size": 182,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        46335
+      ],
+      "notes": [],
+      "insn_count": 73
+    },
+    {
+      "id": "F_6B94",
+      "start": 27540,
+      "end": 27678,
+      "size": 138,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        46335
+      ],
+      "notes": [],
+      "insn_count": 52
+    },
+    {
+      "id": "F_6C1E",
+      "start": 27678,
+      "end": 27786,
+      "size": 108,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        27234,
+        27358,
+        38455,
+        41889,
+        42757,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 47
+    },
+    {
+      "id": "F_6C8A",
+      "start": 27786,
+      "end": 28004,
+      "size": 218,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        27234,
+        27358,
+        32256,
+        38455,
+        41889,
+        42757,
+        43158,
+        44526,
+        45410,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 86
+    },
+    {
+      "id": "F_6D64",
+      "start": 28004,
+      "end": 28090,
+      "size": 86,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        25107,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 36
+    },
+    {
+      "id": "F_6DC2",
+      "start": 28098,
+      "end": 28345,
+      "size": 247,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        30840,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 108
+    },
+    {
+      "id": "F_6EB9",
+      "start": 28345,
+      "end": 28401,
+      "size": 56,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        30840,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 27
+    },
+    {
+      "id": "F_6EF1",
+      "start": 28401,
+      "end": 28475,
+      "size": 74,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        28098,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 39
+    },
+    {
+      "id": "F_6F3B",
+      "start": 28475,
+      "end": 28573,
+      "size": 98,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        28401,
+        28475,
+        28573,
+        28625,
+        30769,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 46
+    },
+    {
+      "id": "F_6F9D",
+      "start": 28573,
+      "end": 28625,
+      "size": 52,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        28401,
+        28573,
+        30769,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 23
+    },
+    {
+      "id": "F_6FD1",
+      "start": 28625,
+      "end": 28677,
+      "size": 52,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        28401,
+        28625,
+        30769,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 23
+    },
+    {
+      "id": "F_7005",
+      "start": 28677,
+      "end": 28785,
+      "size": 108,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        30769,
+        30840,
+        41686,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 49
+    },
+    {
+      "id": "F_7071",
+      "start": 28785,
+      "end": 28875,
+      "size": 90,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        30840,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 37
+    },
+    {
+      "id": "F_70CB",
+      "start": 28875,
+      "end": 28920,
+      "size": 45,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        28785,
+        42383,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 21
+    },
+    {
+      "id": "F_70F8",
+      "start": 28920,
+      "end": 28965,
+      "size": 45,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        28785,
+        42448,
+        46335
+      ],
+      "notes": [],
+      "insn_count": 55
+    },
+    {
+      "id": "F_763E",
+      "start": 30270,
+      "end": 30363,
+      "size": 93,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 146
+    },
+    {
+      "id": "F_778C",
+      "start": 30604,
+      "end": 30689,
+      "size": 85,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        30689
+      ],
+      "notes": [],
+      "insn_count": 39
+    },
+    {
+      "id": "F_77E1",
+      "start": 30689,
+      "end": 30769,
+      "size": 80,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 47
+    },
+    {
+      "id": "F_7843",
+      "start": 30787,
+      "end": 30821,
+      "size": 34,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 17
+    },
+    {
+      "id": "F_7865",
+      "start": 30821,
+      "end": 30840,
+      "size": 19,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 10
+    },
+    {
+      "id": "F_7878",
+      "start": 30840,
+      "end": 30877,
+      "size": 37,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        30901
+      ],
+      "notes": [],
+      "insn_count": 387
+    },
+    {
+      "id": "F_7B3B",
+      "start": 31547,
+      "end": 31640,
+      "size": 93,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        31646,
+        31689,
+        31746
+      ],
+      "notes": [],
+      "insn_count": 110
+    },
+    {
+      "id": "F_7C59",
+      "start": 31833,
+      "end": 31903,
+      "size": 70,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        32135
+      ],
+      "notes": [],
+      "insn_count": 161
+    },
+    {
+      "id": "F_7DC5",
+      "start": 32197,
+      "end": 32256,
+      "size": 59,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        32577
+      ],
+      "notes": [],
+      "insn_count": 19
+    },
+    {
+      "id": "F_7E00",
+      "start": 32256,
+      "end": 32306,
+      "size": 50,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        32468
+      ],
+      "notes": [],
+      "insn_count": 229
+    },
+    {
+      "id": "F_850A",
+      "start": 34058,
+      "end": 34070,
+      "size": 12,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 13
+    },
+    {
+      "id": "F_8525",
+      "start": 34085,
+      "end": 34342,
+      "size": 257,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 117
+    },
+    {
+      "id": "F_862A",
+      "start": 34346,
+      "end": 34473,
+      "size": 127,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 61
+    },
+    {
+      "id": "F_86A9",
+      "start": 34473,
+      "end": 34678,
+      "size": 205,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 99
+    },
+    {
+      "id": "F_8778",
+      "start": 34680,
+      "end": 34860,
+      "size": 180,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 81
+    },
+    {
+      "id": "F_882C",
+      "start": 34860,
+      "end": 34929,
+      "size": 69,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 33
+    },
+    {
+      "id": "F_8871",
+      "start": 34929,
+      "end": 35069,
+      "size": 140,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 65
+    },
+    {
+      "id": "F_88FD",
+      "start": 35069,
+      "end": 35220,
+      "size": 151,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 71
+    },
+    {
+      "id": "F_8994",
+      "start": 35220,
+      "end": 35302,
+      "size": 82,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 36
+    },
+    {
+      "id": "F_89E6",
+      "start": 35302,
+      "end": 35464,
+      "size": 162,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 74
+    },
+    {
+      "id": "F_8A88",
+      "start": 35464,
+      "end": 35743,
+      "size": 279,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 123
+    },
+    {
+      "id": "F_8B9F",
+      "start": 35743,
+      "end": 35942,
+      "size": 199,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 95
+    },
+    {
+      "id": "F_8C66",
+      "start": 35942,
+      "end": 36119,
+      "size": 177,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 76
+    },
+    {
+      "id": "F_8D17",
+      "start": 36119,
+      "end": 36239,
+      "size": 120,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 62
+    },
+    {
+      "id": "F_8D95",
+      "start": 36245,
+      "end": 36446,
+      "size": 201,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 87
+    },
+    {
+      "id": "F_8E5E",
+      "start": 36446,
+      "end": 36570,
+      "size": 124,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 639
+    },
+    {
+      "id": "F_92D6",
+      "start": 37590,
+      "end": 37609,
+      "size": 19,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        37609
+      ],
+      "notes": [],
+      "insn_count": 519
+    },
+    {
+      "id": "F_9613",
+      "start": 38419,
+      "end": 38455,
+      "size": 36,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 14
+    },
+    {
+      "id": "F_9637",
+      "start": 38455,
+      "end": 38498,
+      "size": 43,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        41859,
+        42139
+      ],
+      "notes": [],
+      "insn_count": 22
+    },
+    {
+      "id": "F_9663",
+      "start": 38499,
+      "end": 38534,
+      "size": 35,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        783
+      ],
+      "notes": [],
+      "insn_count": 15
+    },
+    {
+      "id": "F_9686",
+      "start": 38534,
+      "end": 38660,
+      "size": 126,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        43365
+      ],
+      "notes": [],
+      "insn_count": 53
+    },
+    {
+      "id": "F_9704",
+      "start": 38660,
+      "end": 38723,
+      "size": 63,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        38534,
+        46202
+      ],
+      "notes": [],
+      "insn_count": 24
+    },
+    {
+      "id": "F_9743",
+      "start": 38723,
+      "end": 38832,
+      "size": 109,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        38534,
+        45410,
+        46202
+      ],
+      "notes": [],
+      "insn_count": 39
+    },
+    {
+      "id": "F_97B0",
+      "start": 38832,
+      "end": 38962,
+      "size": 130,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        38962,
+        41290
+      ],
+      "notes": [],
+      "insn_count": 57
+    },
+    {
+      "id": "F_9832",
+      "start": 38962,
+      "end": 39016,
+      "size": 54,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        38832
+      ],
+      "notes": [],
+      "insn_count": 27
+    },
+    {
+      "id": "F_9868",
+      "start": 39016,
+      "end": 39118,
+      "size": 102,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 51
+    },
+    {
+      "id": "F_98CE",
+      "start": 39118,
+      "end": 39216,
+      "size": 98,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        38832,
+        39016,
+        42217
+      ],
+      "notes": [],
+      "insn_count": 42
+    },
+    {
+      "id": "F_9930",
+      "start": 39216,
+      "end": 39281,
+      "size": 65,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        39016,
+        40473
+      ],
+      "notes": [],
+      "insn_count": 31
+    },
+    {
+      "id": "F_9971",
+      "start": 39281,
+      "end": 39300,
+      "size": 19,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 11
+    },
+    {
+      "id": "F_9984",
+      "start": 39300,
+      "end": 39319,
+      "size": 19,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 11
+    },
+    {
+      "id": "F_9997",
+      "start": 39319,
+      "end": 39345,
+      "size": 26,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        39345
+      ],
+      "notes": [],
+      "insn_count": 17
+    },
+    {
+      "id": "F_99B1",
+      "start": 39345,
+      "end": 39603,
+      "size": 258,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        38832,
+        44127
+      ],
+      "notes": [],
+      "insn_count": 101
+    },
+    {
+      "id": "F_9AB3",
+      "start": 39603,
+      "end": 39623,
+      "size": 20,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        39345
+      ],
+      "notes": [],
+      "insn_count": 13
+    },
+    {
+      "id": "F_9AC7",
+      "start": 39623,
+      "end": 39929,
+      "size": 306,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        38832,
+        39319,
+        39345,
+        41290,
+        42485,
+        44127
+      ],
+      "notes": [],
+      "insn_count": 142
+    },
+    {
+      "id": "F_9BF9",
+      "start": 39929,
+      "end": 39992,
+      "size": 63,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        39345,
+        39623,
+        43467
+      ],
+      "notes": [],
+      "insn_count": 34
+    },
+    {
+      "id": "F_9C38",
+      "start": 39992,
+      "end": 40009,
+      "size": 17,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 65
+    },
+    {
+      "id": "F_9CD4",
+      "start": 40148,
+      "end": 40352,
+      "size": 204,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        39118,
+        45552,
+        45759
+      ],
+      "notes": [],
+      "insn_count": 75
+    },
+    {
+      "id": "F_9DA0",
+      "start": 40352,
+      "end": 40402,
+      "size": 50,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        40786,
+        43393,
+        43412
+      ],
+      "notes": [],
+      "insn_count": 24
+    },
+    {
+      "id": "F_9DD2",
+      "start": 40402,
+      "end": 40473,
+      "size": 71,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        39281,
+        39300,
+        40497
+      ],
+      "notes": [],
+      "insn_count": 34
+    },
+    {
+      "id": "F_9E19",
+      "start": 40473,
+      "end": 40497,
+      "size": 24,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42217
+      ],
+      "notes": [],
+      "insn_count": 13
+    },
+    {
+      "id": "F_9E31",
+      "start": 40497,
+      "end": 40786,
+      "size": 289,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        43537,
+        43904,
+        46179
+      ],
+      "notes": [
+        "0x9ed0: imul dx"
+      ],
+      "insn_count": 133
+    },
+    {
+      "id": "F_9F52",
+      "start": 40786,
+      "end": 41246,
+      "size": 460,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        43537,
+        43904,
+        45203,
+        45218
+      ],
+      "notes": [],
+      "insn_count": 186
+    },
+    {
+      "id": "F_A11E",
+      "start": 41246,
+      "end": 41290,
+      "size": 44,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 20
+    },
+    {
+      "id": "F_A14A",
+      "start": 41290,
+      "end": 41529,
+      "size": 239,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        44127
+      ],
+      "notes": [],
+      "insn_count": 115
+    },
+    {
+      "id": "F_A25A",
+      "start": 41562,
+      "end": 41674,
+      "size": 112,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 59
+    },
+    {
+      "id": "F_A2CA",
+      "start": 41674,
+      "end": 41686,
+      "size": 12,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        41562
+      ],
+      "notes": [],
+      "insn_count": 7
+    },
+    {
+      "id": "F_A2D6",
+      "start": 41686,
+      "end": 41721,
+      "size": 35,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 16
+    },
+    {
+      "id": "F_A2F9",
+      "start": 41721,
+      "end": 41755,
+      "size": 34,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 14
+    },
+    {
+      "id": "F_A31B",
+      "start": 41755,
+      "end": 41804,
+      "size": 49,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 19
+    },
+    {
+      "id": "F_A34C",
+      "start": 41804,
+      "end": 41816,
+      "size": 12,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        41721
+      ],
+      "notes": [],
+      "insn_count": 7
+    },
+    {
+      "id": "F_A358",
+      "start": 41816,
+      "end": 41832,
+      "size": 16,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        41755
+      ],
+      "notes": [],
+      "insn_count": 11
+    },
+    {
+      "id": "F_A368",
+      "start": 41832,
+      "end": 41859,
+      "size": 27,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42139
+      ],
+      "notes": [],
+      "insn_count": 14
+    },
+    {
+      "id": "F_A383",
+      "start": 41859,
+      "end": 41889,
+      "size": 30,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42139
+      ],
+      "notes": [],
+      "insn_count": 14
+    },
+    {
+      "id": "F_A3A1",
+      "start": 41889,
+      "end": 41954,
+      "size": 65,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        42139
+      ],
+      "notes": [],
+      "insn_count": 32
+    },
+    {
+      "id": "F_A3E2",
+      "start": 41954,
+      "end": 42048,
+      "size": 94,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 49
+    },
+    {
+      "id": "F_A440",
+      "start": 42048,
+      "end": 42063,
+      "size": 15,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 9
+    },
+    {
+      "id": "F_A44F",
+      "start": 42063,
+      "end": 42080,
+      "size": 17,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 10
+    },
+    {
+      "id": "F_A460",
+      "start": 42080,
+      "end": 42089,
+      "size": 9,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 6
+    },
+    {
+      "id": "F_A469",
+      "start": 42089,
+      "end": 42100,
+      "size": 11,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 7
+    },
+    {
+      "id": "F_A474",
+      "start": 42100,
+      "end": 42139,
+      "size": 39,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42139
+      ],
+      "notes": [],
+      "insn_count": 18
+    },
+    {
+      "id": "F_A49B",
+      "start": 42139,
+      "end": 42200,
+      "size": 61,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 25
+    },
+    {
+      "id": "F_A4D8",
+      "start": 42200,
+      "end": 42217,
+      "size": 17,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 9
+    },
+    {
+      "id": "F_A4E9",
+      "start": 42217,
+      "end": 42258,
+      "size": 41,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42139
+      ],
+      "notes": [],
+      "insn_count": 18
+    },
+    {
+      "id": "F_A512",
+      "start": 42258,
+      "end": 42383,
+      "size": 125,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [],
+      "notes": [],
+      "insn_count": 64
+    },
+    {
+      "id": "F_A58F",
+      "start": 42383,
+      "end": 42422,
+      "size": 39,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42258
+      ],
+      "notes": [],
+      "insn_count": 20
+    },
+    {
+      "id": "F_A5B6",
+      "start": 42422,
+      "end": 42448,
+      "size": 26,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42258
+      ],
+      "notes": [],
+      "insn_count": 13
+    },
+    {
+      "id": "F_A5D0",
+      "start": 42448,
+      "end": 42485,
+      "size": 37,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42258
+      ],
+      "notes": [],
+      "insn_count": 17
+    },
+    {
+      "id": "F_A5F5",
+      "start": 42485,
+      "end": 42518,
+      "size": 33,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 19
+    },
+    {
+      "id": "F_A616",
+      "start": 42518,
+      "end": 42558,
+      "size": 40,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 22
+    },
+    {
+      "id": "F_A63E",
+      "start": 42558,
+      "end": 42582,
+      "size": 24,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42518
+      ],
+      "notes": [],
+      "insn_count": 11
+    },
+    {
+      "id": "F_A656",
+      "start": 42582,
+      "end": 42616,
+      "size": 34,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 20
+    },
+    {
+      "id": "F_A678",
+      "start": 42616,
+      "end": 42691,
+      "size": 75,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 41
+    },
+    {
+      "id": "F_A6C3",
+      "start": 42691,
+      "end": 42714,
+      "size": 23,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42616
+      ],
+      "notes": [],
+      "insn_count": 10
+    },
+    {
+      "id": "F_A6DA",
+      "start": 42714,
+      "end": 42739,
+      "size": 25,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42139
+      ],
+      "notes": [],
+      "insn_count": 12
+    },
+    {
+      "id": "F_A6F3",
+      "start": 42739,
+      "end": 42757,
+      "size": 18,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 9
+    },
+    {
+      "id": "F_A705",
+      "start": 42757,
+      "end": 43058,
+      "size": 301,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        41832,
+        41859,
+        42100,
+        42139,
+        42714,
+        42739,
+        43058
+      ],
+      "notes": [],
+      "insn_count": 128
+    },
+    {
+      "id": "F_A832",
+      "start": 43058,
+      "end": 43134,
+      "size": 76,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42139
+      ],
+      "notes": [],
+      "insn_count": 33
+    },
+    {
+      "id": "F_A87E",
+      "start": 43134,
+      "end": 43146,
+      "size": 12,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 7
+    },
+    {
+      "id": "F_A88A",
+      "start": 43146,
+      "end": 43158,
+      "size": 12,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 7
+    },
+    {
+      "id": "F_A896",
+      "start": 43158,
+      "end": 43339,
+      "size": 181,
+      "has_frame": true,
+      "has_sub_sp": true,
+      "calls": [
+        42217,
+        43339
+      ],
+      "notes": [],
+      "insn_count": 85
+    },
+    {
+      "id": "F_A94B",
+      "start": 43339,
+      "end": 43365,
+      "size": 26,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42139
+      ],
+      "notes": [],
+      "insn_count": 13
+    },
+    {
+      "id": "F_A965",
+      "start": 43365,
+      "end": 43393,
+      "size": 28,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42139
+      ],
+      "notes": [],
+      "insn_count": 15
+    },
+    {
+      "id": "F_A981",
+      "start": 43393,
+      "end": 43412,
+      "size": 19,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 11
+    },
+    {
+      "id": "F_A994",
+      "start": 43412,
+      "end": 43431,
+      "size": 19,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 11
+    },
+    {
+      "id": "F_A9A7",
+      "start": 43431,
+      "end": 43467,
+      "size": 36,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 20
+    },
+    {
+      "id": "F_A9CB",
+      "start": 43467,
+      "end": 43493,
+      "size": 26,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 16
+    },
+    {
+      "id": "F_A9E5",
+      "start": 43493,
+      "end": 43537,
+      "size": 44,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 178
+    },
+    {
+      "id": "F_AB80",
+      "start": 43904,
+      "end": 44127,
+      "size": 223,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 87
+    },
+    {
+      "id": "F_AC5F",
+      "start": 44127,
+      "end": 44198,
+      "size": 71,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        42139,
+        42217
+      ],
+      "notes": [],
+      "insn_count": 140
+    },
+    {
+      "id": "F_ADEE",
+      "start": 44526,
+      "end": 44567,
+      "size": 41,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        44220,
+        44318
+      ],
+      "notes": [],
+      "insn_count": 100
+    },
+    {
+      "id": "F_AED4",
+      "start": 44756,
+      "end": 44881,
+      "size": 125,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        44431,
+        44567,
+        44664,
+        44721
+      ],
+      "notes": [],
+      "insn_count": 150
+    },
+    {
+      "id": "F_B02A",
+      "start": 45098,
+      "end": 45203,
+      "size": 105,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        44526,
+        44756,
+        44881,
+        45001
+      ],
+      "notes": [],
+      "insn_count": 202
+    },
+    {
+      "id": "F_B1C5",
+      "start": 45509,
+      "end": 45537,
+      "size": 28,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [],
+      "notes": [],
+      "insn_count": 282
+    },
+    {
+      "id": "F_B416",
+      "start": 46102,
+      "end": 46179,
+      "size": 77,
+      "has_frame": true,
+      "has_sub_sp": false,
+      "calls": [
+        45552,
+        45759,
+        45985,
+        46034
+      ],
+      "notes": [],
+      "insn_count": 2633
+    }
+  ],
+  "unmatched_call_targets": [
+    783,
+    30166,
+    30223,
+    30363,
+    30399,
+    30433,
+    30474,
+    30769,
+    30901,
+    31646,
+    31689,
+    31746,
+    32135,
+    32468,
+    32577,
+    34070,
+    36570,
+    37393,
+    37609,
+    38353,
+    40009,
+    43537,
+    44220,
+    44318,
+    44431,
+    44567,
+    44664,
+    44721,
+    44881,
+    45001,
+    45203,
+    45210,
+    45218,
+    45377,
+    45410,
+    45506,
+    45552,
+    45759,
+    45985,
+    46034,
+    46179,
+    46202,
+    46335
+  ]
+}

@@ -1,22 +1,33 @@
-"""Initial function census over RAW_LOAD_MODULE.
+"""Baseline prologue-scan census over RAW_LOAD_MODULE (cross-reference only).
 
-Resolves the _main disassembly-boundary mystery (see docs/function-census.md)
-and performs a conservative function census: candidate function starts are
-found by scanning for the standard Turbo C++ 1.00 small-model prologue byte
-pattern `55 8B EC` (push bp; mov bp,sp), each function body is linearly
-disassembled forward (capstone, 16-bit mode) until a RET/RETF is reached (or
-the next candidate start, whichever comes first, as a safety cap), and CALL
-targets + notable idioms (imul by small constants, etc.) are recorded.
+Resolves the _main disassembly-boundary mystery (see
+docs/function-census-prologue-scan.md) and performs a conservative function
+census: candidate function starts are found by scanning for the standard
+Turbo C++ 1.00 small-model prologue byte pattern `55 8B EC` (push bp; mov
+bp,sp), each function body is linearly disassembled forward (capstone,
+16-bit mode) until a RET/RETF is reached (or the next candidate start,
+whichever comes first, as a safety cap), and CALL targets + notable idioms
+(imul by small constants, etc.) are recorded.
 
 This is intentionally conservative/heuristic (per docs/matching-phase.md
 phase-3 "function census" frontier) -- it is NOT a claim of matching-C
 correctness for any function. Only F_XXXX address-based names are assigned.
 
+NOTE: this is no longer the authoritative census. `docs/function-census.json`
+is now produced by the call-graph walk in `tools/call_graph_census.py`
+(rooted at the trusted `_main @ 0x439` anchor), which cross-references its
+results against THIS script's output. This script's own output now lives at
+`docs/function-census-prologue-scan.json` -- a frozen baseline for that
+cross-reference, not something other tools should read directly (except as
+an explicit baseline/comparison input). `tools/library_scanner.py` still
+reads `docs/function-census.json` (the call-graph output) for its own
+anchoring heuristic; that file keeps a `start` field for exactly this reason.
+
 Usage:
     "/c/Users/Jiri/AppData/Local/Programs/Python/Python312/python.exe" \
         tools/function_census.py
 
-Writes docs/function-census.json.
+Writes docs/function-census-prologue-scan.json.
 """
 import json
 import pathlib
@@ -131,7 +142,7 @@ def main():
     unmatched_call_targets = [c for c in all_calls if c not in starts_set]
 
     report = {
-        "schema": "dave-function-census-v1",
+        "schema": "dave-function-census-prologue-scan-v1",
         "source": str(EXE.relative_to(ROOT)).replace("\\", "/"),
         "region": {"start": RAW_LOAD_MODULE_START, "end": RAW_LOAD_MODULE_END},
         "method": "scan for 55 8B EC (push bp; mov bp,sp) prologue bytes as candidate "
@@ -141,7 +152,7 @@ def main():
         "functions": functions,
         "unmatched_call_targets": unmatched_call_targets,
     }
-    out = ROOT / "docs" / "function-census.json"
+    out = ROOT / "docs" / "function-census-prologue-scan.json"
     out.write_text(json.dumps(report, indent=2))
     print(f"Wrote {out} with {len(functions)} candidate functions "
           f"({len(unmatched_call_targets)} unmatched call targets).")
