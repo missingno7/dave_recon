@@ -1,7 +1,8 @@
 /*
  * F_519B -- init_game_once()
  * cs [0x4f9b,0x515a) / file [0x519b,0x535a), 447 bytes.
- * Best attempt: MISMATCH (4 bytes) + 4 unresolved fixups; see notes/F_519B.md.
+ * EXACT (strict): 43 fixups incl. the far segments 1C2E/0B31 (MZ relocations
+ * verified) and the SCOPY'd initialiser in _DATA at DS:0x0883.
  *
  * One-time start-up: allocates the 0x16000-byte far work buffer
  * (F_6A62, result to DS:0x56F0), calls the asm stub F_8516 (sets the far
@@ -20,13 +21,11 @@
  * Evidence: docs/data-layout.md (g_sound_data = 1C2E:0000, g_demo_data
  * = 0B31:0000 set here; DSCORES.DAV string at DS:0x00AE).
  *
- * Remaining blocker (tool limitation, not a byte difference): the two far
- * data segments S_1C2E / S_0B31 (paragraphs 0x1C2E / 0x0B31, outside
- * _TEXT and DGROUP) cannot be named in tools/symbols.py, so their offset16
- * and base16 fixups stay unresolved. Every other byte, including the
- * SCOPY'd initialiser in _DATA at DS:0x0883, matches except the 4-byte\n * push order of the far pointer to def (see notes/F_519B.md).
+ * Codegen note: the far pointer to `def` is pushed as `lea ax; push ds;
+ * push ax`. A plain near->far conversion gives `push ss`/`push ds` first;
+ * converting through `long` (`(char far *)(long)def`) reproduces the
+ * original order (the same idiom matches F_6DC2's near->far conversions).
  */
-/* @flags -G */
 /* @seg _DATA 0x0883 */
 
 #include <dos.h>
@@ -47,8 +46,8 @@ struct hiscore {
 extern void far *D_56F0;        /* far work buffer */
 extern char far *D_137A;        /* g_sound_data */
 extern char far *D_57A4;        /* g_demo_data */
-extern char far S_1C2E[];       /* far segment 1C2E: PC-speaker sounds */
-extern char far S_0B31[];       /* far segment 0B31: demo recordings */
+extern char far P1C2E_0000[];       /* far segment 1C2E: PC-speaker sounds */
+extern char far P0B31_0000[];       /* far segment 0B31: demo recordings */
 extern struct hsfile *D_4F8C;   /* high-score file buffer */
 extern char D_00AE[];           /* "DSCORES.DAV" */
 extern int D_579C;
@@ -76,13 +75,13 @@ void F_519B(void)
 
     D_56F0 = F_6A62(0x16000L);
     F_8516();
-    D_137A = S_1C2E;
+    D_137A = P1C2E_0000;
     F_75D6();
     F_6293();
-    D_57A4 = S_0B31;
+    D_57A4 = P0B31_0000;
     D_4F8C = malloc(45);
     if (F_6ADE(D_00AE, D_4F8C) == 0) {
-        F_6B94(D_00AE, def, 45L);
+        F_6B94(D_00AE, (char far *)(long)def, 45L);
         movedata(_DS, (unsigned)def, _DS, (unsigned)D_4F8C, 45);
     }
     F_535A();

@@ -24,6 +24,14 @@ TOOLCHAIN = json.loads((ROOT / "layout" / "toolchain.json").read_text())
 BASE_FLAGS = "-c -ms -1- -f- -N -G"
 
 
+def assembler_dir() -> str:
+    """toolchain/ subdirectory holding the TASM used for inline asm."""
+    lock = ROOT / "layout" / "assembler.json"
+    if lock.exists():
+        return json.loads(lock.read_text()).get("toolchain_dir", "TASM20")
+    return "TASM20"
+
+
 def source_flags(text: str) -> str:
     return " ".join(re.findall(r"@flags\s+([^*\n]+?)\s*\*/", text))
 
@@ -33,7 +41,10 @@ def compile_many(sources, work: pathlib.Path | None = None, extra_flags: str = "
     if work.exists():
         shutil.rmtree(work)
     work.mkdir(parents=True)
-    lines = ["@ECHO OFF", "D:", "CD \\"]
+    # TCC restarts a compile through TASM when a file contains inline `asm`
+    # statements (Turbo C++ 1.00 has no built-in assembler); TASM is found
+    # through PATH. layout/assembler.json pins which TASM that is.
+    lines = ["@ECHO OFF", "SET PATH=C:\\BIN;C:\\" + assembler_dir(), "D:", "CD \\"]
     stems = []
     for n, src in enumerate(sources, 1):
         stem = f"S{n:04d}"
