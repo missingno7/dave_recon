@@ -57,6 +57,15 @@ LOAD_SEG = 0x0824             # measured; re-derived by calibrate() on every run
 DGROUP_PARA = 0x254D
 MAIN_LOOP_HEAD_CS = 0x0283    # main(): `call F_09DE`, first call of the per-tick pipeline
 PLAYSOUND_CS = 0x743E         # lowlevel.asm _PlaySound (census F_763E)
+# main()'s per-tick pipeline: the state at each call site is the state BEFORE
+# that subsystem runs (and after the previous one); 0x2AA is the end of tick
+# (`cmp [game_over],0`). Boundary snapshots let each native subsystem be
+# verified in isolation (PORT_ROADMAP M1.2).
+PIPELINE = [(0x283, "attract_mode"), (0x286, "process_input"), (0x289, "move_dave"),
+            (0x28C, "update_explosions"), (0x28F, "move_monsters"), (0x292, "move_bullets"),
+            (0x295, "animate_tiles"), (0x298, "check_collisions"), (0x29B, "pick_up_items"),
+            (0x29E, "level_complete"), (0x2A1, "check_warp_transition"),
+            (0x2A4, "update_jetpack"), (0x2A7, "handle_death"), (0x2AA, "end_of_tick")]
 DGROUP_LIVE_LEN = 0x9F20      # DS 0 .. _STACK (docs/data-layout.md)
 ASYNC_RANGES = [(0x1384, 0x1392)]   # INT 8 sound driver: TickDivide..SavedRate
 CYCLES = 20000
@@ -98,6 +107,7 @@ def gameplay_view(snapshot: bytes) -> bytes:
 
 def parse_scenario(path: pathlib.Path):
     duration, frames, inputs = None, 0, []
+    global BOUNDARY_TICKS
     for n, raw in enumerate(path.read_text().splitlines(), 1):
         line = raw.split("#", 1)[0].strip()
         if not line:
@@ -107,6 +117,8 @@ def parse_scenario(path: pathlib.Path):
             duration = int(parts[1])
         elif parts[0] == "png_every":
             frames = int(parts[1])
+        elif parts[0] == "boundaries":
+            BOUNDARY_TICKS = int(parts[1])
         elif len(parts) == 3 and parts[1] in ("key", "keydown", "keyup"):
             inputs.append(f"{int(parts[0])} {parts[1]} {parts[2]}")
         else:
@@ -139,6 +151,10 @@ def run_once(work: pathlib.Path, duration: int, frames, inputs, calibrate=False)
         lines.append("0 io_watch 40 43 pit.log out")
         lines.append("0 io_watch 61 61 pit.log inout")
         lines.append(f"0 on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump a0000 fa00 fb")
+        if BOUNDARY_TICKS:
+            for cs, _ in PIPELINE[1:]:    # PIPELINE[0] is the per-tick snapshot itself
+                lines.append(f"0 on_exec {LOAD_SEG:04x}:{cs:04x} {BOUNDARY_TICKS} dump "
+                             f"{ds_linear:x} {DGROUP_LIVE_LEN:x} b{cs:04x}")
         lines += inputs
         lines.append(f"{duration} exit")
     (work / "script.txt").write_text("\n".join(lines) + "\n")
@@ -179,6 +195,43 @@ def _hits(work: pathlib.Path, prefix: str):
         i += 1
 
 
+BOUNDARY_TICKS = 0      # set by a scenario's `boundaries <n>` line
+
+
+def write_boundaries(work: pathlib.Path, tick_snapshots: list) -> int:
+    """boundaries.bin: for each tick (up to BOUNDARY_TICKS) and each PIPELINE
+    site in order, the DGROUP snapshot as zlib(snapshot XOR previous snapshot
+    in the stream), framed as <u32 tick><u16 site index><u32 length><data>."""
+    import struct
+    import zlib
+    per_site = {cs: [b for b, _ in _hits(work, f"b{cs:04x}")] for cs, _ in PIPELINE[1:]}
+    n = min([len(tick_snapshots)] + [len(v) for v in per_site.values()])
+    prev = bytes(DGROUP_LIVE_LEN)
+    with open(work / "boundaries.bin", "wb") as f:
+        for t in range(n):
+            for i, (cs, _) in enumerate(PIPELINE):
+                snap = tick_snapshots[t] if i == 0 else per_site[cs][t]
+                delta = zlib.compress(bytes(a ^ b for a, b in zip(snap, prev)), 6)
+                f.write(struct.pack("<IHI", t + 1, i, len(delta)) + delta)
+                prev = snap
+    return n
+
+
+def iter_boundaries(path: pathlib.Path):
+    """Yield (tick, site_name, snapshot) from a boundaries.bin (see above)."""
+    import struct
+    import zlib
+    data = path.read_bytes()
+    at, prev = 0, bytes(DGROUP_LIVE_LEN)
+    while at < len(data):
+        tick, site, length = struct.unpack_from("<IHI", data, at)
+        at += 10
+        snap = bytes(a ^ b for a, b in zip(zlib.decompress(data[at:at + length]), prev))
+        at += length
+        prev = snap
+        yield tick, PIPELINE[site][1], snap
+
+
 def collect(work: pathlib.Path, png_every: int = 0) -> dict:
     ticks, blob, game_blob = [], bytearray(), bytearray()
     for b, ms in _hits(work, "tick"):
@@ -193,6 +246,11 @@ def collect(work: pathlib.Path, png_every: int = 0) -> dict:
         blob += b
         game_blob += gameplay_view(b)
     (work / "ticks.bin").write_bytes(bytes(blob))
+    boundary_ticks = 0
+    if BOUNDARY_TICKS:
+        L = DGROUP_LIVE_LEN
+        boundary_ticks = write_boundaries(work, [bytes(blob[k * L:(k + 1) * L])
+                                                 for k in range(len(ticks))])
     (work / "ticks.jsonl").write_text("".join(json.dumps(r) + "\n" for r in ticks))
 
     sounds = []
@@ -219,6 +277,7 @@ def collect(work: pathlib.Path, png_every: int = 0) -> dict:
         "pit_events": (work / "pit.log").read_text().count("\n") if (work / "pit.log").exists() else 0,
         "frames": len(frame_hashes),
         "frames_sha1": hashlib.sha1("".join(frame_hashes).encode()).hexdigest(),
+        "boundary_ticks": boundary_ticks,
     }
     (work / "summary.json").write_text(json.dumps(summary, indent=1))
     return summary

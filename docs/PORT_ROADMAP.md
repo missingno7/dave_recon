@@ -51,13 +51,15 @@ names in `src/asm`); data-module provenance unknowable (D-2).
 ### Phase 1 -- deterministic oracle: IN PROGRESS
 - [x] M1.1 `tools/oracle.py`: per-tick DGROUP + framebuffer + sound requests,
       emulated time, pinned clock; contract holds across 3 runs (attract).
-- [ ] M1.2 Per-subsystem boundary snapshots: on_exec at each of the 13
-      call sites in `main`'s loop (cs 0x283..0x2a7), so every native
-      subsystem can be verified in isolation (bridge, decision 3).
+- [x] M1.2 Per-subsystem boundary snapshots: `boundaries <n>` in a scenario
+      dumps DGROUP at all 14 pipeline points (13 call sites + end of tick) for
+      the first n ticks into `boundaries.bin` (XOR-delta + zlib;
+      `oracle.iter_boundaries`). Verified: end-of-tick == next tick start;
+      reproducible across runs (`tests/oracle/attract_boundaries.txt`).
 - [ ] M1.3 Scenario corpus: all 5 demos; scripted per-level play; high-score
       persistence (DSCORES.DAV after run); config screens.
 - [ ] M1.4 CGA/EGA capture (EGA planar memory needs plane-aware dumps).
-- [ ] M1.5 `tests/test_oracle.py` (opt-in, slow): repeat-run contract.
+- [x] M1.5 `tests/test_oracle.py` (opt-in: DAVE_ORACLE_TESTS=1): repeat-run contract.
 **Gate:** every corpus scenario passes the repeat-run contract.
 
 ### Phase 2 -- complete semantic recovery
@@ -123,6 +125,6 @@ needed to build or run.
 
 ## Current next milestone
 
-M1.2 -- per-subsystem boundary snapshots in the oracle, then M2.1 the
-generated semantic inventory. Both are independent, verifiable, and unblock
-native subsystem work.
+M1.3 (scenario corpus: all demos, scripted play, persistence) and M2.1 (the
+generated semantic inventory), in parallel; then M2.3 the native state model
+and M3.1 the `port/` skeleton with the verification bridge.

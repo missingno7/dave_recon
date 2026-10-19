@@ -1,0 +1,5 @@
+# Attract mode with per-subsystem boundary snapshots for the first 120 ticks
+# (title + start of demo 1), for subsystem-level verification (M1.2).
+duration 24000
+png_every 0
+boundaries 120
