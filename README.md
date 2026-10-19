@@ -47,23 +47,17 @@ raw/        git-ignored per-region raw byte extracts for still-unowned regions
 build/      git-ignored generated output
 ```
 
-## Status
+## Status (2026-10-19)
 
-- Specimen identified: 1990 Softdisk *Dangerous Dave* by John Romero.
-- `assets/DAVE.EXE` is LZEXE 0.91-packed; `tools/lzexe_unpack.py` unpacks it
-  to `build/DAVE_unpacked.exe`, independently cross-checked byte-for-byte
-  against a third-party-published decompressed copy.
-- **Milestone 1 reached**: 100% of the unpacked image's bytes are owned in
-  `layout/manifest.json` with no gaps/overlaps, and `tools/reconstruct.py`
-  rebuilds it to an exact MD5 match (currently almost entirely
-  `RAW_UNKNOWN` — the real classification work starts next).
-- **Toolchain confirmed and installed**: Borland Turbo C++ 1.00 (May 1990),
-  obtained from archive.org and pinned in `layout/toolchain.json`. Compiler
-  identity is directly confirmed (not inferred) — a compiled probe's OMF
-  record contains the compiler's own self-identification string `TC86
-  Borland Turbo C++ 1.00`, matching the runtime string embedded in
-  `build/DAVE_unpacked.exe`. See `docs/toolchain-identification.md`. Full
-  compile -> OMF-parse pipeline proven via `tools/compile_probe.py`.
+See [docs/dashboard.json](docs/dashboard.json) (generated) and
+[docs/matching-phase.md](docs/matching-phase.md).
 
-See [docs/progress.md](docs/progress.md) for the full log and
-[docs/blockers.json](docs/blockers.json) for open frontiers.
+- **All game code matches the original bytes**, strictly verified (every
+  fixup resolved, no masking): 90 C functions in `src/game/` (Turbo C++ 1.00
+  `-ms -1- -f- -N -G`) and two TASM 2.0 modules in `src/asm/`.
+- Runtime: C0S + 59 CS.LIB modules identified ([docs/library-map.md](docs/library-map.md)).
+- Data: all far segments and the level array are rebuilt by exact codecs
+  ([docs/data-layout.md](docs/data-layout.md)); EGADAVE.DAV round-trips.
+- Packing: LZEXE 0.91 applied to the unpacked image reproduces `DAVE.EXE`.
+- In progress: Level C, recovering the translation units and linking the
+  whole program with TLINK so the layout emerges instead of being placed.

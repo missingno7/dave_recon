@@ -56,33 +56,17 @@
  "open_frontiers": [
   {
    "category": "PRODUCTIVE_FRONTIER",
-   "target": "Continue matching-C promotions inside game code"
-  },
-  {
-   "category": "DEFERRED_NOT_BLOCKING",
-   "target": "Exact LZEXE 0.91 recompression (packing reconstruction, Level 2)"
-  },
-  {
-   "category": "DEFERRED_NOT_BLOCKING",
    "target": "Historical linker/translation-unit reconstruction"
   },
   {
    "category": "DEFERRED_NOT_BLOCKING",
    "target": "Confirm exact Dangerous Dave release/episode variant"
-  },
-  {
-   "category": "PRODUCTIVE_FRONTIER",
-   "target": "Far data segment map (between _TEXT and DGROUP, 106,944 bytes) and g_levels"
-  },
-  {
-   "category": "PRODUCTIVE_FRONTIER",
-   "target": "ASM modules: assembler identity, module boundaries, MATCHING_ASM"
   }
  ],
  "delta_vs_HEAD": {
   "c_matched_functions": 0,
   "c_matched_bytes": 0,
-  "asm_matched_bytes": 9452,
+  "asm_matched_bytes": 0,
   "known_library_bytes": 0,
   "structured_data_bytes": 0
  }
