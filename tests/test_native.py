@@ -12,11 +12,16 @@ RUN = ROOT / "build" / "oracle" / "attract_boundaries" / "run1"
 
 @unittest.skipUnless((RUN / "boundaries.bin").exists(), "no oracle boundary run")
 class NativeEquivalenceTest(unittest.TestCase):
+    def test_bridge_identity(self):
+        import native_check
+        r = native_check.check("identity", RUN)
+        self.assertTrue(r["equivalent"], r)
+
     def test_animate_tiles(self):
         import native_check
         r = native_check.check("animate_tiles", RUN)
         self.assertTrue(r["equivalent"], r)
-        self.assertGreater(r["ticks_where_original_changed_state"], 0)
+        self.assertGreater(r["ticks_where_original_changed_game_state"], 0)
 
 
 if __name__ == "__main__":

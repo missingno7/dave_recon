@@ -1,6 +1,6 @@
 #include "anim.h"
 
-void anim_step(struct anim_state *a, int16_t scroll_x, anim_redraw_fn redraw, void *ctx)
+void anim_step(struct anim_state *a, int16_t scroll_x, struct frame_output *out)
 {
     if (--a->tick_divider != 0)
         return;
@@ -14,7 +14,7 @@ void anim_step(struct anim_state *a, int16_t scroll_x, anim_redraw_fn redraw, vo
         t->cur = (int16_t)(t->cur + 1);
         if (t->cur >= t->first + t->count)
             t->cur = t->first;
-        if (t->col >= scroll_x && t->col <= scroll_x + VIEW_COLUMNS - 1 && redraw)
-            redraw(ctx, t->col - scroll_x, t->row, t->cur);
+        if (t->col >= scroll_x && t->col <= scroll_x + VIEW_COLUMNS - 1)
+            out_draw(out, DRAW_TILE, t->col - scroll_x, t->row, t->cur, 0);
     }
 }

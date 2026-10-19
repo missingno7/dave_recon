@@ -14,5 +14,5 @@ endif()
 add_library(dave_game STATIC game/anim.c)
 target_include_directories(dave_game PUBLIC game)
 
-add_executable(dave_bridge tests/bridge/bridge.c)
+add_executable(dave_bridge tests/bridge/bridge.c tests/bridge/dgroup_map.c)
 target_link_libraries(dave_bridge PRIVATE dave_game)

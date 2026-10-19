@@ -7,13 +7,14 @@
  * tiles inside the visible window are redrawn.
  *
  * Native split: anim_step() updates the simulation state only; the redraw of
- * visible tiles is reported through a callback, so presentation stays out of
- * the game layer.
+ * each visible tile is emitted as a DRAW_TILE command (output.h), so
+ * presentation stays out of the game layer.
  */
 #ifndef DAVE_ANIM_H
 #define DAVE_ANIM_H
 
 #include <stdint.h>
+#include "output.h"
 
 #define ANIM_MAX_TILES 200      /* capacity of the original table */
 #define ANIM_TICKS_PER_FRAME 10 /* the frame advances every 10th game tick */
@@ -33,10 +34,8 @@ struct anim_state {
     int16_t tick_divider;     /* counts down from ANIM_TICKS_PER_FRAME */
 };
 
-/* Called for each visible tile whose frame changed: view column (0..19),
- * level row, new tile id. */
-typedef void (*anim_redraw_fn)(void *ctx, int view_col, int row, int tile);
-
-void anim_step(struct anim_state *a, int16_t scroll_x, anim_redraw_fn redraw, void *ctx);
+/* One call of the original animate_tiles(): every ANIM_TICKS_PER_FRAME-th
+ * call, advance each active tile; emit DRAW_TILE for the visible ones. */
+void anim_step(struct anim_state *a, int16_t scroll_x, struct frame_output *out);
 
 #endif
