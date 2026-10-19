@@ -151,11 +151,11 @@
     },
     {
       "target": "Continue matching-C promotions inside game code",
-      "category": "PRODUCTIVE_FRONTIER",
-      "state": "in progress -- 1 of 90 C functions EXACT under the strict matcher (F_6D64, full 94-byte function incl. jump table)",
+      "category": "CLOSED",
+      "state": "closed 2026-10-19: 90/90 C functions EXACT (27,884 bytes)",
       "matches": "tools/match_function.py proven end-to-end on F_6D64. Immediate next candidates: the case bodies + jump table following F_6D64 (file offset ~0x6d8a-0x6dba, one of the census's unresolved indirect targets), and the 4 functions the yo-yo-yo-jbo import verified semantics for (game-init, level-completion dispatcher, warp-transition, score/lives-cap logic -- see docs/external-re-evidence.json) which now have known purpose, not just address boundaries. Beyond those, docs/function-census.json's remaining functions (ranked by confidence/simplicity) are the working queue.",
       "first_unresolved_fact": "see docs/dashboard.json game_code.c",
-      "evidence": "2026-10-19: tools/match_function.py rewritten to resolve every fixup through tools/symbols.py instead of masking fixup bytes; tools/verify_sources.py rebuilds MATCHING_C regions from compiler output (reconstruct.py no longer uses raw extracts for them). The earlier 38-byte F_6D64 'dispatch head' promotion with placeholder case bodies is superseded by the real function (set_video_mode). Three workers own disjoint ranges of the 89 remaining C functions.",
+      "evidence": "85 sources in src/game strictly verified by tools/verify_sources.py (every fixup resolved, _DATA images compared); 3 functions contain original inline asm compiled TCC->TASM 2.0.",
       "unblock": "Rank remaining census functions by the ease-of-matching heuristics in docs/matching-phase.md and work through them with tools/match_function.py, smallest/cleanest first.",
       "leverage": "Every additional MATCHING_C promotion is direct, compounding progress on the project's central deliverable."
     },
@@ -180,25 +180,22 @@
     },
     {
       "target": "Exact LZEXE 0.91 recompression (packing reconstruction, Level 2)",
-      "category": "DEFERRED_NOT_BLOCKING",
-      "state": "deferred",
+      "category": "CLOSED",
+      "state": "closed 2026-10-19",
       "matches": "Only the unpack direction is proven; LZEXE's own compressor heuristics are not reimplemented.",
-      "evidence": [
-        "docs/lzexe-unpacking.md section 5"
-      ],
+      "evidence": "tools/repack.py --oracle: LZEXE 0.91 on build/DAVE_unpacked.exe reproduces assets/DAVE.EXE byte for byte (tests/test_repack.py).",
       "unblock": "Revisit after matching-C/ASM/data work has substantially reduced RAW_UNKNOWN; the unpacked image remains the working oracle until then.",
       "leverage": "Only closes the final packed-file-identity gap (docs/build-reconstruction.md Level 2); does not affect current matching-C progress."
     },
     {
       "target": "Historical linker/translation-unit reconstruction",
-      "category": "DEFERRED_NOT_BLOCKING",
-      "state": "deferred",
+      "category": "PRODUCTIVE_FRONTIER",
+      "state": "in progress (2026-10-19)",
       "matches": "Fixed-placement ownership (layout/manifest.json) remains the proof scaffold, per docs/build-reconstruction.md's four-level ladder.",
-      "evidence": [
-        "docs/build-reconstruction.md"
-      ],
+      "evidence": "docs/link-forensics.md; TC++ 1.00 _BSS order key recovered (docs/compiler-behaviors.md); unit reconstruction worker running",
       "unblock": "Reconstruct progressively once enough matching-C/ASM components exist to infer real module/segment ordering; do not wait for this before matching individual components.",
-      "leverage": "Needed only for 'structural build' / 'emergent whole build' levels, not for continuing placement/component-level matching now."
+      "leverage": "Needed only for 'structural build' / 'emergent whole build' levels, not for continuing placement/component-level matching now.",
+      "first_unresolved_fact": "exact C unit boundaries, game _DATA ownership (DS 0xA8-0x173A), BSS names reproducing the hash order, a full TLINK link of all objects"
     },
     {
       "target": "Confirm exact Dangerous Dave release/episode variant",
@@ -213,21 +210,21 @@
     },
     {
       "target": "Far data segment map (between _TEXT and DGROUP, 106,944 bytes) and g_levels",
-      "category": "PRODUCTIVE_FRONTIER",
-      "state": "contents identified 2026-10-19; codecs open",
+      "category": "CLOSED",
+      "state": "closed 2026-10-19: all far segments + g_levels are STRUCTURED_DATA with exact codecs",
       "matches": "far segments at paragraphs 0x0B31,0x0C42,0x11EF,0x1C2E,0x1D58,0x1E84,0x20CC; DGROUP 0x254D",
-      "first_unresolved_fact": "exact re-encoders for the RLE tilesets (the game's own encoder is at file 0x7F41), demo/sound/config-graphics codecs, game _DATA globals and string literals as C initialisers",
+      "first_unresolved_fact": "none for bytes; open curiosities (over-read bytes' origin, sprite tails) documented in docs/data-layout.md",
       "evidence": "docs/data-layout.md: 0x0B31 attract-mode demos; 0x0C42 CGA tileset (RLE); 0x11EF VGA tileset (RLE); 0x1C2E PC-speaker SPK sound bank; 0x1D58/0x1E84/0x20CC CGA/EGA/VGA config-screen header+8x8 font+13 icons; 0x254C _INIT_ table. DGROUP: C0S _DATA 0-0xA8, game _DATA 0xA8-0x493A (ends with g_levels), runtime _DATA 0x493A-0x4C60 (=EOF), game BSS 0x4C60-0x9EC8, runtime BSS -0x9F12, _STACK 0x9F20-0x9FA0.",
       "unblock": "structured round-trip codecs; matching code that references far data (base16 fixups to these segments)",
       "leverage": "62% of the unpacked image is far data"
     },
     {
       "target": "ASM modules: assembler identity, module boundaries, MATCHING_ASM",
-      "category": "PRODUCTIVE_FRONTIER",
-      "state": "in progress (2026-10-19)",
+      "category": "CLOSED",
+      "state": "closed 2026-10-19: src/asm/lowlevel.asm + tiles.asm EXACT (9,452 bytes)",
       "matches": "cs [0x6F25,0x9413), 9,454 bytes, 48 census functions + ~3.2 KB unassigned (tables, pointer-reached code)",
       "first_unresolved_fact": "which assembler/version/options reproduce the encodings (forward-jump NOP padding etc.)",
-      "evidence": "docs/function-census.md (lang ASM)",
+      "evidence": "layout/assembler.json: TASM 2.0 single pass /mx; tools/asm_identify.py reproduces the discriminating evidence.",
       "unblock": "MATCHING_ASM promotions; module order for the final link",
       "leverage": "25% of game code"
     }

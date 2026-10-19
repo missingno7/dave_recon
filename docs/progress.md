@@ -278,6 +278,36 @@ rather than silently accepted. Evidence:
    regions as more of the code segment is mapped.
 5. Confirm the `_TEXT`/`_DATA` boundary using the improved census.
 
+## 2026-10-19 -- strict verification; all game code EXACT; packing solved
+
+Supervisor session with parallel workers (worktree branches, merged after
+strict verification). Highlights (numbers from docs/dashboard.json):
+
+- **Verification hardened.** The matcher no longer masks fixup bytes: it
+  resolves every fixup like TLINK and checks MZ relocations
+  (tools/match_function.py, tools/symbols.py). reconstruct.py now rebuilds
+  matched code from compiler/assembler output and structured data from codecs.
+- **Structure.** CFG census v3 (tools/cfg.py): C cs 0x239-0x6F25 (90 functions,
+  no gaps), ASM cs 0x6F25-0x9413, CS.LIB from 0x9413. DGROUP = 0x254D; far data
+  between _TEXT and DGROUP.
+- **Game C: 90/90 EXACT** (lanes B1-B3 + supervisor): src/game/*.c, flags
+  -ms -1- -f- -N -G (-G discovered: 'inc sp; inc sp'). F_630B/F_6ADE/F_6B94
+  contain original inline asm, compiled TCC->TASM 2.0.
+- **ASM: 2 modules EXACT** (src/asm/lowlevel.asm, tiles.asm), TASM 2.0 single
+  pass, assembler identified by discriminating encodings.
+- **Runtime library fully identified**: 59 CS.LIB modules + data, link order
+  explained (docs/library-map.md).
+- **Data**: every far segment identified and rebuilt by exact codecs (demos,
+  RLE tilesets via a port of the game's own encoder, sounds, config graphics);
+  g_levels = DS:0x173A (the 2026-09-19 'contradicted' verdict was wrong and is
+  withdrawn).
+- **Packing solved**: LZEXE 0.91 on the unpacked image == DAVE.EXE.
+- **Compiler rulebook**: docs/compiler-behaviors.md + tools/codegen_lab (31
+  reproducible cases); TC++ 1.00 _BSS order key recovered.
+
+Remaining raw: game _DATA (5,778 bytes) -> belongs to the C translation units
+(Level C, in progress).
+
 ## 2026-10-19 — Level C: translation units, and the whole layout emerges
 
 - The 85 per-function files (`src/game/F_XXXX.c`) are replaced by the three
