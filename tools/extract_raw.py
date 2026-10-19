@@ -33,13 +33,14 @@ def main():
         )
 
     RAW_DIR.mkdir(exist_ok=True)
-    keep = {f"{r['id']}.bin" for r in manifest["regions"] if r["kind"] not in ("MATCHING_C", "STRUCTURED_DATA")}
+    built_kinds = ("MATCHING_C", "MATCHING_ASM", "STRUCTURED_DATA")
+    keep = {f"{r['id']}.bin" for r in manifest["regions"] if r["kind"] not in built_kinds}
     for stale in RAW_DIR.glob("*.bin"):
         if stale.name not in keep:
             stale.unlink()
     for region in manifest["regions"]:
-        if region["kind"] in ("MATCHING_C", "STRUCTURED_DATA"):
-            continue   # rebuilt from source by tools/verify_sources.py; no raw fallback
+        if region["kind"] in built_kinds:
+            continue   # rebuilt from source/codec (verify_sources.py, structured.py); no raw fallback
         chunk = data[region["start"]:region["end"]]
         out_path = RAW_DIR / f"{region['id']}.bin"
         out_path.write_bytes(chunk)

@@ -13,6 +13,9 @@ regions are coalesced. Extents must coincide with census function
 boundaries. Then extract_raw.py + reconstruct.py run; any failure restores
 the previous manifest.
 
+src/asm/*.asm (hand-written assembly) take a separate, verification-only
+path: see verify_asm() below; their report goes to <json stem>_asm.json.
+
 Usage: python tools/verify_sources.py [--sync] [--json build/verify.json]
 """
 from __future__ import annotations
@@ -54,14 +57,18 @@ def verify_all():
     return results
 
 
-def sync_manifest(results):
+ASM_RANGE_CS = (0x6F25, 0x9413)   # hand-written assembly (docs/function-census.md, layout/assembler.json)
+
+
+def sync_manifest(results, asm_results=()):
     bounds = mf.census_boundaries()
     manifest = mf.load_manifest()
     backup = mf.MANIFEST_PATH.read_text()
     # 1. dissolve existing MATCHING_C regions back into RAW_UNKNOWN
     regions = []
     for r in sorted(manifest["regions"], key=lambda r: r["start"]):
-        if r["kind"] == "MATCHING_C":
+        if r["kind"] in ("MATCHING_C", "MATCHING_ASM") or (
+                r["kind"] == "PADDING" and r.get("padding_reason") == "tlink_word_align_asm"):
             r = {"id": "tmp", "start": r["start"], "end": r["end"], "kind": "RAW_UNKNOWN",
                  "classification": "unknown"}
         if regions and regions[-1]["kind"] == "RAW_UNKNOWN" and r["kind"] == "RAW_UNKNOWN" \
@@ -95,7 +102,44 @@ def sync_manifest(results):
         if b < old["end"]:
             new.append({**old, "start": b})
         regions[idx:idx + 1] = new
+    # 3. carve each EXACT assembly module (its whole _TEXT extent)
+    image = mf.unpacked_bytes()
+    for res in sorted((r for r in asm_results if r["verdict"] == "EXACT"), key=lambda r: r["cs_start"]):
+        if not (ASM_RANGE_CS[0] <= res["cs_start"] and res["cs_end"] <= ASM_RANGE_CS[1]):
+            raise SystemExit(f"{res['source']}: outside the assembly range")
+        a, b = res["cs_start"] + 0x200, res["cs_end"] + 0x200
+        idx = next((i for i, r in enumerate(regions)
+                    if r["kind"] == "RAW_UNKNOWN" and r["start"] <= a and b <= r["end"]), None)
+        if idx is None:
+            raise SystemExit(f"{res['source']}: [{a:#x},{b:#x}) is not inside one RAW_UNKNOWN region")
+        old = regions[idx]
+        stem = pathlib.Path(res["source"]).stem
+        new = []
+        if old["start"] < a:
+            new.append({**old, "end": a})
+        new.append({
+            "id": stem, "start": a, "end": b, "kind": "MATCHING_ASM", "classification": "code",
+            "source": res["source"], "assembler": f"{res.get('assembler')} {res.get('options')}",
+            "matching_status": "EXACT",
+            "matching_status_note": "tools/match_asm.py: strict link, every fixup resolved, "
+                                    f"{res['fixup_count']} fixups; module _DATA compared with DGROUP",
+            "artifact": f"build/matched/{stem}.bin",
+        })
+        if b < old["end"]:
+            new.append({**old, "start": b})
+        regions[idx:idx + 1] = new
+    # 4. a single zero byte right before an assembly module is TLINK's WORD
+    #    alignment of that module's _TEXT (TASM .MODEL small), not unknown code
+    for i, r in enumerate(regions[:-1]):
+        if (r["kind"] == "RAW_UNKNOWN" and r["end"] - r["start"] == 1
+                and regions[i + 1]["kind"] == "MATCHING_ASM" and image[r["start"]] == 0
+                and regions[i + 1]["start"] % 2 == 0):
+            r.update(kind="PADDING", classification="padding", padding_reason="tlink_word_align_asm",
+                     description="TLINK word alignment before a WORD-aligned TASM _TEXT")
     for r in regions:
+        if r["kind"] == "PADDING" and r.get("padding_reason") == "tlink_word_align_asm":
+            r["id"] = f"PAD_{r['start']:X}"
+            r["artifact"] = f"raw/{r['id']}.bin"
         if r["kind"] == "RAW_UNKNOWN":
             r["id"] = f"RAW_{r['start']:X}_{r['end']:X}"
             r["artifact"] = f"raw/{r['id']}.bin"
@@ -113,11 +157,66 @@ def sync_manifest(results):
         raise
 
 
+# ---------------------------------------------------------------------------
+# Hand-written assembly: src/asm/*.asm (separate path, verification only).
+#
+# Each module is assembled with the pinned assembler (layout/assembler.json,
+# tools/asm.py) and strictly matched by tools/match_asm.py (match_function's
+# link(), full SEGDEF extent, frame checks, _DATA compared with DGROUP). The
+# assembler's linked bytes go to build/matched/<stem>.bin, ready for
+# MATCHING_ASM regions. These results never feed --sync (the C carving
+# below); MATCHING_ASM manifest regions are applied separately.
+
+ASM_SRC = ROOT / "src" / "asm"
+
+
+def verify_asm():
+    import match_asm  # noqa: E402  (pulls in tools/asm.py only when needed)
+    sources = sorted(ASM_SRC.glob("*.asm"))
+    if not sources:
+        return []
+    results = match_asm.assemble_and_match(sources, work=ROOT / "build" / "verify_asm_batch")
+    OUT.mkdir(parents=True, exist_ok=True)
+    for src, r in zip(sources, results):
+        r["source"] = str(src.relative_to(ROOT)).replace("\\", "/")
+        linked = r.pop("linked", None)
+        if r["verdict"] == "EXACT":
+            (OUT / f"{src.stem}.bin").write_bytes(linked)
+    return results
+
+
+def report_asm(results) -> int:
+    bad = 0
+    for r in results:
+        if r["verdict"] == "EXACT":
+            data = ", ".join(f"{c['segment']} ds [{c['ds']:#06x},{c['ds'] + c['length']:#06x})"
+                             for c in r["data_checks"])
+            print(f"EXACT     {r['source']}  cs [{r['cs_start']:#06x},{r['cs_end']:#06x}) "
+                  f"{r['length']} bytes, {r['fixup_count']} fixups"
+                  + (f"; {data}" if data else "") + f" ({r['assembler']} {r['options']})")
+        else:
+            bad += 1
+            print(f"{r['verdict']:9s} {r['source']}  {r.get('diff_count', '')}")
+    if results:
+        print(f"{len(results) - bad}/{len(results)} assembly modules EXACT, "
+              f"{sum(r['length'] for r in results if r['verdict'] == 'EXACT')} bytes")
+    return bad
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--sync", action="store_true")
     ap.add_argument("--json", default=None)
+    ap.add_argument("--json-asm", default=None,
+                    help="report for src/asm/*.asm (default: <--json stem>_asm.json)")
     args = ap.parse_args()
+    asm_results = verify_asm()
+    asm_bad = report_asm(asm_results)
+    asm_json = args.json_asm or (str(pathlib.Path(args.json).with_name(
+        pathlib.Path(args.json).stem + "_asm.json")) if args.json else None)
+    if asm_json:
+        pathlib.Path(asm_json).write_text(json.dumps(
+            [{k: v for k, v in r.items() if k != "fixups"} for r in asm_results], indent=1))
     results = verify_all()
     bad = 0
     for r in results:
@@ -136,9 +235,11 @@ def main():
     if args.sync:
         if bad:
             raise SystemExit("refusing to sync: not every source is EXACT")
-        sync_manifest(results)
+        if asm_bad:
+            raise SystemExit("refusing to sync: not every assembly module is EXACT")
+        sync_manifest(results, asm_results)
         print("manifest synced; reconstruction exact")
-    sys.exit(1 if bad else 0)
+    sys.exit(1 if bad or asm_bad else 0)
 
 
 if __name__ == "__main__":

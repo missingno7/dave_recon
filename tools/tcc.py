@@ -25,11 +25,11 @@ BASE_FLAGS = "-c -ms -1- -f- -N -G"
 
 
 def assembler_dir() -> str:
-    """toolchain/ subdirectory holding the TASM used for inline asm."""
-    lock = ROOT / "layout" / "assembler.json"
-    if lock.exists():
-        return json.loads(lock.read_text()).get("toolchain_dir", "TASM20")
-    return "TASM20"
+    """toolchain/ subdirectory (DOS path) of the pinned TASM (layout/assembler.json),
+    used for inline-asm compiles -- the same assembler as the src/asm modules."""
+    lock = json.loads((ROOT / "layout" / "assembler.json").read_text())
+    sub = pathlib.PurePosixPath(lock["files"][0]["path"]).parent
+    return "ASM\\" + str(sub)
 
 
 def source_flags(text: str) -> str:

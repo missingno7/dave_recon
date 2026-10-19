@@ -7,6 +7,7 @@ Idempotent. Does three things, verifying hashes at every step:
    $DAVE_TOOLCHAIN_SRC, then C:/tools/borland-turbo-c++-1.00/files (see that
    directory's provenance.json: archive.org item borland-turbo-c-plus-plus).
    Every file listed in layout/toolchain.json is checked against its sha256.
+1b. Installs the pinned assembler (layout/assembler.json) into toolchain/ASM/.
 2. Copies the original game files into assets/ if missing, from
    $DAVE_ASSETS or D:/Prog/dave_recon/assets (the primary checkout), and
    checks them against docs/specimen-manifest.json's sizes/hashes.
@@ -30,7 +31,6 @@ LOCK = json.loads((ROOT / "layout" / "toolchain.json").read_text())
 TOOLCHAIN = ROOT / "toolchain"
 DEFAULT_TOOLCHAIN_SRC = pathlib.Path("C:/tools/borland-turbo-c++-1.00/files")
 DEFAULT_ASSETS = pathlib.Path("D:/Prog/dave_recon/assets")
-TASM20_SHA256 = "672cc3814fb66fcb73550aa5ad98049bb52ebcd66c66dcdedbe81d83335e62ff"  # Turbo Assembler 2.0
 
 ASSET_SHA256 = {
     "DAVE.EXE": "1ae779823df27f2c6ae03b2e7d2a8c154d4189a5074d444827783fb2f1f92a0a",
@@ -68,15 +68,6 @@ def install_toolchain():
         shutil.copyfile(lz_src, lz_dst)
     if lz_dst.exists() and sha256(lz_dst) != packer["sha256"]:
         raise SystemExit("toolchain/LZEXE/LZEXE.EXE does not match layout/packer.json")
-    # TASM for inline-asm compiles (TCC restarts through TASM; tools/tcc.py)
-    tasm_src = pathlib.Path(os.environ.get("DAVE_TASM_SRC",
-                            "C:/tools/tasm-2.00/files/disk01/expanded/TASM")) / "TASM.EXE"
-    tasm_dst = TOOLCHAIN / "TASM20" / "TASM.EXE"
-    if not tasm_dst.exists() and tasm_src.exists():
-        tasm_dst.parent.mkdir(exist_ok=True)
-        shutil.copyfile(tasm_src, tasm_dst)
-    if not tasm_dst.exists() or sha256(tasm_dst) != TASM20_SHA256:
-        raise SystemExit("toolchain/TASM20/TASM.EXE missing or not TASM 2.0 (set DAVE_TASM_SRC)")
     print("toolchain: ok" + ("" if lz_dst.exists() else " (LZEXE missing: packing tests skip)"))
 
 
@@ -104,7 +95,33 @@ def unpack():
     print("unpacked image: ok")
 
 
+def install_assembler():
+    """The pinned assembler for src/asm/*.asm (layout/assembler.json "files"),
+    copied from its local extracted source into toolchain/ASM/ and hash-checked.
+    The other candidates listed there are copied too when present (they are
+    only used by identification experiments, tools/asm_identify.py)."""
+    cfg = json.loads((ROOT / "layout" / "assembler.json").read_text())
+    for entry in cfg["files"]:
+        dst = TOOLCHAIN / "ASM" / entry["path"]
+        if not dst.exists():
+            src = pathlib.Path(entry["source"])
+            if not src.exists():
+                raise SystemExit(f"no assembler at {src}; see layout/assembler.json")
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dst)
+        if sha256(dst) != entry["sha256"]:
+            raise SystemExit(f"toolchain/ASM/{entry['path']} does not match its pinned sha256")
+    for key, entry in cfg.get("candidates_installed_for_experiments", {}).items():
+        src = pathlib.Path(entry["source"])
+        dst = TOOLCHAIN / "ASM" / key / src.name
+        if not dst.exists() and src.exists() and sha256(src) == entry["sha256"]:
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dst)
+    print("assembler: ok")
+
+
 if __name__ == "__main__":
     install_toolchain()
+    install_assembler()
     install_assets()
     unpack()

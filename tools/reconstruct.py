@@ -70,12 +70,13 @@ def validate_ownership(manifest):
 
 
 def region_bytes(region):
-    if region["kind"] == "MATCHING_C":
-        # Matched C regions are rebuilt from the compiler's output, linked and
-        # verified by tools/verify_sources.py -- never from a raw extract.
+    if region["kind"] in ("MATCHING_C", "MATCHING_ASM"):
+        # Matched C / assembly regions are rebuilt from the compiler's or
+        # assembler's output, linked and verified by tools/verify_sources.py
+        # -- never from a raw extract.
         built = ROOT / "build" / "matched" / f"{region['id']}.bin"
         if not built.exists():
-            raise SystemExit(f"missing compiled bytes for MATCHING_C region {region['id']!r}: "
+            raise SystemExit(f"missing compiled bytes for {region['kind']} region {region['id']!r}: "
                              f"run tools/verify_sources.py first")
         data = built.read_bytes()
         if len(data) != region["end"] - region["start"]:

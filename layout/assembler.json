@@ -1,0 +1,34 @@
+{
+  "description": "Assembler of the hand-written modules src/asm/*.asm (cs [0x6f26,0x9413), between the compiled C and CS.LIB). Driven by tools/asm.py under DOSBox-X; installed into the git-ignored toolchain/ASM/<assembler>/ by tools/bootstrap.py. Evidence reproducible with tools/asm_identify.py --modules.",
+  "assembler": "TASM200",
+  "options": "/mx",
+  "options_note": "Single pass (no /m): TASM 2.0 with /m2 removes the forward-jump NOPs and mismatches both modules (2383 / 3769 differing bytes). /mx (case-sensitive publics, for linking with Turbo C) is not observable in the bytes.",
+  "files": [
+    {"path": "TASM200/TASM.EXE", "sha256": "672cc3814fb66fcb73550aa5ad98049bb52ebcd66c66dcdedbe81d83335e62ff",
+     "source": "C:/tools/tasm-2.00/files/disk01/expanded/TASM/TASM.EXE",
+     "banner": "Turbo Assembler  Version 2.0  Copyright (c) 1988, 1990 Borland International",
+     "provenance": "C:/tools/tasm-README.md (WinWorld 'Borland Turbo Assembler 2.0 (5.25-360k)', TASM.ZIP expanded with Borland UNZIP 2.0)"}
+  ],
+  "candidates_installed_for_experiments": {
+    "TASM100": {"source": "C:/tools/tasm-1.00/files/disk04/TASM.EXE", "sha256": "754b70821e4bac4997f398e3bdcee0f046a42cc3dad89cfbe0138f67d5b6142b"},
+    "TASM101": {"source": "C:/tools/tasm-1.01/files/disk01/TASM.EXE", "sha256": "c58db9e628469769f8ddd69a9288d333d5875558c51925d7e8218a66c205a549"},
+    "TASM201": {"source": "C:/tools/tasm-2.01/files/disk01/expanded/TASM/TASM.EXE", "sha256": "48dd9b48dd83a0041ea4b820379146b10de5f44b3e2633778a35d062f2e1814c"},
+    "MASM400": {"source": "C:/tools/masm-4.00/files/MASM.EXE", "sha256": "6a32bdafb3a79ad9bfa8bfc92762bd7f450baaca242ef0e1c87951ae83df4c52"},
+    "MASM500": {"source": "C:/tools/masm-5.00/files/MASM.EXE", "sha256": "085e0758fa776182da1281e0d75bac8a651e38a40191b5d865ba7a2b443e84b7"},
+    "MASM510": {"source": "C:/tools/masm-5.10/files/MASM.EXE", "sha256": "233120302473749eafe9a54a30f8bda0127140c44346e5bcc047d113828a741e"},
+    "MASM51A": {"source": "C:/tools/masm-5.10a/files/MASM.EXE", "sha256": "245b608e0ba51a815ec9501e657e534b4a39ed793824b5eff7267e6e5be20391"}
+  },
+  "evidence": [
+    "Forward jumps to near labels are EB xx 90 (cs 747a, 755f, 7568, 75a2, 7979, 7984, 83b7): a one-pass assembler that reserved 3 bytes. Rules out MASM 6.x and TASM /m (multi-pass); consistent with MASM 4/5 and TASM 1.x/2.x single pass.",
+    "cs 750a: 9C 0E E8 0A 00 90 = pushf; push cs; call near Int8ISR; nop. Only TASM 2.0 / 2.01 turn a forward `call far ptr` to a procedure in the same segment into PUSH CS / CALL NEAR / NOP; TASM 1.0, 1.01 and MASM 4.0 / 5.0 / 5.1 / 5.1A all emit 9A (far call + base16 fixup, which would also need an MZ relocation at cs 750e that the image does not have).",
+    "src/asm/lowlevel.asm and src/asm/tiles.asm are EXACT under TASM 2.0 and under TASM 2.01; lowlevel.asm is MISMATCH under TASM 1.0 and 1.01 (the far call). No construct in the game distinguishes 2.0 from 2.01; 2.0 is pinned as the release contemporary with Turbo C++ 1.0 (May 1990, the pinned compiler), 2.01 being its later bug-fix release.",
+    "Both modules start word aligned after a single 00 TLINK pad byte (cs 6f25 after the last C function, cs 7e59 between the modules): _TEXT is WORD aligned, as with TASM .MODEL small (or explicit `segment word`). Their _DATA is also word aligned (pad ds 132d before lowlevel's data, ds 13a9 between the modules, ds 1439 after tiles' data).",
+    "Every one of the 14 MZ relocations inside the assembly range (cs 7520 ... 940e) is a `mov ax,DGROUP` base16 fixup of one of the two modules; none is left over."
+  ],
+  "rejected": [
+    {"name": "TASM 1.0 / 1.01", "why": "forward `call far ptr` assembles to 9A (5-byte far call with a segment fixup), not 0E E8 xx xx 90 (cs 750a)"},
+    {"name": "MASM 4.0 / 5.0 / 5.1 / 5.10A", "why": "same 9A far call; MASM 4.0/5.1/5.10A additionally emit 81 /7 iw for a forward-EQU immediate where TASM and MASM 5.0 emit 83 /7 ib + 90 (probe only, no instance in the game). The sources also use TASM LOCALS (@@ labels)."},
+    {"name": "MASM 6.0", "why": "not run (ML needs its DOS extender); it optimizes jump lengths, so it cannot produce the EB xx 90 forward jumps"},
+    {"name": "TASM 2.0 /m (multi-pass)", "why": "removes the forward-jump NOPs; both modules mismatch"}
+  ]
+}

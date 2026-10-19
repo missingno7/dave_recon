@@ -70,7 +70,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "2d404d6cce643ad23496f824169939db057b08cba6c56099c3ffa5749b75170e",
+      "object_sha256": "3104221bfb466304bbb339093082f5d4637772766e2e3ea1a1a714d32224e3b3",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 30 fixups, 0 differing bytes",
       "artifact": "build/matched/F_0439.bin"
@@ -86,7 +86,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "086ff20a73752fb413b50bf1d83c38d12301516e7a874c6e75dc13b959225795",
+      "object_sha256": "644d50774ab5e5069a57b92e53699d36138b8cf8d92f5fb6e797b1bebb575839",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
       "artifact": "build/matched/F_04D2.bin"
@@ -102,7 +102,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "c58fe98f9a760397a573061b4199c8d6f6b13277a1488e63dfdaac079ec52a2d",
+      "object_sha256": "e4954d7f56047b91bf5f8401b9db9f1a85a5cf9a8319b1fcdc33dcb66d35624f",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 226 fixups, 0 differing bytes",
       "artifact": "build/matched/F_04FC.bin"
@@ -118,7 +118,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "69e3ea6e9805c05c133fe01765248380efc482a7d71ebd7ce715ad3040c2816a",
+      "object_sha256": "ca8521c1efce4d126f39b4d699f3772d2ec5bcd7ad46999f2bc082d67d820a7b",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 10 fixups, 0 differing bytes",
       "artifact": "build/matched/F_0DFB.bin"
@@ -134,7 +134,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "21abf1009af1ad9b86023f57c8baa2c64b5ae3a7935eccbb6484c2583587caf8",
+      "object_sha256": "88f94dca3fbf891d0b964640a63fe429b8f75a4db0e11648ec9795e87ce47f11",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 18 fixups, 0 differing bytes",
       "artifact": "build/matched/F_0E57.bin"
@@ -150,7 +150,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "8c825bb8832afab4d51d8559d9be3d4958190afd53cd68c02e0cbe9fa57e9270",
+      "object_sha256": "11b061ff968c89591440caab54ad8ef6b0b8c3d4fc942a76a586eeeca8a98095",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 138 fixups, 0 differing bytes",
       "artifact": "build/matched/F_0EDF.bin"
@@ -166,7 +166,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "0d2b8f71e843ee9a602285c0cf98e4eab8b43f70879dd10938e8af286244d719",
+      "object_sha256": "2df67fd3ab2c5444c5c5204ed9381ea3248ceb638c7bf1190663e1ba0eeccfaf",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 13 fixups, 0 differing bytes",
       "artifact": "build/matched/F_124B.bin"
@@ -182,7 +182,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "59bcf6e2472b1853baa208d1a9efbd9fafba5be253fe937a142073baaed8b59a",
+      "object_sha256": "341112a1750ac74c5e3cc5dab663d6edd07cb81c22c87b70035511c2f748b257",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 14 fixups, 0 differing bytes",
       "artifact": "build/matched/F_12B9.bin"
@@ -198,7 +198,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "bd343684160a8476e432f203094a3fdbe1858a790571d37bc6532bc35f7e3b56",
+      "object_sha256": "fd9a8680243518bf64233ab625b2f09f89be24c4768d24802920f5a8153d3e7e",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 30 fixups, 0 differing bytes",
       "artifact": "build/matched/F_1321.bin"
@@ -214,7 +214,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "730caeae1e9d64b010d53e423d8e6a7b688d7cd8fc4136067bfedd3603d1a2f0",
+      "object_sha256": "4091ef1b71dd618045e4c8f77106c1829b15b1133ab4a35347616878fe456db7",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 44 fixups, 0 differing bytes",
       "artifact": "build/matched/F_13FF.bin"
@@ -230,7 +230,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "e0d44219f8e601adb8fb5a5926dbd12a179ac7f98f645c69cd86d8f0ae72a9f1",
+      "object_sha256": "a404fa672626f0d9dea990491f8cec666fd04c0bf12422bac7e5b5b5f2039682",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
       "artifact": "build/matched/F_156E.bin"
@@ -246,7 +246,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "34854fb663ed510618d99dc373703908b1f0bf64abe3722a47607d91991b019a",
+      "object_sha256": "84ae0a4f8d71e9edfc7324baba76e0fbedcf1d0308bbc5c9043c5ee77277117d",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 70 fixups, 0 differing bytes",
       "artifact": "build/matched/F_15A5.bin"
@@ -262,7 +262,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "d2e5fe45167ddd3f56ad582279bc559692bb0b10e164062fc964939b61f1e094",
+      "object_sha256": "4b3cb0346ede7e9c9789b9070b2fdaf31709c74ea4539857f6afa0a1f6cf52ba",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 29 fixups, 0 differing bytes",
       "artifact": "build/matched/F_1780.bin"
@@ -278,7 +278,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "9bec431ea66819868e55784a806d68f943ecfcb650e53c98acfc37e5e8d4034e",
+      "object_sha256": "96e5043df501c1e059c19806e6d2de0fd98485c989c1fb89ac678865d9ecf70e",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 14 fixups, 0 differing bytes",
       "artifact": "build/matched/F_1830.bin"
@@ -294,7 +294,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "67065b97c7beb4be78604f4703f287269b382b342275164da34e25d99663e960",
+      "object_sha256": "19bd24ef493ff5967336e15f8544d6fdf26ca3b2099a07e68cd05658c1bd26db",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 30 fixups, 0 differing bytes",
       "artifact": "build/matched/F_18F6.bin"
@@ -310,7 +310,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "0fe2ad5a7344906c8dc4e331c0ed50f5ce87de8ec021e05cde15c38941c8cc08",
+      "object_sha256": "9b798f7368a0ad1540b0f616a60a5883dbc164072e7d2171d2ff5e5e3d92a40c",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
       "artifact": "build/matched/F_1A90.bin"
@@ -326,7 +326,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "46ef3e92a5b5dac6f902f533e49d65280c6bf8865be28a8d8a81d5a3fe11916d",
+      "object_sha256": "305144db0644e6e4d5e1c12d962faddb4ff6ebdc4a271d81981ce5610bb25eb9",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
       "artifact": "build/matched/F_1ACE.bin"
@@ -342,7 +342,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "b8fb46e6f42cc1c9338853b7c2dc3ba7ce2f1e06061c5fb389e28a2215085359",
+      "object_sha256": "b9587cb7b11bef1cb4e89e01fd7b217fdb2a74bb78f1e294e6ef667e543dda63",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
       "artifact": "build/matched/F_1B29.bin"
@@ -358,7 +358,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "40f7fee776951c9b95b9e1047343d09885710326cc192eb1586077e5286f2633",
+      "object_sha256": "5d56afeac7b257bdc9c77294bdb6e93b164e03268af301dab1c884bd98dc8f17",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
       "artifact": "build/matched/F_1B84.bin"
@@ -374,7 +374,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "2b6a1a7075f9daac1773b92147aec5689a2bc8b6df5041afc7b463331e7d0370",
+      "object_sha256": "dc12ece173b1bd2e8b00c553e0c01c71189ff729df527edb40ac34856bbabb7e",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
       "artifact": "build/matched/F_1BD6.bin"
@@ -390,7 +390,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "3239366c3bc136aaac8eb372c0ba287a120c5fd93269643129d6c055edb839fd",
+      "object_sha256": "353fd2a55c31c8a4388d779dc40d0d9c8836c2d6a87ab9b5b2aaa340fd8c7f57",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 9 fixups, 0 differing bytes",
       "artifact": "build/matched/F_1C28.bin"
@@ -406,7 +406,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "11dc7a9452a64af8aaad3ef97141b3f6b2f58caedde381eafad7379c9c1ff12a",
+      "object_sha256": "20347a0f27ce9cd2f0fc2c583788dbc821078631e5602d75bc4e4544e8d60f2a",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 33 fixups, 0 differing bytes",
       "artifact": "build/matched/F_1C6A.bin"
@@ -422,7 +422,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "84ae0ddc682e1418a5f9c5b67ae6ed2e02140ea81dde2c242b16b69516ab010d",
+      "object_sha256": "1bb2faa5ac6ccc10082f82b8821937ba750ac273c15d2e301a1cc0000a5252ff",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 575 fixups, 0 differing bytes",
       "artifact": "build/matched/F_1D16.bin"
@@ -438,7 +438,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "f3b2deb2b30f0424a2e60389d9aa7ae14aaff2c8555c0469417ed9ce2f1d5a9c",
+      "object_sha256": "9618a76ccc28876aa92a33364d96ffb2d2bef93de3de6f56d7cb4ace67d826ec",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 15 fixups, 0 differing bytes",
       "artifact": "build/matched/F_2C1F.bin"
@@ -454,7 +454,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "6add01ecb7a177a8f3050594d87771201affff488b5011c4bbeabd2d557acf77",
+      "object_sha256": "49ba5980f28562dda9ee29f0b102c5b4ec8a55c9ab89df0776552f169638cf51",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 9 fixups, 0 differing bytes",
       "artifact": "build/matched/F_2C70.bin"
@@ -470,7 +470,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "e4b407787e67cd3d0a160c918de444ffdd8f9053ba5365480cbb97e7deaa7d10",
+      "object_sha256": "b84388268e899e9fee9f8cda91f813deaacc5d3e710622fe4463ea0b337af7dd",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 8 fixups, 0 differing bytes",
       "artifact": "build/matched/F_2CD8.bin"
@@ -486,7 +486,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "bb28f0baea405d2fccc1783efa5ada8f235d26f4b2459d93af6337fa8c86b20b",
+      "object_sha256": "7234e8165ec56e21c78a0aeae1db13af27acc95d51ef2d44a6c41b02a0db6c79",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
       "artifact": "build/matched/F_2D38.bin"
@@ -502,7 +502,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "cadcb505d12f73d6871ae901da0f3ef674d9523a29d4d2719106fbfc5b819390",
+      "object_sha256": "5a5c5d2a1d14e105683cf4168cd0a48bd16ca44dbfbc34bfe7c428d85cb99155",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 65 fixups, 0 differing bytes",
       "artifact": "build/matched/F_2D87.bin"
@@ -518,7 +518,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "59452cea69c77f1a3d46bcfccb82163d09230784f863fbf680befd99bd751208",
+      "object_sha256": "661795c53360dc716c4ec066736b58f61c70eba3a0ab574c9f8e04e3726124ff",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 36 fixups, 0 differing bytes",
       "artifact": "build/matched/F_301B.bin"
@@ -534,7 +534,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "9d59aa5bc943df7f01102331d094471d199e268792600c287759830c4c435157",
+      "object_sha256": "417ace6ed1a54c2e72c8876cbe9f0368b41ad3c67c3fc2088c6f5c4b14a249b1",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 27 fixups, 0 differing bytes",
       "artifact": "build/matched/F_3205.bin"
@@ -550,7 +550,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "ce6a0715e90d2539ebf6cf51ed4be9866d7d9b727ffa210cf2a7be9c02ed73ed",
+      "object_sha256": "bf88e39553eca6a2f9cb140c0aa0f29066b077256cc67602d5ca91daed0f93d7",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 21 fixups, 0 differing bytes",
       "artifact": "build/matched/F_332C.bin"
@@ -566,7 +566,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "dd5d8d55b4241899aea7ad953c289afbc6393311ccd7dc9f5de3353c55aa9635",
+      "object_sha256": "f1407d9a0cd73282710951a224060f3f505dfdb4c19e3a846adb6596aa0c013d",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 15 fixups, 0 differing bytes",
       "artifact": "build/matched/F_3435.bin"
@@ -582,7 +582,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "05a2bc654dd624f5a81cf70e3b91759144414d9130665839c0c82c02f7be53cd",
+      "object_sha256": "022313d33f99efb7f54adca405d7764acbe3cea49f5157a683156c27a3b6528d",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 81 fixups, 0 differing bytes",
       "artifact": "build/matched/F_34CB.bin"
@@ -598,7 +598,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "db644b2b81a84fb452874dcf95fcec26b00a2dc6c7fbaad468549a764cc3699f",
+      "object_sha256": "7b1832f6e1a6e074a96e88b35b14bb4505d22713a8c0f963e971557a7c85cdb7",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 9 fixups, 0 differing bytes",
       "artifact": "build/matched/F_371F.bin"
@@ -614,7 +614,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "d99741cf630fa3fa06fcf7f27c55203e1b5a5055b3e00873822f6e8d6d327130",
+      "object_sha256": "861883a4041fdf068625f9ad65bf7c157f2a0ac998f01ae52a0531e9b97cf85d",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 13 fixups, 0 differing bytes",
       "artifact": "build/matched/F_376E.bin"
@@ -630,7 +630,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "39623364e66c39efb55cb9190b73c19dbc90f1d29b7aef74287b53b332f730af",
+      "object_sha256": "821324b2e30466e89278b95b0ae7b45893bed918076f3385a9c29cd09a48324e",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 87 fixups, 0 differing bytes",
       "artifact": "build/matched/F_37ED.bin"
@@ -646,7 +646,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "8181141def760e1b144799acbe9ebaddacba9dbd64577a0c81d410487702232c",
+      "object_sha256": "d36ffdea28ec69d0ae5f2ca2819c1129b1065b041c0e84bb6026ae4ce50c15f9",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 114 fixups, 0 differing bytes",
       "artifact": "build/matched/F_3BA3.bin"
@@ -662,7 +662,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "d2339c17677871f454a669d39bbf024ad3e0df13ef2b0fa671c99348c3969521",
+      "object_sha256": "6f4387965a6a61e610f34b211b920479ce3a0a5346c44ba9d4c9cff2f230625a",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 197 fixups, 0 differing bytes",
       "artifact": "build/matched/F_3FD5.bin"
@@ -678,7 +678,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "caa0138da41fbb240154aaae1fd73c75486e7d1b6afdc5ffc5dbf19980acc869",
+      "object_sha256": "d8c9958c88205d7cdfcea366bed7a291b634d0d4debbc883d66465f7e61e2a56",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 36 fixups, 0 differing bytes",
       "artifact": "build/matched/F_46B0.bin"
@@ -694,7 +694,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "3780cfade3a39baf9d8d24db768d4db35158ac0876d79f83bdfa239b9d3889e7",
+      "object_sha256": "a9a04ee37923ca26eb4d60be2d823a6c9c7c94ea70229b87f9dba6889889690c",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
       "artifact": "build/matched/F_47F8.bin"
@@ -710,7 +710,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "849ed50c208a65f537e1710679ddad5f44618e39212483bc99b1c1b5cdb793f2",
+      "object_sha256": "00368e5faae0091026034500dc70389b481c365ef87fbb8eb8359e79ab67a829",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
       "artifact": "build/matched/F_483F.bin"
@@ -726,7 +726,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "cfe11c4b1282e40a414fe65d9e4b86b4b3a43cacc5b57df2df84b6b34b904aca",
+      "object_sha256": "1e23277db133dff9933273d23f7b76cf6277e36d8726cff7d1bef75ca1e937fc",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 19 fixups, 0 differing bytes",
       "artifact": "build/matched/F_4886.bin"
@@ -742,7 +742,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "43d7cd78c4165745948b86fd062561390c2043892454e6bd18d3ad3d77e552c8",
+      "object_sha256": "2eb72a4a797910f425685c8abff05779709bebd48c2fee8f4f669e34ea9d7647",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 18 fixups, 0 differing bytes",
       "artifact": "build/matched/F_4997.bin"
@@ -758,7 +758,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "7212397531abeb3980985ac6a385a1b0c037563767dd70b337fb7e4044e18eee",
+      "object_sha256": "4dbf20c39c3b93a4f8a0c4a64cc064ad615db6afef2c95224b0d4f9ddb448ab7",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 121 fixups, 0 differing bytes",
       "artifact": "build/matched/F_4A27.bin"
@@ -774,7 +774,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "9eada14090b34370c248cd1e6817b9d9f4bc7a729c0e7728583b56c0c21a3a61",
+      "object_sha256": "864b7f413150c7227e1a1de35b9675f8ae2e1f1a06c474894ef0b0a1f213836e",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 19 fixups, 0 differing bytes",
       "artifact": "build/matched/F_4D9C.bin"
@@ -790,7 +790,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "80f7f2c90e02f632c7de76ecdeff7a5649951e8c0b657c1519692d96b2cca049",
+      "object_sha256": "c3242526f567ceaa27528cc415b60fa1000f288773a3bb00de00efce221e2690",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 86 fixups, 0 differing bytes",
       "artifact": "build/matched/F_4E69.bin"
@@ -806,7 +806,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "60dc0b7e04eb75f5055705fdb9d9d46a7cc71882f651153b14e521d2fa000308",
+      "object_sha256": "655cf87bc6200d798d1e0697c585651745b212896a066e228f416afc7f2dfdfd",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 43 fixups, 0 differing bytes",
       "artifact": "build/matched/F_519B.bin"
@@ -822,7 +822,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "85b74d7b065b05d7efc9f0742059cc892d808a91c43d36c9b5e523ed43bf6968",
+      "object_sha256": "634b42fb9dcfc2962bf53b545be45a2e9913c0943e5f49c3c902b801bfacbc8b",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 15 fixups, 0 differing bytes",
       "artifact": "build/matched/F_535A.bin"
@@ -838,7 +838,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "3a3091447185a22a03a5b7098b5a2bc3651ec103514db73e000e23b08fc973a0",
+      "object_sha256": "3eda6136df7c8ec564ca467d55fdcb7bea4cffc6ee59726d7a1ad52188a0eea0",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 57 fixups, 0 differing bytes",
       "artifact": "build/matched/F_53C3.bin"
@@ -854,7 +854,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "b8c1d4bcbf49d3c0637689f0629fa948b6308892aa6af15c2cdf9cb4012ce882",
+      "object_sha256": "22ccbde8e3a9ec2e3521a38dbfe1422287756530726f6c4e0fbc5ca7e2deeb36",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 16 fixups, 0 differing bytes",
       "artifact": "build/matched/F_55BC.bin"
@@ -870,7 +870,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "0aef9154c4ed150c3eb9e9ba55eba58bd1efaae4e248fe949f0cee442352af3a",
+      "object_sha256": "4e76cb1956edb9214fd7aca153fa9fc53d5e90733184540b5ee2a65ec179fbf9",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 53 fixups, 0 differing bytes",
       "artifact": "build/matched/F_564D.bin"
@@ -886,7 +886,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "55514d221eabd8631b136b7fc01df29b9b38011e1affa45cb011e6ed270cc2f7",
+      "object_sha256": "0fc83fd9017ba36b7b7e6895fad8b0219ad42bdbdc1e1bc02d8c65e5527f27fb",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 66 fixups, 0 differing bytes",
       "artifact": "build/matched/F_5815.bin"
@@ -902,7 +902,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "d8871c258915c10bcfba1387271c32c95c06a386a579915644d01d94bff6980f",
+      "object_sha256": "41127e1ddcad6406e93f3df90334be5a672bcb0741fd8d15906d8aedd6151624",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 40 fixups, 0 differing bytes",
       "artifact": "build/matched/F_59EC.bin"
@@ -918,7 +918,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "71992e5566751124b9212c13d33a50986ceca58039075696ee82d2b7f6419c67",
+      "object_sha256": "3d56723104edb66dc67de333738ff2c84293ed68a12f11e0feb55dcc6f528255",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 91 fixups, 0 differing bytes",
       "artifact": "build/matched/F_5B10.bin"
@@ -934,7 +934,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "c9a220da980fee38f80be41cd5d4ae7e8b3b36f90c3ef55908706e9fd6955078",
+      "object_sha256": "f96d926f31071dffabe15fe0bbcbd9a17439b86e07656d346be8a43e249a85b0",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 108 fixups, 0 differing bytes",
       "artifact": "build/matched/F_5DD5.bin"
@@ -950,7 +950,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "c7963c4630e59dccbe886676abe984d67114d5ab655e59b13f893a05d4fdaddd",
+      "object_sha256": "89afef87d91ec87817fba8ebcf37ed0f15b4b9055671d3e37f54c4e2500c1720",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 28 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6099.bin"
@@ -966,7 +966,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "697f2e4ba1ab47925c1c5f97e4ca5abf4d5b072dbc97ae5e4f10118d68c96878",
+      "object_sha256": "0adee0361625d3e1cd86b6c53ec512145ee40a1d48653058d8d90e8fc01faf88",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 10 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6213.bin"
@@ -982,7 +982,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "128c31d57de009b62bcedbe7b54db20a53a1984497c6660952baddac30469cdc",
+      "object_sha256": "8cdadecbb325a6ffe3c7b44eda3f611c1c8ffaac0b2a7daea02167ccfde98fac",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 11 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6293.bin"
@@ -998,7 +998,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "58e6157a53f3753823401ef28f24fff0354995b93274a4a475c55764bc909263",
+      "object_sha256": "9dfe28ee645c004d6527486067b7540a29bdc9292ad773676d2addf483a1c1ec",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
       "artifact": "build/matched/F_630B.bin"
@@ -1014,7 +1014,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "4d176528e1abf1a675b1f4ba6db1e76f9bb8ee4eb534213f4040651193340f2b",
+      "object_sha256": "cfd0894e066242e1480d138aee0fb29d277c50730059a8328362cd54eddd24f5",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6388.bin"
@@ -1030,7 +1030,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "b9c9439e91620c1ad9ca340d57277757578fd90d879dddb3fd77851084fe10f9",
+      "object_sha256": "3b020b8d547f422ee118244323970d21f4bacbf09318e32d95e2f54086a57958",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 33 fixups, 0 differing bytes",
       "artifact": "build/matched/F_63AF.bin"
@@ -1046,7 +1046,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "a87b81d8b79559ed11c16477364f8f1ed0e23a935f6779f1636410852216b090",
+      "object_sha256": "89fff26256eba445662703e6e84293abe11d68472dea1c8c022c4a98796cd5d0",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 21 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6505.bin"
@@ -1062,7 +1062,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "bef0712a9230333efb1daecd970e5c18f035934958433f3696921bb005b69c20",
+      "object_sha256": "752ed2c86e35c4730038337c8a73441a6633859df86812387d93e50402ac1876",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 5 fixups, 0 differing bytes",
       "artifact": "build/matched/F_664B.bin"
@@ -1078,7 +1078,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "9e4ad13b8fe7c6e84a5910382eac946af4feb42d9b9d28be12a4114863353a00",
+      "object_sha256": "bd8f89fc7a14f4bd322b7c12f4fc07ec44d5a4ec57d2475dc1b39dd85bcaa0f7",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 21 fixups, 0 differing bytes",
       "artifact": "build/matched/F_66F2.bin"
@@ -1094,7 +1094,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "0e005648b60d4e1299d4509e75ac7a1fcb3b582b39ffcf177b1176c89c4a9bd3",
+      "object_sha256": "db2e2c0ba7b55eb9f5e485329840acac6823caf08a759bb6a76e750d75a0a8f2",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 24 fixups, 0 differing bytes",
       "artifact": "build/matched/F_688C.bin"
@@ -1110,7 +1110,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "042f8d6625044aba71d30f56215ab7b787aadb4d1b866dc5d27ab14621ace462",
+      "object_sha256": "97ec674f06d24826dd4d5ed531298fc5a790dbb1afa0b455e19194e3fbf492ac",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 5 fixups, 0 differing bytes",
       "artifact": "build/matched/F_69B9.bin"
@@ -1126,7 +1126,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "16ee8562a33537849d5bddb926fd8923179bd42296464297d09b22f2005fa659",
+      "object_sha256": "e2b796311b8751d0bcc43ac9392ac3cc9ff7c3eeb1eaf8a38da8c331595f44c1",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 7 fixups, 0 differing bytes",
       "artifact": "build/matched/F_69D3.bin"
@@ -1142,7 +1142,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "2b899edf7c3e689483396f6ee559b9b7af245c7e923f9a34e501bded45a0d56a",
+      "object_sha256": "beb8c8d2c7b36c485b32282a1e4856def65bb3869b9556b052c8a46527e2a3de",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 7 fixups, 0 differing bytes",
       "artifact": "build/matched/F_69FB.bin"
@@ -1158,7 +1158,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "1c33a5db0fa89d7ff242801a8ddd49a8f61f0e38fc248f830ca14a1b04b2ecd7",
+      "object_sha256": "8dd5cebaa1d0ef202b763dc0fd9ede4eaef8b28fb52d6b3c8cef717ddca6421d",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 5 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6A26.bin"
@@ -1174,7 +1174,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "e836db46a0cba452be5e9cf3fca998fcd14dc0b5ce53ce8b9ea9c277143ddcaf",
+      "object_sha256": "0e8e27948c57e15159598e9326e1e1b7e8802a26ebd1a4ad34cebf42c05550ca",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 10 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6A62.bin"
@@ -1190,7 +1190,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "bdfe3900d33b97c383f575e0de43bf7c257b788039bf901bfd5a162b392e26ff",
+      "object_sha256": "d98410ab47d054fdd14a100f1e0679e7c1c9ded341c02a5c945b959234d48a7e",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 2 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6ADE.bin"
@@ -1206,7 +1206,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "2922774fd53504303a01d926953753f70b897e84e074579a903670817c61c435",
+      "object_sha256": "eb56cc9af6c6d8b34e847e5d2d1ab95f5b0110a1f8e3895033a5d0b903199719",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 2 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6B94.bin"
@@ -1222,7 +1222,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "fb1002c4b435bfa6d5e1a95c6263264e7cb0ef199cf9079e5e53a2856a251d3f",
+      "object_sha256": "a46a0e0f6e09c5bd63988961f1c267d0fda32741190933ff7767e616dc33f812",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 7 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6C1E.bin"
@@ -1238,7 +1238,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "a7b9e8bdf8a52b5a42afed0617f6ddb9cbc8cbf162a04731ac96cbcb6f30f914",
+      "object_sha256": "51c5c5a7d6471bd0dbc7a9f7e9ead60c42685fe52b7e8badccfb50c043d4fbed",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 18 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6C8A.bin"
@@ -1254,7 +1254,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "671e86a9ed92d7c992d20955f7e7f466da5287e1692293d7df8d0edbe6b1fbc0",
+      "object_sha256": "0a9e6d21c217ac09b47f9b5a51886362c752786c34c28607d3958b23c3165101",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 9 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6D64.bin"
@@ -1270,7 +1270,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "9f82e7e11fdc14ba4586b129a0927c159f6b098b3fa6d4eea8a6e77962d3dafd",
+      "object_sha256": "a6fb4d7eb55960aaa745453b95e280b583a5a1e38ec30139e23f38929f7acbf2",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 18 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6DC2.bin"
@@ -1286,7 +1286,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "e1d13cbf1dc7310f65a8afd20aeae8469141c0edcc2929c4c436ee160e88147e",
+      "object_sha256": "df8ae752cbd479b593a7efbfb380ee3d70a8d870948f236d4c9afd51d54c5b63",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 7 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6EB9.bin"
@@ -1302,7 +1302,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "3550355eed92c93511589606e1832c132a54d30b4109d79d1438164b7cdfc621",
+      "object_sha256": "c5f9aa0c6e0b38d0a057cd4b5e786c616a14a11620529cc5c7ed1f1323a10f56",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 3 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6EF1.bin"
@@ -1318,7 +1318,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "a4b3eccda1a77b8679172b01e23e4d8adc4f7dbec99e3f4b6a9d65d0b6fddf4b",
+      "object_sha256": "cfe7349c63da564010bc2618aef3f1469a3a2284ab653a1c22c2f21385065655",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6F3B.bin"
@@ -1334,7 +1334,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "dcbeef73fd1b14e67ca9d8afc4e06f0e0a3c4aa35a5721ba35f50dbb68d14df5",
+      "object_sha256": "ddb966eb5fe2b925104b5fe164ed14fc31effef3dd0438647e37f58118fe5243",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6F9D.bin"
@@ -1350,7 +1350,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "8728e0f766796dd2b1d7088608894e039422a5d86dcd3b5d65c240fdeb43bc78",
+      "object_sha256": "ed90979552384fcf747793467550d9fb432b13c59792da797b38f75cf3089dae",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6FD1.bin"
@@ -1366,7 +1366,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "df65608e1590c2d1c24f604a3fa7f45df8c59727ca1254fef04921cd3310d43c",
+      "object_sha256": "fcb8959eb12e99c108bf7abc3fe8a90a327cfe2ad08e955032e826dc6f7dbede",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 15 fixups, 0 differing bytes",
       "artifact": "build/matched/F_7005.bin"
@@ -1382,7 +1382,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "07e74a8505895f23baf4c1466abcaeb44fa2cb91c73640915fbd36c8dd1f1f92",
+      "object_sha256": "538e0383da0a0c567d54eb2c4bc82def446adfeb1e09a10b4f7e8e7ed6824309",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 11 fixups, 0 differing bytes",
       "artifact": "build/matched/F_7071.bin"
@@ -1398,7 +1398,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "3651ad920f33272f0b1c3c0c3fa1f639c684af0337df8ad6ed3ec02ca1b27bbd",
+      "object_sha256": "5d70ca98941ff2ce30ce52d94f36609e55a5ae3f852455c81db24d91a45b1b9d",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
       "artifact": "build/matched/F_70CB.bin"
@@ -1414,18 +1414,54 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "b774145d0b3128624b484ea9021baae96204df218e6a98c8461eb3c1efccdc90",
+      "object_sha256": "980b50470d14d99ee33aa845e2647853b12ec6e6e58dcb3d5feffc2b3a161ca8",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
       "artifact": "build/matched/F_70F8.bin"
     },
     {
-      "id": "RAW_7125_9613",
+      "id": "PAD_7125",
       "start": 28965,
+      "end": 28966,
+      "kind": "PADDING",
+      "classification": "padding",
+      "padding_reason": "tlink_word_align_asm",
+      "description": "TLINK word alignment before a WORD-aligned TASM _TEXT",
+      "artifact": "raw/PAD_7125.bin"
+    },
+    {
+      "id": "lowlevel",
+      "start": 28966,
+      "end": 32857,
+      "kind": "MATCHING_ASM",
+      "classification": "code",
+      "source": "src/asm/lowlevel.asm",
+      "assembler": "TASM200 /mx",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/match_asm.py: strict link, every fixup resolved, 195 fixups; module _DATA compared with DGROUP",
+      "artifact": "build/matched/lowlevel.bin"
+    },
+    {
+      "id": "PAD_8059",
+      "start": 32857,
+      "end": 32858,
+      "kind": "PADDING",
+      "classification": "padding",
+      "padding_reason": "tlink_word_align_asm",
+      "description": "TLINK word alignment before a WORD-aligned TASM _TEXT",
+      "artifact": "raw/PAD_8059.bin"
+    },
+    {
+      "id": "tiles",
+      "start": 32858,
       "end": 38419,
-      "kind": "RAW_UNKNOWN",
-      "classification": "unknown",
-      "artifact": "raw/RAW_7125_9613.bin"
+      "kind": "MATCHING_ASM",
+      "classification": "code",
+      "source": "src/asm/tiles.asm",
+      "assembler": "TASM200 /mx",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/match_asm.py: strict link, every fixup resolved, 114 fixups; module _DATA compared with DGROUP",
+      "artifact": "build/matched/tiles.bin"
     },
     {
       "id": "LIB_ATEXIT_9613",
