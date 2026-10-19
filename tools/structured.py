@@ -7,11 +7,21 @@ build/ by decoding the original files once (`materialise`), and the encoder
 is the component under test.
 
 Generators:
-  levels   g_levels, DS:0x173A, 10 x 0x500 records (tools/levels.py):
-           build/levels/levelNN.json -> bytes
+  levels       g_levels, DS:0x173A, 10 x 0x500 records (tools/levels.py):
+               build/levels/levelNN.json -> bytes
+  demos        far segment 0x0B31, attract-mode recordings (tools/demos.py)
+  tileset_cga  far segment 0x0C42, RLE CGA tileset (tools/tilesets.py + rle.py)
+  tileset_vga  far segment 0x11EF, RLE VGA tileset (tools/tilesets.py + rle.py)
+  sounds       far segment 0x1C2E, SPK PC-speaker bank (tools/sounds.py)
+  picfile_cga  far segment 0x1D58, config-screen font + icons (tools/picfiles.py)
+  picfile_ega  far segment 0x1E84
+  picfile_vga  far segment 0x20CC
+The far-segment extents come from the MZ relocation table (tools/far_data.py)
+and span whole segments, alignment padding included.
 
 Usage:
     python tools/structured.py promote levels   # carve the region into the manifest
+    python tools/structured.py check            # every generator == original bytes
 """
 from __future__ import annotations
 
@@ -41,10 +51,46 @@ def _levels_generate() -> bytes:
     return levels.encode_levels(recs)
 
 
+def _far(name: str, generate, description: str) -> dict:
+    def extent():
+        import far_data
+        return far_data.extent(name, EXE)
+    return {"extent": extent, "generate": generate, "description": description}
+
+
+def _gen(module: str, *args):
+    def generate() -> bytes:
+        return __import__(module).generate(*args)
+    return generate
+
+
 GENERATORS = {
     "levels": {"extent": _levels_extent, "generate": _levels_generate,
                "description": "g_levels: 10 level records (256-byte monster path, 100x10 tile map, "
                               "24 unread bytes), DS:0x173A; codec tools/levels.py"},
+    "demos": _far("demos", _gen("demos"),
+                  "far segment 0x0B31: 5 attract-mode demo recordings (start level + input "
+                  "event stream) + zero padding; codec tools/demos.py"),
+    "tileset_cga": _far("tileset_cga", _gen("tilesets", "cga"),
+                        "far segment 0x0C42: CGA tileset (53 tiles + 186 sprites, 2bpp), compressed "
+                        "with the game's own RLE encoder (0x7F41), + its 1 over-read byte + zero "
+                        "padding; codec tools/tilesets.py, tools/rle.py"),
+    "tileset_vga": _far("tileset_vga", _gen("tilesets", "vga"),
+                        "far segment 0x11EF: VGA tileset (53 tiles + 105 sprites, 8bpp), compressed "
+                        "with the game's own RLE encoder (0x7F41), + its 22 over-read bytes + zero "
+                        "padding; codec tools/tilesets.py, tools/rle.py"),
+    "sounds": _far("sounds", _gen("sounds"),
+                   "far segment 0x1C2E: SPK PC-speaker bank, 63 directory entries (12 sounds), "
+                   "PIT divisor lists + zero padding; codec tools/sounds.py"),
+    "picfile_cga": _far("picfile_cga", _gen("picfiles", "cga"),
+                        "far segment 0x1D58: CGA config-screen picfile (header, 8x8 font, 13 "
+                        "32x24 icons, 2bpp); codec tools/picfiles.py"),
+    "picfile_ega": _far("picfile_ega", _gen("picfiles", "ega"),
+                        "far segment 0x1E84: EGA config-screen picfile (header, 8x8 font, 13 "
+                        "32x24 icons, 4 planes); codec tools/picfiles.py"),
+    "picfile_vga": _far("picfile_vga", _gen("picfiles", "vga"),
+                        "far segment 0x20CC: VGA config-screen picfile (header, 8x8 font, 13 "
+                        "32x24 icons, 8bpp); codec tools/picfiles.py"),
 }
 
 
@@ -90,6 +136,21 @@ def promote(name: str):
     print(f"promoted {name}: [{a:#x},{b:#x})")
 
 
+def check() -> int:
+    exe = EXE.read_bytes()
+    rc = 0
+    for name, g in GENERATORS.items():
+        a, b = g["extent"]()
+        ok = generate(name) == exe[a:b]
+        print(f"{name:12s} [{a:#07x},{b:#07x}) {b - a:6d} bytes  {'EXACT' if ok else 'MISMATCH'}")
+        rc |= not ok
+    return rc
+
+
 if __name__ == "__main__":
     if sys.argv[1:2] == ["promote"]:
         promote(sys.argv[2])
+    elif sys.argv[1:2] == ["check"]:
+        sys.exit(check())
+    else:
+        sys.exit(__doc__)

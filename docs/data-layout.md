@@ -3,7 +3,8 @@
 Machine-readable companion: [`data-layout.json`](data-layout.json), regenerated
 by `python tools/data_layout.py` (and checked with `--check`). Level data has
 its own decoder/encoder, `tools/levels.py`, proven by
-`tests/test_levels_roundtrip.py`. No derived game data (level contents, text,
+`tests/test_levels_roundtrip.py`. Every far data segment has one too (section
+5); all of them are STRUCTURED_DATA regions in `layout/manifest.json`. No derived game data (level contents, text,
 graphics) is committed; the JSON holds only offsets, sizes, counts and hashes.
 
 Coordinates: **file** = offset in `build/DAVE_unpacked.exe` (MZ header 0x200
@@ -22,8 +23,8 @@ meaningful content stops; the rest is alignment padding or unread leftovers.
 |---|---|---|---|---|---|
 | `_TEXT` (0x0000) | 0x00200-0x0B510 | 45840 | 0x0B50B | C0S 0x200-0x439, game code 0x439-0x9613, CS.LIB runtime 0x9613-0xB50B; 5 zero bytes of padding | [V] |
 | FAR 0x0B31 | 0x0B510-0x0C620 | 4368 | 0x0C616 | Attract-mode **demo recordings**: u32 count = 5, u32 offsets[5], then per demo: start-level byte + recorded input stream; 10 zero bytes of padding | [V] |
-| FAR 0x0C42 | 0x0C620-0x120F0 | 23248 | 0x120E3 | **CGA tileset, RLE-compressed**: u32 unpacked length 27818 + RLE stream (23231 bytes). Unpacks to 239 resources, the first 53 being 64-byte 16x16 2bpp tiles | [V] |
-| FAR 0x11EF | 0x120F0-0x1C4E0 | 41968 | 0x1C4C6 | **VGA tileset, RLE-compressed**: u32 71238 + RLE stream (41938 bytes). Unpacks to 158 resources, the first 53 being 256-byte 16x16 8bpp tiles | [V] |
+| FAR 0x0C42 | 0x0C620-0x120F0 | 23248 | 0x120E5 | **CGA tileset, RLE-compressed**: u32 unpacked length 27818 + RLE stream (23233 bytes, of which the decoder reads 23231). Unpacks to 239 resources, the first 53 being 64-byte 16x16 2bpp tiles | [V] |
+| FAR 0x11EF | 0x120F0-0x1C4E0 | 41968 | 0x1C4DD | **VGA tileset, RLE-compressed**: u32 71238 + RLE stream (41961 bytes, of which the decoder reads 41938). Unpacks to 158 resources, the first 53 being 256-byte 16x16 8bpp tiles | [V] |
 | FAR 0x1C2E | 0x1C4E0-0x1D780 | 4768 | 0x1D774 | **PC-speaker sounds**, id/Softdisk `SPK\0` format: u32 length 4756, 63 x 16-byte directory (12 named sounds + 51 `->UNUSED<-`), u16 PIT divisor data, 12 zero bytes of padding | [V] |
 | FAR 0x1D58 | 0x1D780-0x1EA40 | 4800 | end | **Shell picfile, CGA**: 0x100-byte header, 128-char 8x8 font, 13 control-panel pictures (32x24) | [V] |
 | FAR 0x1E84 | 0x1EA40-0x20EC0 | 9344 | end | **Shell picfile, EGA**: same, 4 planes; header pointers aim at EGA VRAM (A200:0...) | [V] |
@@ -38,7 +39,7 @@ How the segments were identified:
   `rand() % es:[0]`, sets `g_demo_pos = es:[4+4*i]` and
   `g_current_level = es:[g_demo_pos++]`, then sets `g_demo_mode` (DS:0xAA) = 1.
   F_4A27 (0x4A69..0x4AF0) decodes the input stream byte by byte:
-  - `0x20 n` repeats the previous input for n frames.
+  - `0x20 n`: the next n frames get no input (direction 8, no buttons).
   - `0x30` ends the demo.
   - Any other byte: the low nibble is a direction (0-7, 8 = none), and bits 7
     and 6 are the buttons.
@@ -59,8 +60,9 @@ How the segments were identified:
   53 leading fixed tiles. Rendering them (with the VGA palette at DS:0x143A)
   gives the recognisable game tiles: door, jetpack, trophy, gun, gems.
   Some bytes after each stream are never read: CGA has 2 non-zero bytes then
-  zeros, and VGA has 23 non-zero bytes that look like leftover x86 code from
-  the packing tool. **[V]** That they are tool leftovers is **[H]**.
+  zeros, and VGA has 23 non-zero bytes. They are the last chunks the game's
+  own encoder (0x7F41) emitted after reading past the end of its source
+  buffer; see section 5.3. **[V]**
 - **0x1C2E sounds.** In F_519B at 0x51D3, `g_sound_data` (DS:0x137A) is set
   to `MK_FP(0x1C2E,0)`. The `SPK\0` magic, the u32 length 4756, and 12 zero
   bytes of padding together add up exactly to the 4768-byte segment.
@@ -282,23 +284,258 @@ The text itself is not committed.
   immediate and the relocated g_levels init stub.
 - `tools/data_layout.py` contains reference implementations of the RLE
   decompressor, the demo directory parser, the SPK directory parser and the
-  picfile header parser. It does not yet include encoders for those.
+  picfile header parser (used for this document's evidence only).
+- The far data segments have exact codecs, registered as generators in
+  `tools/structured.py` and listed in section 5.
+
+## 5. Far data segment formats (STRUCTURED_DATA)
+
+All seven far segments are owned by codecs. Each region spans a whole
+segment, from its paragraph to the next relocated paragraph, so alignment
+padding is included. `tools/far_data.py` derives the extents from the MZ
+relocation table: the far segments are the relocated values between 0 and
+`_INIT_`, and `_INIT_` is the segment C0S walks. Each codec decodes to
+`build/<name>/`, which is never committed, and encodes back to the exact
+bytes. Run `python tools/structured.py check` to compare every generator
+with the original image.
+
+| Region | File range | Bytes | Codec | Representation | Test |
+|---|---|---|---|---|---|
+| `DATA_DEMOS` | 0x0B510-0x0C620 | 4368 | `tools/demos.py` | `build/demos/demos.json` | `tests/test_demos_roundtrip.py` |
+| `DATA_TILESET_CGA` | 0x0C620-0x120F0 | 23248 | `tools/tilesets.py` + `tools/rle.py` | `build/tileset_cga/tileset.json` + 239 PNGs | `tests/test_tilesets_roundtrip.py` |
+| `DATA_TILESET_VGA` | 0x120F0-0x1C4E0 | 41968 | same | `build/tileset_vga/tileset.json` + 158 PNGs | same |
+| `DATA_SOUNDS` | 0x1C4E0-0x1D780 | 4768 | `tools/sounds.py` | `build/sounds/sounds.json` | `tests/test_sounds_roundtrip.py` |
+| `DATA_PICFILE_CGA` | 0x1D780-0x1EA40 | 4800 | `tools/picfiles.py` | `build/picfile_cga/picfile.json` + font.png + 13 icon PNGs | `tests/test_picfiles_roundtrip.py` |
+| `DATA_PICFILE_EGA` | 0x1EA40-0x20EC0 | 9344 | same | `build/picfile_ega/...` | same |
+| `DATA_PICFILE_VGA` | 0x20EC0-0x256C0 | 18432 | same | `build/picfile_vga/...` | same |
+
+Together these are 106,928 bytes, the whole former `RAW_B510_256C0`. In
+every PNG the pixel values are the stored colour indices, so the attached
+palette does not affect the bytes. The palettes are:
+
+- CGA: palette 1, high intensity.
+- EGA: the standard 16 colours; index = I<<3|R<<2|G<<1|B.
+- VGA: the game's `g_vga_palette`, DS:0x143A.
+
+### 5.1 Demos (0x0B31)
+
+```
++0          u32  count (5)
++4          u32  offsets[count]   from the segment start; offsets[0] = 4+4*count; contiguous
+offsets[i]  u8   start level index (0-based g_current_level): 2, 1, 3, 8, 4
+            ...  input stream, terminated by 0x30
+            ...  bytes after 0x30 up to the next demo: never read
+                 (F_4A27 does not advance g_demo_pos on 0x30); one byte each
+                 here (01 01 01 07 01), kept as `unread_after_end_hex`
+then             zero padding (10 bytes)
+```
+
+Each stream byte is read by F_4A27 as one of three things:
+
+- `0x20 n`: the idle counter DS:0x6544 = n. The following n frames get
+  direction 8 and no buttons. The frame that reads the opcode keeps the
+  live input.
+- `0x30`: the end of the demo (`g_demo_mode++`).
+- Any other byte: one frame of input. The low nibble is the direction, bit 7
+  is button 1 and bit 6 is button 2. Bits 4-5 are never set; such a byte
+  would be kept as `raw:0xHH`.
+
+The direction codes come from the keyboard reader F_63AF. It computes
+`3*dy + dx + 4` and looks the result up in its jump table at file 0x64F3:
+0 N, 1 NE, 2 E, 3 SE, 4 S, 5 SW, 6 W, 7 NW, 8 none. **[V]** The buttons are
+the keys whose scan codes are stored at DS:0x1318 (default 0x1D, Ctrl) and
+DS:0x1319 (default 0x38, Alt). **[V]**
+
+The JSON writes each demo as a list of events: `"E x15"`, `"NE+ctrl x19"`,
+`"none+alt x9"`, `"idle 16"`. A run of identical input bytes becomes one
+event, and the encoder writes one byte per frame, so the round trip is exact.
+The demos never use 0x20 for held input. Repeated input is written out byte
+by byte.
+
+### 5.2 Sounds (0x1C2E), `SPK\0`
+
+```
++0x000  char[4]  "SPK\0"
++0x004  u32      bank length 4756 (= end of the last sound's data)
++0x008  8 bytes  reserved, zero
++0x010  63 x { u16 offset; u8 priority; u8 rate; char name[12]; }   sound ids 1..63
++0x400  sound data in directory order, contiguous: u16 values, each sound ends with 0xFFFF
+then    zero padding (12 bytes)
+```
+
+play_sound F_763E reads an entry as `id*16` with a 1-based id. The fields are
+used as follows:
+
+- `priority` (+2): the sound starts only if `priority >=` the priority of the
+  sound already playing.
+- `offset` (+0): becomes the play pointer, DS:0x1388.
+- `rate` (+3): when it is above 1, PIT channel 0 is set to `0x10000/rate`,
+  and the old INT 8 is chained every `rate` interrupts. So the sound advances
+  `rate` x 18.2 times a second.
+
+The ISR at 0x7719 reads one word per interrupt:
+
+- `0xFFFF` stops the sound.
+- `0` turns the speaker off for that tick.
+- Any other value is a PIT channel 2 divisor (tone = 1193182/value Hz),
+  played only if the sound-enable flag DS:0x137E is set. **[V]**
+
+Twelve sounds are named:
+
+1. HitWall
+2. Falling
+3. OUCH!
+4. Walking
+5. Jumping
+6. Treasure
+7. GotTrophy
+8. explosion
+9. Flying!
+10. NextLevel
+11. ToJetpack
+12. GotSomethng
+
+The other 51 entries are `->UNUSED<-`, each with one data word. The name
+bytes after the NUL are leftovers. They are non-zero only in the unused
+entries, and are kept as `name_tail_hex`. The JSON stores, per entry: name,
+priority, rate and the divisor list. The encoder recomputes the offsets and
+the bank length; the decoder checks both against the original.
+
+### 5.3 RLE codec and the CGA/VGA tilesets (0x0C42, 0x11EF)
+
+**Codec (asm 0x7E00-0x8058, `tools/rle.py`).** The decoder 0x7ED4 has two
+control bytes:
+
+- `b >= 0x80`: copy the next `b-0x7F` bytes (1..128).
+- `b < 0x80`: repeat the next byte `b+3` times (3..130).
+
+It stops once it has produced `count` bytes. The encoder 0x7F41 is never
+called by the game; it was linked in with the decoder. It is ported
+instruction for instruction:
+
+- It keeps a run counter, the repeats after a byte's first occurrence. A run
+  becomes a run chunk at 3 equal bytes, and the run chunk is flushed at 130.
+- Literals are flushed at 126 (`0xFD`). Before a run starts, any pending
+  literal is flushed.
+- After a maximal run or literal, if the next two bytes equal the current one
+  it advances the source pointer without decrementing the count. Call this a
+  "skip".
+- The loop reads `count + 1` source bytes, plus one more per skip.
+- At source offset 0xFF00 it flushes and renormalises seg:off. It resets the
+  literal start to offset 0, which emits the current byte a second time.
+
+**Evidence that this encoder produced the data.** Running the port over the
+decoded tilesets, with count = the u32 header, reproduces both streams byte
+for byte. That includes every run/literal split, the chunks after the
+decoder's stop point, and the one renormalisation in VGA. **[V]** Because
+the encoder reads past its buffer, two artifacts appear:
+
+- **Over-read bytes.** CGA reads 1 byte past the 27,818-byte tileset (`9A`).
+  VGA reads 22 bytes past the 71,238-byte tileset (1 + 21 skips): `83 46 F6
+  02 C4 5E F6 26 8B 07 02 10 C9 25 39 76 FC 77 C6 FF 46 F2`, which looks like
+  x86 code from the compressing tool **[H]**. They are encoded after the
+  point where the decoder stops, so the game never reads them. They are
+  stored as `rle.overread_hex`, so these are the "2 / 23 unread bytes"
+  mentioned in section 1.
+- **VGA duplicate.** The VGA tileset is longer than 0xFF00 bytes. The
+  renormalisation re-emits source byte 0xFF00, a zero inside a zero run of
+  resource 147. The game's decoded tileset therefore has that byte twice and
+  loses the final source byte, which is also 0. In memory, the tail of
+  resource 147 and all of resources 148-157 sit one byte later than the
+  offset table says. **[V]** The representation keeps the tileset as it was
+  before compression, where every offset and size is self-consistent. The
+  encoder reproduces the duplication. `rle.duplicated_source_bytes` records
+  it; that field is informational, and the encoder ignores it. The source
+  pointer's offset part is 0 (`rle.source_offset`). Of offsets 0-15, only 0
+  reproduces the stream, so the tool's source buffer was
+  paragraph-aligned. **[V]**
+
+**Segment layout:**
+
+```
++0  u32 L (tileset length = encoder count = decoder count)
++4  RLE stream    CGA 23233 bytes, VGA 41961
+    zero padding  CGA 11 bytes, VGA 3
+```
+
+**Tileset layout.** It is the same container as EGADAVE.DAV:
+
+```
++0          u32 count (CGA 239, VGA 158)
++4          u32 offsets[count]   offsets[0] = 4+4*count, contiguous, last resource ends at L
+resource    0..52   fixed 16x16 tiles, no header: CGA 64 bytes (2bpp), VGA 256 bytes (8bpp)
+            53..    u16 width, u16 height, pixels:
+                    CGA 2bpp: ceil(w/4) bytes x h rows. The CGA blitter at
+                        0x8900 reads exactly this ((w+3)>>2 bytes per row, h
+                        rows, B800). Each CGA sprite is still allocated
+                        ceil(w/8)*2*(h+1) bytes, EGADAVE.DAV's sprite size
+                        rule. The remaining bytes (2,713 over 186 sprites) are
+                        never read and are kept as `unread_tail_hex`.
+                    VGA 8bpp: w bytes x h rows, no tail. The VGA blitter
+                        0x8A9A reads the u32 offset and the w/h header.
+```
+
+Pixels are MSB-first (CGA: 4 pixels per byte). Each PNG holds the stored
+raster, with the width rounded up to whole bytes. Rendering them gives the
+expected art:
+
+- tiles
+- Dave's animation frames, with separate mask sprites
+- monsters
+- the status-bar words
+- the "Dangerous Dave" title frames
+- the digits 0-9
+
+### 5.4 Config-screen picfiles (0x1D58 CGA, 0x1E84 EGA, 0x20CC VGA)
+
+```
++0x00  far charptr, tileptr, picptr, spriteptr   -> DS:0x8A16/0x8A2E/0x8A1E/0x8A1A
+                                                    EGA: A200:0000, A240, A240, A28E (VRAM, used as-is)
+                                                    CGA/VGA: paragraph-relative, segment added by F_6099
++0x10  far pictable    0002:0008 = +0x28   (F_6099 copies 64 x 16 bytes to DS:0x8604)
++0x14  far spritetable 000F:0008 = +0xF8   (32 x 32 bytes to DS:0x65FC; no sprites)
++0x18  far planes[4]   paragraph-relative -> g_pic_planes DS:0x65A8
+                       CGA 0010,012C,0248,0364  EGA 0010,009E,012C,01BA  VGA 0010,0480,08F0,0D60
++0x28  13 x { u16 width_bytes (per plane); u16 height; u32 offset (from picptr); char name[8]; }
+       name = NUL-terminated, '-' filled, last byte NUL (e.g. "CGA\0---\0", "nomouse\0")
++0xF8  "********"
++0x100 per plane: 128 font chars (8x8), then the 13 pictures (32x24) in table order
+```
+
+The sizes check exactly:
+
+- **Bytes per plane** = spriteptr - charptr: CGA 4544, EGA 2272, VGA 18176.
+- **Planes in the file:** EGA has 4. CGA and VGA have 1; their
+  `planes[1..3]` point past the segment end, written as if the bank had 4
+  planes.
+- **Pixel formats:**
+  - CGA: 2bpp packed (font 16 bytes per char, icons 8 bytes x 24).
+  - EGA: one bit per plane; plane p is bit p of the colour index (font 8
+    bytes per char per plane, icons 4 x 24 per plane).
+  - VGA: 8bpp (font 64 bytes per char, icons 32 x 24).
+- **Icons:** CGA, EGA, VGA, noEGA, noVGA, nosound, SPKR, kbd, joy1, joy2,
+  mouse, nojoy, nomouse.
+
+All three render correctly. The JSON stores every header field by name,
+including the far pointers as `SSSS:OOOO`. The encoder rebuilds the header
+from those fields and checks them against the content sizes. The decoder
+checks that the pictures are contiguous and fill each plane up to spriteptr.
 
 ## Open questions
 
-- An exact re-encoder for the two RLE tilesets. The unread trailing bytes
-  must be preserved verbatim, and the encoder's run-selection policy has to
-  match: the file contains the encoder at 0x7F41.
-- A CGA/VGA tileset render-and-encode tool. The decoder is proven, but the
-  sprite resource header semantics in those blobs are not yet documented.
+- Whether the VGA game visibly suffers from the duplicated byte at decoded
+  0xFF00 (section 5.3): resources 148-157 (the 8x11 digits) have their
+  headers misread in memory. Which code draws them in VGA mode was not
+  traced. **[H]**
+- What the leftover bytes are: the CGA sprite tails, the RLE over-read bytes,
+  the bytes after each demo's 0x30, the sound name tails. They are kept
+  verbatim; their origin is not explained.
 - What `DS:0x118` (per-level byte copied to DS:0x6156, 102 refs) and
   `DS:0x6150` mean.
 - The individual fields of `g_monsters` beyond active (0x5742) and path
   position (0x575A).
 - Linker class names of the 7 far segments (FAR_DATA is inferred from C0S
   segment order, not observed).
-- Whether the 23 non-zero bytes after the VGA RLE stream are packing-tool
-  leftovers.
 - The source of the external project's 0x2932B "level 6 warp" bytes.
 - Several asm entry points used here are not in the function census: the
   g_levels stub at 0x8516 and the RLE entry at 0x7E00/0x7ED4. The supervisor
