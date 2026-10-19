@@ -8,8 +8,8 @@
 | Level | Meaning | Status |
 |---|---|---|
 | A | every byte owned, exact fixed-placement rebuild | complete |
-| B | components independently recovered and EXACT | all game code: 90/90 C functions (85 files, 27,884 B) + 2 ASM modules (9,452 B); runtime 59 CS.LIB modules + C0S identified; far data + levels (119,728 B) rebuilt by codecs. Raw: game `_DATA` (5,778 B) only |
-| C | layout emerges from units + TLINK | in progress |
+| B | components independently recovered and EXACT | all game code: 90/90 C functions (3 units, 27,884 B + their 4,740 B of `_DATA`) + 2 ASM modules (9,452 B); runtime 59 CS.LIB modules + C0S identified; far data + levels (119,728 B) rebuilt by codecs. Raw: asm modules' `_DATA` and the palette (1,035 B) only |
+| C | layout emerges from units + TLINK | units EXACT; TLINK link probe reproduces the load module (stand-ins for data built from original bytes) |
 | D | rebuilt EXE == original; packed == DAVE.EXE | packing layer solved (LZEXE 0.91 repack is exact); whole build pending Level C |
 
 ## Verification standard
@@ -32,12 +32,12 @@ restarts (layout/assembler.json); TLINK 3.0; C0S.OBJ + CS.LIB; LZEXE 0.91.
 
 ## Productive frontier
 
-1. Recover the C translation units (unit files with real globals, `_DATA`
-   images, BSS names reproducing TC++ 1.00's hash order) -- worker running.
-2. OMF writer + full TLINK link of C0S + units + ASM + far-data objects +
-   CS.LIB; compare the linked EXE's load module with the original.
-3. Give everything real names (functions, globals); keep storage names where
-   BSS hashing needs them.
+1. Final build: data-only module (palette + g_levels) and far blobs as OMF
+   from the codecs (tools/omf_writer.py) instead of original bytes; the asm
+   modules adopt the C symbol names (docs/link-forensics.md); TLINK + LZEXE.
+2. Done: C translation units with real names, `_DATA` images and `_BSS`
+   storage names (src/*.C, src/DAVE.H, tools/bss_names.py); OMF writer and a
+   full TLINK link probe (tools/link_probe.py): load module identical.
 4. Runtime validation traces (instrumented DOSBox-X in C:/tools) for
    semantics, never as a substitute for matching.
 

@@ -109,6 +109,28 @@ class SymbolMap:
                     self.code.setdefault(pub["name"], region["start"] - HDR + pub["offset"])
                     self.origin.setdefault(pub["name"], f"library:{region['id']}")
 
+    def define(self, name: str, kind: str, address, origin: str):
+        """Add a symbol derived from a placed object (a translation unit's or an
+        assembly module's PUBDEF): kind 'code' (CS offset) or 'data' (DS offset).
+        A name may be defined only once; an existing curated entry (e.g. _main)
+        must name the same address, which the object then confirms."""
+        table = self.code if kind == "code" else self.data
+        if name in self.code or name in self.data:
+            have = self.code.get(name, self.data.get(name))
+            if have == address and name in table and self.origin.get(name) == "curated":
+                self.origin[name] = f"curated, confirmed by {origin}"
+                return
+            raise ValueError(f"symbol {name} defined twice: {self.origin.get(name)} "
+                             f"({have:#06x}) and {origin} ({address:#06x})")
+        table[name] = address
+        self.origin[name] = origin
+
+    def copy(self) -> "SymbolMap":
+        new = SymbolMap.__new__(SymbolMap)
+        new.code, new.data, new.far = dict(self.code), dict(self.data), dict(self.far)
+        new.origin = dict(self.origin)
+        return new
+
     def resolve_code(self, name: str):
         if name in self.code:
             return self.code[name]

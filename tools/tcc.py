@@ -5,7 +5,7 @@ compiled with the project flags plus per-file extras, and the .OBJ paths are
 returned in input order (None for a failed compile; its log is kept).
 
     from tcc import compile_many
-    objs = compile_many([pathlib.Path("src/game/F_6D64.c")])
+    objs = compile_many([pathlib.Path("src/DAVE.C")])
 
 Project flags: -c -ms -1- -f- -N  (small model and -N are proven; see
 docs/flag-investigation.md and tools/compile_probe.py). A source can add
@@ -46,6 +46,14 @@ def compile_many(sources, work: pathlib.Path | None = None, extra_flags: str = "
     # through PATH. layout/assembler.json pins which TASM that is.
     lines = ["@ECHO OFF", "SET PATH=C:\\BIN;C:\\" + assembler_dir(), "D:", "CD \\"]
     stems = []
+    # Project headers (e.g. src/DAVE.H) live next to their sources; copy them
+    # into the work directory under their 8.3 names so `#include "DAVE.H"`
+    # resolves (CRLF line endings, as for the sources).
+    for d in sorted({pathlib.Path(s).resolve().parent for s in sources}):
+        for h in sorted(d.glob("*.[hH]")):
+            text = h.read_text(encoding="latin1")
+            (work / h.name.upper()).write_bytes(
+                text.replace("\r\n", "\n").replace("\n", "\r\n").encode("latin1"))
     for n, src in enumerate(sources, 1):
         stem = f"S{n:04d}"
         stems.append(stem)

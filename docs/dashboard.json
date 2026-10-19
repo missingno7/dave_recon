@@ -19,7 +19,7 @@
    "functions": 90,
    "bytes": 27884,
    "matched_functions": 90,
-   "matched_bytes": 27884,
+   "matched_bytes": 32624,
    "partial_attempts_with_notes": 0
   },
   "asm": {
@@ -37,11 +37,11 @@
  "data": {
   "far_and_dgroup_bytes": 126496,
   "structured_bytes": 119728,
-  "raw_bytes": 5778
+  "raw_bytes": 1035
  },
  "raw": {
   "code_bytes": 0,
-  "data_bytes": 5778
+  "data_bytes": 1035
  },
  "unresolved": {
   "indirect_control_flow_sites": 3,
@@ -49,7 +49,7 @@
  },
  "levels": {
   "A_byte_ownership": "complete (100% owned, exact fixed-placement rebuild)",
-  "B_independent_components_pct_of_game_code": 99.99,
+  "B_independent_components_pct_of_game_code": 112.69,
   "C_emergent_layout": "not started (fixed placement only)",
   "D_byte_identical_build": "no"
  },
@@ -65,7 +65,7 @@
  ],
  "delta_vs_HEAD": {
   "c_matched_functions": 0,
-  "c_matched_bytes": 0,
+  "c_matched_bytes": 4740,
   "asm_matched_bytes": 0,
   "known_library_bytes": 0,
   "structured_data_bytes": 0

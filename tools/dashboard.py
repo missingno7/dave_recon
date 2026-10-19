@@ -3,7 +3,7 @@
 Every number is derived from the ledgers, never typed in:
   layout/manifest.json        byte ownership (kinds)
   docs/function-census.json   game function inventory (C vs ASM, extents)
-  build/verify.json           strict verification of src/game (run
+  build/verify.json           strict verification of src/*.C (run
                               tools/verify_sources.py --json build/verify.json)
 
 Code/data split uses the executable's segment structure: _TEXT is
