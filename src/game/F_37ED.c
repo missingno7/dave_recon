@@ -25,7 +25,7 @@
  *
  * @name check_collisions
  */
-/* @flags -G */
+
 
 struct obj {
     int active;

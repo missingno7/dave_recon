@@ -9,7 +9,7 @@
  *
  * @name tile_at
  * Codegen: first declared register variable gets SI, the second DI.
- *//* @flags -G */
+ */
 
 extern int D_56EA;              /* horizontal pixel scroll / x offset */
 extern int D_56EC;              /* vertical pixel offset (g_start_y) */

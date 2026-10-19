@@ -15,7 +15,7 @@
  * arg cleanup).
  * @name load_file
  */
-/* @flags -G */
+
 #include <io.h>
 #include <fcntl.h>
 

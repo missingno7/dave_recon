@@ -10,7 +10,7 @@
  *
  * @name draw_status_meter
  */
-/* @flags -G */
+
 
 extern int D_4F86;              /* graphics-mode table index */
 extern int D_0342[];

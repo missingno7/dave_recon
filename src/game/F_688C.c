@@ -18,7 +18,7 @@
  * arg cleanup).
  * @name get_player_input
  */
-/* @flags -G */
+
 struct input {
     int dir;
     int fire;

@@ -11,7 +11,7 @@
  * arg cleanup).
  * @name clear_text_window
  */
-/* @flags -G */
+
 extern int D_8A24, D_8A26, D_8A28, D_8A2A;
 void F_7878(int x, int y, int c);
 

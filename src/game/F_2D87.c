@@ -26,7 +26,7 @@
  * original's four `shl dx,1` need a split constant (`* 8 * 2`). The last
  * switch case has no `break` (no jmp to the switch end).
  */
-/* @flags -G */
+
 
 extern int D_5742[];            /* active */
 extern int D_574A[];            /* x */

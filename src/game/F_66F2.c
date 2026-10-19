@@ -16,7 +16,7 @@
  * arg cleanup).
  * @name read_joystick_input
  */
-/* @flags -G */
+
 #include <dos.h>
 
 struct input {

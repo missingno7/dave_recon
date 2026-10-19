@@ -24,7 +24,7 @@
  * allocated after the struct-return temporary (bp-0x0D vs bp-0x0C).
  * `char = a << 7 | b << 6 | c` is computed in byte registers.
  */
-/* @flags -G */
+
 
 struct input {
     int dir;

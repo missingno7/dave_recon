@@ -10,7 +10,7 @@
  * arg cleanup).
  * @name draw_text_window
  */
-/* @flags -G */
+
 extern int D_8A24, D_8A26, D_8A28, D_8A2A;
 extern int D_8A12, D_8A14, D_8A22;
 void F_7878(int x, int y, int c);

@@ -8,7 +8,7 @@
  * arg cleanup).
  * @name open_window_anim_w
  */
-/* @flags -G */
+
 void F_6EF1(int w, int h);
 void F_7831(void);
 

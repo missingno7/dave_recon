@@ -9,7 +9,7 @@
  * arg cleanup).
  * @name wait_key_cursor
  */
-/* @flags -G */
+
 #include <bios.h>
 
 extern int D_8A12, D_8A14;

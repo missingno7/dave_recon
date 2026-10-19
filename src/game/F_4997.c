@@ -13,7 +13,7 @@
  *
  * @name handle_menu_key
  */
-/* @flags -G */
+
 
 extern int D_00AA;              /* demo / attract mode flag */
 extern char D_615C[];           /* saved 100x10 tile grid */

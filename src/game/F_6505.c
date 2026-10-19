@@ -16,7 +16,7 @@
  * arg cleanup).
  * @name read_mouse_input
  */
-/* @flags -G */
+
 #include <dos.h>
 
 struct input {

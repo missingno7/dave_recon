@@ -18,7 +18,7 @@
  * arg cleanup).
  * @name config_mouse
  */
-/* @flags -G */
+
 /* @seg _DATA 0x1044 */
 #include <dos.h>
 

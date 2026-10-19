@@ -17,7 +17,7 @@
  * arg cleanup).
  * @name draw_control_panel
  */
-/* @flags -G */
+
 /* @seg _DATA 0x1243 */
 extern int D_8A12, D_8A14, D_8A22;
 extern int D_1392;

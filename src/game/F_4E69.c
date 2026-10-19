@@ -31,7 +31,7 @@
  * `t[n + 1].count = 0` folds into `[bx + 0x57FE]` with bx = n * 12.
  * Here every switch case ends with `break`.
  */
-/* @flags -G */
+
 
 struct anim {
     int active;

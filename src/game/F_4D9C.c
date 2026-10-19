@@ -13,7 +13,7 @@
  *
  * @name draw_actors
  */
-/* @flags -G */
+
 
 struct obj {
     int active;

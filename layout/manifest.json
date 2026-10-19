@@ -60,13 +60,1144 @@
       "artifact": "raw/STARTUP_C0S.bin"
     },
     {
-      "id": "RAW_439_6D64",
+      "id": "F_0439",
       "start": 1081,
-      "end": 28004,
+      "end": 1234,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_0439.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "e0b24d497aaf6a266bac09b5e7a9f06c7c84e88776da765c453e654582086a50",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 30 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_0439.bin"
+    },
+    {
+      "id": "F_04D2",
+      "start": 1234,
+      "end": 1276,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_04D2.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "a8e67225b9e800a0c73d5f8d62975036b43e624a697003c377c62c1a9992f25b",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_04D2.bin"
+    },
+    {
+      "id": "F_04FC",
+      "start": 1276,
+      "end": 3579,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_04FC.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "2d99e3c159c682dfe2644bfce2fcf2387bd6b2aad8183d3c855cb9d866af2a72",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 226 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_04FC.bin"
+    },
+    {
+      "id": "F_0DFB",
+      "start": 3579,
+      "end": 3671,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_0DFB.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "d278af65e8944b58ce474090d0a75aaf35dccfb600f658076da001aca86a23dc",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 10 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_0DFB.bin"
+    },
+    {
+      "id": "F_0E57",
+      "start": 3671,
+      "end": 3807,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_0E57.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "9437ec51b39da158e777474c85795536de366f3e693b507efa4419370e3b35b6",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 18 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_0E57.bin"
+    },
+    {
+      "id": "F_0EDF",
+      "start": 3807,
+      "end": 4683,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_0EDF.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "bcca6b583397acf0b629b54300b857d0e582a10e2b15f29cd2010ee2bea5272f",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 138 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_0EDF.bin"
+    },
+    {
+      "id": "F_124B",
+      "start": 4683,
+      "end": 4793,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_124B.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "37339971bd83832d42f5a131a7b1269880e51d86ce8b05c4357a8e0272016441",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 13 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_124B.bin"
+    },
+    {
+      "id": "F_12B9",
+      "start": 4793,
+      "end": 4897,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_12B9.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "951bc5c71495dcf85446e0f216fd69372dccfc9e2a4268721d771726d2213a25",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 14 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_12B9.bin"
+    },
+    {
+      "id": "RAW_1321_13FF",
+      "start": 4897,
+      "end": 5119,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_439_6D64.bin"
+      "artifact": "raw/RAW_1321_13FF.bin"
+    },
+    {
+      "id": "F_13FF",
+      "start": 5119,
+      "end": 5486,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_13FF.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "d6e5b6dd7eefcba0d210a2b5f97314dde79c3524d25b72489de39d8854bcc9d8",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 44 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_13FF.bin"
+    },
+    {
+      "id": "F_156E",
+      "start": 5486,
+      "end": 5541,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_156E.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "5c4fa3083dfe4cfd49791421557cddbbfb3ea09e27204c843f5a895beddad4a1",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_156E.bin"
+    },
+    {
+      "id": "F_15A5",
+      "start": 5541,
+      "end": 6016,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_15A5.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "add493d73120b719793835efbccd71e551afdbcf96f9804cf9e3b101b2e46ca0",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 70 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_15A5.bin"
+    },
+    {
+      "id": "F_1780",
+      "start": 6016,
+      "end": 6192,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_1780.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "2b20634e8e837845ea2425c0c7c4b5a226863d96959cb4d4b1ad43a54c56e550",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 29 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_1780.bin"
+    },
+    {
+      "id": "F_1830",
+      "start": 6192,
+      "end": 6390,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_1830.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "a0e51a7d94764541c75e61373ef52085f85b2644c5551554b7bc3dbd01866a0f",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 14 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_1830.bin"
+    },
+    {
+      "id": "F_18F6",
+      "start": 6390,
+      "end": 6800,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_18F6.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "ae570f499a8b3d4055bb77e3bb6f2a98faa2be0814b5a0d0a12e4ed3c56ad9c4",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 30 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_18F6.bin"
+    },
+    {
+      "id": "F_1A90",
+      "start": 6800,
+      "end": 6862,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_1A90.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "8bd0b61c9cf54d5ed808ac5e0f8e0849c16a69ec041fa5a04c23f3eeb75b1606",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_1A90.bin"
+    },
+    {
+      "id": "F_1ACE",
+      "start": 6862,
+      "end": 6953,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_1ACE.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "3c3e6ae55f2710b1a5ef325ef58bc45191564f3b91604726ed7b116c897a642f",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_1ACE.bin"
+    },
+    {
+      "id": "F_1B29",
+      "start": 6953,
+      "end": 7044,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_1B29.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "cb0bd340fc7720042616da02cde51bf578c82d75f8a662158ff86dbed7ab67d3",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_1B29.bin"
+    },
+    {
+      "id": "F_1B84",
+      "start": 7044,
+      "end": 7126,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_1B84.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "366de0fd9318c49e8773754310f55235df8b8087af0a0e934aa066c55e7c8e2c",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_1B84.bin"
+    },
+    {
+      "id": "F_1BD6",
+      "start": 7126,
+      "end": 7208,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_1BD6.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "06a18374ef1d77cd83c734f58f7ebbd97105a43bf83e3b61f28b7cd6d1304433",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_1BD6.bin"
+    },
+    {
+      "id": "F_1C28",
+      "start": 7208,
+      "end": 7274,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_1C28.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "f03d2aa55e4f37b3ea849bb0f7f2dfc6aabc81a95dfd8bb33558783380ccaca5",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 9 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_1C28.bin"
+    },
+    {
+      "id": "F_1C6A",
+      "start": 7274,
+      "end": 7446,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_1C6A.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "97f6a0d294e0899cd3c34e5cf9943f1312480920e08324ac8e27b92d5dbfe5a1",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 33 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_1C6A.bin"
+    },
+    {
+      "id": "F_1D16",
+      "start": 7446,
+      "end": 11295,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_1D16.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "297998ba8bac84e8b68251ddb1437b668f13a37d8df208993e5b3eb5d9575b9f",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 575 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_1D16.bin"
+    },
+    {
+      "id": "F_2C1F",
+      "start": 11295,
+      "end": 11376,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_2C1F.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "0960780f4d7e82e9d7f2e89f6d718ffb542e4dc2d316c3b7f264577e02706569",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 15 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_2C1F.bin"
+    },
+    {
+      "id": "F_2C70",
+      "start": 11376,
+      "end": 11480,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_2C70.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "c7348a24b8a5fa12838d0b4b28eb8e656c98f450972ffb142375876c43189a9d",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 9 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_2C70.bin"
+    },
+    {
+      "id": "F_2CD8",
+      "start": 11480,
+      "end": 11576,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_2CD8.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "c300f3e6b8605e6fa272d01551d97d8398200ee24b9e6deb12f4f07338b9cfb7",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 8 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_2CD8.bin"
+    },
+    {
+      "id": "F_2D38",
+      "start": 11576,
+      "end": 11655,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_2D38.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "2fc8d7e0b2bc963889241c24e3b707110da893219ea9b707c9204f3e9874765c",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_2D38.bin"
+    },
+    {
+      "id": "F_2D87",
+      "start": 11655,
+      "end": 12315,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_2D87.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "4fbd501798f1f1f656b3cf90b88aedba598f0a7354924e20cae6aafdb5b6a588",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 65 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_2D87.bin"
+    },
+    {
+      "id": "F_301B",
+      "start": 12315,
+      "end": 12805,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_301B.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "afdb5807b498ce9e6ee13bc892500e9b4b077a2f427373b3ccee17806e1ada09",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 36 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_301B.bin"
+    },
+    {
+      "id": "F_3205",
+      "start": 12805,
+      "end": 13100,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_3205.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "843654e5836212ff1b0805b7b9c4d5995077dc70df4652fc0c69253a96538f53",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 27 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_3205.bin"
+    },
+    {
+      "id": "F_332C",
+      "start": 13100,
+      "end": 13365,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_332C.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "a8f7d8ebf20adaa59df16b69045c2740b0160f6b42d851be69c84eac028ee9e4",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 21 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_332C.bin"
+    },
+    {
+      "id": "F_3435",
+      "start": 13365,
+      "end": 13515,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_3435.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "775c27e63f4ab7a29d4c5b0edbfa42f41b0cd92887f1cbaa9e4d998c36b32220",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 15 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_3435.bin"
+    },
+    {
+      "id": "F_34CB",
+      "start": 13515,
+      "end": 14111,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_34CB.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "d1f1ada9552a4ccf9a46ee800da62cb6f73be3ebd6c5d266d5441bc0f6a66f38",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 81 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_34CB.bin"
+    },
+    {
+      "id": "F_371F",
+      "start": 14111,
+      "end": 14190,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_371F.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "63ec821f2140a8eafe5061bc6f75bcc2887fc0854ad456a1cf32537980cf6685",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 9 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_371F.bin"
+    },
+    {
+      "id": "F_376E",
+      "start": 14190,
+      "end": 14317,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_376E.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "9de440cc970b5422c0979ec0318e223771a83e8ca76a8f500dfb2552a30ff2b7",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 13 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_376E.bin"
+    },
+    {
+      "id": "F_37ED",
+      "start": 14317,
+      "end": 15267,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_37ED.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "fe1a428fc73a29cabfa4a2447f4e063848abab73523d83c48a09e1c1b67d0058",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 87 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_37ED.bin"
+    },
+    {
+      "id": "F_3BA3",
+      "start": 15267,
+      "end": 16341,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_3BA3.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "3a5656e21188aaa1406c39ea9bbf522158681926680fe26769930f2dc2678672",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 114 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_3BA3.bin"
+    },
+    {
+      "id": "F_3FD5",
+      "start": 16341,
+      "end": 18096,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_3FD5.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "a11a1e56edca6cd1aa1affde766c9c505dd61a62cbc9b0b770d691f3849d78b5",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 197 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_3FD5.bin"
+    },
+    {
+      "id": "F_46B0",
+      "start": 18096,
+      "end": 18424,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_46B0.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "67969df5ef1ff2d69607856344ed1ed647412cc1c75afc497c4756d0a5bd1604",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 36 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_46B0.bin"
+    },
+    {
+      "id": "F_47F8",
+      "start": 18424,
+      "end": 18495,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_47F8.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "e1c87c905e193022dafe1817ef79a00e1f41bac14832996a80de0256fad2c4f9",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_47F8.bin"
+    },
+    {
+      "id": "F_483F",
+      "start": 18495,
+      "end": 18566,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_483F.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "505e16cbefb03631dae77cd282066408a4182ae799233809c378933e7e4d3210",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_483F.bin"
+    },
+    {
+      "id": "F_4886",
+      "start": 18566,
+      "end": 18839,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_4886.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "7c18d64141f04756f02004483bc633416d09d0e6de4c1fbc712129a70a579fc3",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 19 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_4886.bin"
+    },
+    {
+      "id": "F_4997",
+      "start": 18839,
+      "end": 18983,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_4997.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "649ed4956c46283dd7f9a93019c2b9e7a099d95507f6a8eb6212471a9233218a",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 18 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_4997.bin"
+    },
+    {
+      "id": "F_4A27",
+      "start": 18983,
+      "end": 19868,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_4A27.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "917f8277227c87772a2cb532fd4ad8dae64242b1665c696727fa641d9d71d3b8",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 121 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_4A27.bin"
+    },
+    {
+      "id": "F_4D9C",
+      "start": 19868,
+      "end": 20073,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_4D9C.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "020b5bf09b0c940a809b2a87d28bd04e623534d90cc03cfcc8ddd48f2ea17373",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 19 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_4D9C.bin"
+    },
+    {
+      "id": "F_4E69",
+      "start": 20073,
+      "end": 20891,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_4E69.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "a5a29b23a2296b41a8aa39b67813af9ede17df0c88c3432ca00567b0262178af",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 86 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_4E69.bin"
+    },
+    {
+      "id": "RAW_519B_535A",
+      "start": 20891,
+      "end": 21338,
+      "kind": "RAW_UNKNOWN",
+      "classification": "unclassified",
+      "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
+      "artifact": "raw/RAW_519B_535A.bin"
+    },
+    {
+      "id": "F_535A",
+      "start": 21338,
+      "end": 21443,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_535A.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "93342356c85e1c8fe88dbac9053adf6b0cef9a85d3e3ff0e2767610ccac3a20a",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 15 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_535A.bin"
+    },
+    {
+      "id": "F_53C3",
+      "start": 21443,
+      "end": 21948,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_53C3.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "65c5635ee195109ca7dba99630fe513bc77aaf563672e0786205b3ae911d832a",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 57 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_53C3.bin"
+    },
+    {
+      "id": "F_55BC",
+      "start": 21948,
+      "end": 22093,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_55BC.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "723e61654cc378ef12d6d2782ad3d01ea658cd35bdc9bd0d8a6107d59831c4de",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 16 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_55BC.bin"
+    },
+    {
+      "id": "F_564D",
+      "start": 22093,
+      "end": 22549,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_564D.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "17b4a04aeea6efd609e101830f619fd09fd4624728d849f0f75f454d1f51caea",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 53 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_564D.bin"
+    },
+    {
+      "id": "F_5815",
+      "start": 22549,
+      "end": 23020,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_5815.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "744f16e495b2113be7093e82f0cfcae63c44f79d926cb288258cd855842709b2",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 66 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_5815.bin"
+    },
+    {
+      "id": "F_59EC",
+      "start": 23020,
+      "end": 23312,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_59EC.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "3cc620d9da67918ca0d3de0b3e4de8e5ef680c5b20f8e4c2f9ea9571b65e9273",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 40 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_59EC.bin"
+    },
+    {
+      "id": "F_5B10",
+      "start": 23312,
+      "end": 24021,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_5B10.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "df56e0da021f5d8a83ead697b29d345ee4fe00b48c85e1db7abad203553cd2f5",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 91 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_5B10.bin"
+    },
+    {
+      "id": "F_5DD5",
+      "start": 24021,
+      "end": 24729,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_5DD5.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "8b029d8965416965bafa7278e66615d6d286d392a2c4102d2ceda9c4a20510ca",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 108 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_5DD5.bin"
+    },
+    {
+      "id": "F_6099",
+      "start": 24729,
+      "end": 25107,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6099.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "0f761a385b4af2b01b96f53d8e449d674fa66e71b4b472cec912d4f7d41b74dc",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 28 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6099.bin"
+    },
+    {
+      "id": "F_6213",
+      "start": 25107,
+      "end": 25235,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6213.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "acf5e5606de6e7e817ee33c9931f1a9b19605a87f53d9d6c3f998224d7b5f3d4",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 10 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6213.bin"
+    },
+    {
+      "id": "F_6293",
+      "start": 25235,
+      "end": 25355,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6293.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "418a5598a66710e2705a74bc38746a277dd4377a305ced228d13b1274a49067e",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 11 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6293.bin"
+    },
+    {
+      "id": "RAW_630B_6388",
+      "start": 25355,
+      "end": 25480,
+      "kind": "RAW_UNKNOWN",
+      "classification": "unclassified",
+      "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
+      "artifact": "raw/RAW_630B_6388.bin"
+    },
+    {
+      "id": "F_6388",
+      "start": 25480,
+      "end": 25519,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6388.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "4094f64c4ceb8e0442221db099ea2b0ead694d531f7700edf7ed6b37d0355842",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6388.bin"
+    },
+    {
+      "id": "F_63AF",
+      "start": 25519,
+      "end": 25861,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_63AF.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "c8ffee9a75568a85aabb54fca840857fa852004f699e51abd969b36e5fe5ca0a",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 33 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_63AF.bin"
+    },
+    {
+      "id": "F_6505",
+      "start": 25861,
+      "end": 26187,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6505.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "8aafc5c90cb928f479c85447ef2aa6241ab09ba24f52276fef00ea40fba09403",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 21 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6505.bin"
+    },
+    {
+      "id": "F_664B",
+      "start": 26187,
+      "end": 26354,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_664B.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "3eba68c8f77be7778d5732e3d275e70449ee6f8eea343583ba7ff0b4bb6b5f2f",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 5 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_664B.bin"
+    },
+    {
+      "id": "F_66F2",
+      "start": 26354,
+      "end": 26764,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_66F2.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "d2ae49a2aaa24eb946714a0572f5c868fe115e046d78078191e28969d9fefb3f",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 21 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_66F2.bin"
+    },
+    {
+      "id": "F_688C",
+      "start": 26764,
+      "end": 27065,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_688C.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "73287d7dac7593fcb23ac57b09fbef04a95ec6be8447bff79496c8ac85b22320",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 24 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_688C.bin"
+    },
+    {
+      "id": "F_69B9",
+      "start": 27065,
+      "end": 27091,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_69B9.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "9d8b002eb9d8e3845a9c0e1b22e74d5674b3c81a9cc52356f0ad13b9e5e1919d",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 5 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_69B9.bin"
+    },
+    {
+      "id": "F_69D3",
+      "start": 27091,
+      "end": 27131,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_69D3.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "04b5d4164cf6ba1cda82123abf1926acd558aaf5b6fe1fdde689bbedc7271bc1",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 7 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_69D3.bin"
+    },
+    {
+      "id": "F_69FB",
+      "start": 27131,
+      "end": 27174,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_69FB.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "adc4149f4eb7f5f073f3a098587828a492d0d1d15dd637edfef6b4fb4f267a7f",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 7 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_69FB.bin"
+    },
+    {
+      "id": "F_6A26",
+      "start": 27174,
+      "end": 27234,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6A26.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "633580785021adfb67a529724058060f55a8a348f49455977a0175102716f0e7",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 5 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6A26.bin"
+    },
+    {
+      "id": "F_6A62",
+      "start": 27234,
+      "end": 27358,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6A62.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "09d931449505ded512b65b928fdab02fa10299000d06ba3b2100d524e9511ed8",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 10 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6A62.bin"
+    },
+    {
+      "id": "RAW_6ADE_6C1E",
+      "start": 27358,
+      "end": 27678,
+      "kind": "RAW_UNKNOWN",
+      "classification": "unclassified",
+      "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
+      "artifact": "raw/RAW_6ADE_6C1E.bin"
+    },
+    {
+      "id": "F_6C1E",
+      "start": 27678,
+      "end": 27786,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6C1E.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "a52bef99b76ef6e3f2b878f01ec74389d5c75d2c15d305cfc51fe70b2a09660f",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 7 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6C1E.bin"
+    },
+    {
+      "id": "F_6C8A",
+      "start": 27786,
+      "end": 28004,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6C8A.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "539b08e066bb64e5dddd80c33cf2ed5d5b8840b130c3fb11332cdac1cbfe2ee7",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 18 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6C8A.bin"
     },
     {
       "id": "F_6D64",
@@ -79,19 +1210,179 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "34de0d5c5d62c8b17fb2d7c1d368415564f82d9cb3d60ee7600155101b14c12b",
+      "object_sha256": "468b1258e281feeadaced93f3a8b224f7c262adb50552d42937e1eafb46cc1bf",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 9 fixups, 0 differing bytes",
       "artifact": "build/matched/F_6D64.bin"
     },
     {
-      "id": "RAW_6DC2_9613",
+      "id": "F_6DC2",
       "start": 28098,
+      "end": 28345,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6DC2.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "8ea9a48b1669335fe0ce61bc34dcddbafbac4954872e231cb0e419a2274679e7",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 18 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6DC2.bin"
+    },
+    {
+      "id": "F_6EB9",
+      "start": 28345,
+      "end": 28401,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6EB9.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "40c5b38a445fc1e650f67f0bbdedac14b01c9034f7ca14adcf1c9b48e93a67fc",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 7 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6EB9.bin"
+    },
+    {
+      "id": "F_6EF1",
+      "start": 28401,
+      "end": 28475,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6EF1.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "d2463df73a7f70629c2a2d986717ddbef44cce284a885f2b9700a07807d4a88d",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 3 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6EF1.bin"
+    },
+    {
+      "id": "F_6F3B",
+      "start": 28475,
+      "end": 28573,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6F3B.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "d4f308d29ad55788c063039c829c70c81969fc7e1461ed1257e9258a83bef8ea",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 6 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6F3B.bin"
+    },
+    {
+      "id": "F_6F9D",
+      "start": 28573,
+      "end": 28625,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6F9D.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "4640d8a7eb3dfa858e6062ea3925097d70e16d96b6346ec848579b3e01877f75",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6F9D.bin"
+    },
+    {
+      "id": "F_6FD1",
+      "start": 28625,
+      "end": 28677,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_6FD1.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "9bd72f59dc51210f94b3b5be1e3e3f8b35bde1555c04da3ead2d979dbddb7a2f",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6FD1.bin"
+    },
+    {
+      "id": "F_7005",
+      "start": 28677,
+      "end": 28785,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_7005.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "11b45a65208be036cbc717c70a670af2b315a093d08e6a72bfd6021c7673eb04",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 15 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_7005.bin"
+    },
+    {
+      "id": "F_7071",
+      "start": 28785,
+      "end": 28875,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_7071.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "f41c34135ff32915f6b844c12920edf9f2c741c9c995288134542da80ffa380f",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 11 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_7071.bin"
+    },
+    {
+      "id": "F_70CB",
+      "start": 28875,
+      "end": 28920,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_70CB.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "320732d49013e4b4d5357b8094d554a56906fb9d1d99642e2a5a90725c69b4f0",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_70CB.bin"
+    },
+    {
+      "id": "F_70F8",
+      "start": 28920,
+      "end": 28965,
+      "kind": "MATCHING_C",
+      "classification": "code",
+      "source": "src/game/F_70F8.c",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "0072a9dbb31887544869a5c43ff9593fb7ca8f09285da3d34652c4a055265fc1",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 4 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_70F8.bin"
+    },
+    {
+      "id": "RAW_7125_9613",
+      "start": 28965,
       "end": 38419,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_6DC2_9613.bin"
+      "artifact": "raw/RAW_7125_9613.bin"
     },
     {
       "id": "LIB_ATEXIT_9613",

@@ -18,7 +18,7 @@
  * Codegen notes: the early exit is `j = 15;` in an else branch (the loop
  * ends with `mov di,0xf; inc di`).
  */
-/* @flags -G */
+
 
 struct obj {
     int active;

@@ -10,7 +10,7 @@
  * arg cleanup).
  * @name print_int
  */
-/* @flags -G */
+
 void F_7071(char *s);
 
 void F_70CB(int n)

@@ -9,7 +9,7 @@
  * arg cleanup).
  * @name flush_keyboard
  */
-/* @flags -G */
+
 #include <bios.h>
 
 extern int D_8A32[];

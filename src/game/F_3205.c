@@ -12,7 +12,7 @@
  *
  * @name draw_object
  */
-/* @flags -G */
+
 
 struct obj {
     int active;

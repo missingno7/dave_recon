@@ -9,7 +9,7 @@
  *
  * @name find_object
  */
-/* @flags -G */
+
 struct obj {
     int active;
     int f2, f4, f6, f8, fa;

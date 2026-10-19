@@ -16,7 +16,7 @@
  * arg cleanup).
  * @name ega_upload_planes
  */
-/* @flags -G */
+
 #include <dos.h>
 #include <mem.h>
 

@@ -18,7 +18,7 @@
  * arg cleanup).
  * @name detect_hardware
  */
-/* @flags -G */
+
 #include <dos.h>
 
 extern int D_9EC0;

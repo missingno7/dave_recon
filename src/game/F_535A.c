@@ -20,7 +20,7 @@
  * `inc sp; inc sp`. `for` with a register int counter compiles to
  * `xor si,si; jmp cond; body; inc si; cond: cmp si,N; jl body`.
  */
-/* @flags -G */
+
 
 extern int D_57AA[];            /* 10-word per-game table */
 extern int D_56EE;              /* g_lives */

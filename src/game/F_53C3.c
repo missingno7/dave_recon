@@ -22,7 +22,7 @@
  * temporary (bp-0x18, -0x1E, -0x24, -0x2A). The abort is a `goto` to the
  * shared tail (it skips the threshold stores but not F_6A26/F_6EB9).
  */
-/* @flags -G */
+
 /* @seg _DATA 0x0f92 */
 
 struct input {

@@ -17,7 +17,7 @@
  * `t[row * 4 + i]`: that gives `shl bx,1; shl bx,1; add bx,i; shl bx,1`,
  * whereas a true 2-D `t[row][i]` scales row and column separately.
  */
-/* @flags -G */
+
 
 extern int D_6548;              /* animation countdown */
 extern int D_6150;              /* animation frame 0..3 */

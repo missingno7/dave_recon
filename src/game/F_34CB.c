@@ -25,7 +25,7 @@
  * (g_curr_warp_zone_mapping = DS:0x6152, tables +0x192/+0x1A6/+0x16A,
  * g_current_level -= 1, g_start_y = 0x10).
  */
-/* @flags -G */
+
 
 extern int D_56EA;              /* player x */
 extern int D_56EC;              /* player y offset (g_start_y) */

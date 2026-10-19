@@ -13,7 +13,7 @@
  *
  * @name move_bullets
  */
-/* @flags -G */
+
 
 struct obj {
     int active;

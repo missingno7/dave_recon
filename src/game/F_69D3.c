@@ -14,7 +14,7 @@
  * arg cleanup).
  * @name demo_play_start
  */
-/* @flags -G */
+
 extern char *D_8A2C;
 extern char D_8B34[];
 extern int D_9EC2;

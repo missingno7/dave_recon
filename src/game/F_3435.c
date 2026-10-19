@@ -16,7 +16,7 @@
  * `push ss; push &dst; <args>; push ss; push &tmp; call; add sp; push ss;
  * push &tmp; mov cx,size; call SCOPY@` -- the hidden return pointer is far.
  */
-/* @flags -G */
+
 
 struct input {
     int dir;

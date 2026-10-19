@@ -15,7 +15,7 @@
  * arg cleanup).
  * @name read_joystick_axes
  */
-/* @flags -G */
+
 #include <dos.h>
 
 void F_664B(int stick, register int *px, register int *py)

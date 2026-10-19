@@ -21,7 +21,7 @@
  * arg cleanup).
  * @name control_panel
  */
-/* @flags -G */
+
 extern int D_8A12, D_8A14;
 extern int D_8B32, D_137E, D_12F2, D_12F4;
 extern int D_65D8, D_65FA, D_8600, D_8602;

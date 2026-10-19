@@ -19,7 +19,7 @@
  * arg cleanup).
  * @name config_keyboard
  */
-/* @flags -G */
+
 /* @seg _DATA 0x1133 */
 extern int D_8A12, D_8A14;
 extern int D_8A32[];

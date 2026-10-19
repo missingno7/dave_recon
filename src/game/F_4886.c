@@ -10,7 +10,7 @@
  *
  * @name spawn_object
  */
-/* @flags -G */
+
 
 struct obj {
     int active;

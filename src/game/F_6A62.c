@@ -16,7 +16,7 @@
  * arg cleanup).
  * @name farmalloc_aligned
  */
-/* @flags -G */
+
 /* @seg _DATA 0x131e */
 #include <stdio.h>
 #include <dos.h>

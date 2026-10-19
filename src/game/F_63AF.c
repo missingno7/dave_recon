@@ -18,7 +18,7 @@
  * arg cleanup).
  * @name read_keyboard_input
  */
-/* @flags -G */
+
 struct input {
     int dir;
     int fire;

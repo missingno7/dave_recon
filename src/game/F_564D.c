@@ -18,7 +18,7 @@
  * arg cleanup).
  * @name print_key_name
  */
-/* @flags -G */
+
 /* @seg _DATA 0x10c4 */
 extern int D_8A12, D_8A14;
 extern char D_0F12[];

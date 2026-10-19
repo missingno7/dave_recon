@@ -11,7 +11,7 @@
  * arg cleanup).
  * @name draw_centered_window
  */
-/* @flags -G */
+
 void F_6DC2(int x1, int y1, int x2, int y2);
 void F_6EF1(int w, int h)
 {

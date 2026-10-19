@@ -18,7 +18,7 @@
  * arg cleanup).
  * @name setup_graphics_pointers
  */
-/* @flags -G */
+
 #include <dos.h>
 
 struct s16 { char b[16]; };

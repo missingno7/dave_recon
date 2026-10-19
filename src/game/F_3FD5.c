@@ -21,7 +21,7 @@
  * expanded four times (tile offsets 0, 1, 100, 101); the original has
  * four identical copies, so it was either a macro or copy-paste.
  */
-/* @flags -G */
+
 
 struct anim {
     int active;

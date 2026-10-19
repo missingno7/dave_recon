@@ -17,7 +17,7 @@
  * (both materialised as 0/1, then `test ax,dx`), not `&&`. The countdown
  * here shares DS:0x615A with init_game_state's "levels left = 10".
  */
-/* @flags -G */
+
 
 struct anim {
     int active;

@@ -11,7 +11,7 @@
  * arg cleanup).
  * @name print_long
  */
-/* @flags -G */
+
 void F_7071(char *s);
 
 void F_70F8(int n)

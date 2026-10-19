@@ -27,7 +27,7 @@
  * (the F_769B, F_0DFB x2, F_4E69, F_7831, F_8EDA, F_4D9C, F_3435
  * sequence).
  */
-/* @flags -G */
+
 /* @seg _DATA 0x081a */
 
 struct input {

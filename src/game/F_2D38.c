@@ -9,7 +9,7 @@
  *
  * @name tile_attr_at_offset
  */
-/* @flags -G */
+
 
 extern int D_57A0;              /* first visible level column */
 extern char *D_57A8;            /* current level tile grid */

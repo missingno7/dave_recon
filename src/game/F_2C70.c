@@ -11,7 +11,7 @@
  * the grid at DS:0x57A8 via the row-offset table DS:0x13DD.
  *
  * @name tile_attr_at
- *//* @flags -G */
+ */
 
 extern int D_56EA;              /* horizontal pixel scroll / x offset */
 extern int D_56EC;              /* vertical pixel offset (g_start_y) */

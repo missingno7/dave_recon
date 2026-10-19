@@ -17,7 +17,7 @@
  * arg cleanup).
  * @name install_keyboard_handler
  */
-/* @flags -G */
+
 #include <dos.h>
 
 extern int D_8A32[];

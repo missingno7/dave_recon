@@ -13,7 +13,7 @@
  * arg cleanup).
  * @name restore_keyboard_handler
  */
-/* @flags -G */
+
 #include <dos.h>
 
 extern void interrupt (far *D_131A)();

@@ -15,7 +15,7 @@
  * arg cleanup).
  * @name load_rle_file
  */
-/* @flags -G */
+
 #include <io.h>
 #include <fcntl.h>
 #include <alloc.h>
