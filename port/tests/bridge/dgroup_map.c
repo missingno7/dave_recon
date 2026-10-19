@@ -85,3 +85,14 @@ void dgroup_export(const struct game *g, unsigned char *m) {
     if (ds + LEVEL_ROWS * LEVEL_COLS <= DGROUP_LEN)
         memcpy(m + ds, g->level.map, LEVEL_ROWS * LEVEL_COLS);
 }
+
+void dgroup_import_resources(struct resources *r, const unsigned char *m) {
+    for (int lv = 0; lv < LEVEL_COUNT; lv++) {
+        const unsigned char *rec = m + 0x173A + 0x500 * lv;
+        memcpy(r->levels[lv].path, rec, LEVEL_PATH_BYTES);
+        memcpy(r->levels[lv].map, rec + 0x100, LEVEL_ROWS * LEVEL_COLS);
+    }
+    int16_t cur = (int16_t)(m[0x56F4] | (m[0x56F5] << 8));
+    if (cur >= 0 && cur < LEVEL_COUNT)
+        memcpy(r->levels[cur].map, m + 0x615C, LEVEL_ROWS * LEVEL_COLS);
+}

@@ -30,6 +30,9 @@ struct draw_cmd {
 #define OUTPUT_MAX_SOUNDS 64
 
 struct frame_output {
+    uint16_t retraces;    /* vertical retraces the original waited for during this
+                             call (WaitVBL count); explicit so the per-retrace
+                             restructuring (state-model.md D2) stays mechanical */
     uint16_t n_draws;
     uint16_t n_sounds;
     struct draw_cmd draws[OUTPUT_MAX_DRAWS];

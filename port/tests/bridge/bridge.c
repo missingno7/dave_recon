@@ -18,10 +18,15 @@
 #include "output.h"
 #include "state.h"
 
-typedef void (*subsystem_fn)(struct game *, struct frame_output *);
+/* Every native subsystem gets the state, the immutable resources and the
+ * output of the step. */
+typedef void (*subsystem_fn)(struct game *, const struct resources *, struct frame_output *);
 
-static void run_identity(struct game *g, struct frame_output *o) { (void)g; (void)o; }
-static void run_animate_tiles(struct game *g, struct frame_output *o) {
+static void run_identity(struct game *g, const struct resources *r, struct frame_output *o) {
+    (void)g; (void)r; (void)o;
+}
+static void run_animate_tiles(struct game *g, const struct resources *r, struct frame_output *o) {
+    (void)r;
     anim_step(&g->anim, g->level.scroll_x, o);
 }
 
@@ -36,6 +41,8 @@ static void write_events(FILE *f, long index, const struct frame_output *o) {
     for (unsigned i = 0; i < o->n_draws; i++)
         fprintf(f, "%ld draw %u %d %d %d %d\n", index, o->draws[i].op,
                 o->draws[i].a, o->draws[i].b, o->draws[i].c, o->draws[i].d);
+    if (o->retraces)
+        fprintf(f, "%ld retraces %u\n", index, o->retraces);
     for (unsigned i = 0; i < o->n_sounds; i++)
         fprintf(f, "%ld sound %d\n", index, o->sounds[i]);
 }
@@ -67,11 +74,13 @@ int main(int argc, char **argv) {
     static unsigned char snap[DGROUP_LEN];
     static struct game g;
     static struct frame_output o;
+    static struct resources res;
     long index = 0;
     while (fread(snap, 1, DGROUP_LEN, in) == DGROUP_LEN) {
         dgroup_import(&g, snap);
+        dgroup_import_resources(&res, snap);
         memset(&o, 0, sizeof o);
-        run(&g, &o);
+        run(&g, &res, &o);
         dgroup_export(&g, snap);
         if (events)
             write_events(events, index, &o);
