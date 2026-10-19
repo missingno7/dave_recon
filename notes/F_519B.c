@@ -1,7 +1,7 @@
 /*
  * F_519B -- init_game_once()
  * cs [0x4f9b,0x515a) / file [0x519b,0x535a), 447 bytes.
- * Verdict: UNRESOLVED_FIXUPS (all non-fixup bytes equal; see below).
+ * Best attempt: MISMATCH (4 bytes) + 4 unresolved fixups; see notes/F_519B.md.
  *
  * One-time start-up: allocates the 0x16000-byte far work buffer
  * (F_6A62, result to DS:0x56F0), calls the asm stub F_8516 (sets the far
@@ -24,7 +24,7 @@
  * data segments S_1C2E / S_0B31 (paragraphs 0x1C2E / 0x0B31, outside
  * _TEXT and DGROUP) cannot be named in tools/symbols.py, so their offset16
  * and base16 fixups stay unresolved. Every other byte, including the
- * SCOPY'd initialiser in _DATA at DS:0x0883, matches.
+ * SCOPY'd initialiser in _DATA at DS:0x0883, matches except the 4-byte\n * push order of the far pointer to def (see notes/F_519B.md).
  */
 /* @flags -G */
 /* @seg _DATA 0x0883 */
