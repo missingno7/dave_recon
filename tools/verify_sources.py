@@ -336,6 +336,21 @@ def verify_asm():
     sources = sorted(ASM_SRC.glob("*.asm"))
     if not sources:
         return []
+    # The modules reference C-owned globals by their C (storage) names, so the
+    # C units' placed publics must be known first: compile the units and add
+    # every symbol their own composition places (same rule as verify_all).
+    if mf._IMAGE is None:
+        mf._IMAGE, mf._SYMBOLS = mf.unpacked_bytes(), mf.SymbolMap()
+    units = unit_sources()
+    for src, obj in zip(units, tcc.compile_many(units, work=ROOT / "build" / "verify_asm_units")):
+        if obj is None:
+            continue
+        text = src.read_text(encoding="latin1")
+        mod = mf.omf.OmfReader().read(obj.read_bytes(), src.stem)
+        at = mf.parse_at(text)
+        if at is not None:
+            for name, kind, addr in mf.object_symbols(mod, at, mf.parse_directives(text)):
+                mf._SYMBOLS.define(name, kind, addr, rel(src))
     results = match_asm.assemble_and_match(sources, work=ROOT / "build" / "verify_asm_batch")
     OUT.mkdir(parents=True, exist_ok=True)
     for src, r in zip(sources, results):

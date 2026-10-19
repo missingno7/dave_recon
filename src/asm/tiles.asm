@@ -55,19 +55,18 @@ NUM_TILES	equ	53
 ; ------------------------------------------------------- C-owned globals
 
 		.DATA
-		extrn	_D_4F86:byte	; video type: 0 CGA, 1 EGA, 2 VGA
-		extrn	_D_56F0:word	; far pointer to the loaded tile file: offset
-		extrn	_D_56F2:word	;  ... and segment
-		extrn	_D_56F4:word	; current level
-		extrn	_D_57A0:word	; horizontal scroll of the view, in tiles
-		extrn	_D_173A:byte	; the levels: 10 x 1280 bytes, tiles at +256
+		extrn	_g_gfx_index__2h:byte	; g_gfx_index (C storage name, DAVE.H): video type: 0 CGA, 1 EGA, 2 VGA
+		extrn	_g_tileset_Qh:dword	; g_tileset (C storage name): far pointer to the loaded tile file
+		extrn	_g_current_level______yh:word	; g_current_level (C storage name): current level
+		extrn	_g_scroll_x_Wh:word	; g_scroll_x (C storage name): horizontal scroll of the view, in tiles
+		extrn	_g_levels:byte	; the levels: 10 x 1280 bytes, tiles at +256
 
-VideoType	equ	_D_4F86
-TilesOff	equ	_D_56F0
-TilesSeg	equ	_D_56F2
-CurLevel	equ	_D_56F4
-ScrollX		equ	_D_57A0
-Levels		equ	_D_173A
+VideoType	equ	_g_gfx_index__2h
+TilesOff	equ	word ptr _g_tileset_Qh
+TilesSeg	equ	word ptr _g_tileset_Qh+2
+CurLevel	equ	_g_current_level______yh
+ScrollX		equ	_g_scroll_x_Wh
+Levels		equ	_g_levels
 
 ; ------------------------------------------------------ module variables
 

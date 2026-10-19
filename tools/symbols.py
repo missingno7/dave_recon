@@ -120,6 +120,8 @@ class SymbolMap:
             if have == address and name in table and self.origin.get(name) == "curated":
                 self.origin[name] = f"curated, confirmed by {origin}"
                 return
+            if have == address and name in table and origin in (self.origin.get(name) or ""):
+                return          # the same object placed again (identical definition)
             raise ValueError(f"symbol {name} defined twice: {self.origin.get(name)} "
                              f"({have:#06x}) and {origin} ({address:#06x})")
         table[name] = address
