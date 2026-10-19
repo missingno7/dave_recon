@@ -263,13 +263,14 @@ class OmfReader(ObjectReader):
                         target_bit = (fixdat >> 3) & 1
                         no_displacement = (fixdat >> 2) & 1
                         target_field = fixdat & 3
+                        frame_index = 0
                         if frame_bit:
-                            frame_method, _ = frame_threads.get(
+                            frame_method, frame_index = frame_threads.get(
                                 frame_field & 3, (None, 0))
                         else:
                             frame_method = frame_field
                             if frame_method in (0, 1, 2):
-                                _, at = self._index(body, at)
+                                frame_index, at = self._index(body, at)
                         if target_bit:
                             thread = target_threads.get(target_field & 3,
                                                         (None, 0))
@@ -296,6 +297,7 @@ class OmfReader(ObjectReader):
                             "target_index": target_index,
                             "target_displacement": displacement,
                             "frame_method": frame_method,
+                            "frame_index": frame_index,
                         })
                     else:
                         thread = body[at]
@@ -332,6 +334,19 @@ class OmfReader(ObjectReader):
                                  else f"?{index}")}
             return {"kind": "absolute", "name": f"frame:{index}"}
 
+        def frame_of(fixup: dict) -> str:
+            """F0 segment / F1 group / F2 external / F4 location / F5 target."""
+            method, index = fixup["frame_method"], fixup["frame_index"]
+            if method == 0:
+                return f"segment:{segment_name(index)}"
+            if method == 1:
+                return ("group:" + (group_names[index - 1]
+                                    if 0 < index <= len(group_names) else f"?{index}"))
+            if method == 2:
+                return ("external:" + (externals[index - 1]
+                                       if 0 < index <= len(externals) else f"?{index}"))
+            return {4: "location", 5: "target"}.get(method, f"method{method}")
+
         segments = {segment_name(index): bytes(payload)
                     for index, payload in segment_data.items()}
         # SEGDEF order, so a later SEGDEF of a name already seen (a segment a
@@ -355,6 +370,7 @@ class OmfReader(ObjectReader):
                 "target_kind": target["kind"],
                 "target": target["name"],
                 "displacement": fixup["target_displacement"],
+                "frame": frame_of(fixup),
             })
         return ObjectModule(segments, out_publics, out_fixups, externals,
                             module_name, segment_lengths=out_segment_lengths)

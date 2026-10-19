@@ -1,0 +1,10 @@
+{
+ "description": "Curated symbol addresses for strict fixup verification (tools/symbols.py). cs = CS offset (file offset - 0x200); ds = DGROUP offset (DS:0 = file 0x256D0). Library _TEXT publics are derived automatically from KNOWN_LIBRARY regions and are not listed here.",
+ "code": {
+  "_main": {"cs": "0x0239", "evidence": "C0S calls it (call at file 0x2FC, disp 0x013A); see tests/test_coordinates.py"},
+  "N_OVERFLOW@": {"cs": "0xB2FF", "evidence": "target of the `call` in every -N stack check (cmp [___brklvl],sp; jb +3; call N_OVERFLOW@) across all C functions; tail-jumps into C0S"}
+ },
+ "data": {
+  "___brklvl": {"ds": "0x009A", "size": 2, "evidence": "operand of `cmp word ptr [0x9a],sp` in every -N stack check; TCC emits it as an EXTDEF ___brklvl fixup"}
+ }
+}

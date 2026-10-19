@@ -71,7 +71,7 @@ import coordinates as coord  # noqa: E402
 
 EXE = ROOT / "build" / "DAVE_unpacked.exe"
 PROLOGUE_BASELINE_PATH = ROOT / "docs" / "function-census-prologue-scan.json"
-OUT_JSON = ROOT / "docs" / "function-census.json"
+OUT_JSON = ROOT / "docs" / "function-census-callgraph-v2.json"  # superseded by tools/cfg.py (v3)
 
 SEGMENT_BASE = coord.MZ_HEADER_SIZE            # file offset of CS:IP 0000:0000
 MAIN_START = 0x439                             # trusted call-graph root (file offset)

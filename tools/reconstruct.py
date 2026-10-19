@@ -70,10 +70,19 @@ def validate_ownership(manifest):
 
 
 def region_bytes(region):
-    # Bootstrap: every region currently reads its literal raw extract.
-    # TODO(promotion): dispatch on region["kind"] to prefer a real generator
-    # (compiled C/ASM object, structured codec, asset encoder) once one
-    # exists for a given region, and treat this raw read as a fallback only.
+    if region["kind"] == "MATCHING_C":
+        # Matched C regions are rebuilt from the compiler's output, linked and
+        # verified by tools/verify_sources.py -- never from a raw extract.
+        built = ROOT / "build" / "matched" / f"{region['id']}.bin"
+        if not built.exists():
+            raise SystemExit(f"missing compiled bytes for MATCHING_C region {region['id']!r}: "
+                             f"run tools/verify_sources.py first")
+        data = built.read_bytes()
+        if len(data) != region["end"] - region["start"]:
+            raise SystemExit(f"compiled bytes for {region['id']!r} have the wrong length")
+        return data
+    # Every other region still reads its literal raw extract (KNOWN_LIBRARY
+    # and the headers included; TODO: generators for those too).
     raw_path = RAW_DIR / f"{region['id']}.bin"
     if not raw_path.exists():
         raise SystemExit(f"missing raw extract for region {region['id']!r}: {raw_path} "

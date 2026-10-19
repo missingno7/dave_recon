@@ -60,39 +60,38 @@
       "artifact": "raw/STARTUP_C0S.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_439_9613_439_6D64",
+      "id": "RAW_439_6D64",
       "start": 1081,
       "end": 28004,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_439_6D64.bin"
     },
     {
       "id": "F_6D64",
       "start": 28004,
-      "end": 28042,
+      "end": 28098,
       "kind": "MATCHING_C",
       "classification": "code",
-      "source": "src/F_6D64.c",
+      "source": "src/game/F_6D64.c",
       "compile_flags": {
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "b3f653ea93e2b846bee6c933cf8240ec8fd9cdbce81717b23dc75e13e3a8854a",
-      "description": "Dispatch head of a compiled switch(param) with 4 cases (jump-table-based); see src/F_6D64.c for full provenance notes. The census boundary here (docs/function-census.json's F_6D64) cuts off at the indirect jmp because the naive scan looks for RET, not JMP; the real case bodies + jump table continue at file offset ~0x6d8a-0x6dba and remain RAW_UNKNOWN.",
-      "matching_status": "EXACT_MODULO_FIXUPS",
-      "matching_status_note": "tools/match_function.py: compiling src/F_6D64.c with the pinned Turbo C++ 1.00 toolchain (s model, flags '') reproduces file offset [0x6d64,0x6d8a) with zero unexplained differences (16 fixup-covered bytes; fixup targets -- addresses of externally-resolved symbols/segments -- are not independently re-derived, matching the same standard used for STARTUP_C0S and the library_scanner.py promotions).",
-      "artifact": "raw/F_6D64.bin"
+      "object_sha256": "34de0d5c5d62c8b17fb2d7c1d368415564f82d9cb3d60ee7600155101b14c12b",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 9 fixups, 0 differing bytes",
+      "artifact": "build/matched/F_6D64.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_439_9613_6D8A_9613",
-      "start": 28042,
+      "id": "RAW_6DC2_9613",
+      "start": 28098,
       "end": 38419,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_6DC2_9613.bin"
     },
     {
       "id": "LIB_ATEXIT_9613",
@@ -123,13 +122,13 @@
       "artifact": "raw/LIB_CLOSE_9637.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_9662_97B0",
+      "id": "RAW_9662_97B0",
       "start": 38498,
       "end": 38832,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_9662_97B0.bin"
     },
     {
       "id": "LIB_FFLUSH_97B0",
@@ -160,13 +159,13 @@
       "artifact": "raw/LIB_FLUSHALL_9832.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_9868_9971",
+      "id": "RAW_9868_9971",
       "start": 39016,
       "end": 39281,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_9868_9971.bin"
     },
     {
       "id": "LIB_GETDATE_9971",
@@ -183,13 +182,13 @@
       "artifact": "raw/LIB_GETDATE_9971.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_9997_9BF9",
+      "id": "RAW_9997_9BF9",
       "start": 39319,
       "end": 39929,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_9997_9BF9.bin"
     },
     {
       "id": "LIB_PUTS_9BF9",
@@ -206,13 +205,13 @@
       "artifact": "raw/LIB_PUTS_9BF9.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_9C38_9CD4",
+      "id": "RAW_9C38_9CD4",
       "start": 39992,
       "end": 40148,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_9C38_9CD4.bin"
     },
     {
       "id": "LIB_SETVBUF_9CD4",
@@ -229,13 +228,13 @@
       "artifact": "raw/LIB_SETVBUF_9CD4.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_9DA0_9E19",
+      "id": "RAW_9DA0_9E19",
       "start": 40352,
       "end": 40473,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_9DA0_9E19.bin"
     },
     {
       "id": "LIB_TELL_9E19",
@@ -252,13 +251,13 @@
       "artifact": "raw/LIB_TELL_9E19.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_9E31_A11E",
+      "id": "RAW_9E31_A11E",
       "start": 40497,
       "end": 41246,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_9E31_A11E.bin"
     },
     {
       "id": "LIB_TOUPPER_A11E",
@@ -289,13 +288,13 @@
       "artifact": "raw/LIB_WRITE_A14A.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_A239_A2D6",
+      "id": "RAW_A239_A2D6",
       "start": 41529,
       "end": 41686,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_A239_A2D6.bin"
     },
     {
       "id": "LIB_BIOSKEY_A2D6",
@@ -312,13 +311,13 @@
       "artifact": "raw/LIB_BIOSKEY_A2D6.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_A2F9_A368",
+      "id": "RAW_A2F9_A368",
       "start": 41721,
       "end": 41832,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_A2F9_A368.bin"
     },
     {
       "id": "LIB_CHMODA_A368",
@@ -531,13 +530,13 @@
       "artifact": "raw/LIB_MOVMEM_A678.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_A6DA_A832",
+      "id": "RAW_A6DA_A832",
       "start": 42714,
       "end": 43058,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_A6DA_A832.bin"
     },
     {
       "id": "LIB_OPENA_A832",
@@ -666,13 +665,13 @@
       "artifact": "raw/LIB_STRNCPY_A9E5.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_AA11_AC5F",
+      "id": "RAW_AA11_AC5F",
       "start": 43537,
       "end": 44127,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_AA11_AC5F.bin"
     },
     {
       "id": "LIB_WRITEA_AC5F",
@@ -689,13 +688,13 @@
       "artifact": "raw/LIB_WRITEA_AC5F.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_ACA6_B093",
+      "id": "RAW_ACA6_B093",
       "start": 44198,
       "end": 45203,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_ACA6_B093.bin"
     },
     {
       "id": "LIB_H_LDIV_B093",
@@ -754,13 +753,13 @@
       "artifact": "raw/LIB_H_SCOPY_B1C2.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_B1E1_B463",
+      "id": "RAW_B1E1_B463",
       "start": 45537,
       "end": 46179,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_B1E1_B463.bin"
     },
     {
       "id": "LIB_N_LXMUL_B463",
@@ -791,13 +790,13 @@
       "artifact": "raw/LIB_N_PCMP_B47A.bin"
     },
     {
-      "id": "RAW_LOAD_MODULE_B49B_2A330",
+      "id": "RAW_B49B_2A330",
       "start": 46235,
       "end": 172848,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_LOAD_MODULE.bin"
+      "artifact": "raw/RAW_B49B_2A330.bin"
     }
   ]
 }

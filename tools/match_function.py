@@ -1,41 +1,38 @@
-"""Compile-and-compare pipeline for promoting a MATCHING_C region.
+"""Strict compile-and-compare for promoting MATCHING_C regions.
 
-Generalizes the "match modulo fixups" proof standard (used by
-tools/recover_startup_binding.py for STARTUP_C0S and tools/library_scanner.py
-for linked-in runtime routines) to hand-written candidate.c source files that
-are claimed to reproduce actual GAME code (not linked library code).
+Pipeline: compile candidate.c with the pinned Turbo C++ 1.00 toolchain
+(tools/compile_probe.py) -> parse the OMF object (tools/omf.py) -> place its
+_TEXT at the original CS address -> RESOLVE EVERY FIXUP the way TLINK would,
+using the symbol map (tools/symbols.py) and the candidate's segment
+placements -> compare the fully linked bytes with build/DAVE_unpacked.exe.
 
-Pipeline: compile candidate.c with the pinned Turbo C++ 1.00 toolchain (via
-tools/compile_probe.py's `run()`, so the exact same DOSBox-X harness and
-default flags -ms -1- -f- -N are used) -> parse the resulting OMF object
-(tools/omf.py) -> take its `_TEXT` segment -> compare byte-for-byte against
-the declared target file-offset range in build/DAVE_unpacked.exe -> accept
-only if every differing byte is explained by a FIXUPP record declared for
-that exact byte offset in the object's `_TEXT` segment (the same bar as
-STARTUP_C0S; "unexplained" differences are a hard rejection, not a partial
-match).
+Nothing is masked. A fixup is a claim ("this operand is the address of X");
+the matcher computes X's address independently and the resulting bytes must
+equal the original. Verdicts:
 
-A function's target range does not have to be the function's *complete*
-address range as delineated by some other tool (e.g. docs/function-census.json
-may cut a real function's boundary short at a jump table or another quirk);
-it only has to be a range this tool independently re-derives byte-for-byte.
-The candidate source is free to include placeholder code, so long as (a) the
-compiled bytes covering the declared target range are fully explained, and
-(b) placeholder code lives entirely outside the declared range (this tool
-does not care what happens outside it, but does not silently trim the
-declared range to dodge a bad byte either -- the full extent must match).
+  EXACT              every byte of the extent equals the original after
+                     resolving every fixup; every base16 fixup sits on a real
+                     MZ relocation entry with the expected paragraph.
+  UNRESOLVED_FIXUPS  all non-fixup bytes equal, but some fixups name symbols
+                     or segments with no known address (reported by name).
+                     Not promotable.
+  MISMATCH           at least one byte differs (listed with disassembly
+                     context). Not promotable.
+
+Placement:
+* `_TEXT` is placed so every public function lands on its symbol-map address
+  (named in layout/symbols.json, or a placeholder `F_XXXX` = census id /
+  file offset). All publics must agree on one base. `--at` overrides.
+* A candidate's own `_DATA`/`_BSS` (string literals, statics, globals it
+  defines) need a DS base: give it in the source as a directive comment
+      /* @seg _DATA 0x07c8 */   /* @seg _BSS 0x9ec0 */
+  When a `_DATA` base is given, the candidate's `_DATA` bytes are ALSO
+  compared with the original DGROUP bytes there (verifies string literals and
+  initialisers).
 
 Usage:
-    python tools/match_function.py <candidate.c> <start_hex> <end_hex> \\
-        [--model s] [--flags "..."] [--apply --id F_6D64 \\
-        --description "..." --src src/F_6D64.c]
-
-Without --apply, only prints the comparison report. With --apply, copies
-candidate.c to the given --src path (recorded in the manifest as `source`),
-promotes [start,end) in layout/manifest.json to kind="MATCHING_C", and
-reruns extract_raw.py + reconstruct.py + the full test suite, restoring the
-original manifest/raw state on any failure (same safety discipline as
-tools/library_scanner.py's apply_matches).
+    python tools/match_function.py src/foo.c [--at 0x6b64] [--flags "..."] [--json]
+        [--apply --id F_6D64 --description "..."]
 """
 from __future__ import annotations
 
@@ -43,18 +40,26 @@ import argparse
 import hashlib
 import json
 import pathlib
-import shutil
+import re
+import struct
 import subprocess
 import sys
+
+import capstone
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import compile_probe  # noqa: E402
+import tcc  # noqa: E402
 import omf  # noqa: E402
 import reconstruct  # noqa: E402
+from symbols import SymbolMap, HDR, DGROUP_PARA, TEXT_PARA  # noqa: E402
 
 MANIFEST_PATH = ROOT / "layout" / "manifest.json"
 UNPACKED_PATH = ROOT / "build" / "DAVE_unpacked.exe"
+DGROUP_FILE = HDR + DGROUP_PARA * 16
+
+_md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_16)
 
 
 def load_manifest() -> dict:
@@ -62,120 +67,255 @@ def load_manifest() -> dict:
 
 
 def unpacked_bytes() -> bytes:
-    manifest = load_manifest()
     data = UNPACKED_PATH.read_bytes()
-    expected = manifest["unpacked_original"]
+    expected = load_manifest()["unpacked_original"]
     if len(data) != expected["size"] or hashlib.md5(data).hexdigest() != expected["md5"]:
         raise SystemExit("build/DAVE_unpacked.exe does not match the pinned specimen")
     return data
 
 
-def compare_modulo_fixups(candidate: bytes, target: bytes, covered: set) -> dict:
-    n = len(target)
-    if len(candidate) < n:
-        raise SystemExit(
-            f"compiled _TEXT segment ({len(candidate)} bytes) is shorter than "
-            f"the target range ({n} bytes) -- cannot cover the full extent"
-        )
-    diffs = [i for i in range(n) if candidate[i] != target[i]]
-    unexplained = [i for i in diffs if i not in covered]
+def relocation_sites(image: bytes) -> set:
+    h = struct.unpack_from("<14H", image, 0)
+    sites = set()
+    for i in range(h[3]):
+        off, seg = struct.unpack_from("<HH", image, h[12] + 4 * i)
+        sites.add(seg * 16 + off)
+    return sites
+
+
+def parse_directives(source_text: str) -> dict:
+    segs = {}
+    for name, value in re.findall(r"@seg\s+(\w+)\s+(0x[0-9A-Fa-f]+|\d+)", source_text):
+        segs[name] = int(value, 0)
+    return segs
+
+
+def text_base(mod, symbols: SymbolMap, at: int | None):
+    if at is not None:
+        return at, []
+    bases = []
+    for pub in mod.publics:
+        if pub["segment"] != "_TEXT":
+            continue
+        addr = symbols.resolve_code(pub["name"])
+        if addr is not None:
+            bases.append((pub["name"], addr - pub["offset"]))
+    if not bases:
+        raise SystemExit("cannot place _TEXT: no public function has a known address; use --at")
+    distinct = {b for _, b in bases}
+    if len(distinct) != 1:
+        raise SystemExit(f"publics disagree on the _TEXT base: {bases}")
+    return bases[0][1], bases
+
+
+def link(mod, base: int, segs: dict, symbols: SymbolMap, image: bytes):
+    """Return (linked _TEXT bytes, per-fixup report list)."""
+    text = bytearray(mod.segment_bytes("_TEXT"))
+    relocs = relocation_sites(image)
+    report = []
+    for fx in mod.fixups_in("_TEXT"):
+        site = base + fx["offset"]           # CS offset of the patched bytes
+        entry = {"offset": fx["offset"], "cs": site, "loc": fx["loc"],
+                 "target": fx["target"], "kind": fx["target_kind"],
+                 "frame": fx.get("frame"), "self_relative": fx["self_relative"]}
+        report.append(entry)
+
+        # Resolve the target to (paragraph, offset-within-frame).
+        para = off = None
+        if fx["target_kind"] == "external":
+            name = fx["target"]
+            code = symbols.resolve_code(name)
+            data = symbols.resolve_data(name)
+            if code is not None:
+                para, off = TEXT_PARA, code
+            elif data is not None:
+                para, off = DGROUP_PARA, data
+        elif fx["target_kind"] == "segment":
+            seg = fx["target"]
+            if seg == "_TEXT":
+                para, off = TEXT_PARA, base
+            elif seg in segs:
+                para, off = DGROUP_PARA, segs[seg]
+        elif fx["target_kind"] == "group" and fx["target"] == "DGROUP":
+            para, off = DGROUP_PARA, 0
+        if para is None:
+            entry["status"] = "unresolved"
+            continue
+        off += fx["displacement"]
+        entry["resolved"] = {"para": para, "offset": off}
+
+        loc, o = fx["loc"], fx["offset"]
+        if loc in ("offset16", "loader-offset16"):
+            cur = struct.unpack_from("<H", text, o)[0]
+            if fx["self_relative"]:
+                val = (cur + off - (site + 2)) & 0xFFFF
+            else:
+                val = (cur + off) & 0xFFFF
+            struct.pack_into("<H", text, o, val)
+        elif loc == "lobyte":
+            cur = text[o]
+            if fx["self_relative"]:
+                text[o] = (cur + off - (site + 1)) & 0xFF
+            else:
+                text[o] = (cur + off) & 0xFF
+        elif loc == "base16":
+            struct.pack_into("<H", text, o, para)
+            entry["mz_relocation"] = site in relocs   # CS offset == load-module offset
+        elif loc == "pointer32":
+            cur = struct.unpack_from("<H", text, o)[0]
+            struct.pack_into("<HH", text, o, (cur + off) & 0xFFFF, para)
+            entry["mz_relocation"] = (site + 2) in relocs
+        else:
+            entry["status"] = f"unsupported loc {loc}"
+            continue
+        entry["status"] = "resolved"
+    return bytes(text), report
+
+
+def context(cs: int, image: bytes, n: int = 24) -> list:
+    lm = image[HDR:]
+    out = []
+    for i in _md.disasm(lm[max(0, cs - 4):cs + n], max(0, cs - 4)):
+        out.append(f"{i.address:04x} {i.bytes.hex():12s} {i.mnemonic} {i.op_str}")
+    return out
+
+
+def run_match(source: pathlib.Path, flags: str = "", at: int | None = None, model: str = "s") -> dict:
+    if model != "s":
+        obj_path = compile_probe.run(source, model, flags)
+    else:
+        obj_path = tcc.compile_many([source], extra_flags=flags)[0]
+        if obj_path is None:
+            log = (ROOT / "build" / "tcc_batch" / "S0001.LOG")
+            raise SystemExit("compile failed: " + (log.read_text(errors="replace") if log.exists() else ""))
+    return match_object(obj_path.read_bytes(), source, at=at, flags=flags, model=model)
+
+
+_IMAGE = None
+_SYMBOLS = None
+
+
+def match_object(obj_bytes: bytes, source: pathlib.Path, at: int | None = None,
+                 flags: str = "", model: str = "s") -> dict:
+    global _IMAGE, _SYMBOLS
+    if _IMAGE is None:
+        _IMAGE, _SYMBOLS = unpacked_bytes(), SymbolMap()
+    image, symbols = _IMAGE, _SYMBOLS
+    text_src = source.read_text(encoding="latin1")
+    segs = parse_directives(text_src)
+    flags = (flags + " " + tcc.source_flags(text_src)).strip()
+    mod = omf.OmfReader().read(obj_bytes, source.stem)
+    base, bases = text_base(mod, symbols, at)
+    linked, fixups = link(mod, base, segs, symbols, image)
+    original = image[HDR + base:HDR + base + len(linked)]
+
+    diffs = [i for i in range(len(linked)) if linked[i] != original[i]]
+    unresolved = [f for f in fixups if f.get("status") != "resolved"]
+    unresolved_bytes = set()
+    for f in unresolved:
+        unresolved_bytes.update(range(f["offset"], f["offset"] + 2))
+    hard_diffs = [d for d in diffs if d not in unresolved_bytes]
+    missing_reloc = [f for f in fixups if f.get("mz_relocation") is False]
+
+    data_check = None
+    if "_DATA" in segs and mod.segment_bytes("_DATA"):
+        cand = mod.segment_bytes("_DATA")
+        start = DGROUP_FILE + segs["_DATA"]
+        orig = image[start:start + len(cand)]
+        data_check = {"ds": segs["_DATA"], "length": len(cand),
+                      "diffs": [i for i in range(len(cand)) if cand[i] != orig[i]]}
+        dfx = mod.fixups_in("_DATA")
+        if dfx:
+            data_check["note"] = f"{len(dfx)} fixups inside _DATA not yet resolved by this tool"
+            data_check["unverified_fixups"] = len(dfx)
+
+    if hard_diffs or missing_reloc or (data_check and data_check["diffs"]):
+        verdict = "MISMATCH"
+    elif unresolved or (data_check and data_check.get("unverified_fixups")):
+        verdict = "UNRESOLVED_FIXUPS"
+    else:
+        verdict = "EXACT"
+
     return {
-        "target_length": n,
-        "total_diffs": len(diffs),
-        "diff_offsets": diffs,
-        "fixup_covered_bytes": len(covered),
-        "unexplained_diffs": unexplained,
-        "exact_match_modulo_fixups": len(unexplained) == 0,
+        "source": str(source).replace("\\", "/"),
+        "verdict": verdict,
+        "cs_start": base, "cs_end": base + len(linked),
+        "file_start": HDR + base, "file_end": HDR + base + len(linked),
+        "length": len(linked),
+        "placement": bases,
+        "segments": segs,
+        "model": model, "flags": flags,
+        "object_sha256": hashlib.sha256(obj_bytes).hexdigest(),
+        "publics": mod.publics,
+        "fixup_count": len(fixups),
+        "unresolved_fixups": [{"target": f["target"], "kind": f["kind"], "cs": f["cs"],
+                               "status": f.get("status")} for f in unresolved],
+        "missing_mz_relocations": [f["cs"] for f in missing_reloc],
+        "diffs": [{"offset": d, "cs": base + d, "got": linked[d], "want": original[d]}
+                  for d in hard_diffs[:64]],
+        "diff_count": len(hard_diffs),
+        "first_diff_context": context(base + hard_diffs[0], image) if hard_diffs else [],
+        "candidate_first_diff": (
+            [f"{i.address:04x} {i.bytes.hex():12s} {i.mnemonic} {i.op_str}"
+             for i in _md.disasm(linked[max(0, hard_diffs[0] - 4):hard_diffs[0] + 24],
+                                 base + max(0, hard_diffs[0] - 4))]
+            if hard_diffs else []),
+        "data_check": data_check,
+        "fixups": fixups,
     }
 
 
-def run_match(source: pathlib.Path, start: int, end: int, model: str, flags: str) -> dict:
-    obj_path = compile_probe.run(source, model, flags)
-    obj_bytes = obj_path.read_bytes()
-    mod = omf.OmfReader().read(obj_bytes, obj_path.stem)
-    text = mod.segment_bytes("_TEXT")
-
-    target = unpacked_bytes()[start:end]
-    covered = set()
-    for fx in mod.fixups_in("_TEXT"):
-        covered.update(range(fx["offset"], fx["offset"] + fx["width"]))
-
-    result = compare_modulo_fixups(text[:end - start], target, covered)
-    result.update({
-        "source": str(source),
-        "start": start,
-        "end": end,
-        "model": model,
-        "flags": flags,
-        "object_sha256": hashlib.sha256(obj_bytes).hexdigest(),
-        "text_segment_length": len(text),
-        "publics": mod.publics,
-        "fixups": mod.fixups_in("_TEXT"),
-    })
-    return result
+def census_boundaries() -> set:
+    census = json.loads((ROOT / "docs" / "function-census.json").read_text())
+    b = set()
+    for f in census["functions"]:
+        b.add(f["cs_start"])
+        b.add(f["cs_end"])
+    return b
 
 
-def apply_promotion(result: dict, region_id: str, description: str,
-                     src_dest: pathlib.Path, candidate_source: pathlib.Path):
-    if not result["exact_match_modulo_fixups"]:
-        raise SystemExit("refusing to promote: match is not exact modulo fixups")
-
-    if not src_dest.is_absolute():
-        src_dest = ROOT / src_dest
-    if not candidate_source.is_absolute():
-        candidate_source = ROOT / candidate_source
-
+def apply_promotion(result: dict, region_id: str, description: str):
+    if result["verdict"] != "EXACT":
+        raise SystemExit(f"refusing to promote: verdict is {result['verdict']}")
+    bounds = census_boundaries()
+    if result["cs_start"] not in bounds or result["cs_end"] not in bounds:
+        raise SystemExit("refusing to promote: extent does not coincide with census "
+                         "function boundaries (docs/function-census.json)")
     manifest_backup = MANIFEST_PATH.read_text()
     raw_dir = ROOT / "raw"
     raw_backup = {p.name: p.read_bytes() for p in raw_dir.glob("*.bin")}
 
-    src_dest.parent.mkdir(parents=True, exist_ok=True)
-    src_existed = src_dest.exists()
-    src_backup = src_dest.read_bytes() if src_existed else None
-    if src_dest.resolve() != candidate_source.resolve():
-        shutil.copyfile(candidate_source, src_dest)
-
     manifest = load_manifest()
     regions = manifest["regions"]
-    start, end = result["start"], result["end"]
-    idx = next(
-        i for i, r in enumerate(regions)
-        if r["kind"] == "RAW_UNKNOWN" and r["start"] <= start and end <= r["end"]
-    )
+    start, end = result["file_start"], result["file_end"]
+    idx = next((i for i, r in enumerate(regions)
+                if r["kind"] == "RAW_UNKNOWN" and r["start"] <= start and end <= r["end"]), None)
+    if idx is None:
+        raise SystemExit("target range is not inside a single RAW_UNKNOWN region")
     old = regions[idx]
-    new_regions = []
+    new = []
     if old["start"] < start:
-        new_regions.append({**old, "end": start, "id": f"{old['id']}_{old['start']:X}_{start:X}"})
-    new_regions.append({
-        "id": region_id,
-        "start": start,
-        "end": end,
-        "kind": "MATCHING_C",
-        "classification": "code",
-        "source": str(src_dest.relative_to(ROOT)).replace("\\", "/"),
+        new.append({**old, "end": start, "id": f"RAW_{old['start']:X}_{start:X}",
+                    "artifact": f"raw/RAW_{old['start']:X}_{start:X}.bin"})
+    new.append({
+        "id": region_id, "start": start, "end": end,
+        "kind": "MATCHING_C", "classification": "code",
+        "source": result["source"],
         "compile_flags": {"model": result["model"], "flags": result["flags"]},
         "object_sha256": result["object_sha256"],
         "description": description,
-        "matching_status": "EXACT_MODULO_FIXUPS",
+        "matching_status": "EXACT",
         "matching_status_note": (
-            f"tools/match_function.py: compiling "
-            f"{str(src_dest.relative_to(ROOT)).replace(chr(92), '/')} "
-            f"with the pinned Turbo C++ 1.00 toolchain ({result['model']} model, "
-            f"flags {result['flags']!r}) reproduces file offset "
-            f"[{start:#x},{end:#x}) with zero unexplained differences "
-            f"({result['fixup_covered_bytes']} fixup-covered bytes; fixup "
-            "targets -- addresses of externally-resolved symbols/segments -- "
-            "are not independently re-derived, matching the same standard "
-            "used for STARTUP_C0S and the library_scanner.py promotions)."
-        ),
+            "tools/match_function.py (strict): every fixup resolved through the "
+            "symbol map and placement; linked bytes equal the original over the "
+            f"full extent [{start:#x},{end:#x}); {result['fixup_count']} fixups verified."),
         "artifact": f"raw/{region_id}.bin",
     })
     if end < old["end"]:
-        new_regions.append({**old, "start": end, "id": f"{old['id']}_{end:X}_{old['end']:X}"})
-    regions[idx:idx + 1] = new_regions
-    regions.sort(key=lambda r: r["start"])
-    manifest["regions"] = regions
-
+        new.append({**old, "start": end, "id": f"RAW_{end:X}_{old['end']:X}",
+                    "artifact": f"raw/RAW_{end:X}_{old['end']:X}.bin"})
+    regions[idx:idx + 1] = new
+    manifest["regions"] = sorted(regions, key=lambda r: r["start"])
     reconstruct.validate_ownership(manifest)
     MANIFEST_PATH.write_text(json.dumps(manifest, indent=2) + "\n")
 
@@ -186,64 +326,54 @@ def apply_promotion(result: dict, region_id: str, description: str,
                 p.unlink()
         for name, content in raw_backup.items():
             (raw_dir / name).write_bytes(content)
-        if src_existed:
-            src_dest.write_bytes(src_backup)
-        else:
-            src_dest.unlink(missing_ok=True)
 
     try:
-        extract = subprocess.run(
-            [sys.executable, str(ROOT / "tools" / "extract_raw.py")],
-            cwd=ROOT, capture_output=True, text=True)
-        if extract.returncode != 0:
-            raise RuntimeError(f"extract_raw.py failed:\n{extract.stdout}\n{extract.stderr}")
-        recon = subprocess.run(
-            [sys.executable, str(ROOT / "tools" / "reconstruct.py")],
-            cwd=ROOT, capture_output=True, text=True)
-        if recon.returncode != 0:
-            raise RuntimeError(f"reconstruct.py failed:\n{recon.stdout}\n{recon.stderr}")
-        recon_report = json.loads(recon.stdout)
-        if not recon_report.get("ok"):
-            raise RuntimeError(f"reconstruction failed: {recon.stdout}")
-        tests = subprocess.run(
-            [sys.executable, "-m", "unittest", "discover", "-s", "tests"],
-            cwd=ROOT, capture_output=True, text=True)
-        if tests.returncode != 0:
-            raise RuntimeError(f"test suite failed:\n{tests.stdout}\n{tests.stderr}")
+        for tool in ("extract_raw.py", "reconstruct.py"):
+            r = subprocess.run([sys.executable, str(ROOT / "tools" / tool)],
+                               cwd=ROOT, capture_output=True, text=True)
+            if r.returncode != 0:
+                raise RuntimeError(f"{tool} failed:\n{r.stdout}\n{r.stderr}")
     except Exception:
         restore()
         raise
 
-    return {"applied": True, "region_count": len(regions)}
-
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("source", type=pathlib.Path)
-    parser.add_argument("start", help="target range start, e.g. 0x6d64")
-    parser.add_argument("end", help="target range end, e.g. 0x6d8a")
-    parser.add_argument("--model", default="s", choices=list(compile_probe.MODEL_FLAG))
-    parser.add_argument("--flags", default="")
-    parser.add_argument("--apply", action="store_true")
-    parser.add_argument("--id", dest="region_id", default=None)
-    parser.add_argument("--description", default=None)
-    parser.add_argument("--src", type=pathlib.Path, default=None,
-                         help="destination under src/ to copy the candidate to")
-    args = parser.parse_args()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("source", type=pathlib.Path)
+    ap.add_argument("--at", default=None, help="CS offset to place _TEXT (default: from publics)")
+    ap.add_argument("--model", default="s", choices=list(compile_probe.MODEL_FLAG))
+    ap.add_argument("--flags", default="")
+    ap.add_argument("--json", action="store_true", help="print the full JSON report")
+    ap.add_argument("--apply", action="store_true")
+    ap.add_argument("--id", dest="region_id")
+    ap.add_argument("--description")
+    args = ap.parse_args()
 
-    start = int(args.start, 0)
-    end = int(args.end, 0)
-
-    result = run_match(args.source, start, end, args.model, args.flags)
-    printable = {k: v for k, v in result.items() if k not in ("fixups",)}
-    print(json.dumps(printable, indent=2))
-
+    r = run_match(args.source, args.flags, int(args.at, 0) if args.at else None, args.model)
+    if args.json:
+        print(json.dumps({k: v for k, v in r.items()}, indent=1))
+    else:
+        print(f"{r['verdict']}: {r['source']} -> cs [{r['cs_start']:#06x},{r['cs_end']:#06x}) "
+              f"file [{r['file_start']:#x},{r['file_end']:#x}) {r['length']} bytes, "
+              f"{r['fixup_count']} fixups, {r['diff_count']} differing bytes")
+        for u in r["unresolved_fixups"]:
+            print(f"  unresolved: {u}")
+        if r["missing_mz_relocations"]:
+            print(f"  base16 fixups without MZ relocation at cs {r['missing_mz_relocations']}")
+        if r["diffs"]:
+            print("  first diffs:", ", ".join(f"+{d['offset']:#x} got {d['got']:02x} want {d['want']:02x}"
+                                              for d in r["diffs"][:8]))
+            print("  original:"); [print("    " + l) for l in r["first_diff_context"]]
+            print("  candidate:"); [print("    " + l) for l in r["candidate_first_diff"]]
+        if r["data_check"]:
+            print(f"  _DATA check: {r['data_check']}")
     if args.apply:
-        if not (args.region_id and args.description and args.src):
-            raise SystemExit("--apply requires --id, --description, and --src")
-        apply_result = apply_promotion(result, args.region_id, args.description,
-                                        args.src, args.source)
-        print(f"Applied; manifest now has {apply_result['region_count']} regions.")
+        if not (args.region_id and args.description):
+            raise SystemExit("--apply requires --id and --description")
+        apply_promotion(r, args.region_id, args.description)
+        print("applied")
+    sys.exit(0 if r["verdict"] == "EXACT" else 1)
 
 
 if __name__ == "__main__":
