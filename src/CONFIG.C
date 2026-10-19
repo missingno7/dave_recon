@@ -21,14 +21,16 @@
 /* ---- initialised data: DS [0x0f02, ...) in definition order */
 int g_panel_rows[4] = {4, 9, 14, 19};   /* control panel: text row of each option row */
 int g_panel_cols[4] = {14, 20, 26, 32};   /* control panel: text column of each option */
-char g_scan_ascii[128] = {63, 63, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 43, 63, 63, 81, 87,
-    69, 82, 84, 89, 85, 73, 79, 80, 91, 93, 124, 63, 65, 83, 68, 70, 71,
-    72, 74, 75, 76, 59, 34, 63, 63, 63, 90, 88, 67, 86, 66, 78, 77, 44, 46,
-    47, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
-    63, 15, 63, 45, 21, 53, 17, 43, 63, 19, 63, 63, 63, 63, 63, 63, 63, 63,
-    63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
-    63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
-    63, 63, 63};   /* scan code -> printable key name character */
+char g_scan_ascii[128] = {'?', '?', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '+', '?',
+    '?', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']', '|',
+    '?', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', '"', '?', '?',
+    '?', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', '?', '?', '?',
+    '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
+    '?', '\017', '?', '-', '\025', '5', '\021', '+', '?', '\023', '?', '?',
+    '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
+    '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
+    '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
+    '?', '?', '?'};   /* scan code -> printable key name character */
 /* initialised data ends at DS 0x0f92; local-aggregate images and the string pool follow */
 
 /* ---- uninitialised data: DS [0x654c, 0x8a24), ordered by the _BSS hash (see DAVE.H) */
@@ -67,30 +69,22 @@ int g_text_left;   /* left margin of the text window */
  * calibrate_joystick(stick)
  * cs [0x51c3,0x53bc) / file [0x53c3,0x55bc), 505 bytes.
  *
- * strings, the candidate's _DATA, against DS:0x0F92..).
- *
  * Joystick calibration screen. Prints the "Joystick Configuration" prompt
  * (draw_centered_window positions the text cursor at 24, 9; print_string prints), then
  * asks for the upper-left corner: while waiting, a colour-cycling
- * (15..22) marker is drawn through DrawChar at the text cursor g_text_x/14,
+ * (15..22) marker is drawn through DrawChar at the text cursor (g_text_x, g_text_y),
  * the raw stick position is sampled by read_joystick_axes into (x1, y1) and the input
  * state by read_joystick_input(stick); fire (button word == 1) accepts, then it waits
  * for release. Same for the lower-right corner (x2, y2). The dead-zone
  * thresholds are set a quarter of the range inside each corner:
- * g_joy_xmin/0x12FC/0x1302/0x1308[stick] = x1 + dx, x2 - dx, y1 + dy,
+ * g_joy_xmin/xmax/ymin/ymax[stick] = x1 + dx, x2 - dx, y1 + dy,
  * y2 - dy. If DS:0x8A34 becomes non-zero (abort) the calibration is
  * skipped. Always ends with flush_keyboard, clear_text_window.
  *
-Codegen notes: every struct-returning call site gets its own 6-byte
+ * Codegen notes: every struct-returning call site gets its own 6-byte
  * temporary (bp-0x18, -0x1E, -0x24, -0x2A). The abort is a `goto` to the
  * shared tail (it skips the threshold stores but not flush_keyboard/clear_text_window).
  */
-
-/* text cursor column */
-
-/* text cursor row */
-
-/* abort flag */
 
 void calibrate_joystick(int stick)
 {
@@ -428,10 +422,6 @@ void detect_hardware(void)
  * folds to [bx+0xf08].
  */
 
-/* menu rows: video, sound, control */
-
-/* menu option columns */
-
 void draw_control_panel(void)
 {
     g_text_left = 1;
@@ -506,12 +496,6 @@ void draw_control_panel(void)
  * 00). `if (--g_panel_row < 0)` uses the dec flags directly, `if (++g_panel_row > 2)`
  * reloads.
  */
-
-/* menu rows */
-
-/* menu option columns */
-
-/* option available flags [row][col] */
 
 void control_panel(void)
 {

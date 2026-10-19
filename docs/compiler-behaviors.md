@@ -158,6 +158,24 @@ confirmed on 12 fresh random units (360 names, mixed types);
 `python tools/codegen_lab/bss_order.py name:size ...` predicts a layout.
 (`bss_order_hash`, `bss_ties_last_char`)
 
+**Whole units (established 2026-10-19 by the three game units).** The rules
+above hold unchanged for complete translation units: `src/DAVE.C` (53
+functions), `CONFIG.C` (9) and `HARDWARE.C` (28) each reproduce their
+`_TEXT`, `_DATA` and `_BSS` exactly. A unit containing inline `asm` goes
+through TASM as a whole (HARDWARE.C); its `_DATA` order and `_BSS` hash
+order are the same as for a plain TCC compile. TCC's segments: `_TEXT` BYTE
+aligned (units abut in the image), `_DATA` and `_BSS` WORD aligned (TLINK
+pads after an odd-length unit: DS 0x12EF, 0x132D), DGROUP = `_DATA`, `_BSS`;
+a `far` variable gets segment `<FILE><n>_FAR` (first one `S00015_FAR` for
+S0001.C), class FAR_DATA, PARA, public.
+
+**Constant parts of an index fold into the displacement**: `a[i + 4]`,
+`(&a[4])[i]`, `a[9][0][e]` and `b[e]` on an array starting at that element
+all give `mov bx,i; shl bx,1; mov ax,[bx+a+const]` -- so a sub-table used
+at a fixed offset of a bigger array cannot be told apart from a separate
+array. `long = 0` stores the low word then the high word (`mov word ptr
+[x],0; mov word ptr [x+2],0`), the same as two separate int stores.
+
 ## Checking a change
 
 ```

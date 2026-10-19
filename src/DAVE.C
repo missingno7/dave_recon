@@ -165,7 +165,7 @@ int g_unused_654a;   /* never referenced */
  * (g_quit), and finally exit via quit_game(0).
  * Name evidence: C0S calls it (layout/symbols.json).
  *
-switch cases are emitted in source order (4,5 / 3 / default) while the
+ * switch cases are emitted in source order (4,5 / 3 / default) while the
  * compare chain is sorted ascending (3,4,5).
  */
 
@@ -219,7 +219,7 @@ void main(void)
  * Name evidence: ends in exit(); called by main and by the
  * "Quit?" prompt (ask_quit).
  *
-exit() is the CS.LIB routine at cs 0x9463.
+ * exit() is the CS.LIB routine at cs 0x9463.
  */
 
 void quit_game(int code)
@@ -232,29 +232,18 @@ void quit_game(int code)
 }
 
 /*
- * check_high_score .. update_score -- six consecutive functions of the main game module,
- * compiled together because they share the module's initialised _DATA run
- * DS [0x07B6,0x07D4): the SCOPY initialisers of their local char buffers.
+ * check_high_score .. update_score: six consecutive functions whose local
+ * char buffers have initialisers; their images are this unit's _DATA
+ * DS [0x07B6,0x07D4) (all zero except update_score's "00000").
  *
- *   check_high_score  cs [0x02fc,0x05eb)  check_high_score     751 bytes
- *   input_initials  cs [0x05eb,0x068e)  input_initials       163 bytes
- *   show_high_scores  cs [0x068e,0x07de)  show_high_scores     336 bytes
- *   attract_mode  cs [0x07de,0x09b2)  attract_mode         468 bytes
- *   draw_inventory  cs [0x09b2,0x0a34)  draw_status_bar      130 bytes
- *   update_score  cs [0x0a34,0x0bfb)  update_score         455 bytes
+ *   check_high_score  cs [0x02fc,0x05eb)  751 bytes
+ *   input_initials    cs [0x05eb,0x068e)  163 bytes
+ *   show_high_scores  cs [0x068e,0x07de)  336 bytes
+ *   attract_mode      cs [0x07de,0x09b2)  468 bytes
+ *   draw_inventory    cs [0x09b2,0x0a34)  130 bytes
+ *   update_score      cs [0x0a34,0x0bfb)  455 bytes
  *
- * Why one file: all of these buffers except update_score's "00000" are zero, and
- * TCC emits no LEDATA for an all-zero _DATA, so a single-function file for
- * check_high_score or show_high_scores has a SEGDEF-only _DATA that tools/match_function.py
- * cannot compare (it calls segment_bytes("_DATA") and raises). Compiled as
- * one unit, the _DATA is 30 bytes ending in "00000\0" and is compared in
- * full against DS 0x07B6.
- *
- * The module's string literals are pooled after all its initialised data
- * (DS 0x08B0...), so they are referenced by address ("You got a high score!" ...) rather than
- * written as literals; their text is quoted at each extern.
- *
- * Codegen notes (TCC 1.00, -G needed: 2-byte arg cleanup is inc sp/inc sp):
+ * Codegen notes:
  * - block-scoped locals are placed below every function-level local AND
  *   below the struct-return temporaries of the whole function (check_high_score: len,
  *   num, digits come after s and the get_player_input temp); within a block the first
@@ -268,53 +257,7 @@ void quit_game(int code)
  * - the last case of attract_mode's switch has no break (no trailing jmp).
  */
 
-/* in-memory high score entries */
-
-/* DSCORES.DAV image (5 records) */
-
-/* g_score */
-
-/* next extra-life score */
-
-/* g_lives */
-
-/* g_current_level */
-
-/* game state: 0 play, 1 demo, 2 scores, 3 title */
-
-/* gfx index (video mode - 1) */
-
-/* tiles per gfx mode in g_status_tiles */
-
-/* status-bar tile ids, g_status_row_len per mode */
-
-/* digit-0 tile id per mode */
-
-/* title animation tile ids, 4 per mode */
-
-/* has jetpack */
-
-/* has gun */
-
-/* has trophy */
-
-/* text cursor column */
-
-/* text cursor row */
-
-/* demo data */
-
-/* demo read position */
-
-/* "DSCORES.DAV" */
-
-/* "You got a high score!" */
-
-/* "Game Over" */
-
 /* "High Scores\r\n\nScore  Name  Level\r\n-----  ----  -----\r\n" */
-
-/* "\n\n\r" */
 
 /*
  * check_high_score check_high_score: called by main when the game ends. If the score
@@ -623,7 +566,7 @@ void draw_level_number(void)
  * title state and calls StopSound; otherwise it redraws (redraw_screen, ResumeSound).
  * Name evidence: the prompt string.
  *
-single literal: _DATA placed at the literal (0x090B).
+ * single literal: _DATA placed at the literal (0x090B).
  */
 
 void ask_restart(void)
@@ -665,8 +608,6 @@ void ask_restart(void)
  * DS 0x0923 (identical strings are NOT merged). `g_text_x = g_text_left += 2`
  * style chains reload the stored value (add [x],2; mov ax,[x]).
  */
-
-/* sprite ids [kind][gfx mode][frame] */
 
 void show_help(void)
 {
@@ -872,17 +813,11 @@ void load_graphics(void)
  * Name evidence: called after every popup (help, pause,
  * quit, restart) and from the attract loop.
  *
-the logo initialiser is SCOPY'd from DS 0x07D4 (verified); the three
- * literals live in the module's literal pool and are referenced by address.
+ * The logo initialiser's image is this unit's _DATA at DS 0x07D4; the three
+ * credit strings are in the string pool (DS 0x0D6A..).
  * `(lvl - 2) * 16` compiles to `mov cl,4; shl ax,cl`; the original's four
  * single `shl ax,1` need `(lvl - 2) * 8 * 2`.
  */
-
-/* The module's string literals live in its literal pool, which is not
-   contiguous with this function's SCOPY initialiser at DS 0x07D4:
-     "     BY JOHN ROMERO\n\r" = "     BY JOHN ROMERO\n\r"
-     " (C) 1990 SOFTDISK, INC.\n\r" = " (C) 1990 SOFTDISK, INC.\n\r"
-     "PRESS THE F1 KEY FOR HELP" = "PRESS THE F1 KEY FOR HELP"                                   */
 
 void redraw_screen(void)
 {
@@ -946,7 +881,7 @@ void redraw_screen(void)
  * waits for a key.
  * Name evidence: CGA mode + 0x4000-byte copy to B800.
  *
-the uninitialised `char far *p` occupies [bp-4]/[bp-2].
+ * the uninitialised `char far *p` occupies [bp-4]/[bp-2].
  */
 
 void show_cga_picture(void)
@@ -971,7 +906,7 @@ void show_cga_picture(void)
  * (5 x 0xE) and redraws.
  * Name evidence: g_lives decrement, game-over flag.
  *
-`if (--x == -1)` compiles to dec [x]; mov ax,[x]; cmp ax,-1.
+ * `if (--x == -1)` compiles to dec [x]; mov ax,[x]; cmp ax,-1.
  */
 
 void handle_death(void)
@@ -1105,7 +1040,7 @@ void spawn_explosion(int x, int y, int type)
  * (tile_attr_at_offset probes at +4 and +14) and y < 0x98, redraws; when its life ends
  * it is erased and freed.
  *
-the first two int locals declared get SI and DI; the third (x) stays on
+ * the first two int locals declared get SI and DI; the third (x) stays on
  * the stack.
  */
 
@@ -1165,7 +1100,7 @@ void restore_background(void *buf)
  * that saves the screen area under a sprite (draw_dave passes Dave's
  * position and the buffer g_dave_background).
  *
-params 3 and 4 become DI and SI (loaded before the stack check).
+ * params 3 and 4 become DI and SI (loaded before the stack check).
  */
 
 void save_background(int x, int y, int mask, void *buf)
@@ -1306,36 +1241,6 @@ void draw_dave(void)
  * missing break on the last case of the small inner switches is required
  * (no trailing jmp). Register vars: moved = SI, t = DI, hit on the stack.
  */
-
-/* Dave state bits */
-
-/* requested direction 0..7, 8 = none */
-
-/* previous direction */
-
-/* facing: 0 left, 1 right */
-
-/* Dave x */
-
-/* Dave y */
-
-/* animation delay */
-
-/* animation frame 0..3 */
-
-/* gfx index */
-
-/* Dave sprite */
-
-/* Dave mask */
-
-/* jump table position */
-
-/* jetpack facing */
-
-/* jump y-delta table, 0x80 terminated */
-
-/* tile is climbable */
 
 void move_dave(void)
 {
@@ -1887,7 +1792,7 @@ void move_dave(void)
  * animate_tick()
  * cs [0x2a1f,0x2a70) / file [0x2c1f,0x2c70), 81 bytes.
  *
-Frame-rate divider for a 4-frame animation: the countdown at g_anim_delay is
+ * Frame-rate divider for a 4-frame animation: the countdown at g_anim_delay is
  * decremented and, when it reaches zero, reloaded with 2 and the frame index
  * g_anim_frame advances modulo 4. The new frame then selects two words from
  * the 2-D int tables [?][4] at DS:0x0406 and DS:0x041E, row g_gfx_index,
@@ -1901,12 +1806,6 @@ Frame-rate divider for a 4-frame animation: the countdown at g_anim_delay is
  * `t[row * 4 + i]`: that gives `shl bx,1; shl bx,1; add bx,i; shl bx,1`,
  * whereas a true 2-D `t[row][i]` scales row and column separately.
  */
-
-/* animation countdown */
-
-/* animation frame 0..3 */
-
-/* table row (state/direction) */
 
 void animate_tick(void)
 {
@@ -1923,25 +1822,13 @@ void animate_tick(void)
  * tile_attr_at(x, y)
  * cs [0x2a70,0x2ad8) / file [0x2c70,0x2cd8), 104 bytes.
  *
-Returns the attribute word (table g_tile_attr indexed by tile id) of the
+ * Returns the attribute word (table g_tile_attr indexed by tile id) of the
  * level tile under screen pixel (x, y). Pixel y is relative to the playfield
  * offset g_player_y and the first 16 pixels are above the grid; rows > 9 are
  * outside the 10-row playfield; both cases return 0. Column = (x + g_player_x)
  * / 16 + g_scroll_x (the scroll column). The tile byte is read (signed) from
  * the grid at g_level via the row-offset table RowTimes100.
  */
-
-/* horizontal pixel scroll / x offset */
-
-/* vertical pixel offset (g_start_y) */
-
-/* first visible level column */
-
-/* current level tile grid */
-
-/* row -> byte offset into the tile grid */
-
-/* tile id -> tile attribute */
 
 int tile_attr_at(int x, int y)
 {
@@ -1960,22 +1847,12 @@ int tile_attr_at(int x, int y)
  * tile_at(x, y)
  * cs [0x2ad8,0x2b38) / file [0x2cd8,0x2d38), 96 bytes.
  *
-Same coordinate mapping as tile_attr_at but returns the raw (signed char) tile
+ * Same coordinate mapping as tile_attr_at but returns the raw (signed char) tile
  * id under screen pixel (x, y), and accepts rows 0..11 (0 when y is above
  * the grid or the row is > 11).
  *
  * Codegen: first declared register variable gets SI, the second DI.
  */
-
-/* horizontal pixel scroll / x offset */
-
-/* vertical pixel offset (g_start_y) */
-
-/* first visible level column */
-
-/* current level tile grid */
-
-/* row -> byte offset into the tile grid */
 
 int tile_at(int x, int y)
 {
@@ -1994,18 +1871,10 @@ int tile_at(int x, int y)
  * tile_attr_at_offset(x, y, dx, dy)
  * cs [0x2b38,0x2b87) / file [0x2d38,0x2d87), 79 bytes.
  *
-Attribute word (g_tile_attr[tile]) of the level tile at pixel
+ * Attribute word (g_tile_attr[tile]) of the level tile at pixel
  * (x + dx, y + dy), column relative to the scroll column g_scroll_x, row 0
  * starting at pixel 16. No range checks.
  */
-
-/* first visible level column */
-
-/* current level tile grid */
-
-/* row -> byte offset into the tile grid */
-
-/* tile id -> tile attribute */
 
 int tile_attr_at_offset(int x, int y, int dx, int dy)
 {
@@ -2020,7 +1889,7 @@ int tile_attr_at_offset(int x, int y, int dx, int dy)
  * move_monsters()
  * cs [0x2b87,0x2e1b) / file [0x2d87,0x2e1b), 660 bytes.
  *
-Steps each of the 4 monster slots (parallel int arrays: active 0x5742,
+ * Steps each of the 4 monster slots (parallel int arrays: active 0x5742,
  * x 0x574A, y 0x5752, path index 0x575A, fire reload 0x5762, sprite
  * 0x576A, anim countdown 0x5772, anim frame 0x577A, fire countdown 0x5782,
  * move countdown 0x578A). Every 5th tick an active monster is erased
@@ -2034,41 +1903,13 @@ Steps each of the 4 monster slots (parallel int arrays: active 0x5742,
  * player x g_player_x, at y + DS:0x0156[level] / 2 - 2 (right side offset
  * DS:0x0146[level]).
  *
-Codegen notes: the path index is unsigned (index extension `xor cx,cx`
+ * Codegen notes: the path index is unsigned (index extension `xor cx,cx`
  * before N_PADD@ -- the pointer is huge). `p[n]` is one PADD; the y step
  * `*(p + n + 1)` is two PADDs. `a[i] = ++a[i] & 3` keeps BX between the
  * `inc` and the reload. `x * 16` compiles to `mov cl,4; shl dx,cl`; the
  * original's four `shl dx,1` need a split constant (`* 8 * 2`). The last
  * switch case has no `break` (no jmp to the switch end).
  */
-
-/* active */
-
-/* x */
-
-/* y */
-
-/* path index */
-
-/* fire reload time */
-
-/* sprite id */
-
-/* anim countdown */
-
-/* anim frame */
-
-/* fire countdown */
-
-/* move countdown */
-
-/* monster movement path */
-
-/* graphics-mode index */
-
-/* g_current_level */
-
-/* player x */
 
 void move_monsters(void)
 {
@@ -2118,7 +1959,7 @@ void move_monsters(void)
  * move_bullets()
  * cs [0x2e1b,0x3005) / file [0x301b,0x3205), 490 bytes.
  *
-Steps each active record of the 5-entry, 14-byte object table at
+ * Steps each active record of the 5-entry, 14-byte object table at
  * g_shots (bullets): direction flag (+6) 0 moves 2 px left, 1 moves 2 px
  * right. A bullet that hits a solid tile (tile_attr_at_offset attribute 1 at x-2 or
  * x+16, y+1) is deactivated after being erased with draw_object; otherwise it
@@ -2126,8 +1967,6 @@ Steps each active record of the 5-entry, 14-byte object table at
  * g_shot_anim_count), it moves, and kind-1 bullets that leave the screen
  * (x < 0 or x > 320) are dropped; the rest are redrawn (draw_object).
  */
-
-/* bullet animation countdown */
 
 void move_bullets(void)
 {
@@ -2185,7 +2024,7 @@ void move_bullets(void)
  * draw_object(i)
  * cs [0x3005,0x312c) / file [0x3205,0x332c), 295 bytes.
  *
-Draws record i of the 5-entry, 14-byte object table at g_shots at its
+ * Draws record i of the 5-entry, 14-byte object table at g_shots at its
  * (x, y) = words +2/+4. Word +0x0A selects the kind: kind 0 is animated
  * (sprite from DS:0x038E or, when word +6 is non-zero, DS:0x0376, indexed
  * g_gfx_index * 4 + frame (word +8)); kind 1 is static (sprite g_spr_shot_b0 or,
@@ -2215,7 +2054,7 @@ void draw_object(int i)
  * animate_tiles()
  * cs [0x312c,0x3235) / file [0x332c,0x3435), 265 bytes.
  *
-Every 10th call (countdown g_anim_tick_divider, reloaded with 10) steps the list of
+ * Every 10th call (countdown g_anim_tick_divider, reloaded with 10) steps the list of
  * animated level tiles at g_anim_tiles (12-byte records, terminated by a
  * record whose frame count is <= 0): for each active record the current
  * tile id (+4) advances and wraps from first + count back to first (+2);
@@ -2223,12 +2062,10 @@ Every 10th call (countdown g_anim_tick_divider, reloaded with 10) steps the list
  * [g_scroll_x, g_scroll_x + 19], the tile is redrawn via
  * DrawTile(column - g_scroll_x, row (+8), tile).
  *
-Codegen notes: the visibility test is a bitwise `&` of two comparisons
+ * Codegen notes: the visibility test is a bitwise `&` of two comparisons
  * (both materialised as 0/1, then `test ax,dx`), not `&&`. The countdown
  * here shares g_anim_tick_divider with init_game_state's "levels left = 10".
  */
-
-/* first visible level column */
 
 void animate_tiles(void)
 {
@@ -2250,7 +2087,7 @@ void animate_tiles(void)
  * wait_for_input -- wait_for_input_flashing()
  * cs [0x3235,0x32cb) / file [0x3435,0x34cb), 150 bytes.
  *
-Flushes a pending keystroke, then repeatedly runs erase_dave, ten
+ * Flushes a pending keystroke, then repeatedly runs erase_dave, ten
  * (WaitVBL, animate_tiles) ticks, draw_dave, ten more ticks, and polls the input
  * device through get_player_input(1) (returns a 6-byte input-state struct by value).
  * Keeps looping while the first word of that state is 8 (apparently "no
@@ -2292,7 +2129,7 @@ void wait_for_input(void)
  * check_warp_transition -- check_level_exit_warp()
  * cs [0x32cb,0x351f) / file [0x34cb,0x371f), 596 bytes.
  *
-Called while playing: if Dave walks off the left edge of the level top
+ * Called while playing: if Dave walks off the left edge of the level top
  * row (y offset g_player_y < 16, view column g_scroll_x == 0, x g_player_x
  * < 2) or off the right edge (view column 80, x > 0x132), and this is
  * neither a warp zone (g_in_warp_zone) nor a level whose flag g_level_visited[level]
@@ -2313,34 +2150,6 @@ Called while playing: if Dave walks off the left edge of the level top
  * (g_curr_warp_zone_mapping = g_warp_return_level, tables +0x192/+0x1A6/+0x16A,
  * g_current_level -= 1, g_start_y = 0x10).
  */
-
-/* player x */
-
-/* player y offset (g_start_y) */
-
-/* first visible level column */
-
-/* g_is_warp_zone */
-
-/* g_current_level */
-
-/* per-level "warp used" flags */
-
-/* graphics-mode table index */
-
-/* per-level warp tube tile */
-
-/* saved 100x10 tile grid */
-
-/* current level tile grid */
-
-/* g_curr_warp_zone_mapping */
-
-/* warp target level (1-based, 0 = none) */
-
-/* warp target view column */
-
-/* warp target player x */
 
 void check_warp_transition(void)
 {
@@ -2417,15 +2226,11 @@ void check_warp_transition(void)
  * draw_status_meter -- draw_inventory_row()
  * cs [0x351f,0x356e) / file [0x371f,0x376e), 79 bytes.
  *
-Draws a sprite at (0x48, 0xAA) taken from the per-graphics-mode table
+ * Draws a sprite at (0x48, 0xAA) taken from the per-graphics-mode table
  * g_spr_meter_label[g_gfx_index], then g_jetpack_fuel copies of the per-mode sprite
  * g_spr_meter_bar[g_gfx_index] at x = 0x4C + 2*i, y = 0xAE (a horizontal meter on
  * the bottom status bar). xor_sprite is the draw-sprite(x, y, id) routine.
  */
-
-/* graphics-mode table index */
-
-/* meter length */
 
 void draw_status_meter(void)
 {
@@ -2440,17 +2245,11 @@ void draw_status_meter(void)
  * draw_status_bar()
  * cs [0x356e,0x35ed) / file [0x376e,0x37ed), 127 bytes.
  *
-Draws the top status line: three label sprites at x = 0, 0x78, 0xC8
+ * Draws the top status line: three label sprites at x = 0, 0x78, 0xC8
  * (y = 0) and one life icon per remaining life (g_lives = g_lives) at
  * x = 0x100 + 16*i. Sprite ids come from a per-graphics-mode table at
  * DS:0x020E, row stride g_status_row_len words, row g_gfx_index.
  */
-
-/* graphics-mode table index */
-
-/* row stride of the sprite table (words) */
-
-/* g_lives */
 
 void draw_status_bar(void)
 {
@@ -2469,7 +2268,7 @@ void draw_status_bar(void)
  * check_collisions()
  * cs [0x35ed,0x39a3) / file [0x37ed,0x3ba3), 950 bytes.
  *
-Three collision passes, all box tests written with unsigned
+ * Three collision passes, all box tests written with unsigned
  * differences (d < w covers 0 <= d < w, -d < w covers -w < d < 0):
  *  1. From level 3 on (g_current_level >= 2) while Dave is alive (bit 5 of
  *     g_dave_state): a visible monster overlapping Dave (box from the
@@ -2489,14 +2288,6 @@ Three collision passes, all box tests written with unsigned
  * original's `mov ax,[x]; and ax,0xc0; mov [x],ax` is `x = x & 0xc0`.
  * Unsigned locals give the jb/ja compares.
  */
-
-/* g_current_level */
-
-/* monster width per level */
-
-/* monster height per level */
-
-/* g_score */
 
 void check_collisions(void)
 {
@@ -2599,22 +2390,6 @@ void check_collisions(void)
  * (the StopSound, draw_level_number x2, load_level, WaitVBL, DrawLevelView, draw_actors, wait_for_input
  * sequence).
  */
-
-/* level done */
-
-/* text cursor column */
-
-/* text cursor row */
-
-/* g_current_level */
-
-/* g_is_warp_zone */
-
-/* warp return level */
-
-/* video mode */
-
-/* game over */
 
 void level_complete(void)
 {
@@ -2759,7 +2534,7 @@ void level_complete(void)
  * pick_up_items()
  * cs [0x3dd5,0x44b0) / file [0x3fd5,0x46b0), 1755 bytes.
  *
-While Dave is alive (bit 5 of g_dave_state) and inside the playfield
+ * While Dave is alive (bit 5 of g_dave_state) and inside the playfield
  * (16 < y < 0xA6), looks at the 2x2 tiles under him (grid g_level, row
  * offsets RowTimes100) and, for each, against the 10 collectible tile ids
  * g_pickup_tile_ids[k] (values g_pickup_points[k]): a non-door item adds its value to
@@ -2771,26 +2546,10 @@ While Dave is alive (bit 5 of g_dave_state) and inside the playfield
  * 20 = gun (g_has_gun, sprite, sound 12), 4 = jetpack (fuel meter
  * g_jetpack_fuel = 60, g_fuel_tick = 15, g_has_jetpack, sound 12).
  *
-Codegen notes: the per-tile block is written once as a macro and
+ * Codegen notes: the per-tile block is written once as a macro and
  * expanded four times (tile offsets 0, 1, 100, 101); the original has
  * four identical copies, so it was either a macro or copy-paste.
  */
-
-/* collectible tile ids */
-
-/* their point values */
-
-/* g_score */
-
-/* has trophy */
-
-/* has gun */
-
-/* has jetpack */
-
-/* level done */
-
-/* jetpack fuel meter */
 
 #define PICK(t, o, dx, dy)                                              \
     if (g_pickup_tile_ids[k] == t) {                                               \
@@ -2868,7 +2627,7 @@ void pick_up_items(void)
  * scroll_screen -- scroll_if_needed()
  * cs [0x44b0,0x45f8) / file [0x46b0,0x47f8), 328 bytes.
  *
-Horizontal scrolling. When the player's x (g_player_x) passes 0x118 and
+ * Horizontal scrolling. When the player's x (g_player_x) passes 0x118 and
  * the view column g_scroll_x is below 80 (100-column level, 20 visible),
  * scrolls right 15 columns, one per frame: the view column is incremented,
  * every on-screen entity x (DS:0x574A[4], object table g_shots, actor
@@ -2878,13 +2637,9 @@ Horizontal scrolling. When the player's x (g_player_x) passes 0x118 and
  * same way. Both directions bracket the work with PauseSound / ResumeSound and, if
  * g_player_y < 16, erase_dave / draw_dave.
  *
-Codegen notes: the early exit is `j = 15;` in an else branch (the loop
+ * Codegen notes: the early exit is `j = 15;` in an else branch (the loop
  * ends with `mov di,0xf; inc di`).
  */
-
-/* player x (pixels, screen-relative) */
-
-/* first visible level column */
 
 void scroll_screen(void)
 {
@@ -2943,12 +2698,10 @@ void scroll_screen(void)
  * find_object(id)
  * cs [0x45f8,0x463f) / file [0x47f8,0x483f), 71 bytes.
  *
-Scans the 5-entry table of 14-byte records at g_shots and returns the
+ * Scans the 5-entry table of 14-byte records at g_shots and returns the
  * index of the first record whose word 0 is 1 (active) and whose word at
  * +0x0C equals id; -1 if none.
  */
-
-/* 5 objects, 14 bytes each */
 
 int find_object(int id)
 {
@@ -2964,11 +2717,9 @@ int find_object(int id)
  * object_exists(id)
  * cs [0x463f,0x4686) / file [0x483f,0x4886), 71 bytes.
  *
-Like find_object but returns 1 if an active record with word +0x0C == id
+ * Like find_object but returns 1 if an active record with word +0x0C == id
  * exists in the 5-entry table at g_shots, else 0.
  */
-
-/* 5 objects, 14 bytes each */
 
 int object_exists(int id)
 {
@@ -2984,7 +2735,7 @@ int object_exists(int id)
  * spawn_object(x, y, flag, kind, id)
  * cs [0x4686,0x4797) / file [0x4886,0x4997), 273 bytes.
  *
-Unless the level tile at pixel (x, y + 1) has attribute 1 (solid, via
+ * Unless the level tile at pixel (x, y + 1) has attribute 1 (solid, via
  * tile_attr_at_offset), takes the first free record of the 5-entry, 14-byte object table
  * at g_shots, fills it (active = 1, x, y, id, flag, frame = 0, kind) and
  * draws it once at (x, y) with the sprite draw_object would use for it.
@@ -3026,7 +2777,7 @@ void spawn_object(int x, int y, int flag, int kind, int id)
  * handle_menu_key -- title_handle_key()
  * cs [0x4797,0x4827) / file [0x4997,0x4a27), 144 bytes.
  *
-Peeks at the keyboard (bioskey(1)) and dispatches on the scan code:
+ * Peeks at the keyboard (bioskey(1)) and dispatches on the scan code:
  * F1 (0x3B) -> show_help, F2 (0x3C) -> control_panel, F3 (0x3D) -> ask_restart,
  * F9 (0x43) -> pause_game, Esc (0x01) / F10 (0x44) -> ask_quit. Any other key
  * while g_demo_mode == 1 (attract/demo mode) restores the 1000-byte (100x10)
@@ -3034,12 +2785,6 @@ Peeks at the keyboard (bioskey(1)) and dispatches on the scan code:
  * (pointer g_level), clears demo mode and starts a new game: StopSound,
  * init_game_state (init_game_state), load_level, redraw_screen, wait_for_input.
  */
-
-/* demo / attract mode flag */
-
-/* saved 100x10 tile grid */
-
-/* current level tile grid */
 
 void handle_menu_key(void)
 {
@@ -3086,32 +2831,10 @@ void handle_menu_key(void)
  * flight (bit 0 of g_dave_state; needs fuel g_has_jetpack > 0; sounds 11 / 2)
  * and selects the matching player sprites. Finally handle_menu_key handles keys.
  *
-Codegen notes: the packed byte is a local of an inner block, so it is
+ * Codegen notes: the packed byte is a local of an inner block, so it is
  * allocated after the struct-return temporary (bp-0x0D vs bp-0x0C).
  * `char = a << 7 | b << 6 | c` is computed in byte registers.
  */
-
-/* demo playback */
-
-/* demo recording */
-
-/* demo run-length counter */
-
-/* g_demo_data */
-
-/* g_demo_pos */
-
-/* movement state */
-
-/* fire repeat counter */
-
-/* jetpack repeat counter */
-
-/* has gun */
-
-/* facing */
-
-/* jetpack fuel */
 
 void process_input(void)
 {
@@ -3214,7 +2937,7 @@ void process_input(void)
  * draw_actors()
  * cs [0x4b9c,0x4c69) / file [0x4d9c,0x4e69), 205 bytes.
  *
-Per-frame sprite pass: if the playfield offset g_player_y > 15 and bit 5
+ * Per-frame sprite pass: if the playfield offset g_player_y > 15 and bit 5
  * of g_dave_state is set, calls draw_dave; draws each of 4 active entries of the
  * parallel arrays at g_monsters (flag) / 0x574A (x) / 0x5752 (y) /
  * 0x576A (sprite); calls draw_object(i) for each active 14-byte record of
@@ -3244,9 +2967,9 @@ void draw_actors(void)
  * load_level()
  * cs [0x4c69,0x4f9b) / file [0x4e69,0x519b), 818 bytes.
  *
-Sets up level g_current_level (g_current_level, 0-based): reseeds rand with
+ * Sets up level g_current_level (0-based): reseeds rand with
  * 100, loads the per-level option bits (byte table g_level_flags) into
- * g_dave_state and Dave's start x/y (g_level_start_x/0x0136) into g_player_x/EC,
+ * g_dave_state and Dave's start x/y (g_level_start_x/y) into g_player_x/y,
  * resets the player animation state, and points g_level at the level
  * record g_levels[level] (near pointer at LevelPtr, 0x500-byte records:
  * 256-byte monster path then 100x10 tiles). Clears the actor (6), object
@@ -3271,26 +2994,6 @@ Sets up level g_current_level (g_current_level, 0-based): reseeds rand with
  * `t[n + 1].count = 0` folds into `[bx + 0x57FE]` with bx = n * 12.
  * Here every switch case ends with `break`.
  */
-
-/* per-level option bits */
-
-/* g_current_level */
-
-/* level start x */
-
-/* level start y */
-
-/* current level record / tile map */
-
-/* g_levels */
-
-/* animated base tiles */
-
-/* their frame counts */
-
-/* monster path */
-
-/* working tile grid */
 
 void load_level(void)
 {
@@ -3405,20 +3108,6 @@ void load_level(void)
  * original order (the same idiom matches draw_text_window's near->far conversions).
  */
 
-/* far work buffer */
-
-/* g_sound_data */
-
-/* g_demo_data */
-
-/* far segment 1C2E: PC-speaker sounds */
-
-/* far segment 0B31: demo recordings */
-
-/* high-score file buffer */
-
-/* "DSCORES.DAV" */
-
 void init_game_once(void)
 {
     struct hiscore def[5] = {
@@ -3458,9 +3147,9 @@ void init_game_once(void)
  * init_game_state()
  * cs [0x515a,0x51c3) / file [0x535a,0x53c3), 105 bytes.
  *
-Resets the per-game state at the start of a new game: clears a 10-word
+ * Resets the per-game state at the start of a new game: clears a 10-word
  * table at g_level_visited, sets lives (g_lives) to 3, zeroes the 32-bit score
- * (g_score/62) and the 32-bit next-extra-life goal (g_next_extra_life/4A), clears
+ * (g_score) and the 32-bit next-extra-life goal (g_next_extra_life), clears
  * the game-over flag (g_game_over), the current level (g_current_level), the level
  * reference (g_scroll_x), sets the levels-left counter (g_anim_tick_divider) to 10,
  * clears the warp-zone flag (g_in_warp_zone) and finally re-applies the video
@@ -3469,35 +3158,11 @@ Resets the per-game state at the start of a new game: clears a 10-word
  * Evidence: docs/external-re-evidence.md EXT_INIT_FUNCTION (g_lives=3,
  * scores/goals zeroed, g_maybe_levels_left=10 ...), verified byte-for-byte.
  *
- * Codegen notes: needs the -G flag (optimise for speed, directive below):
+ * Codegen notes: -G (a project flag) is needed:
  * without it the 2-byte argument cleanup is `pop cx` instead of
  * `inc sp; inc sp`. `for` with a register int counter compiles to
  * `xor si,si; jmp cond; body; inc si; cond: cmp si,N; jl body`.
  */
-
-/* 10-word per-game table */
-
-/* g_lives */
-
-/* g_score low word */
-
-/* g_score high word */
-
-/* g_next_goal low word */
-
-/* g_next_goal high word */
-
-/* g_is_game_over */
-
-/* g_current_level */
-
-/* g_some_level_reference */
-
-/* g_levels_left */
-
-/* g_is_warp_zone */
-
-/* video mode */
 
 void init_game_state(void)
 {

@@ -29,7 +29,7 @@ int g_joy_xmax[3] = {60, 60, 0};
 int g_joy_ymin[3] = {20, 20, 0};
 int g_joy_ymax[3] = {50, 50, 0};
 int g_mouse_deadzone = 5;   /* mouse threshold (15 - sensitivity) */
-char g_key_scans[10] = {72, 73, 77, 81, 80, 79, 75, 71, 29, 56};   /* scan codes: 8 directions N..NW, then fire, jump */
+char g_key_scans[10] = {0x48, 0x49, 0x4d, 0x51, 0x50, 0x4f, 0x4b, 0x47, 0x1d, 0x38};   /* scan codes: 8 directions N..NW, then fire, jump */
 void interrupt (far *g_old_int9)() = 0;   /* BIOS keyboard handler saved by install_keyboard_handler */
 /* initialised data ends at DS 0x131e; local-aggregate images and the string pool follow */
 
@@ -749,8 +749,6 @@ char far *load_rle_file(char *name)
  * one (eb 00), because jump optimisation is off.
  */
 
-/* VGA palette, 256 x RGB */
-
 void set_video_mode(int mode)
 {
     unsigned char far *pal = g_vga_palette;
@@ -771,7 +769,7 @@ void set_video_mode(int mode)
  * cs [0x6bc2,0x6cb9) / file [0x6dc2,0x6eb9), 247 bytes.
  *
  * Draws a framed text window with frame characters 1..8 via DrawChar, clears
- * its interior, stores the window rectangle (g_win_x1/26/28/2A) and puts the
+ * its interior, stores the window rectangle (g_win_x1, g_win_x2, g_win_y1, g_win_y2) and puts the
  * text cursor at its top-left inner cell (g_text_x/g_text_left, g_text_y).
  */
 

@@ -70,7 +70,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "0a8d70aeda11a20d463a8bcda28ae0ca1d7fce3da0480447e0583e409d5afa57",
+      "object_sha256": "b66ed1529344c7e0723c0f34cd30a5efd5e82c83d80e0e1349130bac371fde78",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 2112 fixups, 0 differing bytes",
       "artifact": "build/matched/DAVE.bin"
@@ -86,7 +86,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "ef947197a3c4394373f5278b1511b18ddb3ba1b98414578166d22590baa2941e",
+      "object_sha256": "7c8acd726ed0c38d788de58567bfb84f67bae8892cf9c221521d1aee7718f8d4",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 456 fixups, 0 differing bytes",
       "artifact": "build/matched/CONFIG.bin"
@@ -102,7 +102,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "6e173a370a045998fd6270a77d95a29c9c5084b1162d450f4fbf030fc28b350a",
+      "object_sha256": "ec28e9358551d8bd4ea5ee9360c667a46b1728b9e506027ecd53fd4861761c05",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 254 fixups, 0 differing bytes",
       "artifact": "build/matched/HARDWARE.bin"

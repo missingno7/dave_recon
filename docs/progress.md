@@ -277,3 +277,26 @@ rather than silently accepted. Evidence:
 4. Continue the library scan against any newly-classified RAW_UNKNOWN
    regions as more of the code segment is mapped.
 5. Confirm the `_TEXT`/`_DATA` boundary using the improved census.
+
+## 2026-10-19 — Level C: translation units, and the whole layout emerges
+
+- The 85 per-function files (`src/game/F_XXXX.c`) are replaced by the three
+  original translation units `src/DAVE.C` (53 functions), `src/CONFIG.C` (9)
+  and `src/HARDWARE.C` (28) plus `src/DAVE.H`. Real names for all functions
+  and globals; initialised globals are real definitions whose `_DATA` image
+  matches, string literals are written inline (pooled by the compiler),
+  uninitialised globals are real definitions whose `_BSS` order is produced
+  by storage names that hash into the original slots (`tools/bss_names.py`,
+  `layout/bss-map.json`, `docs/bss-map.md`; 60 of 90 need one).
+- `tools/verify_sources.py` verifies whole units: each is placed by its own
+  directives, all cross-unit and C<->asm references resolve through the
+  placed objects' PUBDEFs, each unit's publics are exactly its census C
+  functions, and units + asm modules tile `_TEXT`, `_DATA` and `_BSS`
+  with only TLINK pads in between. All three units EXACT (27,884 bytes);
+  manifest: one MATCHING_C region per unit.
+- `tools/link_probe.py` links C0S + the three units + the two asm modules +
+  stand-ins for the data-only module and the far blobs (`tools/omf_writer.py`)
+  + CS.LIB with TLINK 3.0: the load module is **identical to the original**
+  (172,336 bytes, all 27 relocations, SS:SP, minalloc). Details and the
+  open questions (which unit defines which shared variable, the
+  CONFIG/HARDWARE boundary) in `docs/link-forensics.md`.
