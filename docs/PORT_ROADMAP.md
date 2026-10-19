@@ -61,10 +61,21 @@ names in `src/asm`); data-module provenance unknowable (D-2).
       reproducible across runs (`tests/oracle/attract_boundaries.txt`).
 - [ ] M1.3 Scenario corpus: all 5 demos; scripted per-level play; high-score
       persistence (DSCORES.DAV after run); config screens.
-- [ ] M1.4 CGA/EGA capture (EGA planar memory needs plane-aware dumps).
+      *Partial (2026-10-20):* all 5 demos (attract_all_demos), level 1
+      played to the door, deaths/game over/high-score entry with
+      DSCORES.DAV compared, the out-of-range demo quirk; persistence is in
+      the contract. Open: live play beyond level 1, warp zones, level -1
+      warp, config screens (FIDELITY.md section 5, ledger U-O1).
+- [x] M1.4 CGA/EGA capture: `video ega|cga`; CGA B800 dump is complete;
+      EGA per-tick read-map plane + true 4-plane images inside
+      `SaveUnderEGA` (`ega_planes`); retrace rates measured (59.92 Hz).
+      A 4-plane image at every tick head needs an emulator command (U-O2).
 - [ ] M1.6 Retrace-granularity observation (state-model.md D2): a capture
       point at `WaitVBL`, per-frame input reconstruction from scenario
       scripts, draw-order capture for the D1 draw-command contract.
+      *Partial:* `retraces <n>` captures DGROUP + BIOS key buffer at every
+      `WaitVBL` exit with the script's held keys, and a per-retrace contract
+      (level1_complete, game_over_highscore). Open: draw-order capture.
 - [x] M1.5 `tests/test_oracle.py` (opt-in: DAVE_ORACLE_TESTS=1): repeat-run contract.
 **Gate:** every corpus scenario passes the repeat-run contract.
 
