@@ -59,7 +59,15 @@ def install_toolchain():
     for rel, digest in pinned_files():
         if sha256(TOOLCHAIN / rel) != digest:
             raise SystemExit(f"toolchain/{rel} does not match its pinned sha256")
-    print("toolchain: ok")
+    lz_src = pathlib.Path(os.environ.get("DAVE_LZEXE_SRC", "C:/tools/lzexe-0.91/files")) / "LZEXE.EXE"
+    lz_dst = TOOLCHAIN / "LZEXE" / "LZEXE.EXE"
+    packer = json.loads((ROOT / "layout" / "packer.json").read_text())
+    if not lz_dst.exists() and lz_src.exists():
+        lz_dst.parent.mkdir(exist_ok=True)
+        shutil.copyfile(lz_src, lz_dst)
+    if lz_dst.exists() and sha256(lz_dst) != packer["sha256"]:
+        raise SystemExit("toolchain/LZEXE/LZEXE.EXE does not match layout/packer.json")
+    print("toolchain: ok" + ("" if lz_dst.exists() else " (LZEXE missing: packing tests skip)"))
 
 
 def install_assets():
