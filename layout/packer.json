@@ -1,0 +1,7 @@
+{
+ "packer": "LZEXE 0.91 (Fabrice Bellard, 1990)",
+ "source": "C:/tools/lzexe-0.91/files/LZEXE.EXE (see C:/tools/lzexe-0.91/provenance.json)",
+ "sha256": "dd953e9d5634327202d18a262767240a67c7cffabd358af364f34a51551af20e",
+ "dosbox": "C:/DOSBox-X/dosbox-x.exe",
+ "verified": "2026-10-19: packing build/DAVE_unpacked.exe reproduces assets/DAVE.EXE exactly (tests/test_repack.py)"
+}
