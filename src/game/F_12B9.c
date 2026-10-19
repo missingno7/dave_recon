@@ -8,7 +8,7 @@
  *
  * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
  */
-/* @flags -G */
+
 /* @seg _DATA 0x0d47 */
 #include <bios.h>
 extern int D_8A12;

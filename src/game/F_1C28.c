@@ -7,7 +7,7 @@
  *
  * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
  */
-/* @flags -G */
+
 extern int D_4F86;
 extern unsigned char D_4C64[];
 void F_8994(void *);

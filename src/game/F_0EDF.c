@@ -13,7 +13,7 @@
  * DS 0x0923 (identical strings are NOT merged). `D_8A12 = D_8A22 += 2`
  * style chains reload the stored value (add [x],2; mov ax,[x]).
  */
-/* @flags -G */
+
 /* @seg _DATA 0x0923 */
 #include <bios.h>
 extern int D_8A12;

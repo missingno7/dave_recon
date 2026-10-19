@@ -28,7 +28,7 @@
  * missing break on the last case of the small inner switches is required
  * (no trailing jmp). Register vars: moved = SI, t = DI, hit on the stack.
  */
-/* @flags -G */
+
 extern int D_6156;              /* Dave state bits */
 extern int D_5794;
 extern int D_57E2;              /* requested direction 0..7, 8 = none */

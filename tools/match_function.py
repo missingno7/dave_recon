@@ -90,6 +90,15 @@ def parse_directives(source_text: str) -> dict:
     return segs
 
 
+def declared_segment(mod, name: str) -> bytes:
+    """A segment's full image: LEDATA bytes padded with zeros to the SEGDEF
+    length. TCC writes no data record for all-zero initialised data (e.g.
+    `char buf[6] = "";`), so that data exists only as the declared length."""
+    length = mod.segment_length(name) or 0
+    data = bytes(mod.segments.get(name, b""))
+    return data + b"\x00" * max(0, length - len(data))
+
+
 def text_base(mod, symbols: SymbolMap, at: int | None):
     if at is not None:
         return at, []
@@ -221,8 +230,8 @@ def match_object(obj_bytes: bytes, source: pathlib.Path, at: int | None = None,
     missing_reloc = [f for f in fixups if f.get("mz_relocation") is False]
 
     data_check = None
-    if "_DATA" in segs and mod.segment_bytes("_DATA"):
-        cand = mod.segment_bytes("_DATA")
+    cand = declared_segment(mod, "_DATA")
+    if "_DATA" in segs and cand:
         start = DGROUP_FILE + segs["_DATA"]
         orig = image[start:start + len(cand)]
         data_check = {"ds": segs["_DATA"], "length": len(cand),

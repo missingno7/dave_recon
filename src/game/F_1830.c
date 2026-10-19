@@ -10,7 +10,7 @@
  *
  * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
  */
-/* @flags -G */
+
 struct obj {
     int active;
     int x;

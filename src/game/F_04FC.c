@@ -34,7 +34,7 @@
  *   (shl,shl,add,shl); a 2-D array gives shl,shl,shl / shl.
  * - the last case of F_09DE's switch has no break (no trailing jmp).
  */
-/* @flags -G */
+
 /* @seg _DATA 0x07b6 */
 #include <bios.h>
 #include <ctype.h>

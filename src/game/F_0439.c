@@ -15,7 +15,7 @@
  * switch cases are emitted in source order (4,5 / 3 / default) while the
  * compare chain is sorted ascending (3,4,5).
  */
-/* @flags -G */
+
 extern int D_9EC0;
 extern int D_8B32;
 extern int D_00AA;

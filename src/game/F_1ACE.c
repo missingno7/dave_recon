@@ -9,7 +9,7 @@
  * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
  * params 3 and 4 become DI and SI (loaded before the stack check).
  */
-/* @flags -G */
+
 extern int D_4F86;
 void F_89E6(int, int, int, int);
 void F_86A9(int, int, int, int);

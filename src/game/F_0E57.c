@@ -11,7 +11,7 @@
  * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
  * single literal: _DATA placed at the literal (0x090B).
  */
-/* @flags -G */
+
 /* @seg _DATA 0x090b */
 #include <ctype.h>
 #include <mem.h>

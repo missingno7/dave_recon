@@ -10,7 +10,7 @@
  * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
  * exit() is the CS.LIB routine at cs 0x9463.
  */
-/* @flags -G */
+
 #include <stdlib.h>
 void F_6388(void);
 void F_760F(void);

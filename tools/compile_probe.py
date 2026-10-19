@@ -52,7 +52,7 @@ def run(source: pathlib.Path, model: str, extra_flags: str):
     # Confirmed by compiling tests/fixtures/probe2.c with -N and comparing
     # instruction-for-instruction (see docs/flag-investigation.md). Do not
     # revert this to -N- without fresh evidence.
-    flags = f"-c {MODEL_FLAG[model]} -1- -f- -N {extra_flags}".strip()
+    flags = f"-c {MODEL_FLAG[model]} -1- -f- -N -G {extra_flags}".strip()
     bat = work / "GO.BAT"
     bat.write_text(
         "@ECHO OFF\r\n"

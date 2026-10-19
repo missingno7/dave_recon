@@ -10,7 +10,7 @@
  * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
  * the uninitialised `char far *p` occupies [bp-4]/[bp-2].
  */
-/* @flags -G */
+
 #include <dos.h>
 #include <mem.h>
 #include <bios.h>

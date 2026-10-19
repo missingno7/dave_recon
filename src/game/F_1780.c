@@ -10,7 +10,7 @@
  *
  * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
  */
-/* @flags -G */
+
 extern int D_6156;
 extern int D_6154;
 extern int D_4F86;

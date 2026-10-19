@@ -17,7 +17,7 @@
  * `(lvl - 2) * 16` compiles to `mov cl,4; shl ax,cl`; the original's four
  * single `shl ax,1` need `(lvl - 2) * 8 * 2`.
  */
-/* @flags -G */
+
 /* @seg _DATA 0x07d4 */
 extern int D_8B32;
 extern int D_00AA;

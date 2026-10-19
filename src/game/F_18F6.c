@@ -12,7 +12,7 @@
  * the first two int locals declared get SI and DI; the third (x) stays on
  * the stack.
  */
-/* @flags -G */
+
 struct obj {
     int active;
     int x;

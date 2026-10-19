@@ -7,7 +7,7 @@
  *
  * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
  */
-/* @flags -G */
+
 extern int D_4F86;
 void F_88FD(int, int, int, int);
 void F_8525(int, int, int, int);

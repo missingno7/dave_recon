@@ -14,7 +14,7 @@
  * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
  * `if (--x == -1)` compiles to dec [x]; mov ax,[x]; cmp ax,-1.
  */
-/* @flags -G */
+
 #include <mem.h>
 struct obj {
     int active;

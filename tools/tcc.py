@@ -21,7 +21,7 @@ import subprocess
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TOOLCHAIN = json.loads((ROOT / "layout" / "toolchain.json").read_text())
-BASE_FLAGS = "-c -ms -1- -f- -N"
+BASE_FLAGS = "-c -ms -1- -f- -N -G"
 
 
 def source_flags(text: str) -> str:
