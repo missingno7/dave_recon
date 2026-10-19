@@ -141,13 +141,11 @@
     },
     {
       "target": "Re-derive g_levels' true base address",
-      "category": "PRODUCTIVE_FRONTIER",
-      "state": "not started",
+      "category": "CLOSED",
+      "state": "closed 2026-10-19 -- the earlier 'contradicted' verdict was WRONG",
       "matches": "Both this project and the external yo-yo-yo-jbo project's unverified claim (file offset 0x26E0A) are now known to disagree with directly observed bytes and with the external project's own separately-verified level-6 warp-bug address (0x2932B).",
       "first_unresolved_fact": "No independent re-derivation attempted yet.",
-      "evidence": [
-        "docs/external-re-evidence.json (EXT_LEVELS_BASE_ADDRESS)"
-      ],
+      "evidence": "g_levels = DGROUP:0x173A = file 0x26E0A (the external claim was right). Asm stub at file 0x8516 (called from F_519B): mov ax,0x173A; mov [0x13AC],ax; mov ax,DGROUP(relocated); mov [0x13AE],ax. Loader F_4E69: [0x13AC] + level*0x500, tiles at +0x100 (1000 bytes, rows of 100). The 'text string' at 0x26E0A is level 1's never-read 256-byte monster-path area (editor leftovers). The level-6 warp (index -1) reads DS:0x123A = file 0x2690A. Previous import mis-anchored on the external 0x2932B claim. Records round-trip exactly via tools/levels.py; promoted as STRUCTURED_DATA (DATA_LEVELS). docs/data-layout.md has the full trail.",
       "unblock": "Trace data references from the level-loading/warp functions already identified via the external-RE import to find the real g_levels base, then verify the level-6 warp-bug address (0x2932B) falls at exactly base + (-1 * 0x500 mod 0x10000) as the external project's own verified behavior implies.",
       "leverage": "Unlocks structured classification of the game's ~1280-byte-per-level data (10 levels x 1280 bytes = 12800 bytes), a meaningful chunk of the still-RAW_UNKNOWN data region."
     },
@@ -216,10 +214,10 @@
     {
       "target": "Far data segment map (between _TEXT and DGROUP, 106,944 bytes) and g_levels",
       "category": "PRODUCTIVE_FRONTIER",
-      "state": "in progress (2026-10-19)",
+      "state": "contents identified 2026-10-19; codecs open",
       "matches": "far segments at paragraphs 0x0B31,0x0C42,0x11EF,0x1C2E,0x1D58,0x1E84,0x20CC; DGROUP 0x254D",
-      "first_unresolved_fact": "content and producer (C far arrays vs separate data modules) of each far segment; level array base/stride",
-      "evidence": "MZ relocation values at load-module 0x1149,0x115e,0x118e,0x11b3,0x11c8,0x4fdd,0x4fef",
+      "first_unresolved_fact": "exact re-encoders for the RLE tilesets (the game's own encoder is at file 0x7F41), demo/sound/config-graphics codecs, game _DATA globals and string literals as C initialisers",
+      "evidence": "docs/data-layout.md: 0x0B31 attract-mode demos; 0x0C42 CGA tileset (RLE); 0x11EF VGA tileset (RLE); 0x1C2E PC-speaker SPK sound bank; 0x1D58/0x1E84/0x20CC CGA/EGA/VGA config-screen header+8x8 font+13 icons; 0x254C _INIT_ table. DGROUP: C0S _DATA 0-0xA8, game _DATA 0xA8-0x493A (ends with g_levels), runtime _DATA 0x493A-0x4C60 (=EOF), game BSS 0x4C60-0x9EC8, runtime BSS -0x9F12, _STACK 0x9F20-0x9FA0.",
       "unblock": "structured round-trip codecs; matching code that references far data (base16 fixups to these segments)",
       "leverage": "62% of the unpacked image is far data"
     },

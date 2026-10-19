@@ -81,6 +81,14 @@ def region_bytes(region):
         if len(data) != region["end"] - region["start"]:
             raise SystemExit(f"compiled bytes for {region['id']!r} have the wrong length")
         return data
+    if region["kind"] == "STRUCTURED_DATA":
+        # Encoded from its structured representation by its codec (tools/structured.py).
+        sys.path.insert(0, str(ROOT / "tools"))
+        import structured
+        data = structured.generate(region["generator"])
+        if len(data) != region["end"] - region["start"]:
+            raise SystemExit(f"generator {region['generator']!r} produced the wrong length")
+        return data
     # Every other region still reads its literal raw extract (KNOWN_LIBRARY
     # and the headers included; TODO: generators for those too).
     raw_path = RAW_DIR / f"{region['id']}.bin"

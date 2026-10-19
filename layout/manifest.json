@@ -867,13 +867,23 @@
       "artifact": "raw/C0S_DATA.bin"
     },
     {
-      "id": "RAW_25778_2A00A",
+      "id": "RAW_25778_26E0A",
       "start": 153464,
-      "end": 172042,
+      "end": 159242,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_25778_2A00A.bin"
+      "artifact": "raw/RAW_25778_26E0A.bin"
+    },
+    {
+      "id": "DATA_LEVELS",
+      "start": 159242,
+      "end": 172042,
+      "kind": "STRUCTURED_DATA",
+      "classification": "data",
+      "generator": "levels",
+      "description": "g_levels: 10 level records (256-byte monster path, 100x10 tile map, 24 unread bytes), DS:0x173A; codec tools/levels.py",
+      "matching_status": "EXACT_ROUNDTRIP"
     },
     {
       "id": "LIBDATA_ATEXIT_2A00A",

@@ -36,12 +36,12 @@
  },
  "data": {
   "far_and_dgroup_bytes": 126496,
-  "structured_bytes": 0,
-  "raw_bytes": 125506
+  "structured_bytes": 12800,
+  "raw_bytes": 112706
  },
  "raw": {
   "code_bytes": 37244,
-  "data_bytes": 125506
+  "data_bytes": 112706
  },
  "unresolved": {
   "indirect_control_flow_sites": 3,
@@ -54,10 +54,6 @@
   "D_byte_identical_build": "no"
  },
  "open_frontiers": [
-  {
-   "category": "PRODUCTIVE_FRONTIER",
-   "target": "Re-derive g_levels' true base address"
-  },
   {
    "category": "PRODUCTIVE_FRONTIER",
    "target": "Continue matching-C promotions inside game code"
@@ -87,7 +83,7 @@
   "c_matched_functions": 0,
   "c_matched_bytes": 0,
   "asm_matched_bytes": 0,
-  "known_library_bytes": 6153,
-  "structured_data_bytes": 0
+  "known_library_bytes": 0,
+  "structured_data_bytes": 12800
  }
 }
