@@ -1,0 +1,30 @@
+# Attract-mode quirk: the out-of-range demo index (docs/FIDELITY.md
+# section 5, UNDERSTANDING_LEDGER).
+#
+# attract_mode picks demo = rand() * 5 / 32767, which is 5 -- one past the
+# 5-entry offset table -- when the first rand() after srand(seed) returns
+# 32767. Of the 65536 seeds only 3501 and 7002 do that. The seed is the low
+# word of time() (see attract_all_demos.txt): 7002 = 5968 + 1034 s, i.e. the
+# title timeout must end at DOS time 00:17:14; the title starts at 3.5 s and
+# lasts 1200 retraces, so the DOS clock is started at 00:16:55.
+#
+# With index 5 the game reads g_demo_pos from bank offset 4 + 5*4 = 24, the
+# first two bytes of demo 0 (its level byte 02 and first input 20h):
+# g_demo_pos = 2002h = 8194, past the end of the 4368-byte demo bank, i.e.
+# 3826 bytes into the next far segment (the RLE-packed CGA tileset at
+# 0C42h). The byte there (02) becomes the level (level 3) and the bytes
+# after it are played as demo input: Dave wanders, jumps, and dies on a
+# deadly tile. A built-in demo always ends (0x30) before its death timer
+# runs out, this one does not: after the 300-tick death timer, handle_death
+# restarts the level and calls wait_for_input, which waits for LIVE input
+# even in a demo, so the attract mode freezes until a key is pressed.
+#
+# Tick ranges / evidence (run1, VGA):
+#   tick 1         title, 3.49 s; at 20.61 s srand(7002) (seeds.jsonl)
+#   ticks 2-599    "demo" on level 3 (index 2), demo_pos 8195.., score 200
+#   tick 600/601   killed (sound 3, state 0x60), explosion, death_timer 299
+#   tick 899       death_timer 1 at 33.41 s; no further tick (frozen in
+#                  wait_for_input) until the end of the run
+duration 40000
+png_every 100
+dos_time 00:16:55

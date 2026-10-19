@@ -63,4 +63,8 @@ png_every 100
 58000 key o
 58500 key r
 59000 key c
-59903 key enter
+# Enter is pressed 10 ms after a poll of wait_key_cursor (5-retrace polls,
+# one at ~59903.5 ms) and released 40 ms before the next, so key_down[Enter]
+# is 0 at the title tick head in every run (a 50 ms tap could still be down).
+60056 keydown enter
+60076 keyup enter
