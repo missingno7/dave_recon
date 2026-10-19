@@ -430,7 +430,7 @@ Members: 11 understood, 6 behaviour_understood_representation_unclear.
 | `BarPattern` | DS 0x1419 | 32 | `byte` | presentation_constant | rendering | understood | 32-byte colour pattern of the VGA playfield border lines. | 0 / 0 |
 | `tiles_pad` | DS 0x1439 | 1 | `padding` | layout_artifact | runtime | understood | Pad before the palette. | 0 / 0 |
 | `g_vga_palette` | DS 0x143A | 768 | `unsigned char[768]` | presentation_constant | video_hardware | understood | 256 x RGB (6-bit) VGA DAC palette loaded by set_video_mode(3). | 1 / 0 |
-| `g_levels` | DS 0x173A | 12800 | `char[10][0x500]` | resource_buffer | levels_warps | understood | The 10 level records (0x500 bytes: 256-byte monster path, 100 x 10 tile map, 24 unread bytes). The game edits the CURRENT level's map in place (pickups) and restores it from g_tiles when leaving. | 0 / 0 |
+| `g_levels` | DS 0x173A | 12800 | `char[10][0x500]` | resource_buffer | levels_warps | understood | The 10 level records (0x500 bytes: 256-byte monster path, 100 x 10 tile map, 24 unread bytes). The game edits the CURRENT level's map in place (pickups) and restores it from g_tiles when leaving. | 0 / 7 |
 | `cslib_data` | DS 0x493A | 636 | `runtime _DATA` | runtime | runtime | understood | CS.LIB _DATA (ctype table, streams, heap, TIMECVT, ...) before the rand seed. | 0 / 0 |
 | `rand_seed` | DS 0x4BB6 | 4 | `unsigned long` | game_state | rng | understood | Borland rand() state: Seed = Seed * 0x015A4E35 + 1, rand() = (Seed >> 16) & 0x7FFF; srand(s) sets it to s. | 2 / 2 |
 | `cslib_data_2` | DS 0x4BBA | 166 | `runtime _DATA` | runtime | runtime | understood | CS.LIB _DATA after the rand seed (stack length, TZ, near heap, environ). | 0 / 0 |
@@ -555,7 +555,7 @@ Members: 11 understood, 6 behaviour_understood_representation_unclear.
 
 | name | address | size | type | role | subsystem | status | purpose | readers / writers |
 |---|---|---|---|---|---|---|---|---|
-| `g_demo_bank` | far 0B31:0000 | 4368 | `char far[]` | resource_buffer | attract_demos | understood | Attract demos: u32 count 5, u32 offsets, per demo a level byte and the input stream. | 1 / 0 |
+| `g_demo_bank` | far 0B31:0000 | 4368 | `char far[]` | resource_buffer | attract_demos | understood | Attract demos: u32 count 5, u32 offsets, per demo a level byte and the input stream. | 1 / 1 |
 | `g_tileset_cga` | far 0C42:0000 | 23248 | `char far[]` | resource_buffer | resources | understood | CGA tileset, RLE-compressed (u32 length + stream). | 1 / 0 |
 | `g_tileset_vga` | far 11EF:0000 | 41968 | `char far[]` | resource_buffer | resources | understood | VGA tileset, RLE-compressed. | 1 / 0 |
 | `g_sound_bank` | far 1C2E:0000 | 4768 | `char far[]` | resource_buffer | sound | understood | PC-speaker sound bank (SPK). | 1 / 0 |
@@ -584,6 +584,55 @@ Members: 11 understood, 6 behaviour_understood_representation_unclear.
 | `shot_record` | g_shots | monsters_shots_explosions | understood | {active, x, y, dir, frame, kind, id} (7 ints). |
 | `actor_record` | g_actors | monsters_shots_explosions | partial | {active, x, y, frame, life, anim, type} + 300 unreferenced bytes. |
 | `monster_block` | g_monsters / g_level_monster_init | monsters_shots_explosions | understood | 10 arrays of 4 ints (struct-of-arrays). |
+
+## Game state objects: writers and readers
+
+Mechanical (function bodies / procedures); `*` = through a pointer.
+
+| object | DS | width / note | writers | readers |
+|---|---|---|---|---|
+| `g_demo_mode` | 0x00AA | int16 (values 0..3) | ask_restart, attract_mode, handle_menu_key, main, process_input | ask_restart, attract_mode, handle_menu_key, process_input, redraw_screen |
+| `g_fire_repeat` | 0x00AC | int8 (signed char) | process_input | process_input |
+| `g_jetpack_repeat` | 0x00AD | int8 (signed char) | process_input | process_input |
+| `rand_seed` | 0x4BB6 | uint32 | attract_mode, load_level | attract_mode, load_level |
+| `g_score` | 0x4C60 | uint32 | check_collisions, init_game_state, pick_up_items, update_score | check_collisions, check_high_score, pick_up_items, update_score |
+| `g_has_gun` | 0x4F84 |  | load_level, pick_up_items | draw_inventory, handle_death, load_level, process_input |
+| `g_got_trophy` | 0x4F88 |  | load_level, pick_up_items | check_warp_transition, draw_inventory, pick_up_items |
+| `g_has_jetpack` | 0x4F8A |  | load_level, pick_up_items, update_jetpack | draw_inventory, handle_death, load_level, pick_up_items, process_input |
+| `g_actors` | 0x4F8E |  | handle_death, load_level, scroll_screen, spawn_explosion, update_explosions | draw_actors, scroll_screen, spawn_explosion, update_explosions |
+| `g_player_x` | 0x56EA | int16 | check_warp_transition, handle_death, level_complete, load_level, move_dave, scroll_screen | check_collisions, check_warp_transition, draw_dave, level_complete, move_dave, move_monsters, pick_up_items, process_input, scroll_screen, tile_at, tile_attr_at |
+| `g_player_y` | 0x56EC | int16 storage, values 0..255 after any jump/fall step (masked & 0xff) | check_warp_transition, handle_death, level_complete, load_level, move_dave | check_collisions, check_warp_transition, draw_actors, draw_dave, move_dave, pick_up_items, process_input, scroll_screen, tile_at, tile_attr_at |
+| `g_lives` | 0x56EE | int16 | handle_death, init_game_state, update_score | draw_status_bar, handle_death, update_score |
+| `g_current_level` | 0x56F4 | int16 (signed: -1 is reachable) | attract_mode, check_warp_transition, init_game_state, level_complete | DrawLevelView, check_collisions, check_high_score, check_warp_transition, draw_level_number, handle_death, level_complete, load_level, move_monsters, redraw_screen |
+| `g_shots` | 0x56F6 |  | check_collisions, handle_death, load_level, move_bullets, scroll_screen, spawn_object | check_collisions, draw_actors, draw_object, find_object, move_bullets, object_exists, scroll_screen, spawn_object |
+| `g_in_warp_zone` | 0x573C |  | check_warp_transition, init_game_state, level_complete | check_warp_transition, handle_death, level_complete |
+| `g_dave_facing` | 0x5740 |  | handle_death, load_level, move_dave | move_dave, process_input |
+| `g_monsters` | 0x5742 |  | check_collisions, check_warp_transition, handle_death, load_level, move_monsters, redraw_screen, scroll_screen | check_collisions, check_warp_transition, draw_actors, handle_death, load_level, move_monsters, redraw_screen, scroll_screen |
+| `g_game_over` | 0x5792 |  | handle_death, init_game_state, level_complete, main | main |
+| `g_death_pause` | 0x5794 | int16 (decremented every alive tick) | handle_death, load_level, move_dave | move_dave |
+| `g_shot_anim_count` | 0x5796 |  | load_level, move_bullets | move_bullets |
+| `g_jetpack_fuel` | 0x5798 |  | pick_up_items, update_jetpack | draw_status_meter, update_jetpack |
+| `g_jump_pos` | 0x579A |  | move_dave | move_dave |
+| `g_quit` | 0x579C |  | init_game_once | main |
+| `g_prev_dir` | 0x579E |  | move_dave, process_input, update_jetpack | move_dave |
+| `g_scroll_x` | 0x57A0 |  | check_warp_transition, handle_death, init_game_state, load_level, scroll_screen | DrawLevelView, animate_tiles, check_warp_transition, handle_death, pick_up_items, scroll_screen, tile_at, tile_attr_at, tile_attr_at_offset |
+| `g_demo_pos` | 0x57A2 |  | attract_mode, process_input | attract_mode, process_input |
+| `g_level_visited` | 0x57AA |  | check_warp_transition, init_game_state | check_warp_transition |
+| `g_hiscores` | 0x57BE | score uint16 (truncated) | check_high_score, init_game_once | check_high_score |
+| `g_input_dir` | 0x57E2 |  | handle_death, load_level, move_dave, process_input, update_jetpack | move_dave, process_input, update_jetpack |
+| `g_jet_facing` | 0x57E6 |  | move_dave, process_input | move_dave |
+| `g_anim_tiles` | 0x57E8 |  | animate_tiles, load_level, pick_up_items | animate_tiles, pick_up_items |
+| `g_next_extra_life` | 0x6148 | uint32 | init_game_state, update_score | update_score |
+| `g_anim_frame` | 0x6150 |  | animate_tick, handle_death, level_complete, load_level, move_dave | animate_tick, level_complete, move_dave, process_input |
+| `g_warp_return_level` | 0x6152 |  | check_warp_transition | handle_death, level_complete |
+| `g_fuel_tick` | 0x6154 |  | pick_up_items, update_jetpack | update_jetpack |
+| `g_dave_state` | 0x6156 | int16, low byte used | check_collisions, check_warp_transition, handle_death, load_level, move_dave, process_input, update_jetpack | check_collisions, check_warp_transition, draw_actors, handle_death, move_dave, move_monsters, pick_up_items, process_input, update_jetpack, wait_for_input |
+| `g_level_done` | 0x6158 |  | load_level, pick_up_items | level_complete |
+| `g_anim_tick_divider` | 0x615A |  | animate_tiles, init_game_state | animate_tiles |
+| `g_tiles` | 0x615C |  | load_level | ask_restart, check_warp_transition, handle_death, handle_menu_key, level_complete, load_level, process_input |
+| `g_demo_repeat` | 0x6544 | int8 | process_input | process_input |
+| `g_bonus_timer` | 0x6546 | int16 | handle_death, spawn_explosion | handle_death |
+| `g_anim_delay` | 0x6548 |  | animate_tick, handle_death, load_level, move_dave | animate_tick, move_dave |
 
 ## Not fully understood: what is missing
 

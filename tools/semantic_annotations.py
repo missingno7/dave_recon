@@ -92,6 +92,10 @@ DISPATCH_TABLES = {"TestSequence": ("VideoID", ["FindPS2", "FindEGA", "FindCGA",
 # interrupt handlers -> the procedure that installs them
 INTERRUPT_HANDLERS = {"Int8ISR": "StartSound", "keyboard_isr": "install_keyboard_handler"}
 
+# pointer -> the object it points into (asm offset words and C pointers)
+POINTEES = {"g_level": "g_levels", "g_level_path": "g_levels", "LevelPtr": "g_levels",
+            "g_demo_data": "g_demo_bank", "SoundData": "g_sound_bank"}
+
 # CS.LIB routines -> the runtime data they read / write (Borland rand: LCG on a long seed)
 LIBRARY_DATA = {"rand": {"reads": ["rand_seed"], "writes": ["rand_seed"]}, "srand": {"writes": ["rand_seed"]}}
 

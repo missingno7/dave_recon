@@ -814,6 +814,13 @@ def build() -> dict:
                 g, fld = fr.split(".", 1)
                 field_rw.setdefault(g, {}).setdefault(fld, {"readers": set(), "writers": set()})[key].add(n)
     # installed handlers count as callers (interrupts)
+    # a pointer's pointee object: functions that write through the pointer
+    # write the pointee; functions that read the pointer read through it
+    # (every read of these pointers is a dereference, except their set-up)
+    through_readers = {n: set() for n in data}
+    for ptr, obj in ann.POINTEES.items():
+        through_writers[obj] |= through_writers[ptr]
+        through_readers[obj] |= readers[ptr] - writers[ptr]
     for isr, installer in ann.INTERRUPT_HANDLERS.items():
         callers[isr].add(f"{installer} (installs as interrupt handler)")
 
@@ -958,6 +965,7 @@ def build() -> dict:
              "evidence": [d["source"]] + a.get("evidence", []),
              "relations": {"readers": sorted(readers[n]), "writers": sorted(writers[n]),
                            "written_through_pointer_by": sorted(through_writers[n]),
+                           "read_through_pointer_by": sorted(through_readers[n]),
                            "address_taken_by": sorted(addr_by[n])}}
         if n in field_rw:
             whole = sorted(f for f in funcs if n in funcs[f]["rel"].get("whole_writes", ()))
@@ -1091,6 +1099,17 @@ def markdown(doc: dict) -> str:
             for e in es:
                 out.append(f"| `{e['name']}` | {md_escape(e['identity'].get('where', ''))} | {e['subsystem']} | "
                            f"{e['status']} | {md_escape(e['purpose'])} |")
+    # the game state in detail: who writes and reads it (input to docs/state-model.md)
+    out += ["", "## Game state objects: writers and readers", "",
+            "Mechanical (function bodies / procedures); `*` = through a pointer.", "",
+            "| object | DS | width / note | writers | readers |", "|---|---|---|---|---|"]
+    for e in doc["entries"]:
+        if e.get("role") != "game_state":
+            continue
+        r = e["relations"]
+        wr = r["writers"] + [w + "*" for w in r["written_through_pointer_by"]]
+        out.append(f"| `{e['name']}` | {e['identity'].get('ds') or '-'} | {md_escape(e.get('width', ''))} | "
+                   f"{', '.join(wr) or '-'} | {', '.join(r['readers']) or '-'} |")
     # details of everything not understood: what is missing
     out += ["", "## Not fully understood: what is missing", ""]
     for e in doc["entries"]:

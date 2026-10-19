@@ -7361,6 +7361,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -7391,6 +7392,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "1 while a demo is being recorded (F_4A27)",
@@ -7434,6 +7436,7 @@
      "process_input"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "game state: 0 play, 1 demo, 2 high scores, 3 title",
@@ -7467,6 +7470,7 @@
      "process_input"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "fire auto-repeat counter",
@@ -7500,6 +7504,7 @@
      "process_input"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "jetpack toggle repeat counter",
@@ -7532,6 +7537,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "\"DSCORES.DAV\""
@@ -7564,6 +7570,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "jump y-delta table, 0x80 terminated"
@@ -7597,6 +7604,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per-level option bits (copied to g_dave_state)",
@@ -7629,6 +7637,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -7659,6 +7668,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -7689,6 +7699,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "monster width, levels 3..10 (indexed level - 2)"
@@ -7720,6 +7731,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "monster height, levels 3..10 (indexed level - 2)"
@@ -7751,6 +7763,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "warp target level (1-based, 0 = none)"
@@ -7781,6 +7794,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "tile of the warp tube screen per level"
@@ -7812,6 +7826,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "warp target view column"
@@ -7843,6 +7858,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "warp target player x"
@@ -7873,6 +7889,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per gfx mode: sprite drawn left of the warp tube"
@@ -7903,6 +7920,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per gfx mode: sprite drawn right of the warp tube"
@@ -7935,6 +7953,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per gfx mode: object kind 1 sprite, flag set"
@@ -7967,6 +7986,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per gfx mode: object kind 1 sprite, flag clear"
@@ -7997,6 +8017,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per gfx mode: Dave jumping, facing left"
@@ -8027,6 +8048,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per gfx mode: Dave jumping, facing right"
@@ -8057,6 +8079,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "masks of g_spr_jump_left"
@@ -8087,6 +8110,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "masks of g_spr_jump_right"
@@ -8118,6 +8142,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per gfx mode: tile id of the digit 0"
@@ -8148,6 +8173,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "title animation tile ids, 4 per gfx mode"
@@ -8186,6 +8212,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "row length of g_status_tiles (8)"
@@ -8224,6 +8251,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "status-bar tile ids, g_status_row_len per gfx mode"
@@ -8254,6 +8282,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "collectible tile ids"
@@ -8284,6 +8313,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "their point values"
@@ -8314,6 +8344,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per tile: climbable"
@@ -8345,6 +8376,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per tile: collision attribute",
@@ -8384,6 +8416,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per gfx mode: Dave standing, facing the player"
@@ -8420,6 +8453,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "masks of g_spr_dave_front"
@@ -8450,6 +8484,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per gfx mode: jetpack meter frame"
@@ -8481,6 +8516,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per gfx mode: jetpack meter bar unit"
@@ -8511,6 +8547,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "animated base tiles",
@@ -8542,6 +8579,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "their frame counts"
@@ -8583,6 +8621,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [],
     "fields": {
      "frame": {
@@ -8626,6 +8665,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per-level monster init block, copied to g_monsters"
@@ -8654,6 +8694,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -8681,6 +8722,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -8708,6 +8750,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -8735,6 +8778,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -8762,6 +8806,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -8792,6 +8837,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "control panel: text row of each option row"
@@ -8823,6 +8869,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "control panel: text column of each option"
@@ -8853,6 +8900,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "scan code -> printable key name character"
@@ -8881,6 +8929,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -8908,6 +8957,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -8940,6 +8990,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per player 1..2: 0 keyboard, 1 mouse, 2/3 joystick 1/2"
@@ -8972,6 +9023,7 @@
      "calibrate_joystick"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per stick 1..2: calibrated dead-zone limits"
@@ -9004,6 +9056,7 @@
      "calibrate_joystick"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -9035,6 +9088,7 @@
      "calibrate_joystick"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -9066,6 +9120,7 @@
      "calibrate_joystick"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -9097,6 +9152,7 @@
      "config_mouse"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "mouse threshold (15 - sensitivity)"
@@ -9130,6 +9186,7 @@
      "config_keyboard"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "scan codes: 8 directions N..NW, then fire, jump"
@@ -9163,6 +9220,7 @@
      "install_keyboard_handler"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [
      "restore_keyboard_handler"
     ]
@@ -9193,6 +9251,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -9220,6 +9279,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -9253,6 +9313,7 @@
      "Random"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "word index of the long lag"
@@ -9287,6 +9348,7 @@
      "Random"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "word index of the short lag"
@@ -9321,6 +9383,7 @@
      "Random"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [
      "InitRnd"
     ]
@@ -9353,6 +9416,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [
      "InitRnd"
     ]
@@ -9388,6 +9452,7 @@
      "StartSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "INT 8 handler installed"
@@ -9421,6 +9486,7 @@
      "init_game_once"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "far table of 16-byte sound headers (set by C)"
@@ -9455,6 +9521,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "low byte 0 = speaker muted"
@@ -9488,6 +9555,7 @@
      "StartSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "note": "host-dependent; part of the level -1 collision map (U-M1)"
@@ -9524,6 +9592,7 @@
      "StopSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "chain the old INT 8 every n ticks",
@@ -9562,6 +9631,7 @@
      "StopSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -9594,6 +9664,7 @@
      "StopSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "PIT channel 0 divisor (0 = 65536)"
@@ -9631,6 +9702,7 @@
      "StopSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "next tone word, 0 = silent"
@@ -9666,6 +9738,7 @@
      "StopSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -9697,6 +9770,7 @@
      "PauseSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "PauseSound / ResumeSound copy"
@@ -9729,6 +9803,7 @@
      "PauseSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -9760,6 +9835,7 @@
      "PauseSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -9791,6 +9867,7 @@
      "PauseSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -9822,6 +9899,7 @@
      "PauseSound"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -9857,6 +9935,7 @@
      "redraw_screen"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "XORed into every font pixel"
@@ -9895,6 +9974,7 @@
      "RleExpandCore"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "compressed buffer (segment, offset)"
@@ -9932,6 +10012,7 @@
      "RleExpandCore"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "uncompressed buffer"
@@ -9965,6 +10046,7 @@
      "RLEExpand"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -10002,6 +10084,7 @@
      "WriteRun"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -10037,6 +10120,7 @@
      "RleExpandCore"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "bytes left to consume / produce"
@@ -10073,6 +10157,7 @@
      "WriteRun"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "compressed size produced"
@@ -10109,6 +10194,7 @@
      "WriteRun"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "length of the pending run"
@@ -10142,6 +10228,7 @@
      "RleCompressCore"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "byte of the pending run"
@@ -10179,6 +10266,7 @@
      "WriteLiterals"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "pending literal count"
@@ -10207,6 +10295,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -10234,6 +10323,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "(not referenced)"
@@ -10266,6 +10356,7 @@
      "InitLevelPtr"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "far pointer to Levels (InitLevelPtr)",
@@ -10295,6 +10386,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "(not referenced)",
@@ -10326,6 +10418,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "level n starts at Levels + n*1280"
@@ -10359,6 +10452,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "row*100 (used by C)"
@@ -10389,6 +10483,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "view tile row -> CGA/EGA offset"
@@ -10419,6 +10514,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "view tile row -> VGA offset"
@@ -10447,6 +10543,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [
      "VgaBarLine"
     ]
@@ -10477,6 +10574,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -10507,6 +10605,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "note": "rows 2..9 of the level -1 map"
@@ -10536,7 +10635,29 @@
    "relations": {
     "readers": [],
     "writers": [],
-    "written_through_pointer_by": [],
+    "written_through_pointer_by": [
+     "ask_restart",
+     "check_warp_transition",
+     "handle_death",
+     "handle_menu_key",
+     "level_complete",
+     "pick_up_items",
+     "process_input"
+    ],
+    "read_through_pointer_by": [
+     "ask_restart",
+     "check_warp_transition",
+     "handle_death",
+     "handle_menu_key",
+     "level_complete",
+     "load_level",
+     "move_monsters",
+     "pick_up_items",
+     "process_input",
+     "tile_at",
+     "tile_attr_at",
+     "tile_attr_at_offset"
+    ],
     "address_taken_by": [
      "DrawLevelView",
      "InitLevelPtr"
@@ -10569,6 +10690,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -10604,6 +10726,7 @@
      "load_level"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "note": "observable: load_level's random tile phases and monster frames, the attract demo choice",
@@ -10634,6 +10757,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -10671,6 +10795,7 @@
      "update_score"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "width": "uint32"
@@ -10705,6 +10830,7 @@
      "draw_dave"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "screen area saved under Dave"
@@ -10742,6 +10868,7 @@
      "pick_up_items"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -10807,6 +10934,7 @@
      "load_graphics"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "video mode - 1: 0 CGA, 1 EGA, 2 VGA (table row)",
@@ -10844,6 +10972,7 @@
      "pick_up_items"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -10882,6 +11011,7 @@
      "update_jetpack"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -10919,6 +11049,7 @@
      "check_high_score",
      "init_game_once"
     ],
+    "read_through_pointer_by": [],
     "address_taken_by": [],
     "fields": {
      "level": {
@@ -10989,6 +11120,7 @@
      "update_explosions"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [],
     "fields": {
      "active": {
@@ -11108,6 +11240,7 @@
      "scroll_screen"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "width": "int16"
@@ -11154,6 +11287,7 @@
      "move_dave"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "width": "int16 storage, values 0..255 after any jump/fall step (masked & 0xff)"
@@ -11191,6 +11325,7 @@
      "update_score"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "width": "int16"
@@ -11238,6 +11373,7 @@
     "written_through_pointer_by": [
      "load_graphics"
     ],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "the loaded tile file"
@@ -11283,6 +11419,7 @@
      "level_complete"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "width": "int16 (signed: -1 is reachable)"
@@ -11330,6 +11467,7 @@
      "spawn_object"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [],
     "fields": {
      "active": {
@@ -11448,6 +11586,7 @@
      "level_complete"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -11488,6 +11627,7 @@
      "update_jetpack"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "note": "derived from pose + frame + mode; see state-model.md"
@@ -11524,6 +11664,7 @@
      "move_dave"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "0 left, 1 right"
@@ -11572,6 +11713,7 @@
      "scroll_screen"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [],
     "fields": {
      "active": {
@@ -11713,6 +11855,7 @@
      "main"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -11749,6 +11892,7 @@
      "move_dave"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "width": "int16 (decremented every alive tick)"
@@ -11783,6 +11927,7 @@
      "move_bullets"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "bullet animation countdown"
@@ -11818,6 +11963,7 @@
      "update_jetpack"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "jetpack fuel meter"
@@ -11850,6 +11996,7 @@
      "move_dave"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "position in g_jump_dy"
@@ -11883,6 +12030,7 @@
      "init_game_once"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "leave the main loop",
@@ -11919,6 +12067,7 @@
      "update_jetpack"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "previous direction"
@@ -11964,6 +12113,7 @@
      "scroll_screen"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "first visible level column"
@@ -11998,6 +12148,7 @@
      "process_input"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "demo read position"
@@ -12034,6 +12185,7 @@
     "written_through_pointer_by": [
      "process_input"
     ],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -12084,6 +12236,7 @@
      "pick_up_items",
      "process_input"
     ],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "current level record / tile map",
@@ -12119,6 +12272,7 @@
      "init_game_state"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "per-level \"warp used\" flags"
@@ -12153,6 +12307,7 @@
      "init_game_once"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [],
     "fields": {
      "level": {
@@ -12213,6 +12368,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -12250,6 +12406,7 @@
      "update_jetpack"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "requested direction 0..7, 8 = none"
@@ -12290,6 +12447,7 @@
      "update_jetpack"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -12322,6 +12480,7 @@
      "process_input"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "jetpack facing"
@@ -12358,6 +12517,7 @@
      "pick_up_items"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [],
     "fields": {
      "active": {
@@ -12446,6 +12606,7 @@
      "update_score"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "next extra-life score",
@@ -12479,6 +12640,7 @@
      "load_level"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "monster movement path"
@@ -12521,6 +12683,7 @@
      "move_dave"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "animation frame 0..3"
@@ -12555,6 +12718,7 @@
      "check_warp_transition"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -12588,6 +12752,7 @@
      "update_jetpack"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "jetpack fuel countdown"
@@ -12637,6 +12802,7 @@
      "update_jetpack"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "Dave state bits",
@@ -12672,6 +12838,7 @@
      "pick_up_items"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -12706,6 +12873,7 @@
      "init_game_state"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -12745,6 +12913,7 @@
      "load_level"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "working 100x10 tile grid"
@@ -12778,6 +12947,7 @@
      "process_input"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "demo run-length counter",
@@ -12807,6 +12977,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -12841,6 +13012,7 @@
      "spawn_explosion"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "width": "int16"
@@ -12878,6 +13050,7 @@
      "move_dave"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "animation countdown"
@@ -12909,6 +13082,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "never referenced",
@@ -12943,6 +13117,7 @@
      "detect_hardware"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -12975,6 +13150,7 @@
      "detect_hardware"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -13008,6 +13184,7 @@
      "detect_hardware"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "0 none, 1 or 2"
@@ -13042,6 +13219,7 @@
      "detect_hardware"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -13074,6 +13252,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "control panel cursor column"
@@ -13108,6 +13287,7 @@
      "detect_hardware"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -13137,6 +13317,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "never referenced"
@@ -13170,6 +13351,7 @@
      "setup_graphics_pointers"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "picture file plane segments"
@@ -13203,6 +13385,7 @@
      "detect_hardware"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "option available flags [row][col]"
@@ -13234,6 +13417,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "settings on entry to the control panel"
@@ -13264,6 +13448,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "never referenced"
@@ -13295,6 +13480,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -13325,6 +13511,7 @@
      "setup_graphics_pointers"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "picture file sprite table"
@@ -13358,6 +13545,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "control panel choices"
@@ -13388,6 +13576,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "never referenced"
@@ -13419,6 +13608,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -13449,6 +13639,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -13480,6 +13671,7 @@
      "setup_graphics_pointers"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "picture file picture table"
@@ -13510,6 +13702,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "never referenced"
@@ -13543,6 +13736,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -13574,6 +13768,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "control panel cursor row"
@@ -13604,6 +13799,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "never referenced"
@@ -13637,6 +13833,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -13668,6 +13865,7 @@
      "control_panel"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -13720,6 +13918,7 @@
      "show_high_scores"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "text cursor column"
@@ -13770,6 +13969,7 @@
      "show_high_scores"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "text cursor row"
@@ -13804,6 +14004,7 @@
      "setup_graphics_pointers"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "picture file: 8x8 font"
@@ -13834,6 +14035,7 @@
      "setup_graphics_pointers"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -13866,6 +14068,7 @@
      "setup_graphics_pointers"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -13905,6 +14108,7 @@
      "show_high_scores"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "left margin of the text window"
@@ -13937,6 +14141,7 @@
      "draw_text_window"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "text window rectangle"
@@ -13969,6 +14174,7 @@
      "draw_text_window"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14000,6 +14206,7 @@
      "draw_text_window"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14031,6 +14238,7 @@
      "draw_text_window"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14067,6 +14275,7 @@
      "get_player_input"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "demo buffer read/write pointer"
@@ -14098,6 +14307,7 @@
      "setup_graphics_pointers"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14134,6 +14344,7 @@
      "keyboard_isr"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "key state per scan code"
@@ -14175,6 +14386,7 @@
      "main"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "1 CGA, 2 EGA, 3 VGA"
@@ -14210,6 +14422,7 @@
      "demo_play_start"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14243,6 +14456,7 @@
      "main"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "VideoID result"
@@ -14278,6 +14492,7 @@
      "demo_save"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "0 live, 1 playback, 2 record"
@@ -14312,6 +14527,7 @@
      "load_rle_file"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "last farmalloc block"
@@ -14341,6 +14557,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14371,6 +14588,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "note": "a multiplication table; native code computes it"
@@ -14402,6 +14620,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14432,6 +14651,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14461,6 +14681,7 @@
      "DrawPic"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "bytes per line"
@@ -14493,6 +14714,7 @@
      "BlitPicVGA"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "byte column on screen"
@@ -14523,6 +14745,7 @@
      "DrawPic"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "lines left"
@@ -14553,6 +14776,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [
      "VideoID"
     ]
@@ -14582,6 +14806,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [
      "FindEGA"
     ]
@@ -14614,6 +14839,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "translate table for INT 10h func 1Ah"
@@ -14644,6 +14870,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": [
      "VideoID"
     ]
@@ -14677,6 +14904,7 @@
      "VideoID"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14708,6 +14936,7 @@
      "VideoID"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14739,6 +14968,7 @@
      "VideoID"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14772,6 +15002,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14805,6 +15036,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14838,6 +15070,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14869,6 +15102,7 @@
      "DrawMaskedEGA"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -14908,6 +15142,7 @@
      "SaveUnderVGA"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "walks the mask copy in a save buffer"
@@ -14936,6 +15171,7 @@
     "readers": [],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "(not referenced)"
@@ -14968,6 +15204,7 @@
      "DrawMaskedVGA"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -15001,6 +15238,7 @@
      "DrawXorEGA"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "first byte column (may be negative)"
@@ -15037,6 +15275,7 @@
      "DrawXorVGA"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "bytes skipped per line on the left"
@@ -15073,6 +15312,7 @@
      "DrawXorVGA"
     ],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    },
    "source_comment": "... and on the right"
@@ -15103,7 +15343,13 @@
      "init_game_once"
     ],
     "writers": [],
-    "written_through_pointer_by": [],
+    "written_through_pointer_by": [
+     "process_input"
+    ],
+    "read_through_pointer_by": [
+     "attract_mode",
+     "process_input"
+    ],
     "address_taken_by": []
    }
   },
@@ -15134,6 +15380,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -15164,6 +15411,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -15194,6 +15442,10 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [
+     "Int8ISR",
+     "PlaySound"
+    ],
     "address_taken_by": []
    }
   },
@@ -15224,6 +15476,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -15254,6 +15507,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
@@ -15284,6 +15538,7 @@
     ],
     "writers": [],
     "written_through_pointer_by": [],
+    "read_through_pointer_by": [],
     "address_taken_by": []
    }
   },
