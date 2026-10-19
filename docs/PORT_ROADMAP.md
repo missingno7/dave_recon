@@ -66,10 +66,17 @@ names in `src/asm`); data-module provenance unknowable (D-2).
 - M2.1 Generated semantic inventory (`docs/semantic-inventory.json`): every
   function, asm proc, global, data object with status (understood /
   partial / behaviour-only / representation-only / unresolved) and evidence,
-  drawn from source headers and the ledgers.
+  drawn from source headers and the ledgers. *Done 2026-10-20:*
+  `tools/semantic_inventory.py` (`--check`, `tests/test_semantic_inventory.py`)
+  writes `docs/semantic-inventory.{json,md}`: 90 C functions, 60 asm
+  procedures, 226 data objects, 17 record formats, 19 subsystems, relations
+  parsed mechanically and cross-checked against the binary call graph.
 - M2.2 Close UNDERSTANDING_LEDGER items, driven by oracle experiments
-  (watchpoints on specific fields, boundary snapshots).
-- M2.3 Design `struct game` from the inventory (decision 4).
+  (watchpoints on specific fields, boundary snapshots). *In progress:*
+  U-G1..U-G8, U-S1, U-S2, U-M1, U-M2 closed (`tools/semantic_experiments.py`
+  on `tests/oracle/inv_demos*.txt`); open: U-G9, U-M3, U-R*, U-T*.
+- M2.3 Design `struct game` from the inventory (decision 4). *Proposal:*
+  `docs/state-model.md`, awaiting approval (questions Q1-Q7 there).
 **Gate:** no gameplay-relevant item unresolved; remaining unknowns explicit.
 
 ### Phase 3 -- readable native-oriented source
