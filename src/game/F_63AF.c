@@ -1,3 +1,23 @@
+/*
+ * F_63AF -- read_keyboard_input
+ * cs [0x61af,0x6305) / file [0x63af,0x6505), 342 bytes. Strict match: tools/match_function.py.
+ *
+ * Returns the player input struct {dir, fire, jump} from the key-state
+ * table: 8 configurable direction keys D_1310[0..7] (diagonals override),
+ * dir encoded 0..7 clockwise from north, 8 = none; fire/jump from keys
+ * D_1310[8], D_1310[9].
+ *
+ * Evidence for the name: uses the remappable key table D_1310 edited by
+ * config_keyboard.
+ *
+ * Codegen: Struct return: hidden far destination at [bp+4], copied with
+ * N_SCOPY@. switch over dy*3+dx with cases -4..4 -> jump table. `register
+ * int dx, dy;` gives dy=SI, dx=DI.
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name read_keyboard_input
+ */
 /* @flags -G */
 struct input {
     int dir;

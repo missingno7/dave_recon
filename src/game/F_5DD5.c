@@ -1,3 +1,26 @@
+/*
+ * F_5DD5 -- control_panel
+ * cs [0x5bd5,0x5e99) / file [0x5dd5,0x6099), 708 bytes. Strict match: tools/match_function.py.
+ *
+ * Control-panel main loop (F2 menu): saves current settings, sets the video
+ * mode, draws the panel, then moves a cursor over the option grid with the
+ * arrow keys (skipping unavailable options), ENTER applies the option (video
+ * mode switch incl. EGA plane upload, sound choice, control choice which
+ * runs the keyboard/mouse/joystick configuration screens), ESC writes the
+ * choices back (D_12F2 control, D_8B32 video, D_137E sound) and returns.
+ *
+ * Evidence for the name: arrow scan codes 0x48/0x50/0x4B/0x4D, calls
+ * config_keyboard/config_mouse/F_53C3(joystick), draw_control_panel.
+ *
+ * Codegen: Chained assignments `D_85FC = D_65D8 = D_8B32` store the inner
+ * target first. `while (!D_65B0[r][--c]);` gives the empty-body while (eb
+ * 00). `if (--D_8A0A < 0)` uses the dec flags directly, `if (++D_8A0A > 2)`
+ * reloads.
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name control_panel
+ */
 /* @flags -G */
 extern int D_8A12, D_8A14;
 extern int D_8B32, D_137E, D_12F2, D_12F4;

@@ -1,3 +1,15 @@
+/*
+ * F_6DC2 -- draw_text_window
+ * cs [0x6bc2,0x6cb9) / file [0x6dc2,0x6eb9), 247 bytes. Strict match: tools/match_function.py.
+ *
+ * Draws a framed text window with frame characters 1..8 via F_7878, clears
+ * its interior, stores the window rectangle (D_8A24/26/28/2A) and puts the
+ * text cursor at its top-left inner cell (D_8A12/D_8A22, D_8A14).
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name draw_text_window
+ */
 /* @flags -G */
 extern int D_8A24, D_8A26, D_8A28, D_8A2A;
 extern int D_8A12, D_8A14, D_8A22;

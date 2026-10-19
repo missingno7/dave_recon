@@ -1,3 +1,20 @@
+/*
+ * F_6C8A -- load_rle_file
+ * cs [0x6a8a,0x6b64) / file [0x6c8a,0x6d64), 218 bytes. Strict match: tools/match_function.py.
+ *
+ * Loads a compressed file: reads the 4-byte unpacked size, allocates the
+ * output, loads the packed file into a temporary block and decompresses it
+ * (F_7E00) from offset 4, then frees the temporary block and restores
+ * D_9EC4.
+ *
+ * Evidence for the name: farfree of the temporary, decompressor call F_7E00.
+ *
+ * Codegen: `packed` is a huge pointer (packed + 4 via N_PADD@).
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name load_rle_file
+ */
 /* @flags -G */
 #include <io.h>
 #include <fcntl.h>

@@ -1,3 +1,23 @@
+/*
+ * F_688C -- get_player_input
+ * cs [0x668c,0x67b9) / file [0x688c,0x69b9), 301 bytes. Strict match: tools/match_function.py.
+ *
+ * Input dispatcher: in live (D_9EC2 0) or record (2) mode reads the device
+ * selected by D_12F0[player] (0 keyboard, 1 mouse, 2/3 joystick 1/2); in
+ * record mode appends a packed byte dir<<2|jump<<1|fire to the demo buffer
+ * D_8A2C. In playback mode (1) unpacks the next demo byte. Preserves the
+ * original bug that playback sets BOTH fire and jump from bit 0.
+ *
+ * Evidence for the name: demo buffer pointer D_8A2C set by F_69B9/F_69D3;
+ * mode D_9EC2.
+ *
+ * Codegen: Struct-returning calls go through compiler temporaries +
+ * N_SCOPY@.
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name get_player_input
+ */
 /* @flags -G */
 struct input {
     int dir;

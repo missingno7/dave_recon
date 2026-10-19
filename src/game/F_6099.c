@@ -1,3 +1,23 @@
+/*
+ * F_6099 -- setup_graphics_pointers
+ * cs [0x5e99,0x6013) / file [0x6099,0x6213), 378 bytes. Strict match: tools/match_function.py.
+ *
+ * Takes a loaded graphics file (header of far pointers relative to the file)
+ * and derives runtime pointers: on EGA copies the four tile pointers and
+ * computes the 4 plane segments D_65A8[i]; otherwise relocates the four
+ * pointers to MK_FP(seg(file)+seg(ptr), 0). Then copies 64 16-byte and 256
+ * 32-byte records (huge pointers into the file) to D_8604 and D_65FC.
+ *
+ * Evidence for the name: EGA plane segments D_65A8 are consumed by F_6213;
+ * huge-pointer struct copies via N_PADD@/N_SCOPY@.
+ *
+ * Codegen: Huge pointers give N_LXLSH@ + N_PADD@ for indexing. MK_FP(seg,
+ * off) evaluates seg first.
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name setup_graphics_pointers
+ */
 /* @flags -G */
 #include <dos.h>
 

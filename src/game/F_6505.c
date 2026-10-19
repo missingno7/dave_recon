@@ -1,3 +1,21 @@
+/*
+ * F_6505 -- read_mouse_input
+ * cs [0x6305,0x644b) / file [0x6505,0x664b), 326 bytes. Strict match: tools/match_function.py.
+ *
+ * Mouse version of the input reader: INT 33h AX=3 position/buttons,
+ * direction from displacement of the cursor from the centre (320,100) beyond
+ * the dead zone D_130E, then re-centres partly (AX=4).
+ *
+ * Evidence for the name: INT 33h; same {dir, fire, jump} struct and
+ * direction table as read_keyboard_input.
+ *
+ * Codegen: `x = x - D_130E * 2` (not -=) gives mov dx,di / sub dx,ax / mov
+ * di,dx.
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name read_mouse_input
+ */
 /* @flags -G */
 #include <dos.h>
 

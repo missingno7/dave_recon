@@ -1,3 +1,23 @@
+/*
+ * F_55BC -- config_mouse
+ * cs [0x53bc,0x544d) / file [0x55bc,0x564d), 145 bytes. Strict match: tools/match_function.py.
+ *
+ * Mouse configuration screen: opens a 24x5 text window, prints the five
+ * 'Mouse Configuration' lines, waits (F_7005) for a digit 1-9 (ESC counts as
+ * '5'), sets the mouse dead-zone/sensitivity D_130E = 15 - digit, clears the
+ * window (F_6EB9), then resets the mouse driver (INT 33h AX=0) and centres
+ * the cursor (AX=4, CX=320, DX=100).
+ *
+ * Evidence for the name: strings 'Mouse Configuration'/'Choose the
+ * sensitivity', INT 33h calls; D_130E is the threshold used by F_6505.
+ *
+ * Codegen: String literals land in this module's _DATA at DS:0x1044 in
+ * source order.
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name config_mouse
+ */
 /* @flags -G */
 /* @seg _DATA 0x1044 */
 #include <dos.h>

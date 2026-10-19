@@ -1,3 +1,23 @@
+/*
+ * F_564D -- print_key_name
+ * cs [0x544d,0x5615) / file [0x564d,0x5815), 456 bytes. Strict match: tools/match_function.py.
+ *
+ * Prints the name of a keyboard scan code (bit 7 masked) at the text cursor:
+ * named keys (ESC, BKSP, TAB, CTRL, ... NUMLK), F1-F10 as 'F' + itoa(n),
+ * otherwise the ASCII char from the scan-code table D_0F12 via F_7878 at
+ * (D_8A12++, D_8A14). Preserves the original quirk that scan code 0x59 (not
+ * 0x58) is labelled F12.
+ *
+ * Evidence for the name: called by config_keyboard for each configured key;
+ * string table of key names.
+ *
+ * Codegen: `key = key & 0x7f` (not `&=`) gives mov ax,si / and / mov si,ax.
+ * Long if/else-if chain = compare chain with near jmps to the epilogue.
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name print_key_name
+ */
 /* @flags -G */
 /* @seg _DATA 0x10c4 */
 extern int D_8A12, D_8A14;

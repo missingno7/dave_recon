@@ -1,3 +1,21 @@
+/*
+ * F_66F2 -- read_joystick_input
+ * cs [0x64f2,0x668c) / file [0x66f2,0x688c), 410 bytes. Strict match: tools/match_function.py.
+ *
+ * Joystick input reader: axis counts compared with calibration limits
+ * D_12F6/D_12FC (x) and D_1302/D_1308 (y) per stick, out-of-range readings
+ * replaced by min+1, direction from the switch table, buttons from port 201h
+ * bits (stick 1: 0x10/0x20, stick 2: 0x40/0x80, active low).
+ *
+ * Evidence for the name: calibration arrays indexed by stick, port 0x201.
+ *
+ * Codegen: `(x > 500) | (y > 500)` (bitwise or of two comparisons) gives
+ * push/pop dx/or dx,ax.
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name read_joystick_input
+ */
 /* @flags -G */
 #include <dos.h>
 

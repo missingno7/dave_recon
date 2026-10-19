@@ -1,3 +1,22 @@
+/*
+ * F_5B10 -- draw_control_panel
+ * cs [0x5910,0x5bd5) / file [0x5b10,0x5dd5), 709 bytes. Strict match: tools/match_function.py.
+ *
+ * Draws the 'PC-Arcade Control Panel' screen: VIDEO/SOUND/CONTROL rows of
+ * option icons via F_7B3B(col*8, row*8, icon) (greyed variants when hardware
+ * is unavailable), a marker char 15 next to the current video
+ * mode/sound/control choice, and the three help lines.
+ *
+ * Evidence for the name: strings 'PC-Arcade Control Panel', 'VIDEO:',
+ * 'SOUND:', 'CONTROL:'.
+ *
+ * Codegen: Rows D_0F02[0..2] and columns D_0F0A[0..3]; `D_0F0A[D_85FC - 1]`
+ * folds to [bx+0xf08].
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name draw_control_panel
+ */
 /* @flags -G */
 /* @seg _DATA 0x1243 */
 extern int D_8A12, D_8A14, D_8A22;

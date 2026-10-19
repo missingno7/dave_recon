@@ -1,3 +1,24 @@
+/*
+ * F_5815 -- config_keyboard
+ * cs [0x5615,0x57ec) / file [0x5815,0x59ec), 471 bytes. Strict match: tools/match_function.py.
+ *
+ * Keyboard configuration screen: prints the 10 action labels, the currently
+ * bound key of each (D_1310[0..9]) via print_key_name, then loops: read a
+ * digit 0-9 selecting an action, prompt 'Press the new key:', wait for any
+ * key in the key-state table D_8A32 (scanning 0..127 repeatedly), store its
+ * scan code into D_1310[action], redraw. Any non-digit leaves the screen.
+ *
+ * Evidence for the name: strings 'Keyboard Configuration', 'Modify which
+ * action:', 'Press the new key:'.
+ *
+ * Codegen: `if (c < '0' || c > '9') continue;` inside do/while (continue
+ * jumps to the loop test). `while (!D_8A32[++key]) if (key == 127) key =
+ * -1;`. Redundant `action = c - '0'` kept twice as in the original.
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name config_keyboard
+ */
 /* @flags -G */
 /* @seg _DATA 0x1133 */
 extern int D_8A12, D_8A14;

@@ -1,3 +1,23 @@
+/*
+ * F_59EC -- detect_hardware
+ * cs [0x57ec,0x5910) / file [0x59ec,0x5b10), 292 bytes. Strict match: tools/match_function.py.
+ *
+ * Builds the control-panel availability tables: EGA/VGA flags from adapter
+ * type D_9EC0 (3/5 => EGA, 5/4 => VGA), fills video/sound row D_65B0[0..9],
+ * probes joysticks 1 and 2 with read_joystick_axes (x < 500 => present), and
+ * detects a mouse driver (INT 33h vector non-NULL and its first byte not
+ * IRET 0xCF); fills control row D_65C4[0..4].
+ *
+ * Evidence for the name: INT 33h vector check, joystick probe, consumer
+ * F_5B10/F_5DD5 (option grid D_65B0[3][5]).
+ *
+ * Codegen: `(*(int far *)v & 0xff) == 0xcf` gives les bx / mov ax,es:[bx] /
+ * and ax,0xff.
+ *
+ * Built with -G (speed opt: `inc sp; inc sp` instead of `pop cx` for 2-byte
+ * arg cleanup).
+ * @name detect_hardware
+ */
 /* @flags -G */
 #include <dos.h>
 
