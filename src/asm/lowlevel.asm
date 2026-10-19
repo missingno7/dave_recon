@@ -708,15 +708,15 @@ _DrawPic	proc	near
 		mov	ds,cx
 		cmp	ax,GR_CGA
 		jne	@@notcga
-		call	DrawPicCGA
+		call	BlitPicCGA
 		jmp	@@done
 @@notcga:	cmp	ax,GR_EGA
 		jne	@@notega
-		call	DrawPicEGA
+		call	BlitPicEGA
 		jmp	@@done
 @@notega:	cmp	ax,GR_VGA
 		jne	@@done
-		call	DrawPicVGA
+		call	BlitPicVGA
 @@done:		mov	ax,DGROUP
 		mov	ds,ax
 		pop	di
@@ -742,7 +742,7 @@ col:		movsb
 		jne	row
 		endm
 
-DrawPicCGA	proc	near			; F_7B9E
+BlitPicCGA	proc	near			; F_7B9E
 		shr	di,1
 		shr	di,1
 		mov	cs:PicX,di
@@ -750,9 +750,9 @@ DrawPicCGA	proc	near			; F_7B9E
 		mov	es,ax
 		PicCopy	CgaRowOfs
 		ret
-DrawPicCGA	endp
+BlitPicCGA	endp
 
-DrawPicEGA	proc	near			; F_7BC9: VRAM-to-VRAM through the latches
+BlitPicEGA	proc	near			; F_7BC9: VRAM-to-VRAM through the latches
 		mov	ax,EGA_SEG
 		mov	es,ax
 		mov	ax,0100h+GC_MODE	; write mode 1
@@ -766,15 +766,15 @@ DrawPicEGA	proc	near			; F_7BC9: VRAM-to-VRAM through the latches
 		mov	es,ax
 		PicCopy	EgaRowOfs
 		ret
-DrawPicEGA	endp
+BlitPicEGA	endp
 
-DrawPicVGA	proc	near			; F_7C02
+BlitPicVGA	proc	near			; F_7C02
 		mov	cs:PicX,di
 		mov	ax,EGA_SEG
 		mov	es,ax
 		PicCopy	VgaRowOfs
 		ret
-DrawPicVGA	endp
+BlitPicVGA	endp
 
 ; ====================================================== VIDEO_ID (cs 7a29)
 
