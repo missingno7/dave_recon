@@ -164,7 +164,7 @@ confirmed on 12 fresh random units (360 names, mixed types);
 python tools/codegen_lab/run.py                 # all cases, ~5 s
 python tools/codegen_lab/run.py -k switch --show # one family, with disassembly
 python tools/tcc_batch.py a.c b.c --flags "-ms -1- -f- -N -G"   # ad-hoc compiles
-python tools/match_function.py cand.c 0xSTART 0xEND --flags "-G"
+python tools/match_function.py cand.c        # strict; -G is now a base flag (tools/tcc.py)
 ```
 
 A new case is a `.c` file with an `@behaviour` header and one of `@original`,
@@ -193,3 +193,25 @@ change it (format in `tools/codegen_lab/run.py`).
   get a table; the bound is range <= 3n+1.
 - "`-a` aligns functions": it only pads data and structs.
 - "a `register` keyword is needed for SI/DI": locals are auto-registered.
+
+## Inline `asm` (established 2026-10-19 by matching F_630B, F_6ADE, F_6B94)
+
+- TC++ 1.00 has no built-in assembler: a file with `asm` statements makes TCC
+  print "Restarting compile using assembly" and compile the WHOLE file through
+  TASM, found via PATH. `tools/tcc.py` puts the pinned TASM 2.0
+  (`toolchain/TASM20`) on PATH. The C parts of such a function come out
+  byte-identical to the plain-TCC encoding.
+- Signs that the original used inline asm inside a C function: `jb`/`jc`
+  straight after `int 21h`, `loop`, `push ds; mov ds,ax; ... pop ds`,
+  explicit register saves around a call, and immediates encoded by the
+  assembler's choice (`add dx,0ffffh` as `83 C2 FF`), all inside a normal C
+  frame with the `-N` stack check.
+- A function containing `asm` gets NO automatic register variables (TC
+  cannot know which registers the asm uses): its locals stay on the stack
+  (F_630B's `key` at [bp-2]).
+- `asm` statements may name C locals/parameters (`asm mov dx, name` ->
+  `mov dx,[bp+4]`; `word ptr len+2` for the high word of a long) and jump to C
+  labels.
+- `F_6D64`'s `int 10h` case bodies match from plain C with pseudo-registers
+  (`_AX = 3; geninterrupt(0x10);`), so that function does NOT need asm; the
+  earlier note in this catalog that it could not be reproduced is superseded.

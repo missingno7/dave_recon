@@ -30,6 +30,7 @@ LOCK = json.loads((ROOT / "layout" / "toolchain.json").read_text())
 TOOLCHAIN = ROOT / "toolchain"
 DEFAULT_TOOLCHAIN_SRC = pathlib.Path("C:/tools/borland-turbo-c++-1.00/files")
 DEFAULT_ASSETS = pathlib.Path("D:/Prog/dave_recon/assets")
+TASM20_SHA256 = "672cc3814fb66fcb73550aa5ad98049bb52ebcd66c66dcdedbe81d83335e62ff"  # Turbo Assembler 2.0
 
 ASSET_SHA256 = {
     "DAVE.EXE": "1ae779823df27f2c6ae03b2e7d2a8c154d4189a5074d444827783fb2f1f92a0a",
@@ -67,6 +68,15 @@ def install_toolchain():
         shutil.copyfile(lz_src, lz_dst)
     if lz_dst.exists() and sha256(lz_dst) != packer["sha256"]:
         raise SystemExit("toolchain/LZEXE/LZEXE.EXE does not match layout/packer.json")
+    # TASM for inline-asm compiles (TCC restarts through TASM; tools/tcc.py)
+    tasm_src = pathlib.Path(os.environ.get("DAVE_TASM_SRC",
+                            "C:/tools/tasm-2.00/files/disk01/expanded/TASM")) / "TASM.EXE"
+    tasm_dst = TOOLCHAIN / "TASM20" / "TASM.EXE"
+    if not tasm_dst.exists() and tasm_src.exists():
+        tasm_dst.parent.mkdir(exist_ok=True)
+        shutil.copyfile(tasm_src, tasm_dst)
+    if not tasm_dst.exists() or sha256(tasm_dst) != TASM20_SHA256:
+        raise SystemExit("toolchain/TASM20/TASM.EXE missing or not TASM 2.0 (set DAVE_TASM_SRC)")
     print("toolchain: ok" + ("" if lz_dst.exists() else " (LZEXE missing: packing tests skip)"))
 
 
