@@ -28,8 +28,11 @@ Companion documents: `FIDELITY.md` (oracle + equivalence contract),
    platform layer, presentation state in the presentation layer.
 5. **Three layers** (Phase 7 is where they are finalised, but code is
    written into them from the start):
-   - `port/game/` pure simulation: `game_tick(struct game*, const struct
-     tick_input*)`, deterministic, headless, no I/O.
+   - `port/game/` pure simulation: `game_step(struct game*, const struct
+     frame_input*, struct frame_output*)` advances ONE retrace ("frame",
+     state-model.md D2); multi-retrace sequences are explicit state; the
+     output is the ordered draw-command list (D1) and sound requests.
+     Deterministic, headless, no I/O.
    - `port/present/` original logical presentation: 320x200 indexed
      framebuffer per original video mode, text, sound *requests* -> logical
      tone timeline, resource readers (built from the existing codecs'
@@ -59,6 +62,9 @@ names in `src/asm`); data-module provenance unknowable (D-2).
 - [ ] M1.3 Scenario corpus: all 5 demos; scripted per-level play; high-score
       persistence (DSCORES.DAV after run); config screens.
 - [ ] M1.4 CGA/EGA capture (EGA planar memory needs plane-aware dumps).
+- [ ] M1.6 Retrace-granularity observation (state-model.md D2): a capture
+      point at `WaitVBL`, per-frame input reconstruction from scenario
+      scripts, draw-order capture for the D1 draw-command contract.
 - [x] M1.5 `tests/test_oracle.py` (opt-in: DAVE_ORACLE_TESTS=1): repeat-run contract.
 **Gate:** every corpus scenario passes the repeat-run contract.
 

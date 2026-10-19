@@ -321,3 +321,51 @@ CS scratch words.
   equality; the time-based `srand(time(NULL))` at the title timeout needs the
   emulated DOS time (pinned 1991-01-01 00:00:00 plus elapsed) as an input.
   Approve "time is part of the frame input".
+
+## 8. Supervisor decisions (2026-10-20)
+
+These settle Q1-Q7; the model above is approved with them. PORT_ROADMAP.md
+decision 5 is updated accordingly.
+
+- **D1 (Q1) Draw commands in original order; presentation owns a persistent
+  framebuffer.** The game layer never reads pixels (no gameplay decision
+  depends on video memory), so it stays pure: each step emits an ordered
+  list of logical draw commands (tile, masked sprite, XOR sprite,
+  save/restore-under, text, picture) exactly in the original's order.
+  `present/` applies them to a persistent 320x200 logical framebuffer per
+  original mode, which is what makes XOR erase/redraw and save-under
+  byte-equivalent. Alternative renderers (Phase 10) may instead redraw from
+  state; the original-compatible renderer replays commands.
+- **D2 (Q2) The simulation step is one retrace ("frame"), not one pipeline
+  pass.** Every sequence that waits on retraces inside a pipeline call
+  (wait_for_input, scroll, warp tube, level-complete walk, high-score mini
+  loop, title/score timeouts, death/respawn, menus) becomes explicit,
+  resumable state (`struct sequence`) advanced by `game_step()` once per
+  frame with one input sample per frame (key-state table + at most one
+  buffered key). A "tick" (pipeline pass) is a derived notion: the frames
+  between two pipeline heads. This is also what decouples presentation rate
+  from simulation rate later. Consequence for Phase 1: the oracle must
+  observe at retrace granularity (M1.6: a capture point at `WaitVBL`, plus
+  per-frame input reconstruction from the scenario script).
+- **D3 (Q3) Mode-independent pose/frame in game state.** Per-mode sprite ids
+  are presentation; the bridge rebuilds them for comparison.
+- **D4 (Q4) The level -1 warp stays an observed, documented quirk outside the
+  byte-equivalence contract.** Its collision map is made of DGROUP bytes that
+  include the asynchronous sound-driver phase and the BIOS INT 8 vector, so
+  even two runs of the original need not agree there. After U-M3 observes it
+  in the original, the port implements a deterministic, documented stand-in
+  (same reachability, same freeze/timer behaviour); no memory image is
+  modelled. The deterministic out-of-range reads (U-M1 items 2 and 4) are
+  reproduced explicitly with the trailing bytes they read, given as named
+  constant data.
+- **D5 (Q5) Rename the oracle fields** to the native names: DS 0x9EC2 is
+  `input_recorder_mode` (dead, always 0), not `demo_mode`. The owner of
+  `tools/oracle.py` makes the change.
+- **D6 (Q6) Settings live outside `struct game`.** `struct settings` (video
+  mode, input device and bindings, sound on/off) belongs to platform/config;
+  `game_step()` receives a logical input sample, and the control panel edits
+  settings through the platform layer.
+- **D7 (Q7) Time is an input.** The only wall-clock use is
+  `srand(time(NULL))` choosing the demo at the title timeout; the frame input
+  carries the DOS seconds-of-day value for that frame, supplied by the
+  platform clock and pinned in tests (the oracle pins 1991-01-01 00:00:00).
