@@ -6399,14 +6399,14 @@
     "size": 12,
     "size_basis": "extent to the next procedure (includes any CS-resident data between)",
     "census_id": "F_850A",
-    "source": "src/asm/tiles.asm:121",
+    "source": "src/asm/tiles.asm:120",
     "signature": "void PrintDosString(char *s)"
    },
    "purpose": "Dead: DOS print of a '$' string (probably for TileErrMsg).",
    "status": "understood",
    "subsystem": "resources",
    "evidence": [
-    "src/asm/tiles.asm:121",
+    "src/asm/tiles.asm:120",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)",
     "unreachable: no caller in the sources and absent from the binary call graph from _main"
    ],
@@ -6433,14 +6433,14 @@
     "size": 13,
     "size_basis": "census",
     "census_id": "F_8516",
-    "source": "src/asm/tiles.asm:133",
+    "source": "src/asm/tiles.asm:132",
     "signature": "void InitLevelPtr(void)"
    },
    "purpose": "LevelPtr = DGROUP:g_levels.",
    "status": "understood",
    "subsystem": "levels_warps",
    "evidence": [
-    "src/asm/tiles.asm:133",
+    "src/asm/tiles.asm:132",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6472,14 +6472,14 @@
     "size": 257,
     "size_basis": "census",
     "census_id": "F_8525",
-    "source": "src/asm/tiles.asm:147",
+    "source": "src/asm/tiles.asm:146",
     "signature": "void DrawMaskedEGA(int x, int y, int sprite, int mask)"
    },
    "purpose": "EGA masked sprite: screen = (screen AND mask) OR sprite per plane, pre-shifted copy for x & 6, clipped to playfield lines 13..165.",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:147",
+    "src/asm/tiles.asm:146",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6515,14 +6515,14 @@
     "size": 127,
     "size_basis": "census",
     "census_id": "F_862A",
-    "source": "src/asm/tiles.asm:269",
+    "source": "src/asm/tiles.asm:268",
     "signature": "void RestoreUnderEGA(int *buf)"
    },
    "purpose": "EGA: put back the background saved by SaveUnderEGA under its mask.",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:269",
+    "src/asm/tiles.asm:268",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6557,14 +6557,14 @@
     "size": 205,
     "size_basis": "census",
     "census_id": "F_86A9",
-    "source": "src/asm/tiles.asm:335",
+    "source": "src/asm/tiles.asm:334",
     "signature": "void SaveUnderEGA(int x, int y, int mask, int *buf)"
    },
    "purpose": "EGA: save the screen AND NOT mask plus the mask into a buffer {x, y*2, width, height, mask size, mask, background}.",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:335",
+    "src/asm/tiles.asm:334",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6600,14 +6600,14 @@
     "size": 180,
     "size_basis": "census",
     "census_id": "F_8778",
-    "source": "src/asm/tiles.asm:442",
+    "source": "src/asm/tiles.asm:441",
     "signature": "void DrawMaskedVGA(int x, int y, int sprite, int mask)"
    },
    "purpose": "VGA masked sprite: screen = (screen AND mask) OR sprite, clipped to lines 13..165.",
    "status": "understood",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:442",
+    "src/asm/tiles.asm:441",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)",
     "oracle VGA framebuffer per tick (docs/FIDELITY.md)"
    ],
@@ -6643,14 +6643,14 @@
     "size": 69,
     "size_basis": "census",
     "census_id": "F_882C",
-    "source": "src/asm/tiles.asm:528",
+    "source": "src/asm/tiles.asm:527",
     "signature": "void RestoreUnderVGA(int *buf)"
    },
    "purpose": "VGA: screen = (screen AND mask) OR saved background.",
    "status": "understood",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:528",
+    "src/asm/tiles.asm:527",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6681,14 +6681,14 @@
     "size": 140,
     "size_basis": "census",
     "census_id": "F_8871",
-    "source": "src/asm/tiles.asm:566",
+    "source": "src/asm/tiles.asm:565",
     "signature": "void SaveUnderVGA(int x, int y, int mask, int *buf)"
    },
    "purpose": "VGA: save header, mask and (screen AND NOT mask) into the buffer.",
    "status": "understood",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:566",
+    "src/asm/tiles.asm:565",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6724,14 +6724,14 @@
     "size": 151,
     "size_basis": "census",
     "census_id": "F_88FD",
-    "source": "src/asm/tiles.asm:638",
+    "source": "src/asm/tiles.asm:637",
     "signature": "void DrawMaskedCGA(int x, int y, int sprite, int mask)"
    },
    "purpose": "CGA masked sprite (pre-shifted copy for x & 2).",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:638",
+    "src/asm/tiles.asm:637",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6764,14 +6764,14 @@
     "size": 82,
     "size_basis": "census",
     "census_id": "F_8994",
-    "source": "src/asm/tiles.asm:714",
+    "source": "src/asm/tiles.asm:713",
     "signature": "void RestoreUnderCGA(int *buf)"
    },
    "purpose": "CGA restore-under.",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:714",
+    "src/asm/tiles.asm:713",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6806,14 +6806,14 @@
     "size": 162,
     "size_basis": "census",
     "census_id": "F_89E6",
-    "source": "src/asm/tiles.asm:755",
+    "source": "src/asm/tiles.asm:754",
     "signature": "void SaveUnderCGA(int x, int y, int mask, int *buf)"
    },
    "purpose": "CGA save-under.",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:755",
+    "src/asm/tiles.asm:754",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6849,14 +6849,14 @@
     "size": 279,
     "size_basis": "census",
     "census_id": "F_8A88",
-    "source": "src/asm/tiles.asm:881",
+    "source": "src/asm/tiles.asm:880",
     "signature": "void DrawXorEGA(int x, int y, int pic)"
    },
    "purpose": "EGA XOR blit of any resource, horizontally clipped.",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:881",
+    "src/asm/tiles.asm:880",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6894,14 +6894,14 @@
     "size": 199,
     "size_basis": "census",
     "census_id": "F_8B9F",
-    "source": "src/asm/tiles.asm:987",
+    "source": "src/asm/tiles.asm:986",
     "signature": "void DrawPicEGA(int x, int y, int pic)"
    },
    "purpose": "EGA opaque blit of any resource, unclipped.",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:987",
+    "src/asm/tiles.asm:986",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6935,14 +6935,14 @@
     "size": 177,
     "size_basis": "census",
     "census_id": "F_8C66",
-    "source": "src/asm/tiles.asm:1065",
+    "source": "src/asm/tiles.asm:1064",
     "signature": "void DrawXorVGA(int x, int y, int pic)"
    },
    "purpose": "VGA XOR blit of any resource, horizontally clipped; nothing if y >= 200.",
    "status": "understood",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:1065",
+    "src/asm/tiles.asm:1064",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -6978,14 +6978,14 @@
     "size": 120,
     "size_basis": "census",
     "census_id": "F_8D17",
-    "source": "src/asm/tiles.asm:1134",
+    "source": "src/asm/tiles.asm:1133",
     "signature": "void DrawPicVGA(int x, int y, int pic)"
    },
    "purpose": "VGA opaque blit of any resource.",
    "status": "understood",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:1134",
+    "src/asm/tiles.asm:1133",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -7016,14 +7016,14 @@
     "size": 201,
     "size_basis": "census",
     "census_id": "F_8D95",
-    "source": "src/asm/tiles.asm:1190",
+    "source": "src/asm/tiles.asm:1189",
     "signature": "void DrawXorCGA(int x, int y, int pic)"
    },
    "purpose": "CGA XOR blit, horizontally clipped.",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:1190",
+    "src/asm/tiles.asm:1189",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -7060,14 +7060,14 @@
     "size": 124,
     "size_basis": "census",
     "census_id": "F_8E5E",
-    "source": "src/asm/tiles.asm:1270",
+    "source": "src/asm/tiles.asm:1269",
     "signature": "void DrawPicCGA(int x, int y, int pic)"
    },
    "purpose": "CGA opaque blit.",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:1270",
+    "src/asm/tiles.asm:1269",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -7099,14 +7099,14 @@
     "size": 823,
     "size_basis": "census",
     "census_id": "F_8EDA",
-    "source": "src/asm/tiles.asm:1361",
+    "source": "src/asm/tiles.asm:1360",
     "signature": "void DrawLevelView(void)"
    },
    "purpose": "Draw the 20 x 9.5-tile playfield from line 16, reading the tiles of level g_current_level directly from g_levels (LevelOfs) at view column g_scroll_x.",
    "status": "understood",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:1361",
+    "src/asm/tiles.asm:1360",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)",
     "LEDGER U-M1 (closed)"
    ],
@@ -7149,14 +7149,14 @@
     "size": 182,
     "size_basis": "census",
     "census_id": "F_9211",
-    "source": "src/asm/tiles.asm:1559",
+    "source": "src/asm/tiles.asm:1558",
     "signature": "void DrawViewBorders(void)"
    },
    "purpose": "Draw the lines above (12-13) and below (167-168) the playfield.",
    "status": "understood",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:1559",
+    "src/asm/tiles.asm:1558",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -7188,14 +7188,14 @@
     "size": 15,
     "size_basis": "census",
     "census_id": "F_92C7",
-    "source": "src/asm/tiles.asm:1626",
+    "source": "src/asm/tiles.asm:1625",
     "signature": null
    },
    "purpose": "One 320-pixel VGA border line from BarPattern.",
    "status": "understood",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:1626",
+    "src/asm/tiles.asm:1625",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -7225,14 +7225,14 @@
     "size": 19,
     "size_basis": "census",
     "census_id": "F_92D6",
-    "source": "src/asm/tiles.asm:1638",
+    "source": "src/asm/tiles.asm:1637",
     "signature": "void DrawTile(int x, int y, int tile)"
    },
    "purpose": "Draw tile t at view cell (x, y) (row 9 = the half row).",
    "status": "understood",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:1638",
+    "src/asm/tiles.asm:1637",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -7268,14 +7268,14 @@
     "size": 744,
     "size_basis": "census",
     "census_id": "F_92E9",
-    "source": "src/asm/tiles.asm:1651",
+    "source": "src/asm/tiles.asm:1650",
     "signature": "DrawTileAt"
    },
    "purpose": "Tile blit per mode (EGA from the A800 latch cache).",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:1651",
+    "src/asm/tiles.asm:1650",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -7310,14 +7310,14 @@
     "size": 66,
     "size_basis": "census",
     "census_id": "F_95D1",
-    "source": "src/asm/tiles.asm:1845",
+    "source": "src/asm/tiles.asm:1844",
     "signature": "void CacheEGATiles(void)"
    },
    "purpose": "Copy the 53 tiles into EGA memory at A800:0000 for latched copies.",
    "status": "partial",
    "subsystem": "rendering",
    "evidence": [
-    "src/asm/tiles.asm:1845",
+    "src/asm/tiles.asm:1844",
     "EXACT: tests/test_matching_asm.py (TASM 2.0 reproduces the module byte for byte)"
    ],
    "relations": {
@@ -10219,7 +10219,7 @@
     "segment": "_DATA",
     "type": "word",
     "size": 2,
-    "source": "src/asm/tiles.asm:76",
+    "source": "src/asm/tiles.asm:75",
     "ds": "0x13AA",
     "file": "0x26A7A"
    },
@@ -10228,7 +10228,7 @@
    "subsystem": "runtime",
    "role": "layout_artifact",
    "evidence": [
-    "src/asm/tiles.asm:76"
+    "src/asm/tiles.asm:75"
    ],
    "relations": {
     "readers": [],
@@ -10247,7 +10247,7 @@
     "segment": "_DATA",
     "type": "dword",
     "size": 4,
-    "source": "src/asm/tiles.asm:77",
+    "source": "src/asm/tiles.asm:76",
     "ds": "0x13AC",
     "file": "0x26A7C"
    },
@@ -10256,7 +10256,7 @@
    "subsystem": "levels_warps",
    "role": "layout_artifact",
    "evidence": [
-    "src/asm/tiles.asm:77"
+    "src/asm/tiles.asm:76"
    ],
    "relations": {
     "readers": [
@@ -10280,7 +10280,7 @@
     "segment": "_DATA",
     "type": "byte",
     "size": 25,
-    "source": "src/asm/tiles.asm:78",
+    "source": "src/asm/tiles.asm:77",
     "ds": "0x13B0",
     "file": "0x26A80"
    },
@@ -10289,7 +10289,7 @@
    "subsystem": "resources",
    "role": "layout_artifact",
    "evidence": [
-    "src/asm/tiles.asm:78"
+    "src/asm/tiles.asm:77"
    ],
    "relations": {
     "readers": [],
@@ -10309,7 +10309,7 @@
     "segment": "_DATA",
     "type": "table",
     "size": 20,
-    "source": "src/asm/tiles.asm:80",
+    "source": "src/asm/tiles.asm:79",
     "ds": "0x13C9",
     "file": "0x26A99"
    },
@@ -10318,7 +10318,7 @@
    "subsystem": "rendering",
    "role": "layout_artifact",
    "evidence": [
-    "src/asm/tiles.asm:80"
+    "src/asm/tiles.asm:79"
    ],
    "relations": {
     "readers": [
@@ -10339,7 +10339,7 @@
     "segment": "_DATA",
     "type": "table",
     "size": 20,
-    "source": "src/asm/tiles.asm:87",
+    "source": "src/asm/tiles.asm:86",
     "ds": "0x13DD",
     "file": "0x26AAD"
    },
@@ -10348,7 +10348,7 @@
    "subsystem": "collisions_items_tiles",
    "role": "layout_artifact",
    "evidence": [
-    "src/asm/tiles.asm:87"
+    "src/asm/tiles.asm:86"
    ],
    "relations": {
     "readers": [
@@ -10372,7 +10372,7 @@
     "segment": "_DATA",
     "type": "table",
     "size": 20,
-    "source": "src/asm/tiles.asm:94",
+    "source": "src/asm/tiles.asm:93",
     "ds": "0x13F1",
     "file": "0x26AC1"
    },
@@ -10381,7 +10381,7 @@
    "subsystem": "rendering",
    "role": "layout_artifact",
    "evidence": [
-    "src/asm/tiles.asm:94"
+    "src/asm/tiles.asm:93"
    ],
    "relations": {
     "readers": [
@@ -10402,7 +10402,7 @@
     "segment": "_DATA",
     "type": "table",
     "size": 20,
-    "source": "src/asm/tiles.asm:101",
+    "source": "src/asm/tiles.asm:100",
     "ds": "0x1405",
     "file": "0x26AD5"
    },
@@ -10411,7 +10411,7 @@
    "subsystem": "rendering",
    "role": "layout_artifact",
    "evidence": [
-    "src/asm/tiles.asm:101"
+    "src/asm/tiles.asm:100"
    ],
    "relations": {
     "readers": [
@@ -10432,7 +10432,7 @@
     "segment": "_DATA",
     "type": "byte",
     "size": 32,
-    "source": "src/asm/tiles.asm:108",
+    "source": "src/asm/tiles.asm:107",
     "ds": "0x1419",
     "file": "0x26AE9"
    },
@@ -10441,7 +10441,7 @@
    "subsystem": "rendering",
    "role": "presentation_constant",
    "evidence": [
-    "src/asm/tiles.asm:108"
+    "src/asm/tiles.asm:107"
    ],
    "relations": {
     "readers": [],
@@ -14850,7 +14850,7 @@
     "segment": "_TEXT",
     "type": "word",
     "size": 2,
-    "source": "src/asm/tiles.asm:141",
+    "source": "src/asm/tiles.asm:140",
     "cs": "0x8323",
     "file": "0x8523"
    },
@@ -14859,7 +14859,7 @@
    "subsystem": "rendering",
    "role": "platform_state",
    "evidence": [
-    "src/asm/tiles.asm:141"
+    "src/asm/tiles.asm:140"
    ],
    "relations": {
     "readers": [
@@ -14881,7 +14881,7 @@
     "segment": "_TEXT",
     "type": "word",
     "size": 2,
-    "source": "src/asm/tiles.asm:264",
+    "source": "src/asm/tiles.asm:263",
     "cs": "0x8426",
     "file": "0x8626"
    },
@@ -14890,7 +14890,7 @@
    "subsystem": "rendering",
    "role": "platform_state",
    "evidence": [
-    "src/asm/tiles.asm:264"
+    "src/asm/tiles.asm:263"
    ],
    "relations": {
     "readers": [
@@ -14921,7 +14921,7 @@
     "segment": "_TEXT",
     "type": "word",
     "size": 2,
-    "source": "src/asm/tiles.asm:265",
+    "source": "src/asm/tiles.asm:264",
     "cs": "0x8428",
     "file": "0x8628"
    },
@@ -14930,7 +14930,7 @@
    "subsystem": "rendering",
    "role": "layout_artifact",
    "evidence": [
-    "src/asm/tiles.asm:265"
+    "src/asm/tiles.asm:264"
    ],
    "relations": {
     "readers": [],
@@ -14949,7 +14949,7 @@
     "segment": "_TEXT",
     "type": "word",
     "size": 2,
-    "source": "src/asm/tiles.asm:436",
+    "source": "src/asm/tiles.asm:435",
     "cs": "0x8576",
     "file": "0x8776"
    },
@@ -14958,7 +14958,7 @@
    "subsystem": "rendering",
    "role": "platform_state",
    "evidence": [
-    "src/asm/tiles.asm:436"
+    "src/asm/tiles.asm:435"
    ],
    "relations": {
     "readers": [
@@ -14980,7 +14980,7 @@
     "segment": "_TEXT",
     "type": "word",
     "size": 2,
-    "source": "src/asm/tiles.asm:1184",
+    "source": "src/asm/tiles.asm:1183",
     "cs": "0x8B8F",
     "file": "0x8D8F"
    },
@@ -14989,7 +14989,7 @@
    "subsystem": "rendering",
    "role": "platform_state",
    "evidence": [
-    "src/asm/tiles.asm:1184"
+    "src/asm/tiles.asm:1183"
    ],
    "relations": {
     "readers": [
@@ -15014,7 +15014,7 @@
     "segment": "_TEXT",
     "type": "word",
     "size": 2,
-    "source": "src/asm/tiles.asm:1185",
+    "source": "src/asm/tiles.asm:1184",
     "cs": "0x8B91",
     "file": "0x8D91"
    },
@@ -15023,7 +15023,7 @@
    "subsystem": "rendering",
    "role": "platform_state",
    "evidence": [
-    "src/asm/tiles.asm:1185"
+    "src/asm/tiles.asm:1184"
    ],
    "relations": {
     "readers": [
@@ -15050,7 +15050,7 @@
     "segment": "_TEXT",
     "type": "word",
     "size": 2,
-    "source": "src/asm/tiles.asm:1186",
+    "source": "src/asm/tiles.asm:1185",
     "cs": "0x8B93",
     "file": "0x8D93"
    },
@@ -15059,7 +15059,7 @@
    "subsystem": "rendering",
    "role": "platform_state",
    "evidence": [
-    "src/asm/tiles.asm:1186"
+    "src/asm/tiles.asm:1185"
    ],
    "relations": {
     "readers": [

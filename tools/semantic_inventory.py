@@ -439,11 +439,15 @@ def parse_asm(path: pathlib.Path) -> dict:
     lines = text.splitlines()
     at = int(re.search(r"@at (0x[0-9a-fA-F]+)", text).group(1), 16)
     data_base = int(re.search(r"@seg _DATA (0x[0-9a-fA-F]+)", text).group(1), 16)
-    aliases = {}           # name -> DS address of a C-owned global (extrn _D_XXXX + equ)
-    for m in re.finditer(r"^(\w+)\s+equ\s+_D_([0-9A-F]{4})", text, re.M):
-        aliases[m.group(1)] = int(m.group(2), 16)
-    for m in re.finditer(r"extrn\s+_D_([0-9A-F]{4}):\w+\s*;\s*(.*)", text):
-        aliases.setdefault("_D_" + m.group(1), int(m.group(1), 16))
+    # C-owned globals the module references: `extrn _sym:type` (the C storage
+    # name, or a _D_XXXX placeholder in older sources) and local equates
+    # `Alias equ [word ptr] _sym[+k]`  ->  alias -> (symbol, byte offset)
+    aliases = {}
+    for m in re.finditer(r"extrn\s+(_\w+):\w+", text):
+        aliases[m.group(1)] = (m.group(1), 0)
+    for m in re.finditer(r"^(\w+)\s+equ\s+(?:\w+\s+ptr\s+)?(_\w+)(?:\+(\d+))?", text, re.M):
+        if m.group(2) in aliases:
+            aliases[m.group(1)] = (m.group(2), int(m.group(3) or 0))
     publics = set()
     for m in re.finditer(r"^\s*public\s+(.*)$", text, re.M):
         publics |= {p.strip() for p in m.group(1).split(",")}
@@ -722,6 +726,7 @@ def build() -> dict:
         asm_names |= set(m["aliases"])
         asm_names |= {"CgaRowOfs", "EgaRowOfs", "VgaRowOfs"}
     raw_to_pub = {p["name"]: pub for pub, (m, p) in asm_procs.items()}
+    storage_to_name = {v: k for k, v in defines.items()}
     for pub, (m, p) in asm_procs.items():
         names = asm_names | set(raw_to_pub)
         r = asm_refs(p, names, set(raw_to_pub))
@@ -732,8 +737,14 @@ def build() -> dict:
             if x in raw_to_pub:
                 return raw_to_pub[x]
             if x in m["aliases"]:
-                o, off = owner_of(m["aliases"][x])
-                return o + (f"+{off}" if off else "") if o else f"DS:{m['aliases'][x]:04X}"
+                sym, off = m["aliases"][x]
+                if sym.startswith("_D_"):            # placeholder: resolve by address
+                    o, k = owner_of(int(sym[3:], 16))
+                    return (o + (f"+{k + off}" if k + off else "")) if o else f"DS:{sym[3:]}"
+                name = storage_to_name.get(sym[1:], sym[1:])
+                if name not in data:
+                    raise SystemExit(f"{m['module']}: extrn {sym} is not a known data object")
+                return name + (f"+{off}" if off else "")
             if x in ("CgaRowOfs", "EgaRowOfs", "VgaRowOfs"):
                 return f"{mod}.{x}"
             return x.lstrip("_") if x.startswith("_") else x
