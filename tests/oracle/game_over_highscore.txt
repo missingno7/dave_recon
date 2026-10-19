@@ -33,38 +33,41 @@
 # Right is released and the initials typed inside the game-over interval
 # (no tick heads between tick 2236 and 2237), so their exact times do not
 # reach the per-tick state.
+# retraces: per-retrace capture (M1.6) of the whole run; every event is
+# snapped half-way between two WaitVBL exits (oracle.py --snap).
 duration 66000
 png_every 100
-4050 key space
-11948 keydown right
-12155 keydown pageup
+retraces 6000
+4051 key space
+11942 keydown right
+12156 keydown pageup
 12255 keyup pageup
-14452 keyup right
-14951 keydown pageup
-14951 keydown right
-15051 keyup pageup
-16150 keyup right
+14453 keyup right
+14952 keydown pageup
+14952 keydown right
+15052 keyup pageup
+16151 keyup right
 16507 keydown right
 17206 keyup right
-17505 keydown left
-17505 keydown up
-17605 keyup up
-18347 keyup left
-19003 keydown left
-19003 keydown up
-19103 keyup up
-19845 keyup left
-20302 keydown right
-23298 keyup right
-23298 keydown left
-27500 keyup left
-33008 keydown right
-56000 keyup right
-58000 key o
-58500 key r
-59000 key c
-# Enter is pressed 10 ms after a poll of wait_key_cursor (5-retrace polls,
+17506 keydown left
+17506 keydown up
+17606 keyup up
+18348 keyup left
+19004 keydown left
+19004 keydown up
+19104 keyup up
+19846 keyup left
+20303 keydown right
+23299 keyup right
+23299 keydown left
+27494 keyup left
+33001 keydown right
+56001 keyup right
+57999 key o
+58498 key r
+58998 key c
+# Enter is pressed ~7 ms after a poll of wait_key_cursor (5-retrace polls,
 # one at ~59903.5 ms) and released 40 ms before the next, so key_down[Enter]
 # is 0 at the title tick head in every run (a 50 ms tap could still be down).
-60056 keydown enter
-60076 keyup enter
+60053 keydown enter
+60082 keyup enter

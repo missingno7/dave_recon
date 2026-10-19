@@ -47,6 +47,9 @@ Scenario files (tests/oracle/*.txt):
                                     the game's VideoID picks mode 13h/0Dh/4
   dos_time HH:MM:SS                 DOS start time (default 00:00:00; the
                                     attract demo choice is srand(time()))
+  retraces <n>                      per-retrace capture (M1.6) for the first n
+                                    retraces: DGROUP + BIOS key buffer at every
+                                    WaitVBL exit, see RETRACE_SITE
   ega_planes <n>                    EGA only: capture up to n true 4-plane
                                     images (at SaveUnderEGA, see EGA_PLANE_SITE)
   <ms> key|keydown|keyup <name>     input (DOSBox-X mapper key names)
@@ -114,6 +117,13 @@ VBL_MS = VIDEO["vga"]["vbl_ms"]     # kept for importers
 # BL = lines left) are one consistent image of all four planes, taken where
 # draw_dave saves the background under Dave.
 EGA_PLANE_SITE = 0x8545
+# Per-retrace observation (M1.6, docs/state-model.md D2): lowlevel.asm
+# _WaitVBL (census F_7831, cs 0x7631) leaves its polling loop at cs 0x7640
+# (`pop di`) right after port 3DAh bit 3 rose, once per retrace the game
+# waits for. Captured there: DGROUP and the BIOS keyboard buffer
+# (0040:001A head, 001C tail, 001E..003D ring) = the frame's input.
+RETRACE_SITE = 0x7640
+BIOS_KBD = (0x41A, 0x24)
 
 FIELDS = {   # decoded into ticks.jsonl; names: docs/UNDERSTANDING_LEDGER.md
     "game_state": (0x00AA, 2, False),     # 0 play, 1 demo, 2 high scores, 3 title
@@ -167,6 +177,7 @@ class Scenario:
     video: str = "vga"
     dos_time: str = "00:00:00"
     ega_planes: int = 0
+    retraces: int = 0
     inputs: list = field(default_factory=list)
 
 
@@ -189,6 +200,8 @@ def parse_scenario(path: pathlib.Path) -> Scenario:
             sc.dos_time = parts[1]
         elif parts[0] == "ega_planes":
             sc.ega_planes = int(parts[1])
+        elif parts[0] == "retraces":
+            sc.retraces = int(parts[1])
         elif len(parts) == 3 and parts[1] in ("key", "keydown", "keyup"):
             sc.inputs.append(f"{int(parts[0])} {parts[1]} {parts[2]}")
         else:
@@ -231,6 +244,11 @@ def run_once(work: pathlib.Path, sc: Scenario, calibrate=False):
             # every SaveUnderEGA plane read; collect() keeps the first line's 4
             lines.append(f"0 on_exec {LOAD_SEG:04x}:{EGA_PLANE_SITE:04x} {sc.ega_planes * 400} "
                          f"dump a0000 1f40 ep")
+        if sc.retraces:
+            lines.append(f"0 on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} {sc.retraces} dump "
+                         f"{ds_linear:x} {DGROUP_LIVE_LEN:x} r")
+            lines.append(f"0 on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} {sc.retraces} dump "
+                         f"{BIOS_KBD[0]:x} {BIOS_KBD[1]:x} k")
         if sc.boundaries:
             for cs, _ in PIPELINE[1:]:    # PIPELINE[0] is the per-tick snapshot itself
                 lines.append(f"0 on_exec {LOAD_SEG:04x}:{cs:04x} {sc.boundaries} dump "
@@ -298,6 +316,88 @@ def write_boundaries(work: pathlib.Path, tick_snapshots: list) -> int:
                 f.write(struct.pack("<IHI", t + 1, i, len(delta)) + delta)
                 prev = snap
     return n
+
+
+def script_keys(sc: Scenario):
+    """The scenario's key script as (ms, mapper name, down?) transitions, with
+    `key` taps expanded the way the acceptance build does (50 ms; an
+    upper-case letter is a 52 ms lshift chord)."""
+    ev = []
+    for line in sc.inputs:
+        ms, kind, name = line.split()
+        ms = int(ms)
+        upper = len(name) == 1 and name.isupper()
+        low = name.lower()
+        if kind == "key":
+            if upper:
+                ev += [(ms, "lshift", True), (ms + 1, low, True), (ms + 51, low, False),
+                       (ms + 52, "lshift", False)]
+            else:
+                ev += [(ms, low, True), (ms + 50, low, False)]
+        elif upper:
+            ev += [(ms, "lshift", True), (ms + 1, low, True)] if kind == "keydown" else \
+                  [(ms + 1, low, False), (ms + 2, "lshift", False)]
+        else:
+            ev.append((ms, low, kind == "keydown"))
+    return sorted(ev, key=lambda e: e[0])
+
+
+def collect_retraces(work: pathlib.Path, sc: Scenario, times: list) -> int:
+    """retraces.bin: per captured retrace <u32 index><u32 tick><f64 ms><u32 len>
+    zlib(DGROUP XOR previous); retraces.jsonl: per retrace the tick it belongs
+    to (number of tick heads <= its time), the gameplay hash, key_down[] and
+    the pending BIOS keys as captured, and the keys the scenario script holds
+    at that time (the per-frame input reconstruction)."""
+    import bisect
+    import struct
+    import zlib
+    kbd = [b for b, _ in _hits(work, "k")]
+    script = script_keys(sc)
+    held, si = set(), 0
+    prev = bytes(DGROUP_LIVE_LEN)
+    recs = []
+    with open(work / "retraces.bin", "wb") as f:
+        for i, (snap, ms) in enumerate(_hits(work, "r")):
+            while si < len(script) and script[si][0] <= ms:
+                _, name, down = script[si]
+                (held.add if down else held.discard)(name)
+                si += 1
+            tick = bisect.bisect_right(times, ms)
+            delta = zlib.compress(bytes(x ^ y for x, y in zip(snap, prev)), 6)
+            f.write(struct.pack("<IIdI", i + 1, tick, ms, len(delta)) + delta)
+            prev = snap
+            buf = kbd[i] if i < len(kbd) else b""
+            pending = []
+            if len(buf) == BIOS_KBD[1]:
+                head, tail = struct.unpack_from("<HH", buf, 0)
+                while head != tail and len(pending) < 16:
+                    off = head - 0x1A
+                    if not 4 <= off < len(buf) - 1:
+                        break
+                    pending.append(struct.unpack_from("<H", buf, off)[0])
+                    head = head + 2 if head + 2 < 0x3E else 0x1E
+            recs.append({"retrace": i + 1, "tick": tick, "emulated_ms": round(ms, 6),
+                         "gameplay_sha1": hashlib.sha1(gameplay_view(snap)).hexdigest(),
+                         "keys_down": [k for k in range(128)
+                                       if snap[KEYDOWN + 2 * k] | snap[KEYDOWN + 2 * k + 1]],
+                         "bios_keys": pending, "script_keys": sorted(held)})
+    (work / "retraces.jsonl").write_text("".join(json.dumps(r) + "\n" for r in recs))
+    return len(recs)
+
+
+def iter_retraces(path: pathlib.Path):
+    """Yield (index, tick, emulated_ms, DGROUP snapshot) from a retraces.bin."""
+    import struct
+    import zlib
+    data = path.read_bytes()
+    at, prev = 0, bytes(DGROUP_LIVE_LEN)
+    while at < len(data):
+        i, tick, ms, length = struct.unpack_from("<IIdI", data, at)
+        at += 20
+        snap = bytes(x ^ y for x, y in zip(zlib.decompress(data[at:at + length]), prev))
+        at += length
+        prev = snap
+        yield i, tick, ms, snap
 
 
 def iter_boundaries(path: pathlib.Path):
@@ -429,6 +529,7 @@ def collect(work: pathlib.Path, sc: Scenario) -> dict:
         if sc.png_every and k % sc.png_every == 0:
             pixels.write_png(frame_pixels(sc.video, data), work / f"tick{k:05d}.png", pal)
     (work / "frames.txt").write_text("".join(f"{h}\n" for h in frame_hashes))
+    retraces = collect_retraces(work, sc, times) if sc.retraces else 0
     ega = collect_ega_planes(work, times, sc.ega_planes, bool(sc.png_every)) if sc.ega_planes else []
 
     files = {}
@@ -436,8 +537,12 @@ def collect(work: pathlib.Path, sc: Scenario) -> dict:
         if p.is_file():
             data = p.read_bytes()
             files[p.name] = {"size": len(data), "sha1": hashlib.sha1(data).hexdigest()}
-    single = sorted(b["emulated_ms"] - a["emulated_ms"] for a, b in zip(ticks, ticks[1:])
-                    if b["frames_since_prev"] == 1)
+    # mean retrace period over the play/demo ticks (title/high-score
+    # intervals excluded): total time / total retraces
+    span = [(a, b) for a, b in zip(ticks, ticks[1:])
+            if a["game_state"] not in TIMING_EXEMPT_STATES and b["game_state"] != 3]
+    span_frames = sum(b["frames_since_prev"] for _, b in span)
+    span_ms = sum(b["emulated_ms"] - a["emulated_ms"] for a, b in span)
     summary = {
         "video": sc.video,
         "ticks": len(ticks),
@@ -451,8 +556,8 @@ def collect(work: pathlib.Path, sc: Scenario) -> dict:
         "ega_plane_captures": len(ega),
         "ega_planes_sha1": hashlib.sha1("".join(r["sha1"] for r in ega).encode()).hexdigest(),
         "boundary_ticks": boundary_ticks,
-        # median interval of the ticks that took exactly one retrace
-        "retrace_ms_median": round(single[len(single) // 2], 6) if single else None,
+        "retraces": retraces,
+        "retrace_ms_mean": round(span_ms / span_frames, 6) if span_frames else None,
         "files": files,
     }
     (work / "summary.json").write_text(json.dumps(summary, indent=1))
@@ -497,6 +602,8 @@ def compare_runs(a: pathlib.Path, b: pathlib.Path) -> list:
         if x != y:
             problems.append(f"framebuffer differs at tick {k}")
             break
+    if (a / "retraces.jsonl").exists() and (b / "retraces.jsonl").exists():
+        problems += compare_retraces(a, b, ta)
     if (a / "ega_planes.jsonl").exists() or (b / "ega_planes.jsonl").exists():
         ea = (a / "ega_planes.jsonl").read_text().splitlines()
         eb = (b / "ega_planes.jsonl").read_text().splitlines()
@@ -509,6 +616,32 @@ def compare_runs(a: pathlib.Path, b: pathlib.Path) -> list:
         if fa.get(name) != fb.get(name):
             problems.append(f"game file {name} after the run: {fa.get(name)} vs {fb.get(name)}")
     return problems
+
+
+def compare_retraces(a: pathlib.Path, b: pathlib.Path, ta: list) -> list:
+    """Per-retrace contract (M1.6): within every tick whose interval is under
+    the timing contract (see compare_runs), the sequence of per-retrace
+    gameplay states and captured key tables must be equal."""
+    ra = [json.loads(l) for l in (a / "retraces.jsonl").read_text().splitlines()]
+    rb = [json.loads(l) for l in (b / "retraces.jsonl").read_text().splitlines()]
+    n = min(ra[-1]["tick"] if ra else 0, rb[-1]["tick"] if rb else 0)
+
+    def by_tick(rs):
+        d = {}
+        for r in rs:
+            if r["tick"] < n:          # the last captured tick may be cut off
+                d.setdefault(r["tick"], []).append((r["gameplay_sha1"], r["keys_down"]))
+        return d
+    da, db = by_tick(ra), by_tick(rb)
+    for k in sorted(set(da) | set(db)):
+        if 1 <= k < len(ta) and (ta[k - 1]["game_state"] in TIMING_EXEMPT_STATES
+                                 or ta[k]["game_state"] == 3):
+            continue
+        if da.get(k) != db.get(k):
+            sa, sb = da.get(k, []), db.get(k, [])
+            j = next((j for j, (x, y) in enumerate(zip(sa, sb)) if x != y), min(len(sa), len(sb)))
+            return [f"per-retrace state differs in tick {k} at retrace {j + 1} ({len(sa)} vs {len(sb)} retraces)"]
+    return []
 
 
 def report(run: pathlib.Path) -> str:
@@ -554,10 +687,14 @@ def snap_scenario(path: pathlib.Path, run: pathlib.Path) -> int:
     whose head is >= T (process_input runs right after the head):
       * one-retrace window (head_{n-1}, head_n]: T' = its midpoint;
       * a longer tick (scrolling, death/level/warp sequences, title,
-        wait_for_input): the LAST event before head_n goes to head_n - min(10
-        retraces, gap/2), the middle of wait_for_input's 20-retrace poll period;
+        wait_for_input): the LAST event before head_n goes to head_n -
+        min(10.5 retraces, gap/2), the middle of wait_for_input's 20-retrace
+        poll period and half a retrace off its polls;
         other events inside that tick are blocking-prompt keys (title, high-score
         initials) and are left where the author put them.
+    If the run has a per-retrace capture (`retraces`), every event instead goes
+    to the middle of the two WaitVBL exits around it, which also makes the
+    per-retrace input reproducible.
     The per-tick input of the snapped scenario equals the draft's, so the draft
     run's tick times stay valid. Rewrites the file in place; returns the number
     of events moved."""
@@ -571,19 +708,36 @@ def snap_scenario(path: pathlib.Path, run: pathlib.Path) -> int:
         if len(parts) == 3 and parts[1] in ("key", "keydown", "keyup"):
             events.append((i, int(parts[0])))
     import bisect
+    moved = 0
+    if (run / "retraces.jsonl").exists():
+        # Retrace-level snapping (M1.6 capture): every key/BIOS sample the game
+        # takes happens right after a WaitVBL exit, so the middle between the
+        # two retraces around T keeps T's sampling point and is half a
+        # retrace away from any sample.
+        rt = [json.loads(l)["emulated_ms"] for l in (run / "retraces.jsonl").read_text().splitlines()]
+        for i, t in events:
+            n = bisect.bisect_left(rt, t)
+            if 0 < n < len(rt):
+                t_new = int(round((rt[n - 1] + rt[n]) / 2))
+                code, _, comment = lines[i].partition("#")
+                parts = code.split()
+                if int(parts[0]) != t_new:
+                    moved += 1
+                lines[i] = f"{t_new} {parts[1]} {parts[2]}" + (f"  #{comment}" if comment else "")
+        path.write_text("\n".join(lines) + "\n")
+        return moved
     groups = {}
     for i, t in events:
         n = bisect.bisect_left(heads, t)          # heads[n] >= t
         if 0 < n < len(heads):
             groups.setdefault(n, []).append((i, t))
-    moved = 0
     for n, evs in groups.items():
         gap = heads[n] - heads[n - 1]
         if gap < 1.5 * vbl:
             targets = [(i, heads[n - 1] + gap / 2) for i, _ in evs]
         else:
             last_t = max(t for _, t in evs)
-            targets = [(i, heads[n] - min(10 * vbl, gap / 2)) for i, t in evs if t == last_t]
+            targets = [(i, heads[n] - min(10.5 * vbl, gap / 2)) for i, t in evs if t == last_t]
         for i, t_new in targets:
             raw = lines[i]
             code, _, comment = raw.partition("#")

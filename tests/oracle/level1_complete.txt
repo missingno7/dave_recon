@@ -25,31 +25,34 @@
 #                     this tick (420 retraces), score 3200
 #   tick 884          level 2 (index 1) after wait_for_input, 33.15 s
 #
-# All input events sit mid-way in their sampling windows (oracle.py --snap);
-# the release of Left at 27500 falls inside the level-complete tick.
+# retraces: per-retrace capture (M1.6) of the whole run. Every input event
+# sits half-way between two WaitVBL exits (oracle.py --snap with retraces),
+# so neither its tick nor its retrace depends on the emulator jitter; the
+# release of Left at 27494 falls inside the level-complete tick.
 duration 34000
 png_every 100
-4050 key space
-11948 keydown right
-12155 keydown pageup
+retraces 4000
+4051 key space
+11942 keydown right
+12156 keydown pageup
 12255 keyup pageup
-14452 keyup right
-14951 keydown pageup
-14951 keydown right
-15051 keyup pageup
-16150 keyup right
+14453 keyup right
+14952 keydown pageup
+14952 keydown right
+15052 keyup pageup
+16151 keyup right
 16507 keydown right
 17206 keyup right
-17505 keydown left
-17505 keydown up
-17605 keyup up
-18347 keyup left
-19003 keydown left
-19003 keydown up
-19103 keyup up
-19845 keyup left
-20302 keydown right
-23298 keyup right
-23298 keydown left
-27500 keyup left
-33008 keydown right
+17506 keydown left
+17506 keydown up
+17606 keyup up
+18348 keyup left
+19004 keydown left
+19004 keydown up
+19104 keyup up
+19846 keyup left
+20303 keydown right
+23299 keyup right
+23299 keydown left
+27494 keyup left
+33001 keydown right
