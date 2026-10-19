@@ -829,13 +829,74 @@
       "artifact": "raw/PAD_B50B.bin"
     },
     {
-      "id": "RAW_B510_256C0",
+      "id": "DATA_DEMOS",
       "start": 46352,
+      "end": 50720,
+      "kind": "STRUCTURED_DATA",
+      "classification": "data",
+      "generator": "demos",
+      "description": "far segment 0x0B31: 5 attract-mode demo recordings (start level + input event stream) + zero padding; codec tools/demos.py",
+      "matching_status": "EXACT_ROUNDTRIP"
+    },
+    {
+      "id": "DATA_TILESET_CGA",
+      "start": 50720,
+      "end": 73968,
+      "kind": "STRUCTURED_DATA",
+      "classification": "data",
+      "generator": "tileset_cga",
+      "description": "far segment 0x0C42: CGA tileset (53 tiles + 186 sprites, 2bpp), compressed with the game's own RLE encoder (0x7F41), + its 1 over-read byte + zero padding; codec tools/tilesets.py, tools/rle.py",
+      "matching_status": "EXACT_ROUNDTRIP"
+    },
+    {
+      "id": "DATA_TILESET_VGA",
+      "start": 73968,
+      "end": 115936,
+      "kind": "STRUCTURED_DATA",
+      "classification": "data",
+      "generator": "tileset_vga",
+      "description": "far segment 0x11EF: VGA tileset (53 tiles + 105 sprites, 8bpp), compressed with the game's own RLE encoder (0x7F41), + its 22 over-read bytes + zero padding; codec tools/tilesets.py, tools/rle.py",
+      "matching_status": "EXACT_ROUNDTRIP"
+    },
+    {
+      "id": "DATA_SOUNDS",
+      "start": 115936,
+      "end": 120704,
+      "kind": "STRUCTURED_DATA",
+      "classification": "data",
+      "generator": "sounds",
+      "description": "far segment 0x1C2E: SPK PC-speaker bank, 63 directory entries (12 sounds), PIT divisor lists + zero padding; codec tools/sounds.py",
+      "matching_status": "EXACT_ROUNDTRIP"
+    },
+    {
+      "id": "DATA_PICFILE_CGA",
+      "start": 120704,
+      "end": 125504,
+      "kind": "STRUCTURED_DATA",
+      "classification": "data",
+      "generator": "picfile_cga",
+      "description": "far segment 0x1D58: CGA config-screen picfile (header, 8x8 font, 13 32x24 icons, 2bpp); codec tools/picfiles.py",
+      "matching_status": "EXACT_ROUNDTRIP"
+    },
+    {
+      "id": "DATA_PICFILE_EGA",
+      "start": 125504,
+      "end": 134848,
+      "kind": "STRUCTURED_DATA",
+      "classification": "data",
+      "generator": "picfile_ega",
+      "description": "far segment 0x1E84: EGA config-screen picfile (header, 8x8 font, 13 32x24 icons, 4 planes); codec tools/picfiles.py",
+      "matching_status": "EXACT_ROUNDTRIP"
+    },
+    {
+      "id": "DATA_PICFILE_VGA",
+      "start": 134848,
       "end": 153280,
-      "kind": "RAW_UNKNOWN",
-      "classification": "unclassified",
-      "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_B510_256C0.bin"
+      "kind": "STRUCTURED_DATA",
+      "classification": "data",
+      "generator": "picfile_vga",
+      "description": "far segment 0x20CC: VGA config-screen picfile (header, 8x8 font, 13 32x24 icons, 8bpp); codec tools/picfiles.py",
+      "matching_status": "EXACT_ROUNDTRIP"
     },
     {
       "id": "INIT_TABLE",
