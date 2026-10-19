@@ -1,0 +1,1038 @@
+{
+ "description": "Game _BSS map, DS 0x4C60-0x9EC8 (tools/bss_names.py). Per C unit: its _BSS extent and every variable in address order with size, char-ness (chars are not word aligned), readable name, the storage name that hashes into the original slot, and the referencing evidence; padding entries are the word alignment the compiler inserts. Unit membership of variables is a hypothesis (docs/link-forensics.md); offsets and sizes are verified by tools/verify_sources.py through each unit's own _BSS.",
+ "range": [
+  19552,
+  40648
+ ],
+ "units": [
+  {
+   "unit": "DAVE",
+   "bss": [
+    19552,
+    25932
+   ],
+   "entries": [
+    {
+     "kind": "variable",
+     "ds": 19552,
+     "size": 4,
+     "char": false,
+     "name": "g_score",
+     "storage": "g_score",
+     "type": "unsigned long",
+     "comment": "",
+     "key": 183
+    },
+    {
+     "kind": "variable",
+     "ds": 19556,
+     "size": 800,
+     "char": true,
+     "name": "g_dave_background",
+     "storage": "g_dave_background___zh",
+     "type": "unsigned char [800]",
+     "comment": "screen area saved under Dave",
+     "key": 183
+    },
+    {
+     "kind": "variable",
+     "ds": 20356,
+     "size": 2,
+     "char": false,
+     "name": "g_has_gun",
+     "storage": "g_has_gun_Jh",
+     "type": "int",
+     "comment": "",
+     "key": 183
+    },
+    {
+     "kind": "variable",
+     "ds": 20358,
+     "size": 2,
+     "char": false,
+     "name": "g_gfx_index",
+     "storage": "g_gfx_index__2h",
+     "type": "int",
+     "comment": "video mode - 1: 0 CGA, 1 EGA, 2 VGA (table row)",
+     "key": 183
+    },
+    {
+     "kind": "variable",
+     "ds": 20360,
+     "size": 2,
+     "char": false,
+     "name": "g_got_trophy",
+     "storage": "g_got_trophy_2h",
+     "type": "int",
+     "comment": "",
+     "key": 183
+    },
+    {
+     "kind": "variable",
+     "ds": 20362,
+     "size": 2,
+     "char": false,
+     "name": "g_has_jetpack",
+     "storage": "g_has_jetpack_______zh",
+     "type": "int",
+     "comment": "",
+     "key": 183
+    },
+    {
+     "kind": "variable",
+     "ds": 20364,
+     "size": 2,
+     "char": false,
+     "name": "g_hiscore_buf",
+     "storage": "g_hiscore_buf_______zh",
+     "type": "struct hiscore *",
+     "comment": "DSCORES.DAV image (5 records)",
+     "key": 183
+    },
+    {
+     "kind": "variable",
+     "ds": 20366,
+     "size": 1884,
+     "char": false,
+     "name": "g_actors",
+     "storage": "g_actors_Rh",
+     "type": "struct actor [6]",
+     "comment": "explosions and other short-lived animated objects",
+     "key": 183
+    },
+    {
+     "kind": "variable",
+     "ds": 22250,
+     "size": 2,
+     "char": false,
+     "name": "g_player_x",
+     "storage": "g_player_x",
+     "type": "int",
+     "comment": "",
+     "key": 223
+    },
+    {
+     "kind": "variable",
+     "ds": 22252,
+     "size": 2,
+     "char": false,
+     "name": "g_player_y",
+     "storage": "g_player_y",
+     "type": "int",
+     "comment": "",
+     "key": 223
+    },
+    {
+     "kind": "variable",
+     "ds": 22254,
+     "size": 2,
+     "char": false,
+     "name": "g_lives",
+     "storage": "g_lives_ah",
+     "type": "int",
+     "comment": "",
+     "key": 239
+    },
+    {
+     "kind": "variable",
+     "ds": 22256,
+     "size": 4,
+     "char": false,
+     "name": "g_tileset",
+     "storage": "g_tileset_Qh",
+     "type": "char far *",
+     "comment": "the loaded tile file",
+     "key": 239
+    },
+    {
+     "kind": "variable",
+     "ds": 22260,
+     "size": 2,
+     "char": false,
+     "name": "g_current_level",
+     "storage": "g_current_level______yh",
+     "type": "int",
+     "comment": "",
+     "key": 239
+    },
+    {
+     "kind": "variable",
+     "ds": 22262,
+     "size": 70,
+     "char": false,
+     "name": "g_shots",
+     "storage": "g_shots_ah",
+     "type": "struct shot [5]",
+     "comment": "bullets",
+     "key": 239
+    },
+    {
+     "kind": "variable",
+     "ds": 22332,
+     "size": 2,
+     "char": false,
+     "name": "g_in_warp_zone",
+     "storage": "g_in_warp_zone_0h",
+     "type": "int",
+     "comment": "",
+     "key": 295
+    },
+    {
+     "kind": "variable",
+     "ds": 22334,
+     "size": 2,
+     "char": false,
+     "name": "g_dave_sprite",
+     "storage": "g_dave_sprite_8h",
+     "type": "int",
+     "comment": "",
+     "key": 295
+    },
+    {
+     "kind": "variable",
+     "ds": 22336,
+     "size": 2,
+     "char": false,
+     "name": "g_dave_facing",
+     "storage": "g_dave_facing_8h",
+     "type": "int",
+     "comment": "0 left, 1 right",
+     "key": 295
+    },
+    {
+     "kind": "variable",
+     "ds": 22338,
+     "size": 80,
+     "char": false,
+     "name": "g_monsters",
+     "storage": "g_monsters_Ph",
+     "type": "struct monsters",
+     "comment": "",
+     "key": 295
+    },
+    {
+     "kind": "variable",
+     "ds": 22418,
+     "size": 2,
+     "char": false,
+     "name": "g_game_over",
+     "storage": "g_game_over",
+     "type": "int",
+     "comment": "",
+     "key": 335
+    },
+    {
+     "kind": "variable",
+     "ds": 22420,
+     "size": 2,
+     "char": false,
+     "name": "g_death_pause",
+     "storage": "g_death_pause__5h",
+     "type": "int",
+     "comment": "",
+     "key": 335
+    },
+    {
+     "kind": "variable",
+     "ds": 22422,
+     "size": 2,
+     "char": false,
+     "name": "g_shot_anim_count",
+     "storage": "g_shot_anim_count______uh",
+     "type": "int",
+     "comment": "bullet animation countdown",
+     "key": 335
+    },
+    {
+     "kind": "variable",
+     "ds": 22424,
+     "size": 2,
+     "char": false,
+     "name": "g_jetpack_fuel",
+     "storage": "g_jetpack_fuel_5h",
+     "type": "int",
+     "comment": "jetpack fuel meter",
+     "key": 335
+    },
+    {
+     "kind": "variable",
+     "ds": 22426,
+     "size": 2,
+     "char": false,
+     "name": "g_jump_pos",
+     "storage": "g_jump_pos",
+     "type": "int",
+     "comment": "position in g_jump_dy",
+     "key": 351
+    },
+    {
+     "kind": "variable",
+     "ds": 22428,
+     "size": 2,
+     "char": false,
+     "name": "g_quit",
+     "storage": "g_quit_wh",
+     "type": "int",
+     "comment": "leave the main loop",
+     "key": 351
+    },
+    {
+     "kind": "variable",
+     "ds": 22430,
+     "size": 2,
+     "char": false,
+     "name": "g_prev_dir",
+     "storage": "g_prev_dir_Wh",
+     "type": "int",
+     "comment": "previous direction",
+     "key": 351
+    },
+    {
+     "kind": "variable",
+     "ds": 22432,
+     "size": 2,
+     "char": false,
+     "name": "g_scroll_x",
+     "storage": "g_scroll_x_Wh",
+     "type": "int",
+     "comment": "first visible level column",
+     "key": 351
+    },
+    {
+     "kind": "variable",
+     "ds": 22434,
+     "size": 2,
+     "char": false,
+     "name": "g_demo_pos",
+     "storage": "g_demo_pos",
+     "type": "int",
+     "comment": "demo read position",
+     "key": 351
+    },
+    {
+     "kind": "variable",
+     "ds": 22436,
+     "size": 4,
+     "char": false,
+     "name": "g_demo_data",
+     "storage": "g_demo_data_Oh",
+     "type": "char far *",
+     "comment": "",
+     "key": 351
+    },
+    {
+     "kind": "variable",
+     "ds": 22440,
+     "size": 2,
+     "char": false,
+     "name": "g_level",
+     "storage": "g_level_oh",
+     "type": "char *",
+     "comment": "current level record / tile map",
+     "key": 351
+    },
+    {
+     "kind": "variable",
+     "ds": 22442,
+     "size": 20,
+     "char": false,
+     "name": "g_level_visited",
+     "storage": "g_level_visited_0h",
+     "type": "int [10]",
+     "comment": "per-level \"warp used\" flags",
+     "key": 359
+    },
+    {
+     "kind": "variable",
+     "ds": 22462,
+     "size": 35,
+     "char": false,
+     "name": "g_hiscores",
+     "storage": "g_hiscores_Xh",
+     "type": "struct entry [5]",
+     "comment": "in-memory high score entries",
+     "key": 359
+    },
+    {
+     "kind": "padding",
+     "ds": 22497,
+     "size": 1,
+     "reason": "word alignment of the next non-char variable"
+    },
+    {
+     "kind": "variable",
+     "ds": 22498,
+     "size": 2,
+     "char": false,
+     "name": "g_input_dir",
+     "storage": "g_input_dir",
+     "type": "int",
+     "comment": "requested direction 0..7, 8 = none",
+     "key": 367
+    },
+    {
+     "kind": "variable",
+     "ds": 22500,
+     "size": 2,
+     "char": false,
+     "name": "g_dave_mask",
+     "storage": "g_dave_mask",
+     "type": "int",
+     "comment": "",
+     "key": 447
+    },
+    {
+     "kind": "variable",
+     "ds": 22502,
+     "size": 2,
+     "char": false,
+     "name": "g_jet_facing",
+     "storage": "g_jet_facing",
+     "type": "int",
+     "comment": "jetpack facing",
+     "key": 471
+    },
+    {
+     "kind": "variable",
+     "ds": 22504,
+     "size": 2400,
+     "char": false,
+     "name": "g_anim_tiles",
+     "storage": "g_anim_tiles_Vh",
+     "type": "struct anim [200]",
+     "comment": "",
+     "key": 471
+    },
+    {
+     "kind": "variable",
+     "ds": 24904,
+     "size": 4,
+     "char": false,
+     "name": "g_next_extra_life",
+     "storage": "g_next_extra_life_0h",
+     "type": "unsigned long",
+     "comment": "next extra-life score",
+     "key": 487
+    },
+    {
+     "kind": "variable",
+     "ds": 24908,
+     "size": 4,
+     "char": false,
+     "name": "g_level_path",
+     "storage": "g_level_path",
+     "type": "char huge *",
+     "comment": "monster movement path",
+     "key": 519
+    },
+    {
+     "kind": "variable",
+     "ds": 24912,
+     "size": 2,
+     "char": false,
+     "name": "g_anim_frame",
+     "storage": "g_anim_frame__Th",
+     "type": "int",
+     "comment": "animation frame 0..3",
+     "key": 519
+    },
+    {
+     "kind": "variable",
+     "ds": 24914,
+     "size": 2,
+     "char": false,
+     "name": "g_warp_return_level",
+     "storage": "g_warp_return_level_______th",
+     "type": "int",
+     "comment": "",
+     "key": 519
+    },
+    {
+     "kind": "variable",
+     "ds": 24916,
+     "size": 2,
+     "char": false,
+     "name": "g_fuel_tick",
+     "storage": "g_fuel_tick_dh",
+     "type": "int",
+     "comment": "jetpack fuel countdown",
+     "key": 519
+    },
+    {
+     "kind": "variable",
+     "ds": 24918,
+     "size": 2,
+     "char": false,
+     "name": "g_dave_state",
+     "storage": "g_dave_state",
+     "type": "int",
+     "comment": "Dave state bits",
+     "key": 519
+    },
+    {
+     "kind": "variable",
+     "ds": 24920,
+     "size": 2,
+     "char": false,
+     "name": "g_level_done",
+     "storage": "g_level_done_ah",
+     "type": "int",
+     "comment": "",
+     "key": 559
+    },
+    {
+     "kind": "variable",
+     "ds": 24922,
+     "size": 2,
+     "char": false,
+     "name": "g_anim_tick_divider",
+     "storage": "g_anim_tick_divider",
+     "type": "int",
+     "comment": "",
+     "key": 847
+    },
+    {
+     "kind": "variable",
+     "ds": 24924,
+     "size": 1000,
+     "char": true,
+     "name": "g_tiles",
+     "storage": "g_tiles_0h",
+     "type": "char [1000]",
+     "comment": "working 100x10 tile grid",
+     "key": 871
+    },
+    {
+     "kind": "variable",
+     "ds": 25924,
+     "size": 1,
+     "char": true,
+     "name": "g_demo_repeat",
+     "storage": "g_demo_repeat__xh",
+     "type": "char",
+     "comment": "demo run-length counter",
+     "key": 871
+    },
+    {
+     "kind": "padding",
+     "ds": 25925,
+     "size": 1,
+     "reason": "word alignment of the next non-char variable"
+    },
+    {
+     "kind": "variable",
+     "ds": 25926,
+     "size": 2,
+     "char": false,
+     "name": "g_bonus_timer",
+     "storage": "g_bonus_timer__xh",
+     "type": "int",
+     "comment": "",
+     "key": 871
+    },
+    {
+     "kind": "variable",
+     "ds": 25928,
+     "size": 2,
+     "char": false,
+     "name": "g_anim_delay",
+     "storage": "g_anim_delay___xh",
+     "type": "int",
+     "comment": "animation countdown",
+     "key": 871
+    },
+    {
+     "kind": "variable",
+     "ds": 25930,
+     "size": 2,
+     "char": false,
+     "name": "g_unused_654a",
+     "storage": "g_unused_654a__xh",
+     "type": "int",
+     "comment": "never referenced",
+     "key": 871
+    }
+   ]
+  },
+  {
+   "unit": "CONFIG",
+   "bss": [
+    25932,
+    35364
+   ],
+   "entries": [
+    {
+     "kind": "variable",
+     "ds": 25932,
+     "size": 2,
+     "char": false,
+     "name": "g_have_ega",
+     "storage": "g_have_ega",
+     "type": "int",
+     "comment": "",
+     "key": 287
+    },
+    {
+     "kind": "variable",
+     "ds": 25934,
+     "size": 2,
+     "char": false,
+     "name": "g_have_vga",
+     "storage": "g_have_vga",
+     "type": "int",
+     "comment": "",
+     "key": 287
+    },
+    {
+     "kind": "variable",
+     "ds": 25936,
+     "size": 2,
+     "char": false,
+     "name": "g_have_joystick",
+     "storage": "g_have_joystick_______wh",
+     "type": "int",
+     "comment": "0 none, 1 or 2",
+     "key": 287
+    },
+    {
+     "kind": "variable",
+     "ds": 25938,
+     "size": 2,
+     "char": false,
+     "name": "g_have_joystick2",
+     "storage": "g_have_joystick2______wh",
+     "type": "int",
+     "comment": "",
+     "key": 287
+    },
+    {
+     "kind": "variable",
+     "ds": 25940,
+     "size": 2,
+     "char": false,
+     "name": "g_panel_col",
+     "storage": "g_panel_col_Gh",
+     "type": "int",
+     "comment": "control panel cursor column",
+     "key": 287
+    },
+    {
+     "kind": "variable",
+     "ds": 25942,
+     "size": 2,
+     "char": false,
+     "name": "g_have_mouse",
+     "storage": "g_have_mouse_Ah",
+     "type": "int",
+     "comment": "",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 25944,
+     "size": 80,
+     "char": false,
+     "name": "g_unused_6558",
+     "storage": "g_unused_6558_9h",
+     "type": "int [40]",
+     "comment": "never referenced",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 26024,
+     "size": 8,
+     "char": false,
+     "name": "g_pic_planes",
+     "storage": "g_pic_planes_Ah",
+     "type": "unsigned [4]",
+     "comment": "picture file plane segments",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 26032,
+     "size": 40,
+     "char": false,
+     "name": "g_panel_avail",
+     "storage": "g_panel_avail_9h",
+     "type": "int [4][5]",
+     "comment": "option available flags [row][col]",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 26072,
+     "size": 2,
+     "char": false,
+     "name": "g_saved_video",
+     "storage": "g_saved_video_9h",
+     "type": "int",
+     "comment": "settings on entry to the control panel",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 26074,
+     "size": 32,
+     "char": false,
+     "name": "g_unused_65da",
+     "storage": "g_unused_65da_9h",
+     "type": "int [16]",
+     "comment": "never referenced",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 26106,
+     "size": 2,
+     "char": false,
+     "name": "g_saved_sound",
+     "storage": "g_saved_sound_9h",
+     "type": "int",
+     "comment": "",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 26108,
+     "size": 8192,
+     "char": false,
+     "name": "g_pic_sprites",
+     "storage": "g_pic_sprites_9h",
+     "type": "struct s32 [256]",
+     "comment": "picture file sprite table",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 34300,
+     "size": 2,
+     "char": false,
+     "name": "g_cur_video",
+     "storage": "g_cur_video",
+     "type": "int",
+     "comment": "control panel choices",
+     "key": 335
+    },
+    {
+     "kind": "variable",
+     "ds": 34302,
+     "size": 2,
+     "char": false,
+     "name": "g_unused_85fe",
+     "storage": "g_unused_85fe_Ah",
+     "type": "int",
+     "comment": "never referenced",
+     "key": 367
+    },
+    {
+     "kind": "variable",
+     "ds": 34304,
+     "size": 2,
+     "char": false,
+     "name": "g_saved_control1",
+     "storage": "g_saved_control1_______yh",
+     "type": "int",
+     "comment": "",
+     "key": 367
+    },
+    {
+     "kind": "variable",
+     "ds": 34306,
+     "size": 2,
+     "char": false,
+     "name": "g_saved_control2",
+     "storage": "g_saved_control2_______yh",
+     "type": "int",
+     "comment": "",
+     "key": 367
+    },
+    {
+     "kind": "variable",
+     "ds": 34308,
+     "size": 1024,
+     "char": false,
+     "name": "g_pic_table",
+     "storage": "g_pic_table",
+     "type": "struct s16 [64]",
+     "comment": "picture file picture table",
+     "key": 391
+    },
+    {
+     "kind": "variable",
+     "ds": 35332,
+     "size": 4,
+     "char": false,
+     "name": "g_unused_8a04",
+     "storage": "g_unused_8a04_Dh",
+     "type": "int [2]",
+     "comment": "never referenced",
+     "key": 391
+    },
+    {
+     "kind": "variable",
+     "ds": 35336,
+     "size": 2,
+     "char": false,
+     "name": "g_cur_sound",
+     "storage": "g_cur_sound",
+     "type": "int",
+     "comment": "",
+     "key": 407
+    },
+    {
+     "kind": "variable",
+     "ds": 35338,
+     "size": 2,
+     "char": false,
+     "name": "g_panel_row",
+     "storage": "g_panel_row",
+     "type": "int",
+     "comment": "control panel cursor row",
+     "key": 415
+    },
+    {
+     "kind": "variable",
+     "ds": 35340,
+     "size": 2,
+     "char": false,
+     "name": "g_unused_8a0c",
+     "storage": "g_unused_8a0c_Gh",
+     "type": "int",
+     "comment": "never referenced",
+     "key": 415
+    },
+    {
+     "kind": "variable",
+     "ds": 35342,
+     "size": 2,
+     "char": false,
+     "name": "g_cur_control1",
+     "storage": "g_cur_control1",
+     "type": "int",
+     "comment": "",
+     "key": 583
+    },
+    {
+     "kind": "variable",
+     "ds": 35344,
+     "size": 2,
+     "char": false,
+     "name": "g_cur_control2",
+     "storage": "g_cur_control2",
+     "type": "int",
+     "comment": "",
+     "key": 583
+    },
+    {
+     "kind": "variable",
+     "ds": 35346,
+     "size": 2,
+     "char": false,
+     "name": "g_text_x",
+     "storage": "g_text_x___th",
+     "type": "int",
+     "comment": "text cursor column",
+     "key": 583
+    },
+    {
+     "kind": "variable",
+     "ds": 35348,
+     "size": 2,
+     "char": false,
+     "name": "g_text_y",
+     "storage": "g_text_y___th",
+     "type": "int",
+     "comment": "text cursor row",
+     "key": 583
+    },
+    {
+     "kind": "variable",
+     "ds": 35350,
+     "size": 4,
+     "char": false,
+     "name": "g_pic_charptr",
+     "storage": "g_pic_charptr",
+     "type": "char far *",
+     "comment": "picture file: 8x8 font",
+     "key": 583
+    },
+    {
+     "kind": "variable",
+     "ds": 35354,
+     "size": 4,
+     "char": false,
+     "name": "g_pic_spriteptr",
+     "storage": "g_pic_spriteptr",
+     "type": "char far *",
+     "comment": "",
+     "key": 711
+    },
+    {
+     "kind": "variable",
+     "ds": 35358,
+     "size": 4,
+     "char": false,
+     "name": "g_pic_picptr",
+     "storage": "g_pic_picptr_th",
+     "type": "char far *",
+     "comment": "",
+     "key": 711
+    },
+    {
+     "kind": "variable",
+     "ds": 35362,
+     "size": 2,
+     "char": false,
+     "name": "g_text_left",
+     "storage": "g_text_left__th",
+     "type": "int",
+     "comment": "left margin of the text window",
+     "key": 711
+    }
+   ]
+  },
+  {
+   "unit": "HARDWARE",
+   "bss": [
+    35364,
+    40648
+   ],
+   "entries": [
+    {
+     "kind": "variable",
+     "ds": 35364,
+     "size": 2,
+     "char": false,
+     "name": "g_win_x1",
+     "storage": "g_win_x1",
+     "type": "int",
+     "comment": "text window rectangle",
+     "key": 295
+    },
+    {
+     "kind": "variable",
+     "ds": 35366,
+     "size": 2,
+     "char": false,
+     "name": "g_win_x2",
+     "storage": "g_win_x2",
+     "type": "int",
+     "comment": "",
+     "key": 295
+    },
+    {
+     "kind": "variable",
+     "ds": 35368,
+     "size": 2,
+     "char": false,
+     "name": "g_win_y1",
+     "storage": "g_win_y1",
+     "type": "int",
+     "comment": "",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 35370,
+     "size": 2,
+     "char": false,
+     "name": "g_win_y2",
+     "storage": "g_win_y2",
+     "type": "int",
+     "comment": "",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 35372,
+     "size": 2,
+     "char": false,
+     "name": "g_demo_ptr",
+     "storage": "g_demo_ptr_Qh",
+     "type": "char *",
+     "comment": "demo buffer read/write pointer",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 35374,
+     "size": 4,
+     "char": false,
+     "name": "g_pic_tileptr",
+     "storage": "g_pic_tileptr_9h",
+     "type": "char far *",
+     "comment": "",
+     "key": 303
+    },
+    {
+     "kind": "variable",
+     "ds": 35378,
+     "size": 256,
+     "char": false,
+     "name": "g_keydown",
+     "storage": "g_keydown",
+     "type": "int [128]",
+     "comment": "key state per scan code",
+     "key": 351
+    },
+    {
+     "kind": "variable",
+     "ds": 35634,
+     "size": 2,
+     "char": false,
+     "name": "g_video_mode",
+     "storage": "g_video_mode",
+     "type": "int",
+     "comment": "1 CGA, 2 EGA, 3 VGA",
+     "key": 391
+    },
+    {
+     "kind": "variable",
+     "ds": 35636,
+     "size": 5004,
+     "char": true,
+     "name": "g_demo_buffer",
+     "storage": "g_demo_buffer",
+     "type": "char [5004]",
+     "comment": "",
+     "key": 463
+    },
+    {
+     "kind": "variable",
+     "ds": 40640,
+     "size": 2,
+     "char": false,
+     "name": "g_adapter_type",
+     "storage": "g_adapter_type_Eh",
+     "type": "int",
+     "comment": "VideoID result",
+     "key": 463
+    },
+    {
+     "kind": "variable",
+     "ds": 40642,
+     "size": 2,
+     "char": false,
+     "name": "g_demo_state",
+     "storage": "g_demo_state",
+     "type": "int",
+     "comment": "0 live, 1 playback, 2 record",
+     "key": 519
+    },
+    {
+     "kind": "variable",
+     "ds": 40644,
+     "size": 4,
+     "char": false,
+     "name": "g_alloc_block",
+     "storage": "g_alloc_block_Th",
+     "type": "void far *",
+     "comment": "last farmalloc block",
+     "key": 519
+    }
+   ]
+  }
+ ]
+}

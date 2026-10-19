@@ -1,13 +1,26 @@
 """Compile and strictly verify every recovered game source; feed the rebuild.
 
-For each src/game/*.c: batch-compile (tools/tcc.py), place and link it with
-every fixup resolved (tools/match_function.py match_object), and require
-EXACT. The linked bytes are written to build/matched/<stem>.bin, which is
-what tools/reconstruct.py uses for MATCHING_C regions -- the rebuilt image's
+The game's C code is three translation units, src/DAVE.C, src/CONFIG.C and
+src/HARDWARE.C (+ src/DAVE.H). Each is batch-compiled (tools/tcc.py) to ONE
+object, placed by its own directives (`@at` for _TEXT, `@seg _DATA`, `@seg
+_BSS`), and strictly matched (tools/match_function.py match_object): every
+fixup resolved, _TEXT and the whole _DATA image compared, _BSS extent
+checked. Addresses come from each unit's composition: references to the
+unit's own data go through its segment bases, references to another unit's
+(or an assembly module's) functions and variables through that object's
+placed PUBDEFs, which verify_all() adds to the symbol map. On top:
+  * census: a unit's publics are exactly the census C functions inside its
+    extent, each at its census start;
+  * layout: the units and assembly modules tile _TEXT [0x239,0x9413),
+    _DATA [0xa8,0x1439) and the game _BSS [0x4c60,0x9ec8) with nothing
+    between them but TLINK word-alignment pads (--json also writes
+    <stem>_layout.json).
+The linked bytes are written to build/matched/<stem>.bin, which is what
+tools/reconstruct.py uses for MATCHING_C regions -- the rebuilt image's
 matched code therefore really comes from the compiler, not from raw extracts.
 
 --sync rewrites layout/manifest.json's code-area ownership from the verdicts:
-every MATCHING_C region is re-derived (id = source stem, extent = linked
+every MATCHING_C region is re-derived (id = unit stem, extent = linked
 extent), the bytes between them stay RAW_UNKNOWN, adjacent RAW_UNKNOWN
 regions are coalesced. Extents must coincide with census function
 boundaries. Then extract_raw.py + reconstruct.py run; any failure restores
@@ -32,29 +45,132 @@ import match_function as mf  # noqa: E402
 import reconstruct  # noqa: E402
 import tcc  # noqa: E402
 
-SRC = ROOT / "src" / "game"
+SRC = ROOT / "src"                 # translation units: src/<UNIT>.C (+ src/DAVE.H)
 OUT = ROOT / "build" / "matched"
+C0S_END_CS = 0x0239                # first game byte: _main (C0S _TEXT ends here)
+GAME_DATA_DS = 0x00A8              # C0S _DATA ends here (docs/data-layout.md)
 
 
-def verify_all():
-    sources = sorted(SRC.glob("*.c"))
+def unit_sources():
+    return sorted(p for p in SRC.glob("*.[cC]") if p.suffix in (".C", ".c"))
+
+
+def rel(p: pathlib.Path) -> str:
+    return str(p.relative_to(ROOT)).replace("\\", "/")
+
+
+def verify_all(asm_results=()):
+    """Compile every unit, place each object by its directives, add every
+    placed object's PUBDEFs (units and assembly modules) to the symbol map,
+    then strictly match each unit against that map: a reference from one unit
+    to another's function or variable resolves to the address that the other
+    unit's own composition gives it."""
+    sources = unit_sources()
     objs = tcc.compile_many(sources, work=ROOT / "build" / "verify_batch")
     OUT.mkdir(parents=True, exist_ok=True)
+    if mf._IMAGE is None:
+        mf._IMAGE, mf._SYMBOLS = mf.unpacked_bytes(), mf.SymbolMap()
+    symbols = mf._SYMBOLS.copy()
+    for r in asm_results:
+        for p in r.get("publics", []):
+            if p["segment"] == "_TEXT":
+                symbols.define(p["name"], "code", r["cs_start"] + p["offset"], r["source"])
+            else:
+                symbols.define(p["name"], "data", r["segments"][p["segment"]] + p["offset"], r["source"])
+    mods = {}
+    for src, obj in zip(sources, objs):
+        if obj is None:
+            continue
+        text = src.read_text(encoding="latin1")
+        mod = mf.omf.OmfReader().read(obj.read_bytes(), src.stem)
+        at = mf.parse_at(text)
+        if at is None:
+            raise SystemExit(f"{rel(src)}: no `/* @at 0x.... */` placement directive")
+        for name, kind, addr in mf.object_symbols(mod, at, mf.parse_directives(text)):
+            symbols.define(name, kind, addr, rel(src))
+        mods[src] = mod
     results = []
     for i, (src, obj) in enumerate(zip(sources, objs)):
         if obj is None:
             log = (ROOT / "build" / "verify_batch" / f"S{i + 1:04d}.LOG")
-            results.append({"source": str(src.relative_to(ROOT)).replace("\\", "/"),
-                            "verdict": "COMPILE_FAILED",
+            results.append({"source": rel(src), "verdict": "COMPILE_FAILED",
                             "log": log.read_text(errors="replace") if log.exists() else ""})
             continue
-        r = mf.match_object(obj.read_bytes(), src)
-        r["source"] = str(src.relative_to(ROOT)).replace("\\", "/")
+        r = mf.match_object(obj.read_bytes(), src, symbols=symbols)
+        r["source"] = rel(src)
+        r["census"] = census_check(r)
+        if r["census"]["problems"] and r["verdict"] == "EXACT":
+            r["verdict"] = "MISMATCH"
         if r["verdict"] == "EXACT":
-            image = mf._IMAGE
-            (OUT / f"{src.stem}.bin").write_bytes(image[r["file_start"]:r["file_end"]])
+            (OUT / f"{src.stem}.bin").write_bytes(mf._IMAGE[r["file_start"]:r["file_end"]])
         results.append(r)
     return results
+
+
+def census_check(r) -> dict:
+    """A unit's functions must be exactly the census C functions inside its
+    _TEXT extent, each public landing on its census start."""
+    census = json.loads((ROOT / "docs" / "function-census.json").read_text())
+    inside = {f["cs_start"]: f["id"] for f in census["functions"]
+              if r["cs_start"] <= f["cs_start"] < r["cs_end"]}
+    problems = []
+    publics = {r["cs_start"] + p["offset"]: p["name"] for p in r["publics"] if p["segment"] == "_TEXT"}
+    for cs, name in sorted(publics.items()):
+        if cs not in inside:
+            problems.append(f"{name} at cs {cs:#06x} is not a census function start")
+    for cs, fid in sorted(inside.items()):
+        if cs not in publics:
+            problems.append(f"census {fid} (cs {cs:#06x}) is not a public of this unit")
+    lang = {f["id"]: f["lang"] for f in census["functions"]}
+    non_c = [fid for fid in inside.values() if not lang[fid].startswith("C")]
+    if non_c:
+        problems.append(f"non-C census functions inside the unit: {non_c}")
+    return {"functions": [{"cs": cs, "id": inside.get(cs), "name": n} for cs, n in sorted(publics.items())],
+            "problems": problems}
+
+
+def tile(name, ranges, lo, hi, image_base=None) -> dict:
+    """Do the placed ranges cover [lo, hi) in order with nothing between them
+    except TLINK's word-alignment pads (one byte before an even start, zero
+    in the original when it is file data)?"""
+    out = {"segment": name, "range": [lo, hi], "pieces": [], "problems": []}
+    pos = lo
+    for start, end, who in sorted(ranges):
+        if start < pos:
+            out["problems"].append(f"{who} [{start:#06x},{end:#06x}) overlaps the previous piece")
+        elif start > pos:
+            pad_ok = start - pos == 1 and start % 2 == 0
+            if pad_ok and image_base is not None:
+                pad_ok = mf._IMAGE[image_base + pos] == 0
+            if pad_ok:
+                out["pieces"].append({"start": pos, "end": start, "owner": "TLINK word-alignment pad"})
+            else:
+                out["problems"].append(f"gap [{pos:#06x},{start:#06x}) before {who}")
+        out["pieces"].append({"start": start, "end": end, "owner": who})
+        pos = max(pos, end)
+    if pos != hi:
+        out["problems"].append(f"pieces end at {pos:#06x}, expected {hi:#06x}")
+    return out
+
+
+def composition(results, asm_results) -> list:
+    """Whole-program layout check of the C units and the assembly modules:
+    _TEXT from the end of C0S to the end of the assembly, _DATA from the end
+    of C0S's _DATA to the end of the assembly's _DATA, and the game _BSS."""
+    units = [r for r in results if r["verdict"] == "EXACT"]
+    asms = [r for r in asm_results if r["verdict"] == "EXACT"]
+    text = [(r["cs_start"], r["cs_end"], r["source"]) for r in units + asms]
+    data = [(r["data_check"]["ds"], r["data_check"]["ds"] + r["data_check"]["length"], r["source"])
+            for r in units if r.get("data_check")]
+    for r in asms:
+        for c in r.get("data_checks", []):
+            data.append((c["ds"], c["ds"] + c["length"], f"{r['source']} {c['segment']}"))
+    bss = [(r["bss_check"]["ds"], r["bss_check"]["end"], r["source"]) for r in units if r.get("bss_check")]
+    text_end = max((e for _, e, _ in text), default=C0S_END_CS)
+    data_end = max((e for _, e, _ in data), default=GAME_DATA_DS)
+    return [tile("_TEXT", text, C0S_END_CS, text_end, image_base=mf.HDR),
+            tile("_DATA", data, GAME_DATA_DS, data_end, image_base=mf.DGROUP_FILE),
+            tile("_BSS", bss, *mf.GAME_BSS)]
 
 
 ASM_RANGE_CS = (0x6F25, 0x9413)   # hand-written assembly (docs/function-census.md, layout/assembler.json)
@@ -217,21 +333,39 @@ def main():
     if asm_json:
         pathlib.Path(asm_json).write_text(json.dumps(
             [{k: v for k, v in r.items() if k != "fixups"} for r in asm_results], indent=1))
-    results = verify_all()
+    results = verify_all(asm_results)
     bad = 0
     for r in results:
         if r["verdict"] == "EXACT":
+            d, b = r.get("data_check"), r.get("bss_check")
             print(f"EXACT     {r['source']}  cs [{r['cs_start']:#06x},{r['cs_end']:#06x}) "
-                  f"{r['length']} bytes, {r['fixup_count']} fixups")
+                  f"{r['length']} bytes, {len(r['census']['functions'])} functions, "
+                  f"{r['fixup_count']} fixups"
+                  + (f"; _DATA ds [{d['ds']:#06x},{d['ds'] + d['length']:#06x})" if d else "")
+                  + (f"; _BSS ds [{b['ds']:#06x},{b['end']:#06x})" if b else ""))
         else:
             bad += 1
             extra = r.get("diff_count", "")
             print(f"{r['verdict']:9s} {r['source']}  {extra}")
+            for p in r.get("census", {}).get("problems", []):
+                print(f"          census: {p}")
+            if r.get("unplaced_segments"):
+                print(f"          unplaced segments: {r['unplaced_segments']}")
+            if r.get("data_check") and r["data_check"]["diffs"]:
+                print(f"          _DATA differs at {len(r['data_check']['diffs'])} bytes")
     print(f"{len(results) - bad}/{len(results)} sources EXACT, "
           f"{sum(r['length'] for r in results if r['verdict'] == 'EXACT')} bytes")
+    comp = composition(results, asm_results)
+    for c in comp:
+        lo, hi = c["range"]
+        print(f"layout {c['segment']:5s} [{lo:#06x},{hi:#06x}): {len(c['pieces'])} pieces"
+              + ("" if not c["problems"] else "; " + "; ".join(c["problems"])))
+        bad += bool(c["problems"])
     if args.json:
         pathlib.Path(args.json).write_text(json.dumps(
             [{k: v for k, v in r.items() if k != "fixups"} for r in results], indent=1))
+        pathlib.Path(args.json).with_name(pathlib.Path(args.json).stem + "_layout.json").write_text(
+            json.dumps(comp, indent=1))
     if args.sync:
         if bad:
             raise SystemExit("refusing to sync: not every source is EXACT")

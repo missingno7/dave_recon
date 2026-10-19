@@ -1,6 +1,6 @@
 """Every recovered game source compiles to EXACTLY the original bytes.
 
-Runs tools/verify_sources.py (batch compile of src/game/*.c, strict link with
+Runs tools/verify_sources.py (batch compile of the src/*.C units, strict link with
 every fixup resolved) and then tools/reconstruct.py, which takes MATCHING_C
 regions from that compiler output rather than raw extracts.
 """

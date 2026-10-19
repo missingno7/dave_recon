@@ -86,8 +86,36 @@ def relocation_sites(image: bytes) -> set:
 def parse_directives(source_text: str) -> dict:
     segs = {}
     for name, value in re.findall(r"@seg\s+(\w+)\s+(0x[0-9A-Fa-f]+|\d+)", source_text):
+        if name in segs and segs[name] != int(value, 0):
+            raise SystemExit(f"conflicting @seg {name} directives")
         segs[name] = int(value, 0)
     return segs
+
+
+def parse_at(source_text: str):
+    """`/* @at 0x0239 */`: the CS offset of the object's _TEXT (a whole
+    translation unit names its functions meaningfully, so it cannot be placed
+    by census-id publics)."""
+    found = {int(v, 0) for v in re.findall(r"@at\s+(0x[0-9A-Fa-f]+|\d+)", source_text)}
+    if len(found) > 1:
+        raise SystemExit(f"conflicting @at directives: {sorted(found)}")
+    return found.pop() if found else None
+
+
+def object_symbols(mod, text_at: int, segs: dict) -> list:
+    """[(name, kind, address)] of a placed object's PUBDEFs: _TEXT publics are
+    code at text_at + offset, publics of a placed DGROUP segment are data at
+    its DS base + offset. These are what other objects' EXTDEFs resolve to."""
+    out = []
+    for pub in mod.publics:
+        seg = pub["segment"]
+        if seg == "_TEXT":
+            out.append((pub["name"], "code", text_at + pub["offset"]))
+        elif seg in segs:
+            out.append((pub["name"], "data", segs[seg] + pub["offset"]))
+        else:
+            raise SystemExit(f"public {pub['name']} in unplaced segment {seg}")
+    return out
 
 
 def declared_segment(mod, name: str) -> bytes:
@@ -101,6 +129,15 @@ def declared_segment(mod, name: str) -> bytes:
 
 def text_base(mod, symbols: SymbolMap, at: int | None):
     if at is not None:
+        # an explicit placement must still agree with every public whose
+        # address is already known (curated names such as _main, census ids)
+        for pub in mod.publics:
+            if pub["segment"] != "_TEXT":
+                continue
+            known = symbols.resolve_code(pub["name"])
+            if known is not None and known != at + pub["offset"]:
+                raise SystemExit(f"@at {at:#06x} puts {pub['name']} at {at + pub['offset']:#06x}, "
+                                 f"but it is known at {known:#06x}")
         return at, []
     bases = []
     for pub in mod.publics:
@@ -117,13 +154,27 @@ def text_base(mod, symbols: SymbolMap, at: int | None):
     return bases[0][1], bases
 
 
-def link(mod, base: int, segs: dict, symbols: SymbolMap, image: bytes):
-    """Return (linked _TEXT bytes, per-fixup report list)."""
-    text = bytearray(mod.segment_bytes("_TEXT"))
+def link(mod, base: int, segs: dict, symbols: SymbolMap, image: bytes, seg_name: str = "_TEXT"):
+    """Return (linked segment bytes, per-fixup report list).
+
+    seg_name "_TEXT": `base` is the CS offset of the segment. A DGROUP segment
+    (`_DATA`, e.g. pointer initialisers): `base` is its DS offset; its fixups
+    are resolved the same way (no self-relative ones), and a base16 fixup
+    must sit on an MZ relocation at its load-module offset."""
+    if seg_name == "_TEXT":
+        text = bytearray(mod.segment_bytes("_TEXT"))
+        lm_base = TEXT_PARA * 16 + base
+    else:
+        text = bytearray(declared_segment(mod, seg_name))
+        lm_base = DGROUP_PARA * 16 + base
     relocs = relocation_sites(image)
     report = []
-    for fx in mod.fixups_in("_TEXT"):
-        site = base + fx["offset"]           # CS offset of the patched bytes
+    for fx in mod.fixups_in(seg_name):
+        site = base + fx["offset"]           # offset of the patched bytes in its frame
+        if seg_name != "_TEXT" and fx["self_relative"]:
+            report.append({"offset": fx["offset"], "cs": site, "target": fx["target"],
+                           "kind": fx["target_kind"], "status": "self-relative fixup in data"})
+            continue
         entry = {"offset": fx["offset"], "cs": site, "loc": fx["loc"],
                  "target": fx["target"], "kind": fx["target_kind"],
                  "frame": fx.get("frame"), "self_relative": fx["self_relative"]}
@@ -172,11 +223,11 @@ def link(mod, base: int, segs: dict, symbols: SymbolMap, image: bytes):
                 text[o] = (cur + off) & 0xFF
         elif loc == "base16":
             struct.pack_into("<H", text, o, para)
-            entry["mz_relocation"] = site in relocs   # CS offset == load-module offset
+            entry["mz_relocation"] = (lm_base + o) in relocs
         elif loc == "pointer32":
             cur = struct.unpack_from("<H", text, o)[0]
             struct.pack_into("<HH", text, o, (cur + off) & 0xFFFF, para)
-            entry["mz_relocation"] = (site + 2) in relocs
+            entry["mz_relocation"] = (lm_base + o + 2) in relocs
         else:
             entry["status"] = f"unsupported loc {loc}"
             continue
@@ -207,14 +258,23 @@ _IMAGE = None
 _SYMBOLS = None
 
 
+GAME_BSS = (0x4C60, 0x9EC8)       # docs/data-layout.md: C0S clears from 0x4C60; CS.LIB _BSS from 0x9EC8
+
+
 def match_object(obj_bytes: bytes, source: pathlib.Path, at: int | None = None,
-                 flags: str = "", model: str = "s") -> dict:
+                 flags: str = "", model: str = "s", symbols: SymbolMap | None = None) -> dict:
+    """Place, link and compare one object. `symbols` overrides the default
+    symbol map (tools/verify_sources.py passes one extended with the publics
+    of the other placed units and assembly modules)."""
     global _IMAGE, _SYMBOLS
     if _IMAGE is None:
         _IMAGE, _SYMBOLS = unpacked_bytes(), SymbolMap()
-    image, symbols = _IMAGE, _SYMBOLS
+    image = _IMAGE
+    symbols = symbols or _SYMBOLS
     text_src = source.read_text(encoding="latin1")
     segs = parse_directives(text_src)
+    if at is None:
+        at = parse_at(text_src)
     flags = (flags + " " + tcc.source_flags(text_src)).strip()
     mod = omf.OmfReader().read(obj_bytes, source.stem)
     base, bases = text_base(mod, symbols, at)
@@ -229,21 +289,47 @@ def match_object(obj_bytes: bytes, source: pathlib.Path, at: int | None = None,
     hard_diffs = [d for d in diffs if d not in unresolved_bytes]
     missing_reloc = [f for f in fixups if f.get("mz_relocation") is False]
 
+    # Every non-empty segment other than _TEXT must be placed: its contents and
+    # every reference into it are checked against that placement.
+    unplaced = [n for n, length in mod.segment_lengths.items()
+                if n != "_TEXT" and length and n not in segs]
+
     data_check = None
     cand = declared_segment(mod, "_DATA")
     if "_DATA" in segs and cand:
+        dlinked, dfixups = link(mod, segs["_DATA"], segs, symbols, image, seg_name="_DATA")
         start = DGROUP_FILE + segs["_DATA"]
         orig = image[start:start + len(cand)]
         data_check = {"ds": segs["_DATA"], "length": len(cand),
-                      "diffs": [i for i in range(len(cand)) if cand[i] != orig[i]]}
-        dfx = mod.fixups_in("_DATA")
-        if dfx:
-            data_check["note"] = f"{len(dfx)} fixups inside _DATA not yet resolved by this tool"
-            data_check["unverified_fixups"] = len(dfx)
+                      "diffs": [i for i in range(len(cand)) if dlinked[i] != orig[i]],
+                      "fixups": len(dfixups)}
+        dbad = [f for f in dfixups if f.get("status") != "resolved"]
+        if dbad:
+            data_check["unresolved_fixups"] = [{"target": f["target"], "status": f.get("status")}
+                                               for f in dbad]
+        if any(f.get("mz_relocation") is False for f in dfixups):
+            data_check["missing_mz_relocations"] = [f["cs"] for f in dfixups
+                                                    if f.get("mz_relocation") is False]
 
-    if hard_diffs or missing_reloc or (data_check and data_check["diffs"]):
+    # _BSS: no bytes to compare (TLINK writes none). Every reference into it
+    # was resolved above through the placed base; here the declared extent
+    # must lie inside the game's _BSS and the base must be word aligned
+    # (TCC's _BSS SEGDEF is WORD aligned).
+    bss_check = None
+    bss_len = mod.segment_length("_BSS") or 0
+    if "_BSS" in segs and bss_len:
+        b0 = segs["_BSS"]
+        bss_check = {"ds": b0, "length": bss_len, "end": b0 + bss_len,
+                     "inside_game_bss": GAME_BSS[0] <= b0 and b0 + bss_len <= GAME_BSS[1],
+                     "aligned": b0 % 2 == 0,
+                     "publics": sorted((p["offset"] + b0, p["name"]) for p in mod.publics
+                                       if p["segment"] == "_BSS")}
+    bss_bad = bool(bss_check) and not (bss_check["inside_game_bss"] and bss_check["aligned"])
+
+    data_bad = bool(data_check) and bool(data_check["diffs"] or data_check.get("missing_mz_relocations"))
+    if hard_diffs or missing_reloc or data_bad or bss_bad or unplaced:
         verdict = "MISMATCH"
-    elif unresolved or (data_check and data_check.get("unverified_fixups")):
+    elif unresolved or (data_check and data_check.get("unresolved_fixups")):
         verdict = "UNRESOLVED_FIXUPS"
     else:
         verdict = "EXACT"
@@ -273,6 +359,8 @@ def match_object(obj_bytes: bytes, source: pathlib.Path, at: int | None = None,
                                  base + max(0, hard_diffs[0] - 4))]
             if hard_diffs else []),
         "data_check": data_check,
+        "bss_check": bss_check,
+        "unplaced_segments": unplaced,
         "fixups": fixups,
     }
 
