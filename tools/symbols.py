@@ -55,6 +55,25 @@ class SymbolMap:
             self.origin[name] = "curated"
 
     def _load_library(self):
+        libmap = ROOT / "docs" / "library-map.json"
+        if libmap.exists():
+            doc = json.loads(libmap.read_text())
+            for s in doc["library_symbols"]:
+                for name in [s["symbol"]] + list(s.get("aliases", [])):
+                    self.code.setdefault(name, s["cs_offset"])
+                    self.origin.setdefault(name, f"library-map:{s['module']}")
+            for seg in doc["dgroup"]["segments"]:
+                for p in seg.get("publics", []):
+                    self.data.setdefault(p["symbol"], p["ds_offset"])
+                    self.origin.setdefault(p["symbol"], f"library-map:{seg['owner']}")
+            for m in doc["modules"] + doc["data_only_modules"]:
+                for p in m.get("publics", []):
+                    if "ds_offset" in p:
+                        self.data.setdefault(p["symbol"], p["ds_offset"])
+                        self.origin.setdefault(p["symbol"], f"library-map:{m['module']}")
+        self._load_library_from_manifest()
+
+    def _load_library_from_manifest(self):
         manifest = json.loads((ROOT / "layout" / "manifest.json").read_text())
         lib_path = ROOT / "toolchain" / "LIB" / "CS.LIB"
         c0s_path = ROOT / "toolchain" / "LIB" / "C0S.OBJ"
