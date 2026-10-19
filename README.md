@@ -53,11 +53,16 @@ See [docs/dashboard.json](docs/dashboard.json) (generated) and
 [docs/matching-phase.md](docs/matching-phase.md).
 
 - **All game code matches the original bytes**, strictly verified (every
-  fixup resolved, no masking): 90 C functions in `src/game/` (Turbo C++ 1.00
-  `-ms -1- -f- -N -G`) and two TASM 2.0 modules in `src/asm/`.
+  fixup resolved, no masking): 90 C functions in the three original
+  translation units `src/DAVE.C`, `src/CONFIG.C`, `src/HARDWARE.C` (Turbo C++
+  1.00 `-ms -1- -f- -N -G`; each unit's `_TEXT`, `_DATA` and `_BSS` reproduce
+  the original) and two TASM 2.0 modules in `src/asm/`.
 - Runtime: C0S + 59 CS.LIB modules identified ([docs/library-map.md](docs/library-map.md)).
 - Data: all far segments and the level array are rebuilt by exact codecs
   ([docs/data-layout.md](docs/data-layout.md)); EGADAVE.DAV round-trips.
 - Packing: LZEXE 0.91 applied to the unpacked image reproduces `DAVE.EXE`.
-- In progress: Level C, recovering the translation units and linking the
-  whole program with TLINK so the layout emerges instead of being placed.
+- Level C: TLINK 3.0 linking C0S + the C units + the ASM modules + stand-ins
+  for the data-only module and far blobs + CS.LIB reproduces the whole load
+  module byte for byte (`python tools/link_probe.py`,
+  [docs/link-forensics.md](docs/link-forensics.md)). Remaining for the final
+  build: data objects from the codecs instead of original bytes.

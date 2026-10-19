@@ -323,7 +323,8 @@ Remaining raw: game _DATA (5,778 bytes) -> belongs to the C translation units
   placed objects' PUBDEFs, each unit's publics are exactly its census C
   functions, and units + asm modules tile `_TEXT`, `_DATA` and `_BSS`
   with only TLINK pads in between. All three units EXACT (27,884 bytes);
-  manifest: one MATCHING_C region per unit.
+  manifest: per unit one MATCHING_C region for its _TEXT and one for its
+  _DATA (`<UNIT>_DATA`, 4,740 bytes in all), plus the TLINK pads between them.
 - `tools/link_probe.py` links C0S + the three units + the two asm modules +
   stand-ins for the data-only module and the far blobs (`tools/omf_writer.py`)
   + CS.LIB with TLINK 3.0: the load module is **identical to the original**

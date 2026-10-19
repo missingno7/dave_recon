@@ -70,7 +70,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "b66ed1529344c7e0723c0f34cd30a5efd5e82c83d80e0e1349130bac371fde78",
+      "object_sha256": "db5f7aa49fa6381b7cab220fa0b29e522af1bf2054617d0af3a256887020fe33",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 2112 fixups, 0 differing bytes",
       "artifact": "build/matched/DAVE.bin"
@@ -86,7 +86,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "7c8acd726ed0c38d788de58567bfb84f67bae8892cf9c221521d1aee7718f8d4",
+      "object_sha256": "b7aac5f3072597afb88ce5f9ecd01b1532e785c6caac49d351d5cf253f8e8694",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 456 fixups, 0 differing bytes",
       "artifact": "build/matched/CONFIG.bin"
@@ -102,7 +102,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "ec28e9358551d8bd4ea5ee9360c667a46b1728b9e506027ecd53fd4861761c05",
+      "object_sha256": "cff5169add730556da30efd6e39b6785442533dd8b0ab437887ab8914eacf901",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 254 fixups, 0 differing bytes",
       "artifact": "build/matched/HARDWARE.bin"
@@ -986,13 +986,100 @@
       "artifact": "raw/C0S_DATA.bin"
     },
     {
-      "id": "RAW_25778_26E0A",
+      "id": "DAVE_DATA",
       "start": 153464,
+      "end": 157138,
+      "kind": "MATCHING_C",
+      "classification": "data",
+      "source": "src/DAVE.C",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "db5f7aa49fa6381b7cab220fa0b29e522af1bf2054617d0af3a256887020fe33",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: the unit's whole _DATA image at DS [0x00a8,0x0f02), 0 fixups resolved, 0 differing bytes",
+      "artifact": "build/matched/DAVE_DATA.bin"
+    },
+    {
+      "id": "CONFIG_DATA",
+      "start": 157138,
+      "end": 158143,
+      "kind": "MATCHING_C",
+      "classification": "data",
+      "source": "src/CONFIG.C",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "b7aac5f3072597afb88ce5f9ecd01b1532e785c6caac49d351d5cf253f8e8694",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: the unit's whole _DATA image at DS [0x0f02,0x12ef), 0 fixups resolved, 0 differing bytes",
+      "artifact": "build/matched/CONFIG_DATA.bin"
+    },
+    {
+      "id": "PAD_269BF",
+      "start": 158143,
+      "end": 158144,
+      "kind": "PADDING",
+      "classification": "padding",
+      "padding_reason": "tlink_word_align_data",
+      "description": "TLINK word alignment of the next module's _DATA",
+      "artifact": "raw/PAD_269BF.bin"
+    },
+    {
+      "id": "HARDWARE_DATA",
+      "start": 158144,
+      "end": 158205,
+      "kind": "MATCHING_C",
+      "classification": "data",
+      "source": "src/HARDWARE.C",
+      "compile_flags": {
+        "model": "s",
+        "flags": ""
+      },
+      "object_sha256": "cff5169add730556da30efd6e39b6785442533dd8b0ab437887ab8914eacf901",
+      "matching_status": "EXACT",
+      "matching_status_note": "tools/verify_sources.py: the unit's whole _DATA image at DS [0x12f0,0x132d), 0 fixups resolved, 0 differing bytes",
+      "artifact": "build/matched/HARDWARE_DATA.bin"
+    },
+    {
+      "id": "PAD_269FD",
+      "start": 158205,
+      "end": 158206,
+      "kind": "PADDING",
+      "classification": "padding",
+      "padding_reason": "tlink_word_align_data",
+      "description": "TLINK word alignment of the next module's _DATA",
+      "artifact": "raw/PAD_269FD.bin"
+    },
+    {
+      "id": "RAW_269FE_26A79",
+      "start": 158206,
+      "end": 158329,
+      "kind": "RAW_UNKNOWN",
+      "classification": "unclassified",
+      "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
+      "artifact": "raw/RAW_269FE_26A79.bin"
+    },
+    {
+      "id": "PAD_26A79",
+      "start": 158329,
+      "end": 158330,
+      "kind": "PADDING",
+      "classification": "padding",
+      "padding_reason": "tlink_word_align_data",
+      "description": "TLINK word alignment of the next module's _DATA",
+      "artifact": "raw/PAD_26A79.bin"
+    },
+    {
+      "id": "RAW_26A7A_26E0A",
+      "start": 158330,
       "end": 159242,
       "kind": "RAW_UNKNOWN",
       "classification": "unclassified",
       "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_25778_26E0A.bin"
+      "artifact": "raw/RAW_26A7A_26E0A.bin"
     },
     {
       "id": "DATA_LEVELS",

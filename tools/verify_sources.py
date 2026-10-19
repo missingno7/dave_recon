@@ -101,8 +101,13 @@ def verify_all(asm_results=()):
         r["census"] = census_check(r)
         if r["census"]["problems"] and r["verdict"] == "EXACT":
             r["verdict"] = "MISMATCH"
+        data_linked = r.pop("data_linked", None)
+        text_linked = r.pop("text_linked", None)
         if r["verdict"] == "EXACT":
-            (OUT / f"{src.stem}.bin").write_bytes(mf._IMAGE[r["file_start"]:r["file_end"]])
+            # the compiler's linked bytes (equal to the image: that is what EXACT means)
+            (OUT / f"{src.stem}.bin").write_bytes(text_linked)
+            if data_linked is not None:
+                (OUT / f"{src.stem}_DATA.bin").write_bytes(data_linked)
         results.append(r)
     return results
 
@@ -176,7 +181,7 @@ def composition(results, asm_results) -> list:
 ASM_RANGE_CS = (0x6F25, 0x9413)   # hand-written assembly (docs/function-census.md, layout/assembler.json)
 
 
-def sync_manifest(results, asm_results=()):
+def sync_manifest(results, asm_results=(), composition_result=None):
     bounds = mf.census_boundaries()
     manifest = mf.load_manifest()
     backup = mf.MANIFEST_PATH.read_text()
@@ -184,7 +189,8 @@ def sync_manifest(results, asm_results=()):
     regions = []
     for r in sorted(manifest["regions"], key=lambda r: r["start"]):
         if r["kind"] in ("MATCHING_C", "MATCHING_ASM") or (
-                r["kind"] == "PADDING" and r.get("padding_reason") == "tlink_word_align_asm"):
+                r["kind"] == "PADDING" and r.get("padding_reason") in ("tlink_word_align_asm",
+                                                                       "tlink_word_align_data")):
             r = {"id": "tmp", "start": r["start"], "end": r["end"], "kind": "RAW_UNKNOWN",
                  "classification": "unknown"}
         if regions and regions[-1]["kind"] == "RAW_UNKNOWN" and r["kind"] == "RAW_UNKNOWN" \
@@ -192,7 +198,7 @@ def sync_manifest(results, asm_results=()):
             regions[-1]["end"] = r["end"]
         else:
             regions.append(dict(r))
-    # 2. carve each EXACT source out of RAW_UNKNOWN
+    # 2. carve each EXACT unit's _TEXT out of RAW_UNKNOWN
     for res in sorted((r for r in results if r["verdict"] == "EXACT"), key=lambda r: r["file_start"]):
         if res["cs_start"] not in bounds or res["cs_end"] not in bounds:
             raise SystemExit(f"{res['source']}: extent [{res['cs_start']:#x},{res['cs_end']:#x}) "
@@ -252,6 +258,45 @@ def sync_manifest(results, asm_results=()):
                 and regions[i + 1]["start"] % 2 == 0):
             r.update(kind="PADDING", classification="padding", padding_reason="tlink_word_align_asm",
                      description="TLINK word alignment before a WORD-aligned TASM _TEXT")
+
+    def carve(a, b, region, what):
+        idx = next((i for i, r in enumerate(regions)
+                    if r["kind"] == "RAW_UNKNOWN" and r["start"] <= a and b <= r["end"]), None)
+        if idx is None:
+            raise SystemExit(f"{what}: [{a:#x},{b:#x}) is not inside one RAW_UNKNOWN region")
+        old = regions[idx]
+        new = ([{**old, "end": a}] if old["start"] < a else []) + [region] + \
+              ([{**old, "start": b}] if b < old["end"] else [])
+        regions[idx:idx + 1] = new
+
+    # 5. each EXACT unit's _DATA (initialised globals, local-aggregate images,
+    #    string pool), rebuilt from the compiler's linked _DATA image
+    for res in sorted((r for r in results if r["verdict"] == "EXACT" and r.get("data_check")),
+                      key=lambda r: r["data_check"]["ds"]):
+        d = res["data_check"]
+        stem = pathlib.Path(res["source"]).stem
+        a = mf.DGROUP_FILE + d["ds"]
+        carve(a, a + d["length"], {
+            "id": f"{stem}_DATA", "start": a, "end": a + d["length"], "kind": "MATCHING_C",
+            "classification": "data", "source": res["source"],
+            "compile_flags": {"model": res["model"], "flags": res["flags"]},
+            "object_sha256": res["object_sha256"], "matching_status": "EXACT",
+            "matching_status_note": f"tools/verify_sources.py: the unit's whole _DATA image at DS "
+                                    f"[{d['ds']:#06x},{d['ds'] + d['length']:#06x}), {d['fixups']} "
+                                    "fixups resolved, 0 differing bytes",
+            "artifact": f"build/matched/{stem}_DATA.bin"}, res["source"])
+    # 6. TLINK's word-alignment pads between DGROUP contributions, as proven by
+    #    the composition check (one zero byte before an even start)
+    for c in composition_result or ():
+        if c["segment"] != "_DATA":
+            continue
+        for p in c["pieces"]:
+            if p["owner"] == "TLINK word-alignment pad":
+                a = mf.DGROUP_FILE + p["start"]
+                carve(a, a + 1, {"id": f"PAD_{a:X}", "start": a, "end": a + 1, "kind": "PADDING",
+                                 "classification": "padding", "padding_reason": "tlink_word_align_data",
+                                 "description": "TLINK word alignment of the next module's _DATA",
+                                 "artifact": f"raw/PAD_{a:X}.bin"}, "pad")
     for r in regions:
         if r["kind"] == "PADDING" and r.get("padding_reason") == "tlink_word_align_asm":
             r["id"] = f"PAD_{r['start']:X}"
@@ -371,7 +416,7 @@ def main():
             raise SystemExit("refusing to sync: not every source is EXACT")
         if asm_bad:
             raise SystemExit("refusing to sync: not every assembly module is EXACT")
-        sync_manifest(results, asm_results)
+        sync_manifest(results, asm_results, comp)
         print("manifest synced; reconstruction exact")
     sys.exit(1 if bad or asm_bad else 0)
 

@@ -295,6 +295,7 @@ def match_object(obj_bytes: bytes, source: pathlib.Path, at: int | None = None,
                 if n != "_TEXT" and length and n not in segs]
 
     data_check = None
+    dlinked = None
     cand = declared_segment(mod, "_DATA")
     if "_DATA" in segs and cand:
         dlinked, dfixups = link(mod, segs["_DATA"], segs, symbols, image, seg_name="_DATA")
@@ -362,6 +363,8 @@ def match_object(obj_bytes: bytes, source: pathlib.Path, at: int | None = None,
         "bss_check": bss_check,
         "unplaced_segments": unplaced,
         "fixups": fixups,
+        "data_linked": dlinked,          # bytes (not JSON): the linked _DATA image
+        "text_linked": linked,           # bytes (not JSON): the linked _TEXT
     }
 
 
@@ -452,7 +455,7 @@ def main():
 
     r = run_match(args.source, args.flags, int(args.at, 0) if args.at else None, args.model)
     if args.json:
-        print(json.dumps({k: v for k, v in r.items()}, indent=1))
+        print(json.dumps({k: v for k, v in r.items() if not k.endswith("_linked")}, indent=1))
     else:
         print(f"{r['verdict']}: {r['source']} -> cs [{r['cs_start']:#06x},{r['cs_end']:#06x}) "
               f"file [{r['file_start']:#x},{r['file_end']:#x}) {r['length']} bytes, "

@@ -190,12 +190,12 @@
     {
       "target": "Historical linker/translation-unit reconstruction",
       "category": "PRODUCTIVE_FRONTIER",
-      "state": "in progress (2026-10-19)",
+      "state": "units done, link probe identical (2026-10-19); final whole build pending",
       "matches": "Fixed-placement ownership (layout/manifest.json) remains the proof scaffold, per docs/build-reconstruction.md's four-level ladder.",
-      "evidence": "docs/link-forensics.md; TC++ 1.00 _BSS order key recovered (docs/compiler-behaviors.md); unit reconstruction worker running",
-      "unblock": "Reconstruct progressively once enough matching-C/ASM components exist to infer real module/segment ordering; do not wait for this before matching individual components.",
+      "evidence": "docs/link-forensics.md: src/DAVE.C, CONFIG.C, HARDWARE.C are the three C units, each ONE object whose _TEXT/_DATA/_BSS reproduce the original (tools/verify_sources.py, composition-checked); _BSS storage names in src/DAVE.H (tools/bss_names.py, docs/bss-map.md); tools/link_probe.py: TLINK 3.0 on C0S + units + asm modules + stand-ins (tools/omf_writer.py) + CS.LIB gives a load module identical to the original (tests/test_link_probe.py).",
+      "unblock": "Final build: build the data-only module and far blobs from the codecs as OMF (tools/omf_writer.py), adopt the C symbol names in src/asm, link with TLINK, then LZEXE.",
       "leverage": "Needed only for 'structural build' / 'emergent whole build' levels, not for continuing placement/component-level matching now.",
-      "first_unresolved_fact": "exact C unit boundaries, game _DATA ownership (DS 0xA8-0x173A), BSS names reproducing the hash order, a full TLINK link of all objects"
+      "first_unresolved_fact": "which unit DEFINES the shared variables in DS 0x654C-0x9EC8 and the exact CONFIG/HARDWARE code boundary (not observable; chosen by usage, docs/link-forensics.md); the asm modules still extern C data by placeholder (_D_XXXX); the data-only module (palette + g_levels) and far blobs are stand-ins built from original bytes, not yet from the codecs"
     },
     {
       "target": "Confirm exact Dangerous Dave release/episode variant",
