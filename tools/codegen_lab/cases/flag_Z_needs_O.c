@@ -4,8 +4,8 @@
  *   -O -Z drops the second `les bx,[fp]` / `mov bx,[np]` reload. The
  *   original keeps such reloads (see orig_F47F8_structarray: the index
  *   multiply is recomputed per access) and `jmp $+2`, so neither -O nor -Z
- *   is in effect. Note also: storing a global and reading it back
- *   (`a = b; c = b;`) always reloads, even with -O -Z.
+ *   is in effect. (-O -Z would also drop _main's `a3 c0 9e a1 c0 9e`
+ *   store-then-reload; `a = b; c = b;` below reloads b even under -O -Z.)
  * @expect-text:
  *   55 8b ec 39 26 .. .. 72 03 e8 .. .. c4 1e .. ..
  *   26 c7 07 01 00 c4 1e .. .. 26 c7 47 02 02 00 5d
