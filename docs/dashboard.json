@@ -1,0 +1,87 @@
+{
+ "schema": "dave-dashboard-v1",
+ "image": {
+  "unpacked_bytes": 172848,
+  "sections": {
+   "header": 512,
+   "text": 45840,
+   "far_data": 106944,
+   "dgroup_initialised": 19552
+  }
+ },
+ "game_code": {
+  "range_cs": [
+   569,
+   37907
+  ],
+  "bytes": 37338,
+  "c": {
+   "functions": 90,
+   "bytes": 27884,
+   "matched_functions": 1,
+   "matched_bytes": 94,
+   "partial_attempts_with_notes": 0
+  },
+  "asm": {
+   "functions_identified": 48,
+   "bytes_in_functions": 6265,
+   "bytes_unassigned": 3189,
+   "matched_bytes": 0
+  }
+ },
+ "runtime": {
+  "known_library_bytes": 3301,
+  "text_bytes_after_game_code": 7933,
+  "raw_bytes_in_runtime_area": 5201
+ },
+ "data": {
+  "far_and_dgroup_bytes": 126496,
+  "structured_bytes": 0,
+  "raw_bytes": 126496
+ },
+ "raw": {
+  "code_bytes": 42445,
+  "data_bytes": 126496
+ },
+ "unresolved": {
+  "indirect_control_flow_sites": 3,
+  "census_gap_bytes": 3189
+ },
+ "levels": {
+  "A_byte_ownership": "complete (100% owned, exact fixed-placement rebuild)",
+  "B_independent_components_pct_of_game_code": 0.25,
+  "C_emergent_layout": "not started (fixed placement only)",
+  "D_byte_identical_build": "no"
+ },
+ "open_frontiers": [
+  {
+   "category": "PRODUCTIVE_FRONTIER",
+   "target": "Re-derive g_levels' true base address"
+  },
+  {
+   "category": "PRODUCTIVE_FRONTIER",
+   "target": "Continue matching-C promotions inside game code"
+  },
+  {
+   "category": "DEFERRED_NOT_BLOCKING",
+   "target": "Exact LZEXE 0.91 recompression (packing reconstruction, Level 2)"
+  },
+  {
+   "category": "DEFERRED_NOT_BLOCKING",
+   "target": "Historical linker/translation-unit reconstruction"
+  },
+  {
+   "category": "DEFERRED_NOT_BLOCKING",
+   "target": "Confirm exact Dangerous Dave release/episode variant"
+  },
+  {
+   "category": "PRODUCTIVE_FRONTIER",
+   "target": "Far data segment map (between _TEXT and DGROUP, 106,944 bytes) and g_levels"
+  },
+  {
+   "category": "PRODUCTIVE_FRONTIER",
+   "target": "ASM modules: assembler identity, module boundaries, MATCHING_ASM"
+  }
+ ],
+ "delta_vs_HEAD": null
+}
