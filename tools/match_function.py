@@ -126,10 +126,13 @@ def link(mod, base: int, segs: dict, symbols: SymbolMap, image: bytes):
             name = fx["target"]
             code = symbols.resolve_code(name)
             data = symbols.resolve_data(name)
+            far = symbols.resolve_far(name)
             if code is not None:
                 para, off = TEXT_PARA, code
             elif data is not None:
                 para, off = DGROUP_PARA, data
+            elif far is not None:
+                para, off = far
         elif fx["target_kind"] == "segment":
             seg = fx["target"]
             if seg == "_TEXT":

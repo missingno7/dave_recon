@@ -12,6 +12,8 @@ Three sources, in priority order:
 3. Placeholder names that carry their own address:
      _F_XXXX  -> code at FILE offset 0xXXXX (the census id convention)
      _D_XXXX  -> data at DS offset 0xXXXX
+     _P<PARA>_<OFF> -> far data at load-module paragraph PARA, offset OFF
+                       (e.g. _P0B31_0000 = the demo segment)
    These let a candidate reference not-yet-named functions/globals while the
    matcher still verifies every reference byte-for-byte.
 
@@ -39,6 +41,7 @@ class SymbolMap:
     def __init__(self):
         self.code: dict[str, int] = {}     # name -> CS offset
         self.data: dict[str, int] = {}     # name -> DS offset
+        self.far: dict[str, tuple] = {}    # name -> (paragraph, offset) in a far data segment
         self.origin: dict[str, str] = {}
         self._load_library()
         self._load_curated()
@@ -49,6 +52,11 @@ class SymbolMap:
         doc = json.loads(CURATED.read_text(encoding="utf-8"))
         for name, e in doc.get("code", {}).items():
             self.code[name] = int(e["cs"], 0) if isinstance(e["cs"], str) else e["cs"]
+            self.origin[name] = "curated"
+        for name, e in doc.get("far", {}).items():
+            para = int(e["para"], 0) if isinstance(e["para"], str) else e["para"]
+            off = int(e["off"], 0) if isinstance(e["off"], str) else e["off"]
+            self.far[name] = (para, off)
             self.origin[name] = "curated"
         for name, e in doc.get("data", {}).items():
             self.data[name] = int(e["ds"], 0) if isinstance(e["ds"], str) else e["ds"]
@@ -107,6 +115,15 @@ class SymbolMap:
         m = re.fullmatch(r"_F_([0-9A-Fa-f]{4,5})", name)
         if m:
             return int(m.group(1), 16) - HDR
+        return None
+
+    def resolve_far(self, name: str):
+        """Far data: curated name, or placeholder _P<PARA>_<OFF> (load-module paragraph)."""
+        if name in self.far:
+            return self.far[name]
+        m = re.fullmatch(r"_P([0-9A-Fa-f]{4})_([0-9A-Fa-f]{4})", name)
+        if m:
+            return int(m.group(1), 16), int(m.group(2), 16)
         return None
 
     def resolve_data(self, name: str):
