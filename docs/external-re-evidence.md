@@ -1,3 +1,5 @@
+> **Correction (2026-10-19):** the g_levels finding below is withdrawn. Binary evidence (docs/data-layout.md) proves the external claim g_levels = file 0x26E0A is CORRECT; the bytes we read as a text string are level 1's never-read monster-path area. The level-6 warp reads file 0x2690A.
+
 # External RE import: yo-yo-yo-jbo/dangerous_dave
 
 Per `docs/blockers.json`'s "Import and verify yo-yo-yo-jbo/dangerous_dave RE
