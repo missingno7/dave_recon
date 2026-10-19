@@ -75,6 +75,12 @@ def assemble_many(sources, key: str | None = None, options: str | None = None,
     work.mkdir(parents=True)
     lines = ["@ECHO OFF", "D:", "CD \\"]
     stems = []
+    # INCLUDE files live next to the sources; the assembler sees them in D:\.
+    for inc_dir in {pathlib.Path(s).resolve().parent for s in sources}:
+        for inc in inc_dir.glob("*.inc"):
+            text = inc.read_text(encoding="latin1")
+            (work / inc.name.upper()).write_bytes(
+                text.replace("\r\n", "\n").replace("\n", "\r\n").encode("latin1"))
     for n, src in enumerate(sources, 1):
         stem = f"S{n:04d}"
         stems.append(stem)

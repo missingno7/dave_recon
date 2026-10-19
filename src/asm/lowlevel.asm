@@ -131,28 +131,9 @@ RleLiteral	dw	0			; ds 13a7  pending literal count
 
 		.CODE
 
-; ------------------------------------------------- row-offset tables (cs 6f26)
+; ---------------------- line offset tables: cs 6f26 CGA, 70b6 EGA, 7246 VGA
 
-CgaRowOfs	label	word		; 200 lines, even lines in bank 0, odd in bank 1
-y		=	0
-		rept	100
-		dw	y*80, 2000h+y*80
-y		=	y+1
-		endm
-
-EgaRowOfs	label	word		; cs 70b6: 200 lines of 40 bytes
-y		=	0
-		rept	200
-		dw	y*40
-y		=	y+1
-		endm
-
-VgaRowOfs	label	word		; cs 7246: 200 lines of 320 bytes
-y		=	0
-		rept	200
-		dw	y*320
-y		=	y+1
-		endm
+		include	vidtabs.inc
 
 ; ======================================================= sound (cs 73d6)
 

@@ -33,6 +33,11 @@ STRING_OPS = {"lodsb", "lodsw", "stosb", "stosw", "movsb", "movsw", "scasb", "sc
               "cmpsb", "cmpsw"}
 
 
+def is_branch_insn(i) -> bool:
+    return (i.group(capstone.CS_GRP_JUMP) or i.group(capstone.CS_GRP_CALL)
+            or i.mnemonic.startswith(("j", "loop", "call")))
+
+
 def hx(v: int) -> str:
     s = f"{v:X}h"
     return "0" + s if s[0] in "ABCDEF" else s
@@ -88,7 +93,7 @@ def main():
             pc += 1
             continue
         insns.append(("insn", i))
-        if i.group(capstone.CS_GRP_JUMP) or i.group(capstone.CS_GRP_CALL):
+        if is_branch_insn(i):
             if i.operands and i.operands[0].type == x86.X86_OP_IMM:
                 targets.add(i.operands[0].imm & 0xFFFF)
         pc += i.size
@@ -113,7 +118,7 @@ def main():
         bp_based = m.base == x86.X86_REG_BP
         sym = None
         cs_like = seg == "cs" or (seg is None and any(x <= i.address < y for x, y in dscs))
-        if (m.base or m.index) and not bp_based and disp >= 0x100:
+        if (m.base or m.index) and not bp_based and 0x100 <= disp < 0xFF00:
             if dwin[0] <= disp < dwin[1] and not cs_like:
                 sym = f"V_{disp:04X}"
                 dvars.add(disp)
@@ -181,7 +186,7 @@ def main():
             mn = "call"
         if mn == "ljmp":
             mn = "jmp"
-        is_branch = i.group(capstone.CS_GRP_JUMP) or i.group(capstone.CS_GRP_CALL)
+        is_branch = is_branch_insn(i)
         for n, op in enumerate(i.operands):
             if op.type == x86.X86_OP_REG:
                 ops.append(i.reg_name(op.reg))
