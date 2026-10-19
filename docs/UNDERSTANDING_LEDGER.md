@@ -31,8 +31,7 @@ exact codecs.
   observed jump heights; speed throttle DS 0x5794.
 - **U-G3** DS 0x0118 "per-level option byte" (102 refs together with
   0x6156): meaning.
-- **U-G4** DS 0x6150 (animation frame?) and 0x615A (10-tick animation
-  countdown; the external RE's name "levels_left" is contradicted).
+- **U-G4** DS 0x6150 (animation frame?). (0x615A closed, see below.)
 - **U-G5** Monster record fields (DS 0x5742-0x578A, 4 slots: active, x, y,
   path index, fire reload, sprite, anim count, frame, fire count, move count)
   and per-level monster init block (DS 0x0496, 10 x 0x50).
@@ -77,6 +76,12 @@ exact codecs.
   0x9EC2 = 0 (oracle trace 2026-10-20). Rename in the native state model.
 
 ## Closed (with evidence)
+
+- **DS 0x615A** = the animated-tile period counter: `animate_tiles` steps
+  every animated tile one frame when it counts down to 0 and reloads it with
+  10 (`init_game_state` also loads 10). The external RE's "levels_left" is
+  wrong. Evidence: source; native `anim_step` equivalent over 120 oracle
+  ticks, and a period-9 mutation diverges at DS 0x615A on tick 10.
 
 - **g_levels** = DGROUP:0x173A, 10 x 0x500 records (256-byte monster path,
   10x100 tiles, 24 unread bytes); level-6 warp reads level index -1 = DS

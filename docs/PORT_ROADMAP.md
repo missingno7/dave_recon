@@ -74,7 +74,10 @@ names in `src/asm`); data-module provenance unknowable (D-2).
 
 ### Phase 3 -- readable native-oriented source
 - M3.1 `port/` skeleton: CMake, headless runner, bridge, CI target that
-  runs native unit tests without SDL.
+  runs native unit tests without SDL. *Started 2026-10-20:* CMake (C11,
+  MinGW gcc), `port/game/anim.c` (first native subsystem), test-only bridge
+  `port/tests/bridge/`, differential driver `tools/native_check.py` --
+  the whole verification pipeline is proven end to end on `animate_tiles`.
 - M3.2 Translate subsystems into `port/game/` one at a time, each verified
   against M1.2 boundary snapshots: pure logic first (tiles/collision,
   items, levels/warps, monsters, shots, player, death, demo input), then

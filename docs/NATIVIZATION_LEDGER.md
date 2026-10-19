@@ -55,11 +55,16 @@ tag `historical-baseline-v1`). Inventory measured 2026-10-20 from `src/*.C`,
 | `time()` (seeds RNG) | `init_game_once`/`load_level` | random seed | injectable seed (fixed in tests) | Phase 6 |
 | TCC/TASM/TLINK/LZEXE toolchain, DOSBox | build + oracle | historical build and reference | CMake + modern compiler for the port; DOSBox only for the oracle | the native build never uses them |
 
-## C. Compatibility scaffolding (none yet)
+## C. Compatibility scaffolding
 
-No compatibility layer exists yet. Each one introduced must be listed here
-with what has to be understood before it can be removed.
+None in the game. Test-only verification code (never linked into the game):
+
+| scaffold | purpose | removal |
+|---|---|---|
+| `port/tests/bridge/bridge.c` | imports/exports native state from/to original DGROUP snapshots so native subsystems can be compared with the oracle | permanent TEST tool; must never be used by game/, present/ or platform/ code |
 
 ## D. Native code
 
-None yet. The native tree (`port/`, see PORT_ROADMAP.md) starts in Phase 3.
+| native unit | original | state | evidence |
+|---|---|---|---|
+| `port/game/anim.c` `anim_step()` | `animate_tiles` (DAVE.C, F_332C) | Readable, Native, Decoupled (state part; redraw reported via callback to presentation), Verified on `attract_boundaries` (120 ticks, state changed every tick, whole DGROUP equal) | `tools/native_check.py animate_tiles`, `tests/test_native.py`; mutation (period 9) caught at tick 10, DS 0x615A |
