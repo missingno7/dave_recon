@@ -7,6 +7,7 @@ Idempotent. Does three things, verifying hashes at every step:
    $DAVE_TOOLCHAIN_SRC, then C:/tools/borland-turbo-c++-1.00/files (see that
    directory's provenance.json: archive.org item borland-turbo-c-plus-plus).
    Every file listed in layout/toolchain.json is checked against its sha256.
+1b. Installs the pinned assembler (layout/assembler.json) into toolchain/ASM/.
 2. Copies the original game files into assets/ if missing, from
    $DAVE_ASSETS or D:/Prog/dave_recon/assets (the primary checkout), and
    checks them against docs/specimen-manifest.json's sizes/hashes.
@@ -86,7 +87,33 @@ def unpack():
     print("unpacked image: ok")
 
 
+def install_assembler():
+    """The pinned assembler for src/asm/*.asm (layout/assembler.json "files"),
+    copied from its local extracted source into toolchain/ASM/ and hash-checked.
+    The other candidates listed there are copied too when present (they are
+    only used by identification experiments, tools/asm_identify.py)."""
+    cfg = json.loads((ROOT / "layout" / "assembler.json").read_text())
+    for entry in cfg["files"]:
+        dst = TOOLCHAIN / "ASM" / entry["path"]
+        if not dst.exists():
+            src = pathlib.Path(entry["source"])
+            if not src.exists():
+                raise SystemExit(f"no assembler at {src}; see layout/assembler.json")
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dst)
+        if sha256(dst) != entry["sha256"]:
+            raise SystemExit(f"toolchain/ASM/{entry['path']} does not match its pinned sha256")
+    for key, entry in cfg.get("candidates_installed_for_experiments", {}).items():
+        src = pathlib.Path(entry["source"])
+        dst = TOOLCHAIN / "ASM" / key / src.name
+        if not dst.exists() and src.exists() and sha256(src) == entry["sha256"]:
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dst)
+    print("assembler: ok")
+
+
 if __name__ == "__main__":
     install_toolchain()
+    install_assembler()
     install_assets()
     unpack()
