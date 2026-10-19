@@ -70,7 +70,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "db5f7aa49fa6381b7cab220fa0b29e522af1bf2054617d0af3a256887020fe33",
+      "object_sha256": "4ecf3e58f7e06a2403bb89dfa97939808bf8b72a44c3cea14ccd62342c4111f5",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 2112 fixups, 0 differing bytes",
       "artifact": "build/matched/DAVE.bin"
@@ -86,7 +86,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "b7aac5f3072597afb88ce5f9ecd01b1532e785c6caac49d351d5cf253f8e8694",
+      "object_sha256": "095731d0433754d73a3e81d1c6d0a3f4ce7eac32de519ffab0505d956f170443",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 456 fixups, 0 differing bytes",
       "artifact": "build/matched/CONFIG.bin"
@@ -102,7 +102,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "cff5169add730556da30efd6e39b6785442533dd8b0ab437887ab8914eacf901",
+      "object_sha256": "5d87a284fc00eddf4abf18c738cacd70dd36e784738572c43b02dfc0b03fab60",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: strict link, every fixup resolved, 254 fixups, 0 differing bytes",
       "artifact": "build/matched/HARDWARE.bin"
@@ -996,7 +996,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "db5f7aa49fa6381b7cab220fa0b29e522af1bf2054617d0af3a256887020fe33",
+      "object_sha256": "4ecf3e58f7e06a2403bb89dfa97939808bf8b72a44c3cea14ccd62342c4111f5",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: the unit's whole _DATA image at DS [0x00a8,0x0f02), 0 fixups resolved, 0 differing bytes",
       "artifact": "build/matched/DAVE_DATA.bin"
@@ -1012,7 +1012,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "b7aac5f3072597afb88ce5f9ecd01b1532e785c6caac49d351d5cf253f8e8694",
+      "object_sha256": "095731d0433754d73a3e81d1c6d0a3f4ce7eac32de519ffab0505d956f170443",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: the unit's whole _DATA image at DS [0x0f02,0x12ef), 0 fixups resolved, 0 differing bytes",
       "artifact": "build/matched/CONFIG_DATA.bin"
@@ -1038,7 +1038,7 @@
         "model": "s",
         "flags": ""
       },
-      "object_sha256": "cff5169add730556da30efd6e39b6785442533dd8b0ab437887ab8914eacf901",
+      "object_sha256": "5d87a284fc00eddf4abf18c738cacd70dd36e784738572c43b02dfc0b03fab60",
       "matching_status": "EXACT",
       "matching_status_note": "tools/verify_sources.py: the unit's whole _DATA image at DS [0x12f0,0x132d), 0 fixups resolved, 0 differing bytes",
       "artifact": "build/matched/HARDWARE_DATA.bin"
@@ -1058,8 +1058,7 @@
       "start": 158206,
       "end": 158329,
       "kind": "RAW_UNKNOWN",
-      "classification": "unclassified",
-      "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
+      "classification": "unknown",
       "artifact": "raw/RAW_269FE_26A79.bin"
     },
     {
@@ -1073,13 +1072,22 @@
       "artifact": "raw/PAD_26A79.bin"
     },
     {
-      "id": "RAW_26A7A_26E0A",
+      "id": "RAW_26A7A_26B0A",
       "start": 158330,
-      "end": 159242,
+      "end": 158474,
       "kind": "RAW_UNKNOWN",
-      "classification": "unclassified",
-      "description": "The rest of the load module (game code + data + BSS-adjacent static storage) after the identified C0S startup module. Bootstrap placeholder before function census, disassembly, and matching-C/ASM promotion begin.",
-      "artifact": "raw/RAW_26A7A_26E0A.bin"
+      "classification": "unknown",
+      "artifact": "raw/RAW_26A7A_26B0A.bin"
+    },
+    {
+      "id": "DATA_PALETTE",
+      "start": 158474,
+      "end": 159242,
+      "kind": "STRUCTURED_DATA",
+      "classification": "data",
+      "generator": "palette",
+      "description": "g_vga_palette: 256 x 6-bit RGB VGA DAC palette, DS:0x143A; codec tools/palette.py",
+      "matching_status": "EXACT_ROUNDTRIP"
     },
     {
       "id": "DATA_LEVELS",

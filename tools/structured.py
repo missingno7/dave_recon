@@ -65,6 +65,10 @@ def _gen(module: str, *args):
 
 
 GENERATORS = {
+    "palette": {"extent": lambda: __import__("palette").extent(),
+                "generate": lambda: __import__("palette").generate(),
+                "description": "g_vga_palette: 256 x 6-bit RGB VGA DAC palette, DS:0x143A; "
+                               "codec tools/palette.py"},
     "levels": {"extent": _levels_extent, "generate": _levels_generate,
                "description": "g_levels: 10 level records (256-byte monster path, 100x10 tile map, "
                               "24 unread bytes), DS:0x173A; codec tools/levels.py"},

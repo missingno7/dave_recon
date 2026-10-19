@@ -102,8 +102,8 @@ def main():
             "A_byte_ownership": "complete (100% owned, exact fixed-placement rebuild)",
             "B_independent_components_pct_of_game_code": round(
                 100 * (kind_bytes({"MATCHING_C", "MATCHING_ASM"})) / game_code_bytes, 2),
-            "C_emergent_layout": "not started (fixed placement only)",
-            "D_byte_identical_build": "no",
+            "C_emergent_layout": "complete: TLINK lays out C0S + 3 C units + 2 ASM modules + codec-built data objects + CS.LIB into the identical load module (tools/build.py)",
+            "D_byte_identical_build": "yes: tools/build.py -> LZEXE-packed DAVE.EXE == original (sha256 1ae77982...); tests/test_build.py",
         },
         "open_frontiers": [{"category": f["category"], "target": f["target"]}
                            for f in json.loads((ROOT / "docs" / "blockers.json").read_text())["frontiers"]

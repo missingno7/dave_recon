@@ -36,12 +36,12 @@
  },
  "data": {
   "far_and_dgroup_bytes": 126496,
-  "structured_bytes": 119728,
-  "raw_bytes": 1035
+  "structured_bytes": 120496,
+  "raw_bytes": 267
  },
  "raw": {
   "code_bytes": 0,
-  "data_bytes": 1035
+  "data_bytes": 267
  },
  "unresolved": {
   "indirect_control_flow_sites": 3,
@@ -50,8 +50,8 @@
  "levels": {
   "A_byte_ownership": "complete (100% owned, exact fixed-placement rebuild)",
   "B_independent_components_pct_of_game_code": 112.69,
-  "C_emergent_layout": "not started (fixed placement only)",
-  "D_byte_identical_build": "no"
+  "C_emergent_layout": "complete: TLINK lays out C0S + 3 C units + 2 ASM modules + codec-built data objects + CS.LIB into the identical load module (tools/build.py)",
+  "D_byte_identical_build": "yes: tools/build.py -> LZEXE-packed DAVE.EXE == original (sha256 1ae77982...); tests/test_build.py"
  },
  "open_frontiers": [
   {
@@ -65,9 +65,9 @@
  ],
  "delta_vs_HEAD": {
   "c_matched_functions": 0,
-  "c_matched_bytes": 4740,
+  "c_matched_bytes": 0,
   "asm_matched_bytes": 0,
   "known_library_bytes": 0,
-  "structured_data_bytes": 0
+  "structured_data_bytes": 768
  }
 }
