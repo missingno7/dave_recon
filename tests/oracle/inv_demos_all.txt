@@ -1,0 +1,7 @@
+# Semantic inventory (M2.2): like inv_demos.txt, but with per-subsystem
+# boundary snapshots for every tick of the first four attract demos (levels
+# 2, 9, 3 and 5: walking, jumping, climbing, jetpack, deadly tiles, monster
+# shots, a jump off the top of the screen). Heavy: ~76,000 DGROUP dumps.
+duration 200000
+png_every 0
+boundaries 5400

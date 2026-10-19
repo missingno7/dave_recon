@@ -83,15 +83,15 @@ Device1		equ	word ptr Video1Type[di]
 ; ------------------------------------------------------- C-owned globals
 
 		.DATA
-		extrn	_D_8604:word	; picture table: 16-byte entries {width, height, offset}
-		extrn	_D_8A18:word	; segment of the 8x8 font
-		extrn	_D_8A20:word	; segment of the picture data
-		extrn	_D_8B32:word	; graphics mode (GR_CGA / GR_EGA / GR_VGA)
+		extrn	_g_pic_table:word	; picture table: 16-byte entries {width, height, offset}
+		extrn	_g_pic_charptr:dword	; far pointer to the 8x8 font (segment used)
+		extrn	_g_pic_picptr_th:dword	; far pointer to the picture data (segment used); C storage name of g_pic_picptr (DAVE.H)
+		extrn	_g_video_mode:word	; graphics mode (GR_CGA / GR_EGA / GR_VGA)
 
-PicTable	equ	_D_8604
-FontSeg		equ	_D_8A18
-PicSeg		equ	_D_8A20
-GrMode		equ	_D_8B32
+PicTable	equ	_g_pic_table
+FontSeg		equ	word ptr _g_pic_charptr+2
+PicSeg		equ	word ptr _g_pic_picptr_th+2
+GrMode		equ	_g_video_mode
 
 ; ------------------------------------------------------ module variables
 

@@ -28,8 +28,11 @@ Companion documents: `FIDELITY.md` (oracle + equivalence contract),
    platform layer, presentation state in the presentation layer.
 5. **Three layers** (Phase 7 is where they are finalised, but code is
    written into them from the start):
-   - `port/game/` pure simulation: `game_tick(struct game*, const struct
-     tick_input*)`, deterministic, headless, no I/O.
+   - `port/game/` pure simulation: `game_step(struct game*, const struct
+     frame_input*, struct frame_output*)` advances ONE retrace ("frame",
+     state-model.md D2); multi-retrace sequences are explicit state; the
+     output is the ordered draw-command list (D1) and sound requests.
+     Deterministic, headless, no I/O.
    - `port/present/` original logical presentation: 320x200 indexed
      framebuffer per original video mode, text, sound *requests* -> logical
      tone timeline, resource readers (built from the existing codecs'
@@ -59,6 +62,9 @@ names in `src/asm`); data-module provenance unknowable (D-2).
 - [ ] M1.3 Scenario corpus: all 5 demos; scripted per-level play; high-score
       persistence (DSCORES.DAV after run); config screens.
 - [ ] M1.4 CGA/EGA capture (EGA planar memory needs plane-aware dumps).
+- [ ] M1.6 Retrace-granularity observation (state-model.md D2): a capture
+      point at `WaitVBL`, per-frame input reconstruction from scenario
+      scripts, draw-order capture for the D1 draw-command contract.
 - [x] M1.5 `tests/test_oracle.py` (opt-in: DAVE_ORACLE_TESTS=1): repeat-run contract.
 **Gate:** every corpus scenario passes the repeat-run contract.
 
@@ -66,15 +72,25 @@ names in `src/asm`); data-module provenance unknowable (D-2).
 - M2.1 Generated semantic inventory (`docs/semantic-inventory.json`): every
   function, asm proc, global, data object with status (understood /
   partial / behaviour-only / representation-only / unresolved) and evidence,
-  drawn from source headers and the ledgers.
+  drawn from source headers and the ledgers. *Done 2026-10-20:*
+  `tools/semantic_inventory.py` (`--check`, `tests/test_semantic_inventory.py`)
+  writes `docs/semantic-inventory.{json,md}`: 90 C functions, 60 asm
+  procedures, 226 data objects, 17 record formats, 19 subsystems, relations
+  parsed mechanically and cross-checked against the binary call graph.
 - M2.2 Close UNDERSTANDING_LEDGER items, driven by oracle experiments
-  (watchpoints on specific fields, boundary snapshots).
-- M2.3 Design `struct game` from the inventory (decision 4).
+  (watchpoints on specific fields, boundary snapshots). *In progress:*
+  U-G1..U-G8, U-S1, U-S2, U-M1, U-M2 closed (`tools/semantic_experiments.py`
+  on `tests/oracle/inv_demos*.txt`); open: U-G9, U-M3, U-R*, U-T*.
+- M2.3 Design `struct game` from the inventory (decision 4). *Proposal:*
+  `docs/state-model.md`, awaiting approval (questions Q1-Q7 there).
 **Gate:** no gameplay-relevant item unresolved; remaining unknowns explicit.
 
 ### Phase 3 -- readable native-oriented source
 - M3.1 `port/` skeleton: CMake, headless runner, bridge, CI target that
-  runs native unit tests without SDL.
+  runs native unit tests without SDL. *Started 2026-10-20:* CMake (C11,
+  MinGW gcc), `port/game/anim.c` (first native subsystem), test-only bridge
+  `port/tests/bridge/`, differential driver `tools/native_check.py` --
+  the whole verification pipeline is proven end to end on `animate_tiles`.
 - M3.2 Translate subsystems into `port/game/` one at a time, each verified
   against M1.2 boundary snapshots: pure logic first (tiles/collision,
   items, levels/warps, monsters, shots, player, death, demo input), then

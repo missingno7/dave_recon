@@ -1,20 +1,67 @@
 {
  "description": "Curated symbol addresses for strict fixup verification (tools/symbols.py). cs = CS offset (file offset - 0x200); ds = DGROUP offset (DS:0 = file 0x256D0); far = load-module paragraph:offset of a far data segment. Library _TEXT publics are derived automatically from KNOWN_LIBRARY regions, and the publics of the C units (src/*.C) and assembly modules (src/asm) from their placed objects (tools/verify_sources.py); neither is listed here. What remains are objects not (yet) built from source: the far data segments and the data-only module after the assembly.",
  "code": {
-  "_main": {"cs": "0x0239", "evidence": "C0S calls it (call at file 0x2FC, disp 0x013A); see tests/test_coordinates.py"},
-  "N_OVERFLOW@": {"cs": "0xB2FF", "evidence": "target of the `call` in every -N stack check (cmp [___brklvl],sp; jb +3; call N_OVERFLOW@) across all C functions; tail-jumps into C0S"}
+  "_main": {
+   "cs": "0x0239",
+   "evidence": "C0S calls it (call at file 0x2FC, disp 0x013A); see tests/test_coordinates.py"
+  },
+  "N_OVERFLOW@": {
+   "cs": "0xB2FF",
+   "evidence": "target of the `call` in every -N stack check (cmp [___brklvl],sp; jb +3; call N_OVERFLOW@) across all C functions; tail-jumps into C0S"
+  }
  },
  "data": {
-  "___brklvl": {"ds": "0x009A", "size": 2, "evidence": "operand of `cmp word ptr [0x9a],sp` in every -N stack check; TCC emits it as an EXTDEF ___brklvl fixup"},
-  "_g_vga_palette": {"ds": "0x143A", "size": 768, "evidence": "set_video_mode (F_6D64) loads all 256 DAC registers (INT 10h AX=1012h) from DS:0x143A; first object of the data-only module after tiles.asm's _DATA (word pad at DS 0x1439), followed by g_levels at DS 0x173A (docs/data-layout.md)"}
+  "___brklvl": {
+   "ds": "0x009A",
+   "size": 2,
+   "evidence": "operand of `cmp word ptr [0x9a],sp` in every -N stack check; TCC emits it as an EXTDEF ___brklvl fixup"
+  },
+  "_g_vga_palette": {
+   "ds": "0x143A",
+   "size": 768,
+   "evidence": "set_video_mode (F_6D64) loads all 256 DAC registers (INT 10h AX=1012h) from DS:0x143A; first object of the data-only module after tiles.asm's _DATA (word pad at DS 0x1439), followed by g_levels at DS 0x173A (docs/data-layout.md)"
+  },
+  "_g_levels": {
+   "ds": "0x173A",
+   "size": 12800,
+   "evidence": "asm stub file 0x8516 stores MK_FP(DGROUP,0x173A) into LevelPtr (DS 0x13AC); load_level indexes it by level*0x500 (docs/data-layout.md); second object of the data-only module after g_vga_palette"
+  }
  },
  "far": {
-  "_g_demo_bank": {"para": "0x0B31", "off": "0x0000", "evidence": "init_game_once (F_519B): g_demo_data = MK_FP(0x0B31,0), MZ relocation; DATA_DEMOS (docs/data-layout.md 5.1)"},
-  "_g_tileset_cga": {"para": "0x0C42", "off": "0x0000", "evidence": "load_graphics (F_1321) CGA case: RLEExpand(seg 0x0C42 + 4, ...); DATA_TILESET_CGA"},
-  "_g_tileset_vga": {"para": "0x11EF", "off": "0x0000", "evidence": "load_graphics (F_1321) VGA case; DATA_TILESET_VGA"},
-  "_g_sound_bank": {"para": "0x1C2E", "off": "0x0000", "evidence": "init_game_once (F_519B): SoundData = MK_FP(0x1C2E,0); DATA_SOUNDS"},
-  "_g_picfile_cga": {"para": "0x1D58", "off": "0x0000", "evidence": "load_graphics (F_1321): setup_graphics_pointers(MK_FP(0x1D58,0), 0); DATA_PICFILE_CGA"},
-  "_g_picfile_ega": {"para": "0x1E84", "off": "0x0000", "evidence": "load_graphics (F_1321) EGA case; DATA_PICFILE_EGA"},
-  "_g_picfile_vga": {"para": "0x20CC", "off": "0x0000", "evidence": "load_graphics (F_1321) VGA case; DATA_PICFILE_VGA"}
+  "_g_demo_bank": {
+   "para": "0x0B31",
+   "off": "0x0000",
+   "evidence": "init_game_once (F_519B): g_demo_data = MK_FP(0x0B31,0), MZ relocation; DATA_DEMOS (docs/data-layout.md 5.1)"
+  },
+  "_g_tileset_cga": {
+   "para": "0x0C42",
+   "off": "0x0000",
+   "evidence": "load_graphics (F_1321) CGA case: RLEExpand(seg 0x0C42 + 4, ...); DATA_TILESET_CGA"
+  },
+  "_g_tileset_vga": {
+   "para": "0x11EF",
+   "off": "0x0000",
+   "evidence": "load_graphics (F_1321) VGA case; DATA_TILESET_VGA"
+  },
+  "_g_sound_bank": {
+   "para": "0x1C2E",
+   "off": "0x0000",
+   "evidence": "init_game_once (F_519B): SoundData = MK_FP(0x1C2E,0); DATA_SOUNDS"
+  },
+  "_g_picfile_cga": {
+   "para": "0x1D58",
+   "off": "0x0000",
+   "evidence": "load_graphics (F_1321): setup_graphics_pointers(MK_FP(0x1D58,0), 0); DATA_PICFILE_CGA"
+  },
+  "_g_picfile_ega": {
+   "para": "0x1E84",
+   "off": "0x0000",
+   "evidence": "load_graphics (F_1321) EGA case; DATA_PICFILE_EGA"
+  },
+  "_g_picfile_vga": {
+   "para": "0x20CC",
+   "off": "0x0000",
+   "evidence": "load_graphics (F_1321) VGA case; DATA_PICFILE_VGA"
+  }
  }
 }

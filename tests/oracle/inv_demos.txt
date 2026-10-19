@@ -1,0 +1,7 @@
+# Semantic inventory (M2.2): attract mode with no input for 4 minutes, so
+# several of the built-in demos play; per-subsystem boundary snapshots for
+# the first 2000 ticks attribute every state change (Dave state bits, monster
+# and shot records, RNG seed) to the subsystem that makes it.
+duration 240000
+png_every 0
+boundaries 2000

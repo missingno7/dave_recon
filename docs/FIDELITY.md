@@ -30,9 +30,11 @@ the oracle traces (`tools/oracle.py`).
   per-sound rate (`TickDivide`/`TimerRate`) and chains the BIOS INT 8 every n
   ticks. The game only *requests* sounds (`PlaySound(n)`, priority-based).
   The tone stream runs on the PIT clock, not on game ticks.
-- **The title screen timeout is measured in real time** (the asynchronous
-  timer), so the number of retraces before the first demo tick varies by
-  one depending on PIT/retrace phase.
+- **The title screen timeout counts 1,200 retraces** (inventory U-T3), yet
+  the oracle sees the first demo tick vary by one retrace between runs.
+  Unexplained so far. Hypothesis to test: the title animation counter is an
+  uninitialised stack word (U-R5) whose garbage depends on what the
+  asynchronous INT 8/INT 9 handlers last pushed, i.e. on PIT phase.
 - **Randomness**: `srand(time())` at start-up plus the asm lagged-Fibonacci
   generator (`InitRnd`/`Random`). The oracle pins the DOS date and time.
 
@@ -63,7 +65,7 @@ Two runs are equivalent when:
 | level | compared | rule |
 |---|---|---|
 | gameplay state | per-tick DGROUP | byte-exact, excluding DS [0x1384,0x1392) (INT 8 driver phase: TickDivide, TickCount, TimerRate, SoundPtr, SoundPriority, saved copies) |
-| timing | retraces between consecutive ticks | exact, except the interval after a title-screen tick (real-time timeout) |
+| timing | retraces between consecutive ticks | exact, except the interval after a title-screen tick (unexplained +-1 retrace, U-T3) |
 | sound | sequence of (tick, sound id) | exact |
 | visuals | per-tick framebuffer | byte-exact |
 | persistence | DSCORES.DAV after the run | exact (planned: scenario-level check) |
