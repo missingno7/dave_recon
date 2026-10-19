@@ -1,0 +1,66 @@
+# Death, restart, game over and high-score entry with DSCORES.DAV
+# persistence (docs/FIDELITY.md section 5).
+#
+# Level 1 is played exactly as in level1_complete.txt (same events, same
+# ticks 1-884). On level 2 Right is held from the wait_for_input exit until
+# the game is over: Dave walks into the fire at column 3 four times.
+#
+# Covers: death on a deadly tile (attr 2, sound 3), the killed state 0x60 and
+# the death tick without a WaitVBL (two ticks in one retrace: tick 921 has
+# frames_since_prev 0), the 300-tick death timer (death_timer 299..1), the
+# restart at the level start with a life removed (handle_death), the
+# wait_for_input after each restart (left at once because Right is held),
+# lives 3 -> 2 -> 1 -> 0 -> -1 = game over, check_high_score: the table with
+# sounds 11/6 and WaitSound, "You got a high score!", initials typed as
+# o, r, c (upper-cased by input_initials), Enter, DSCORES.DAV rewritten,
+# then the title again.
+#
+# Tick ranges / evidence (run1, VGA):
+#   ticks 2-883       level 1 (see level1_complete.txt), score 3200
+#   ticks 884-2236    level 2 (index 1), 33.15-53.28 s
+#     919/920/921     death 1: fire at x 40 (sound 3), state 0x60, explosion
+#                     (state 0, death_timer 299, tick 921 in the same retrace)
+#     1220            restart: x 16, lives 2
+#     1258, 1597,     deaths 2, 3, 4 (lives 2, 1, 0)
+#     1936
+#     2236            death timer expires with lives 0: lives -1, game over
+#   tick 2237         title (game_state 3) at 59.90 s, after the high-score
+#                     entry (PIT sound activity of the table ends ~54.0 s)
+#   DSCORES.DAV       first record: level 2, score 03200, "ORC"; the other
+#                     four the defaults (level 1, 00100, "JON") that the game
+#                     itself wrote at start-up (assets/ has no DSCORES.DAV)
+#
+# Right is released and the initials typed inside the game-over interval
+# (no tick heads between tick 2236 and 2237), so their exact times do not
+# reach the per-tick state.
+duration 66000
+png_every 100
+4050 key space
+11948 keydown right
+12155 keydown pageup
+12255 keyup pageup
+14452 keyup right
+14951 keydown pageup
+14951 keydown right
+15051 keyup pageup
+16150 keyup right
+16507 keydown right
+17206 keyup right
+17505 keydown left
+17505 keydown up
+17605 keyup up
+18347 keyup left
+19003 keydown left
+19003 keydown up
+19103 keyup up
+19845 keyup left
+20302 keydown right
+23298 keyup right
+23298 keydown left
+27500 keyup left
+33008 keydown right
+56000 keyup right
+58000 key o
+58500 key r
+59000 key c
+59903 key enter

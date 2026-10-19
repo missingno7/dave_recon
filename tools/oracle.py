@@ -11,30 +11,50 @@ scripted input schedule, and records:
                   i.e. once per game tick, with its emulated time;
   sound requests  every call of PlaySound(n) (asm F_763E) with its id n,
                   assigned to the game tick it happened in;
+  rng seeds       every srand(seed) call (CS.LIB _srand, cs 0x9A38) with its
+                  tick: the attract demo choice (srand(time)) and load_level's
+                  srand(100);
   pit/speaker     the raw PIT (40h-43h) / speaker (61h) port stream;
-  frames          the VGA framebuffer (A000:0000, 64000 bytes, mode 13h) at
-                  every tick, sampled together with the state (the image the
-                  previous tick left on screen); PNGs every N ticks.
+  frames          the video memory at every tick, sampled together with the
+                  state (the image the previous tick left on screen); PNGs
+                  every N ticks. VGA mode 13h: A000:0000, 64000 bytes. CGA
+                  mode 4: B800:0000, 16 KB (two interleaved banks). EGA mode
+                  0Dh: A000:0000, 8000 bytes of ONE bit plane (the plane the
+                  graphics controller's read map selects at that instant; a
+                  CPU read of planar memory cannot see the others), plus the
+                  true 4-plane image wherever the game itself selects each
+                  plane for reading (`ega_planes`, see below);
+  files           the game directory after the run (DSCORES.DAV, demo saves):
+                  name, size and SHA-1 of every file.
 
 Equivalence contract (docs/FIDELITY.md, verified by --repeat):
   * gameplay state: per-tick DGROUP equal EXCEPT the asynchronous PC-speaker
     driver variables DS [0x1384,0x1392) (INT 8 runs on its own PIT clock, so
     their value at the sampling instant depends on PIT phase, not on the game);
   * tick timing: per-tick intervals equal in whole vertical-retrace periods,
-    except the interval after a title-screen tick (that timeout is measured
-    on the asynchronous timer);
+    except the interval after a tick that waits for the asynchronous sound
+    driver (WaitSound: title/high-score ticks, see TIMING_EXEMPT_STATES);
   * sound: the sequence of (tick, sound id) requests equal; the raw port
     stream is kept for analysis but not part of the contract;
-  * frames: per-tick framebuffer byte-equal.
+  * frames: per-tick framebuffer byte-equal (and the 4-plane EGA captures);
+  * persistence: every file of the game directory after the run equal.
 
 Scenario files (tests/oracle/*.txt):
   duration <ms>                     run length (emulated, from DOSBox start)
   png_every <n>                     write a PNG of every n-th tick's framebuffer
+  boundaries <n>                    per-subsystem snapshots for the first n ticks
+  video vga|ega|cga                 emulated adapter (machine=svga_s3/ega/cga);
+                                    the game's VideoID picks mode 13h/0Dh/4
+  dos_time HH:MM:SS                 DOS start time (default 00:00:00; the
+                                    attract demo choice is srand(time()))
+  ega_planes <n>                    EGA only: capture up to n true 4-plane
+                                    images (at SaveUnderEGA, see EGA_PLANE_SITE)
   <ms> key|keydown|keyup <name>     input (DOSBox-X mapper key names)
 
 Usage:  python tools/oracle.py tests/oracle/attract.txt [--repeat 2]
+        python tools/oracle.py --report build/oracle/attract/run1
 Output: build/oracle/<scenario>/run<N>/{ticks.bin,ticks.jsonl,sounds.jsonl,
-        pit.log,frame_*.png,summary.json}
+        seeds.jsonl,pit.log,frames.txt,tick*.png,summary.json,game/}
 """
 from __future__ import annotations
 
@@ -46,6 +66,7 @@ import pathlib
 import shutil
 import subprocess
 import sys
+from dataclasses import dataclass, field
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
@@ -57,6 +78,7 @@ LOAD_SEG = 0x0824             # measured; re-derived by calibrate() on every run
 DGROUP_PARA = 0x254D
 MAIN_LOOP_HEAD_CS = 0x0283    # main(): `call F_09DE`, first call of the per-tick pipeline
 PLAYSOUND_CS = 0x743E         # lowlevel.asm _PlaySound (census F_763E)
+SRAND_CS = 0x9A38             # CS.LIB _srand (docs/library-map.md)
 # main()'s per-tick pipeline: the state at each call site is the state BEFORE
 # that subsystem runs (and after the previous one); 0x2AA is the end of tick
 # (`cmp [game_over],0`). Boundary snapshots let each native subsystem be
@@ -70,8 +92,28 @@ DGROUP_LIVE_LEN = 0x9F20      # DS 0 .. _STACK (docs/data-layout.md)
 ASYNC_RANGES = [(0x1384, 0x1392)]   # INT 8 sound driver: TickDivide..SavedRate
 CYCLES = 20000
 LAUNCH_MS = 3000              # emulated time at which "DAVE<enter>" is typed
-VBL_MS = 1000 / 70.086        # mode 13h vertical refresh in this emulation
 TIME_TOLERANCE_MS = 0.01
+# Ticks whose length includes a wait on the asynchronous PIT sound driver
+# (WaitSound in show_high_scores) or on keyboard prompts: the interval after a
+# title tick (game_state 3), and the interval that ends at a title tick (game
+# over -> check_high_score). Their retrace count varies with the PIT phase.
+TIMING_EXEMPT_STATES = (3,)
+
+# Per adapter: DOSBox-X machine, video memory captured per tick (linear,
+# length), nominal retrace period (measured, docs/FIDELITY.md section 1),
+# the game's g_video_mode.
+VIDEO = {
+    "vga": {"machine": "svga_s3", "fb": (0xA0000, 0xFA00), "vbl_ms": 1000 / 70.086, "mode": 3},
+    "ega": {"machine": "ega", "fb": (0xA0000, 0x2000), "vbl_ms": 1000 / 59.92, "mode": 2},
+    "cga": {"machine": "cga", "fb": (0xB8000, 0x4000), "vbl_ms": 1000 / 59.92, "mode": 1},
+}
+VBL_MS = VIDEO["vga"]["vbl_ms"]     # kept for importers
+# EGA true-colour capture: tiles.asm SaveUnderEGA, the instruction after the
+# read-map `out` in @@plane (`mov cx,bp`, cs 0x8545). SaveUnderEGA only READS
+# video memory, so the four dumps of its first line (planes 3,2,1,0, AH = plane,
+# BL = lines left) are one consistent image of all four planes, taken where
+# draw_dave saves the background under Dave.
+EGA_PLANE_SITE = 0x8545
 
 FIELDS = {   # decoded into ticks.jsonl; names: docs/UNDERSTANDING_LEDGER.md
     "game_state": (0x00AA, 2, False),     # 0 play, 1 demo, 2 high scores, 3 title
@@ -87,15 +129,27 @@ FIELDS = {   # decoded into ticks.jsonl; names: docs/UNDERSTANDING_LEDGER.md
     "got_trophy": (0x4F88, 2, False),
     "has_jetpack": (0x4F8A, 2, False),
     "jetpack_fuel": (0x5798, 2, False),
-    "demo_mode": (0x9EC2, 2, False),      # 0 live, 1 playback, 2 record
+    "input_recorder_mode": (0x9EC2, 2, False),  # dead input recorder (HARDWARE.C g_demo_state), always 0
     "demo_pos": (0x57A2, 2, False),
     "video_mode": (0x8B32, 2, False),
+    "in_warp_zone": (0x573C, 2, False),
+    "warp_return_level": (0x6152, 2, True),
+    "level_done": (0x6158, 2, False),
+    "death_timer": (0x6546, 2, True),     # g_bonus_timer: 300-tick countdown armed by the death explosion
+    "input_dir": (0x57E2, 2, False),
+    "dave_facing": (0x5740, 2, False),
 }
+KEYDOWN = 0x8A32              # int key_down[128], indexed by scan code
+MONSTER_ACTIVE = 0x5742       # int active[4]
 
 
 def decode(snapshot: bytes) -> dict:
-    return {name: int.from_bytes(snapshot[off:off + w], "little", signed=s)
-            for name, (off, w, s) in FIELDS.items()}
+    d = {name: int.from_bytes(snapshot[off:off + w], "little", signed=s)
+         for name, (off, w, s) in FIELDS.items()}
+    d["monsters_active"] = [int.from_bytes(snapshot[MONSTER_ACTIVE + 2 * i:MONSTER_ACTIVE + 2 * i + 2],
+                                           "little") for i in range(4)]
+    d["keys_down"] = [k for k in range(128) if snapshot[KEYDOWN + 2 * k] | snapshot[KEYDOWN + 2 * k + 1]]
+    return d
 
 
 def gameplay_view(snapshot: bytes) -> bytes:
@@ -105,9 +159,19 @@ def gameplay_view(snapshot: bytes) -> bytes:
     return bytes(b)
 
 
-def parse_scenario(path: pathlib.Path):
-    duration, frames, inputs = None, 0, []
-    global BOUNDARY_TICKS
+@dataclass
+class Scenario:
+    duration: int = 0
+    png_every: int = 0
+    boundaries: int = 0
+    video: str = "vga"
+    dos_time: str = "00:00:00"
+    ega_planes: int = 0
+    inputs: list = field(default_factory=list)
+
+
+def parse_scenario(path: pathlib.Path) -> Scenario:
+    sc, duration = Scenario(), None
     for n, raw in enumerate(path.read_text().splitlines(), 1):
         line = raw.split("#", 1)[0].strip()
         if not line:
@@ -116,19 +180,28 @@ def parse_scenario(path: pathlib.Path):
         if parts[0] == "duration":
             duration = int(parts[1])
         elif parts[0] == "png_every":
-            frames = int(parts[1])
+            sc.png_every = int(parts[1])
         elif parts[0] == "boundaries":
-            BOUNDARY_TICKS = int(parts[1])
+            sc.boundaries = int(parts[1])
+        elif parts[0] == "video" and len(parts) == 2 and parts[1] in VIDEO:
+            sc.video = parts[1]
+        elif parts[0] == "dos_time" and len(parts) == 2 and len(parts[1].split(":")) == 3:
+            sc.dos_time = parts[1]
+        elif parts[0] == "ega_planes":
+            sc.ega_planes = int(parts[1])
         elif len(parts) == 3 and parts[1] in ("key", "keydown", "keyup"):
-            inputs.append(f"{int(parts[0])} {parts[1]} {parts[2]}")
+            sc.inputs.append(f"{int(parts[0])} {parts[1]} {parts[2]}")
         else:
             raise SystemExit(f"{path}:{n}: cannot parse {raw!r}")
     if duration is None:
         raise SystemExit(f"{path}: missing 'duration'")
-    return duration, frames, inputs
+    if sc.ega_planes and sc.video != "ega":
+        raise SystemExit(f"{path}: ega_planes needs 'video ega'")
+    sc.duration = duration
+    return sc
 
 
-def run_once(work: pathlib.Path, duration: int, frames, inputs, calibrate=False):
+def run_once(work: pathlib.Path, sc: Scenario, calibrate=False):
     if work.exists():
         shutil.rmtree(work)
     game = work / "game"
@@ -137,6 +210,7 @@ def run_once(work: pathlib.Path, duration: int, frames, inputs, calibrate=False)
         if (ROOT / "assets" / name).exists():
             shutil.copyfile(ROOT / "assets" / name, game / name)
     ds_linear = (LOAD_SEG + DGROUP_PARA) * 16
+    fb_at, fb_len = VIDEO[sc.video]["fb"]
     # DAVE is started by typing its name at a fixed EMULATED time rather than
     # from the autoexec, whose duration varies by ~1 ms with the host.
     lines = [f"{LAUNCH_MS + 100 * k} key {c}" for k, c in enumerate("dave")]
@@ -148,34 +222,46 @@ def run_once(work: pathlib.Path, duration: int, frames, inputs, calibrate=False)
         lines.append(f"0 on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump "
                      f"{ds_linear:x} {DGROUP_LIVE_LEN:x} tick")
         lines.append(f"0 on_exec {LOAD_SEG:04x}:{PLAYSOUND_CS:04x} 1000000 dump ss:sp+2 2 snd")
+        lines.append(f"0 on_exec {LOAD_SEG:04x}:{SRAND_CS:04x} 1000000 dump ss:sp+2 2 seed")
         lines.append("0 io_watch 40 43 pit.log out")
         lines.append("0 io_watch 61 61 pit.log inout")
-        lines.append(f"0 on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump a0000 fa00 fb")
-        if BOUNDARY_TICKS:
+        lines.append(f"0 on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump "
+                     f"{fb_at:x} {fb_len:x} fb")
+        if sc.ega_planes:
+            # every SaveUnderEGA plane read; collect() keeps the first line's 4
+            lines.append(f"0 on_exec {LOAD_SEG:04x}:{EGA_PLANE_SITE:04x} {sc.ega_planes * 400} "
+                         f"dump a0000 1f40 ep")
+        if sc.boundaries:
             for cs, _ in PIPELINE[1:]:    # PIPELINE[0] is the per-tick snapshot itself
-                lines.append(f"0 on_exec {LOAD_SEG:04x}:{cs:04x} {BOUNDARY_TICKS} dump "
+                lines.append(f"0 on_exec {LOAD_SEG:04x}:{cs:04x} {sc.boundaries} dump "
                              f"{ds_linear:x} {DGROUP_LIVE_LEN:x} b{cs:04x}")
-        lines += inputs
-        lines.append(f"{duration} exit")
+        lines += sc.inputs
+        lines.append(f"{sc.duration} exit")
     (work / "script.txt").write_text("\n".join(lines) + "\n")
     (work / "oracle.conf").write_text(
         "[sdl]\noutput=surface\n"
-        "[dosbox]\nmachine=svga_s3\nmemsize=4\nworking directory option=noprompt\n"
+        f"[dosbox]\nmachine={VIDEO[sc.video]['machine']}\nmemsize=4\n"
+        "working directory option=noprompt\n"
         "synchronize time=false\n"
         f"acceptance script={work / 'script.txt'}\n"
         f"[cpu]\ncore=normal\ncputype=386\ncycles=fixed {CYCLES}\n"
         "[mixer]\nnosound=true\n"
+        # frameskip=1: with 0, DOSBox-X's VGA vertical-timer drift compensation
+        # (vga_draw.cpp VGA_VerticalTimer, vsync_adj) is fed by frame accounting
+        # in the host rendering path and shifted the emulated retrace timeline
+        # by whole frames between identical runs (docs/FIDELITY.md section 1).
+        "[render]\nframeskip=1\n"
         "[autoexec]\n"
         # The host clock must not leak in (C0S reads it; the game seeds its RNG
         # from time()): pin the emulated date and time.
-        f'mount c "{game}"\nc:\nDATE 01/01/1991\nTIME 00:00:00\n')
+        f'mount c "{game}"\nc:\nDATE 01/01/1991\nTIME {sc.dos_time}\n')
     env = dict(os.environ, SDL_VIDEODRIVER="dummy", SDL_AUDIODRIVER="dummy")
     subprocess.run([str(DOSBOX), "-conf", str(work / "oracle.conf"), "-noconsole"],
-                   cwd=work, env=env, capture_output=True, timeout=600 + duration // 50)
+                   cwd=work, env=env, capture_output=True, timeout=900 + sc.duration // 20)
 
 
-def calibrate(out: pathlib.Path) -> int:
-    run_once(out / "calibrate", 0, [], [], calibrate=True)
+def calibrate(out: pathlib.Path, video: str = "vga") -> int:
+    run_once(out / "calibrate", Scenario(video=video), calibrate=True)
     mem = (out / "calibrate" / "mem.bin").read_bytes()
     lm = (ROOT / "build" / "DAVE_unpacked.exe").read_bytes()[0x200:]
     at = mem.find(lm[0x239:0x239 + 32])
@@ -184,24 +270,21 @@ def calibrate(out: pathlib.Path) -> int:
     return (at - 0x239) // 16
 
 
-def _hits(work: pathlib.Path, prefix: str):
+def _hits(work: pathlib.Path, prefix: str, regs: bool = False):
     i = 1
     while (work / f"{prefix}.{i}.bin").exists():
         b = (work / f"{prefix}.{i}.bin").read_bytes()
         meta = json.loads((work / f"{prefix}.{i}.json").read_text())
         (work / f"{prefix}.{i}.bin").unlink()
         (work / f"{prefix}.{i}.json").unlink()
-        yield b, meta["emulated_ms"]
+        yield (b, meta["emulated_ms"], meta["registers"]) if regs else (b, meta["emulated_ms"])
         i += 1
 
 
-BOUNDARY_TICKS = 0      # set by a scenario's `boundaries <n>` line
-
-
 def write_boundaries(work: pathlib.Path, tick_snapshots: list) -> int:
-    """boundaries.bin: for each tick (up to BOUNDARY_TICKS) and each PIPELINE
-    site in order, the DGROUP snapshot as zlib(snapshot XOR previous snapshot
-    in the stream), framed as <u32 tick><u16 site index><u32 length><data>."""
+    """boundaries.bin: for each tick (up to the scenario's `boundaries`) and each
+    PIPELINE site in order, the DGROUP snapshot as zlib(snapshot XOR previous
+    snapshot in the stream), framed as <u32 tick><u16 site index><u32 length><data>."""
     import struct
     import zlib
     per_site = {cs: [b for b, _ in _hits(work, f"b{cs:04x}")] for cs, _ in PIPELINE[1:]}
@@ -232,13 +315,86 @@ def iter_boundaries(path: pathlib.Path):
         yield tick, PIPELINE[site][1], snap
 
 
-def collect(work: pathlib.Path, png_every: int = 0) -> dict:
+# ------------------------------------------------------------- framebuffers
+
+def frame_pixels(video: str, data: bytes):
+    """Rows of palette indices for a PNG. EGA: one plane as a bit mask (0/15)."""
+    if video == "vga":
+        return [list(data[y * 320:(y + 1) * 320]) for y in range(200)]
+    if video == "cga":
+        rows = []
+        for y in range(200):
+            line = data[(y & 1) * 0x2000 + (y >> 1) * 80:][:80]
+            rows.append([(b >> (6 - 2 * k)) & 3 for b in line for k in range(4)])
+        return rows
+    return [[15 if (b >> (7 - k)) & 1 else 0 for b in data[y * 40:(y + 1) * 40] for k in range(8)]
+            for y in range(200)]
+
+
+def ega_compose(planes) -> list:
+    """Four 8000-byte bit planes (index = plane) -> rows of 4-bit colour indices."""
+    rows = []
+    for y in range(200):
+        row = []
+        for xb in range(40):
+            p = [planes[k][y * 40 + xb] for k in range(4)]
+            for bit in range(7, -1, -1):
+                row.append(sum(((p[k] >> bit) & 1) << k for k in range(4)))
+        rows.append(row)
+    return rows
+
+
+def palette_for(video: str):
+    import pixels
+    if video == "vga":
+        return pixels.vga_palette((ROOT / "build" / "DAVE_unpacked.exe").read_bytes())
+    if video == "cga":
+        return pixels.CGA_PALETTE
+    return pixels.ega_palette()
+
+
+def collect_ega_planes(work: pathlib.Path, times: list, limit: int, png: bool) -> list:
+    """Group SaveUnderEGA plane-read dumps into 4-plane images (first line of
+    each call: AH = 3,2,1,0 with the same BL), assigned to ticks."""
+    import pixels
+    images, cur, prev_bl = [], None, None
+    for data, ms, r in _hits(work, "ep", regs=True):
+        eax, ebx = int(r["eax"], 16), int(r["ebx"], 16)
+        plane, lines_left = (eax >> 8) & 0xFF, ebx & 0xFF
+        if plane == 3:
+            # a new line; it is the first line of a call unless the previous
+            # line of the same call (BL one higher) came just before
+            cur = {"ms": ms, "bl": lines_left, "first": prev_bl != lines_left + 1,
+                   "planes": {3: data[:8000]}}
+            prev_bl = lines_left
+        elif cur is not None and cur["bl"] == lines_left and plane == min(cur["planes"]) - 1:
+            cur["planes"][plane] = data[:8000]
+            if plane == 0:
+                if cur["first"] and len(images) < limit:
+                    tick = sum(1 for t in times if t <= cur["ms"])
+                    images.append((tick, [cur["planes"][k] for k in range(4)]))
+                cur = None
+        else:
+            cur = None
+    pal = pixels.ega_palette()
+    records = []
+    for n, (tick, planes) in enumerate(images, 1):
+        sha = hashlib.sha1(b"".join(planes)).hexdigest()
+        records.append({"capture": n, "tick": tick, "sha1": sha})
+        if png:
+            pixels.write_png(ega_compose(planes), work / f"ega{n:04d}_tick{tick:05d}.png", pal)
+    (work / "ega_planes.jsonl").write_text("".join(json.dumps(r) + "\n" for r in records))
+    return records
+
+
+def collect(work: pathlib.Path, sc: Scenario) -> dict:
+    vbl = VIDEO[sc.video]["vbl_ms"]
     ticks, blob, game_blob = [], bytearray(), bytearray()
     for b, ms in _hits(work, "tick"):
         t0 = ticks[0]["emulated_ms"] if ticks else ms
         prev = ticks[-1] if ticks else None
         rec = {"tick": len(ticks) + 1, "emulated_ms": round(ms, 6), "t_ms": round(ms - t0, 6),
-               "frames_since_prev": round((ms - prev["emulated_ms"]) / VBL_MS) if prev else 0,
+               "frames_since_prev": round((ms - prev["emulated_ms"]) / vbl) if prev else 0,
                "sha1": hashlib.sha1(b).hexdigest(),
                "gameplay_sha1": hashlib.sha1(gameplay_view(b)).hexdigest()}
         rec.update(decode(b))
@@ -247,37 +403,57 @@ def collect(work: pathlib.Path, png_every: int = 0) -> dict:
         game_blob += gameplay_view(b)
     (work / "ticks.bin").write_bytes(bytes(blob))
     boundary_ticks = 0
-    if BOUNDARY_TICKS:
+    if sc.boundaries:
         L = DGROUP_LIVE_LEN
         boundary_ticks = write_boundaries(work, [bytes(blob[k * L:(k + 1) * L])
                                                  for k in range(len(ticks))])
     (work / "ticks.jsonl").write_text("".join(json.dumps(r) + "\n" for r in ticks))
 
-    sounds = []
     times = [r["emulated_ms"] for r in ticks]
+    sounds = []
     for b, ms in _hits(work, "snd"):
         k = sum(1 for t in times if t <= ms)          # tick in which PlaySound ran
         sounds.append({"tick": k, "sound": int.from_bytes(b, "little")})
     (work / "sounds.jsonl").write_text("".join(json.dumps(s) + "\n" for s in sounds))
+    seeds = []
+    for b, ms in _hits(work, "seed"):
+        seeds.append({"tick": sum(1 for t in times if t <= ms), "emulated_ms": round(ms, 3),
+                      "seed": int.from_bytes(b, "little")})
+    (work / "seeds.jsonl").write_text("".join(json.dumps(s) + "\n" for s in seeds))
 
     import pixels
-    pal = pixels.vga_palette((ROOT / "build" / "DAVE_unpacked.exe").read_bytes())
+    pal = palette_for(sc.video)
     frame_hashes = []
     for k, (data, _) in enumerate(_hits(work, "fb"), 1):
-        frame_hashes.append(hashlib.sha1(data[:64000]).hexdigest())
-        if png_every and k % png_every == 0:
-            pixels.write_png([list(data[y * 320:(y + 1) * 320]) for y in range(200)],
-                             work / f"tick{k:05d}.png", pal)
+        frame_hashes.append(hashlib.sha1(data).hexdigest())
+        if sc.png_every and k % sc.png_every == 0:
+            pixels.write_png(frame_pixels(sc.video, data), work / f"tick{k:05d}.png", pal)
     (work / "frames.txt").write_text("".join(f"{h}\n" for h in frame_hashes))
+    ega = collect_ega_planes(work, times, sc.ega_planes, bool(sc.png_every)) if sc.ega_planes else []
+
+    files = {}
+    for p in sorted((work / "game").iterdir()):
+        if p.is_file():
+            data = p.read_bytes()
+            files[p.name] = {"size": len(data), "sha1": hashlib.sha1(data).hexdigest()}
+    single = sorted(b["emulated_ms"] - a["emulated_ms"] for a, b in zip(ticks, ticks[1:])
+                    if b["frames_since_prev"] == 1)
     summary = {
+        "video": sc.video,
         "ticks": len(ticks),
         "gameplay_sha1": hashlib.sha1(game_blob).hexdigest(),
         "sound_requests": len(sounds),
         "sound_requests_sha1": hashlib.sha1(json.dumps(sounds).encode()).hexdigest(),
+        "seeds": [s["seed"] for s in seeds],
         "pit_events": (work / "pit.log").read_text().count("\n") if (work / "pit.log").exists() else 0,
         "frames": len(frame_hashes),
         "frames_sha1": hashlib.sha1("".join(frame_hashes).encode()).hexdigest(),
+        "ega_plane_captures": len(ega),
+        "ega_planes_sha1": hashlib.sha1("".join(r["sha1"] for r in ega).encode()).hexdigest(),
         "boundary_ticks": boundary_ticks,
+        # median interval of the ticks that took exactly one retrace
+        "retrace_ms_median": round(single[len(single) // 2], 6) if single else None,
+        "files": files,
     }
     (work / "summary.json").write_text(json.dumps(summary, indent=1))
     return summary
@@ -288,13 +464,19 @@ def compare_runs(a: pathlib.Path, b: pathlib.Path) -> list:
     problems = []
     ta = [json.loads(l) for l in (a / "ticks.jsonl").read_text().splitlines()]
     tb = [json.loads(l) for l in (b / "ticks.jsonl").read_text().splitlines()]
+    if len(ta) != len(tb):
+        problems.append(f"tick count {len(ta)} vs {len(tb)}")
     for x, y in zip(ta, tb):
         if x["gameplay_sha1"] != y["gameplay_sha1"]:
             named = {k: (x[k], y[k]) for k in FIELDS if x[k] != y[k]}
             problems.append(f"gameplay state diverges at tick {x['tick']}: {named or 'unnamed bytes'}")
             break
-        after_title = x["tick"] > 1 and ta[x["tick"] - 2]["game_state"] == 3
-        if x["frames_since_prev"] != y["frames_since_prev"] and not after_title:
+        # intervals starting at a title/high-score tick, or ending at a title
+        # tick (game over -> high-score table and initials), contain WaitSound
+        # and keyboard prompts: their retrace count is not part of the contract
+        exempt = x["tick"] > 1 and (ta[x["tick"] - 2]["game_state"] in TIMING_EXEMPT_STATES
+                                    or x["game_state"] == 3)
+        if x["frames_since_prev"] != y["frames_since_prev"] and not exempt:
             problems.append(f"tick {x['tick']}: {x['frames_since_prev']} vs "
                             f"{y['frames_since_prev']} retraces since previous tick")
             break
@@ -315,28 +497,137 @@ def compare_runs(a: pathlib.Path, b: pathlib.Path) -> list:
         if x != y:
             problems.append(f"framebuffer differs at tick {k}")
             break
+    if (a / "ega_planes.jsonl").exists() or (b / "ega_planes.jsonl").exists():
+        ea = (a / "ega_planes.jsonl").read_text().splitlines()
+        eb = (b / "ega_planes.jsonl").read_text().splitlines()
+        if ea != eb:
+            k = next((i for i, (x, y) in enumerate(zip(ea, eb), 1) if x != y), min(len(ea), len(eb)) + 1)
+            problems.append(f"EGA 4-plane capture {k} differs")
+    fa = json.loads((a / "summary.json").read_text()).get("files", {})
+    fb = json.loads((b / "summary.json").read_text()).get("files", {})
+    for name in sorted(set(fa) | set(fb)):
+        if fa.get(name) != fb.get(name):
+            problems.append(f"game file {name} after the run: {fa.get(name)} vs {fb.get(name)}")
     return problems
+
+
+def report(run: pathlib.Path) -> str:
+    """Tick ranges of constant (game_state, level, in_warp_zone), with the
+    demo index for demo segments: the evidence lines for scenario headers."""
+    import demos
+    import far_data
+    bank = demos.decode(far_data.segment_bytes(far_data.DEFAULT_EXE.read_bytes(), demos.SEGMENT))
+    import struct
+    blob = far_data.segment_bytes(far_data.DEFAULT_EXE.read_bytes(), demos.SEGMENT)
+    offsets = list(struct.unpack_from(f"<{len(bank['demos'])}I", blob, 4))
+    ticks = [json.loads(l) for l in (run / "ticks.jsonl").read_text().splitlines()]
+    out, start = [], 0
+    names = {0: "play", 1: "demo", 2: "high scores", 3: "title"}
+
+    def key(t):
+        return (t["game_state"], t["level"], t["in_warp_zone"])
+
+    for i in range(1, len(ticks) + 1):
+        if i == len(ticks) or key(ticks[i]) != key(ticks[start]):
+            a, b = ticks[start], ticks[i - 1]
+            desc = f"ticks {a['tick']}-{b['tick']}: {names.get(a['game_state'], a['game_state'])}"
+            if a["game_state"] in (0, 1):
+                desc += f", level {a['level'] + 1} (index {a['level']})"
+                if a["in_warp_zone"]:
+                    desc += " warp zone"
+            if a["game_state"] == 1:
+                pos = a["demo_pos"]
+                idx = max((k for k, o in enumerate(offsets) if o < pos), default=None)
+                desc += f", demo {idx}"
+            desc += (f"; score {a['score']}->{b['score']}, lives {a['lives']}->{b['lives']}"
+                     f", t {a['emulated_ms'] / 1000:.2f}-{b['emulated_ms'] / 1000:.2f} s")
+            out.append(desc)
+            start = i
+    return "\n".join(out)
+
+
+def snap_scenario(path: pathlib.Path, run: pathlib.Path) -> int:
+    """Move every input event of a scenario to the middle of the sampling
+    window it fell into in `run` (a run of this same scenario), so the tick that
+    samples it does not depend on the emulator's retrace-phase jitter
+    (docs/FIDELITY.md section 1). An event at T is sampled by the first tick
+    whose head is >= T (process_input runs right after the head):
+      * one-retrace window (head_{n-1}, head_n]: T' = its midpoint;
+      * a longer tick (scrolling, death/level/warp sequences, title,
+        wait_for_input): the LAST event before head_n goes to head_n - min(10
+        retraces, gap/2), the middle of wait_for_input's 20-retrace poll period;
+        other events inside that tick are blocking-prompt keys (title, high-score
+        initials) and are left where the author put them.
+    The per-tick input of the snapped scenario equals the draft's, so the draft
+    run's tick times stay valid. Rewrites the file in place; returns the number
+    of events moved."""
+    sc = parse_scenario(path)
+    vbl = VIDEO[sc.video]["vbl_ms"]
+    heads = [json.loads(l)["emulated_ms"] for l in (run / "ticks.jsonl").read_text().splitlines()]
+    lines = path.read_text().splitlines()
+    events = []
+    for i, raw in enumerate(lines):
+        parts = raw.split("#", 1)[0].split()
+        if len(parts) == 3 and parts[1] in ("key", "keydown", "keyup"):
+            events.append((i, int(parts[0])))
+    import bisect
+    groups = {}
+    for i, t in events:
+        n = bisect.bisect_left(heads, t)          # heads[n] >= t
+        if 0 < n < len(heads):
+            groups.setdefault(n, []).append((i, t))
+    moved = 0
+    for n, evs in groups.items():
+        gap = heads[n] - heads[n - 1]
+        if gap < 1.5 * vbl:
+            targets = [(i, heads[n - 1] + gap / 2) for i, _ in evs]
+        else:
+            last_t = max(t for _, t in evs)
+            targets = [(i, heads[n] - min(10 * vbl, gap / 2)) for i, t in evs if t == last_t]
+        for i, t_new in targets:
+            raw = lines[i]
+            code, _, comment = raw.partition("#")
+            parts = code.split()
+            new = f"{int(round(t_new))} {parts[1]} {parts[2]}"
+            if int(parts[0]) != int(round(t_new)):
+                moved += 1
+            lines[i] = new + (f"  #{comment}" if comment else "")
+    path.write_text("\n".join(lines) + "\n")
+    return moved
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("scenario", type=pathlib.Path)
+    ap.add_argument("scenario", type=pathlib.Path, nargs="?")
     ap.add_argument("--repeat", type=int, default=1, help="runs; >1 checks the contract between them")
     ap.add_argument("--out", type=pathlib.Path, default=None)
+    ap.add_argument("--report", type=pathlib.Path, default=None, metavar="RUN_DIR",
+                    help="print the tick ranges of a collected run and exit")
+    ap.add_argument("--snap", action="store_true",
+                    help="after the run(s), move the scenario's input events to the middle "
+                         "of their sampling windows (rewrites the scenario file)")
     args = ap.parse_args()
+    if args.report:
+        print(report(args.report))
+        return
+    if args.scenario is None:
+        ap.error("a scenario is required")
     if hashlib.sha256(DOSBOX.read_bytes()).hexdigest() != DOSBOX_SHA256:
         raise SystemExit(f"{DOSBOX} is not the pinned acceptance build")
     out = args.out or ROOT / "build" / "oracle" / args.scenario.stem
-    seg = calibrate(out)
+    sc = parse_scenario(args.scenario)
+    seg = calibrate(out, sc.video)
     if seg != LOAD_SEG:
         raise SystemExit(f"load segment moved: {seg:#x} != {LOAD_SEG:#x}; update LOAD_SEG")
-    duration, frames, inputs = parse_scenario(args.scenario)
     for r in range(1, args.repeat + 1):
-        run_once(out / f"run{r}", duration, frames, inputs)
-        s = collect(out / f"run{r}", frames)
+        run_once(out / f"run{r}", sc)
+        s = collect(out / f"run{r}", sc)
         print(f"run{r}: {s['ticks']} ticks, {s['sound_requests']} sound requests, "
               f"{s['pit_events']} PIT/speaker events, {s['frames']} frames, "
-              f"gameplay {s['gameplay_sha1'][:12]}")
+              f"gameplay {s['gameplay_sha1'][:12]}, files "
+              + ", ".join(f"{k} {v['sha1'][:8]}" for k, v in s["files"].items()))
+    if args.snap:
+        print(f"snapped {snap_scenario(args.scenario, out / 'run1')} input events in {args.scenario}")
     if args.repeat > 1:
         problems = [p for r in range(2, args.repeat + 1)
                     for p in compare_runs(out / "run1", out / f"run{r}")]
