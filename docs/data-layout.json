@@ -1,0 +1,8559 @@
+{
+ "schema": "dave_recon/data-layout/v1",
+ "generator": "tools/data_layout.py",
+ "specimen": {
+  "path": "build/DAVE_unpacked.exe",
+  "size": 172848,
+  "md5": "86feba8cc84fc1f0d829fd731f6dbe20"
+ },
+ "mz": {
+  "header_size": "0x200",
+  "e_minalloc_paragraphs": "0x534",
+  "e_maxalloc_paragraphs": "0xFFFF",
+  "e_ss": "0x2F3F",
+  "e_sp": "0x80",
+  "relocations": [
+   {
+    "load_module": "0x1",
+    "file": "0x201",
+    "value": "0x254D",
+    "in_function": null
+   },
+   {
+    "load_module": "0xDE",
+    "file": "0x2DE",
+    "value": "0x254C",
+    "in_function": null
+   },
+   {
+    "load_module": "0x110",
+    "file": "0x310",
+    "value": "0x254C",
+    "in_function": null
+   },
+   {
+    "load_module": "0x1149",
+    "file": "0x1349",
+    "value": "0x1D58",
+    "in_function": "F_1321"
+   },
+   {
+    "load_module": "0x115E",
+    "file": "0x135E",
+    "value": "0xC42",
+    "in_function": "F_1321"
+   },
+   {
+    "load_module": "0x118E",
+    "file": "0x138E",
+    "value": "0x1E84",
+    "in_function": "F_1321"
+   },
+   {
+    "load_module": "0x11B3",
+    "file": "0x13B3",
+    "value": "0x20CC",
+    "in_function": "F_1321"
+   },
+   {
+    "load_module": "0x11C8",
+    "file": "0x13C8",
+    "value": "0x11EF",
+    "in_function": "F_1321"
+   },
+   {
+    "load_module": "0x4FDD",
+    "file": "0x51DD",
+    "value": "0x1C2E",
+    "in_function": "F_519B"
+   },
+   {
+    "load_module": "0x4FEF",
+    "file": "0x51EF",
+    "value": "0xB31",
+    "in_function": "F_519B"
+   },
+   {
+    "load_module": "0x60DC",
+    "file": "0x62DC",
+    "value": "0x0",
+    "in_function": "F_6293"
+   },
+   {
+    "load_module": "0x60F5",
+    "file": "0x62F5",
+    "value": "0x0",
+    "in_function": "F_6293"
+   },
+   {
+    "load_module": "0x6115",
+    "file": "0x6315",
+    "value": "0x254D",
+    "in_function": "F_6293"
+   },
+   {
+    "load_module": "0x7520",
+    "file": "0x7720",
+    "value": "0x254D",
+    "in_function": "F_7719"
+   },
+   {
+    "load_module": "0x7710",
+    "file": "0x7910",
+    "value": "0x254D",
+    "in_function": "F_78B5"
+   },
+   {
+    "load_module": "0x786E",
+    "file": "0x7A6E",
+    "value": "0x254D",
+    "in_function": "F_78B5"
+   },
+   {
+    "load_module": "0x7936",
+    "file": "0x7B36",
+    "value": "0x254D",
+    "in_function": "F_78B5"
+   },
+   {
+    "load_module": "0x7990",
+    "file": "0x7B90",
+    "value": "0x254D",
+    "in_function": "F_7B3B"
+   },
+   {
+    "load_module": "0x831D",
+    "file": "0x851D",
+    "value": "0x254D",
+    "in_function": "F_8516"
+   },
+   {
+    "load_module": "0x8D84",
+    "file": "0x8F84",
+    "value": "0x254D",
+    "in_function": "F_8EDA"
+   },
+   {
+    "load_module": "0x8DDF",
+    "file": "0x8FDF",
+    "value": "0x254D",
+    "in_function": "F_8EDA"
+   },
+   {
+    "load_module": "0x8E66",
+    "file": "0x9066",
+    "value": "0x254D",
+    "in_function": "F_8EDA"
+   },
+   {
+    "load_module": "0x8EB2",
+    "file": "0x90B2",
+    "value": "0x254D",
+    "in_function": "F_8EDA"
+   },
+   {
+    "load_module": "0x8F8F",
+    "file": "0x918F",
+    "value": "0x254D",
+    "in_function": "F_8EDA"
+   },
+   {
+    "load_module": "0x9003",
+    "file": "0x9203",
+    "value": "0x254D",
+    "in_function": "F_8EDA"
+   },
+   {
+    "load_module": "0x918D",
+    "file": "0x938D",
+    "value": "0x254D",
+    "in_function": "F_92E9"
+   },
+   {
+    "load_module": "0x940E",
+    "file": "0x960E",
+    "value": "0x254D",
+    "in_function": "F_95D1"
+   }
+  ]
+ },
+ "startup": {
+  "entry_file": "0x200",
+  "dgroup": "0x254D",
+  "bdata": "0x4C60",
+  "edata": "0x9F12",
+  "bss_clear_site": "0x2C4",
+  "stklen_ds": "0x4BBE",
+  "stklen_value": "0x1000",
+  "heaplen_ds": "0x4BB2",
+  "toolchain_objects_used": true
+ },
+ "segments": [
+  {
+   "name": "_TEXT",
+   "class": "CODE",
+   "paragraph": "0x0000",
+   "file_start": "0x200",
+   "file_end": "0xB510",
+   "size": 45840,
+   "data_end": "0xB50B",
+   "padding": {
+    "file_start": "0xB50B",
+    "file_end": "0xB510",
+    "bytes": 5,
+    "all_zero": true
+   },
+   "content": "game code 0x439..0x9613 (after C0S 0x200..0x439), Borland CS.LIB runtime 0x9613..data_end",
+   "status": "verified",
+   "evidence": [
+    "segment value 0x0000 is the relocated target of the two `seg _TEXT` immediates at load-module 0x60DC/0x60F5 (keyboard-ISR far pointer _TEXT:0x610B in F_6293)",
+    "last non-zero byte belongs to the runtime's stack-overflow stub (`Stack overflow!` message + int 21h/ah=9 + jmp) at file 0xB4ED..0xB50B; followed by 5 zero bytes of paragraph alignment before the first FAR_DATA segment"
+   ]
+  },
+  {
+   "name": "FAR_0B31",
+   "class": "FAR_DATA (hypothesis: class name from C0S segment order)",
+   "paragraph": "0xB31",
+   "file_start": "0xB510",
+   "file_end": "0xC620",
+   "size": 4368,
+   "referenced_from": [
+    {
+     "file": "0x51EF",
+     "load_module": "0x4FEF",
+     "in_function": "F_519B"
+    }
+   ],
+   "content": "attract-mode demo recordings (recorded input streams)",
+   "status": "verified",
+   "data_end": "0xC616",
+   "format": {
+    "count_u32": 5,
+    "offsets_u32": [
+     "0x18",
+     "0x655",
+     "0x9B3",
+     "0xBFC",
+     "0xDD4"
+    ],
+    "record": "byte 0 = level index to load; then input bytes: low nibble = direction 0..7 (8 = none), bit 7 / bit 6 = buttons; 0x20 n = repeat previous input n frames; 0x30 = end of demo"
+   },
+   "demos": [
+    {
+     "offset": "0x18",
+     "start_level_index": 2
+    },
+    {
+     "offset": "0x655",
+     "start_level_index": 1
+    },
+    {
+     "offset": "0x9B3",
+     "start_level_index": 3
+    },
+    {
+     "offset": "0xBFC",
+     "start_level_index": 8
+    },
+    {
+     "offset": "0xDD4",
+     "start_level_index": 4
+    }
+   ],
+   "evidence": [
+    "F_519B 0x51E5: g_demo_data (DS:0x57A4) = MK_FP(0x0B31,0) via relocated immediate at lm 0x4FEF",
+    "F_09DE 0xB63..0xB9F: idx = rand() %% es:[0]; g_demo_pos = es:[4+4*idx]; g_current_level = es:[g_demo_pos++]; g_demo_mode = 1",
+    "F_4A27 0x4A69..0x4AF0: 0x20 -> g_demo_repeat = next byte; 0x30 -> end of demo; else dir = b&0xF, button bits from b>>7 and b>>6"
+   ],
+   "padding": {
+    "file_start": "0xC616",
+    "file_end": "0xC620",
+    "bytes": 10,
+    "all_zero": true
+   }
+  },
+  {
+   "name": "FAR_0C42",
+   "class": "FAR_DATA (hypothesis: class name from C0S segment order)",
+   "paragraph": "0xC42",
+   "file_start": "0xC620",
+   "file_end": "0x120F0",
+   "size": 23248,
+   "referenced_from": [
+    {
+     "file": "0x135E",
+     "load_module": "0x115E",
+     "in_function": "F_1321"
+    }
+   ],
+   "content": "RLE-compressed CGA tileset (the in-EXE counterpart of EGADAVE.DAV)",
+   "status": "verified",
+   "data_end": "0x120E3",
+   "format": {
+    "unpacked_length_u32": 27818,
+    "rle": "b>=0x80: copy b-0x7F literal bytes; b<0x80: repeat next byte b+3 times",
+    "compressed_bytes_consumed": 23231,
+    "unpacked_overshoot": 0,
+    "unpacked": {
+     "count_u32": 239,
+     "offset_table_end": "0x3C0",
+     "fixed_tiles": 53,
+     "fixed_tile_bytes": 64,
+     "unpacked_md5": "44d839739e8b3137ac9fe92b35a3d4fd"
+    }
+   },
+   "evidence": [
+    "F_1321 0x1356..0x1382 (CGA case): far ptr MK_FP(0x0C42,0) (relocated immediate); unrle(dst=g_tileset, src=+4, len=u32 at +0) via 0x7E00 -> 0x7ED4",
+    "decoding with the 0x7ED4 algorithm yields a count + strictly increasing offset table whose first offset == 4 + 4*count, and 53 leading 64-byte tiles (16x16 at 2bpp depth), matching EGADAVE.DAV's 53 fixed tiles"
+   ],
+   "padding": {
+    "file_start": "0x120E3",
+    "file_end": "0x120F0",
+    "bytes": 13,
+    "unread_nonzero_bytes": 2,
+    "note": "bytes after the RLE stream are never read by the decoder; 2 non-zero leftover byte(s) then zero alignment"
+   }
+  },
+  {
+   "name": "FAR_11EF",
+   "class": "FAR_DATA (hypothesis: class name from C0S segment order)",
+   "paragraph": "0x11EF",
+   "file_start": "0x120F0",
+   "file_end": "0x1C4E0",
+   "size": 41968,
+   "referenced_from": [
+    {
+     "file": "0x13C8",
+     "load_module": "0x11C8",
+     "in_function": "F_1321"
+    }
+   ],
+   "content": "RLE-compressed VGA tileset (the in-EXE counterpart of EGADAVE.DAV)",
+   "status": "verified",
+   "data_end": "0x1C4C6",
+   "format": {
+    "unpacked_length_u32": 71238,
+    "rle": "b>=0x80: copy b-0x7F literal bytes; b<0x80: repeat next byte b+3 times",
+    "compressed_bytes_consumed": 41938,
+    "unpacked_overshoot": 1,
+    "unpacked": {
+     "count_u32": 158,
+     "offset_table_end": "0x27C",
+     "fixed_tiles": 53,
+     "fixed_tile_bytes": 256,
+     "unpacked_md5": "49cac42e5ef0df59362a7acbddba3197"
+    }
+   },
+   "evidence": [
+    "F_1321 0x1356..0x1382 (VGA case): far ptr MK_FP(0x11EF,0) (relocated immediate); unrle(dst=g_tileset, src=+4, len=u32 at +0) via 0x7E00 -> 0x7ED4",
+    "decoding with the 0x7ED4 algorithm yields a count + strictly increasing offset table whose first offset == 4 + 4*count, and 53 leading 256-byte tiles (16x16 at 8bpp depth), matching EGADAVE.DAV's 53 fixed tiles"
+   ],
+   "padding": {
+    "file_start": "0x1C4C6",
+    "file_end": "0x1C4E0",
+    "bytes": 26,
+    "unread_nonzero_bytes": 23,
+    "note": "bytes after the RLE stream are never read by the decoder; 23 non-zero leftover byte(s) then zero alignment"
+   }
+  },
+  {
+   "name": "FAR_1C2E",
+   "class": "FAR_DATA (hypothesis: class name from C0S segment order)",
+   "paragraph": "0x1C2E",
+   "file_start": "0x1C4E0",
+   "file_end": "0x1D780",
+   "size": 4768,
+   "referenced_from": [
+    {
+     "file": "0x51DD",
+     "load_module": "0x4FDD",
+     "in_function": "F_519B"
+    }
+   ],
+   "content": "PC-speaker sound effects, id/Softdisk 'SPK' format",
+   "status": "verified",
+   "data_end": "0x1D774",
+   "format": {
+    "magic": "SPK\\0",
+    "total_length_u32": 4756,
+    "directory": "63 x 16-byte entries at +0x10: u16 data offset, u8 priority, u8 rate/divider, char name[12]",
+    "named_sounds": 12,
+    "unused_slots": 51,
+    "sound_data": "u16 PIT divisors from +0x400, each sound terminated by 0xFFFF"
+   },
+   "evidence": [
+    "F_519B 0x51D3/0x51D9: g_sound_data (DS:0x137A) = MK_FP(0x1C2E,0) via relocated immediate at lm 0x4FDD",
+    "u32 at +4 (4756) + 12 zero bytes == segment size 4768 (paragraph alignment)",
+    "play_sound F_763E is called with 1-based ids that line up with the directory (e.g. 7 on the trophy, 12 on gun/jetpack in F_3FD5)"
+   ],
+   "padding": {
+    "file_start": "0x1D774",
+    "file_end": "0x1D780",
+    "bytes": 12,
+    "all_zero": true
+   }
+  },
+  {
+   "name": "FAR_1D58",
+   "class": "FAR_DATA (hypothesis: class name from C0S segment order)",
+   "paragraph": "0x1D58",
+   "file_start": "0x1D780",
+   "file_end": "0x1EA40",
+   "size": 4800,
+   "referenced_from": [
+    {
+     "file": "0x1349",
+     "load_module": "0x1149",
+     "in_function": "F_1321"
+    }
+   ],
+   "content": "shell picfile (CGA): 8x8 font (128 chars) + 13 control-panel pictures 32x24; header 0x100 bytes",
+   "status": "verified",
+   "data_end": "0x1EA40",
+   "format": {
+    "header_far_ptrs": {
+     "charptr": "0010:0000",
+     "tileptr": "0090:0000",
+     "picptr": "0090:0000",
+     "spriteptr": "012C:0000"
+    },
+    "pointer_base": "segment-relative paragraphs (added to the segment in F_6099)",
+    "pictable": "+0x28, 13 x 16 bytes {u16 width_bytes, u16 height, u32 offset, char name[8]}; rest of header filled with '*'",
+    "plane_paragraphs": [
+     "0x10",
+     "0x12C",
+     "0x248",
+     "0x364"
+    ],
+    "pictures": [
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x0"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0xC0"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x180"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x240"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x300"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x3C0"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x480"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x540"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x600"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x6C0"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x780"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x840"
+     },
+     {
+      "width_bytes": 8,
+      "height": 24,
+      "offset": "0x900"
+     }
+    ]
+   },
+   "evidence": [
+    "F_1321 (switch on g_video_mode at 0x1330) passes MK_FP(0x1D58,0) to F_6099 via relocated immediate",
+    "F_6099 0x60B5: for g_video_mode==2 the header far pointers are used as-is (A200:0, A240:0, A28E:0 = EGA VRAM); otherwise segment+header word (0x5F29..)",
+    "last plane paragraph + plane size == segment size exactly (no padding)"
+   ],
+   "padding": null
+  },
+  {
+   "name": "FAR_1E84",
+   "class": "FAR_DATA (hypothesis: class name from C0S segment order)",
+   "paragraph": "0x1E84",
+   "file_start": "0x1EA40",
+   "file_end": "0x20EC0",
+   "size": 9344,
+   "referenced_from": [
+    {
+     "file": "0x138E",
+     "load_module": "0x118E",
+     "in_function": "F_1321"
+    }
+   ],
+   "content": "shell picfile (EGA): 8x8 font (128 chars) + 13 control-panel pictures 32x24; header 0x100 bytes",
+   "status": "verified",
+   "data_end": "0x20EC0",
+   "format": {
+    "header_far_ptrs": {
+     "charptr": "A200:0000",
+     "tileptr": "A240:0000",
+     "picptr": "A240:0000",
+     "spriteptr": "A28E:0000"
+    },
+    "pointer_base": "EGA video memory (latched planes)",
+    "pictable": "+0x28, 13 x 16 bytes {u16 width_bytes, u16 height, u32 offset, char name[8]}; rest of header filled with '*'",
+    "plane_paragraphs": [
+     "0x10",
+     "0x9E",
+     "0x12C",
+     "0x1BA"
+    ],
+    "pictures": [
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x0"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x60"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0xC0"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x120"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x180"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x1E0"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x240"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x2A0"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x300"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x360"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x3C0"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x420"
+     },
+     {
+      "width_bytes": 4,
+      "height": 24,
+      "offset": "0x480"
+     }
+    ]
+   },
+   "evidence": [
+    "F_1321 (switch on g_video_mode at 0x1330) passes MK_FP(0x1E84,0) to F_6099 via relocated immediate",
+    "F_6099 0x60B5: for g_video_mode==2 the header far pointers are used as-is (A200:0, A240:0, A28E:0 = EGA VRAM); otherwise segment+header word (0x5F29..)",
+    "last plane paragraph + plane size == segment size exactly (no padding)"
+   ],
+   "padding": null
+  },
+  {
+   "name": "FAR_20CC",
+   "class": "FAR_DATA (hypothesis: class name from C0S segment order)",
+   "paragraph": "0x20CC",
+   "file_start": "0x20EC0",
+   "file_end": "0x256C0",
+   "size": 18432,
+   "referenced_from": [
+    {
+     "file": "0x13B3",
+     "load_module": "0x11B3",
+     "in_function": "F_1321"
+    }
+   ],
+   "content": "shell picfile (VGA): 8x8 font (128 chars) + 13 control-panel pictures 32x24; header 0x100 bytes",
+   "status": "verified",
+   "data_end": "0x256C0",
+   "format": {
+    "header_far_ptrs": {
+     "charptr": "0010:0000",
+     "tileptr": "0210:0000",
+     "picptr": "0210:0000",
+     "spriteptr": "0480:0000"
+    },
+    "pointer_base": "segment-relative paragraphs (added to the segment in F_6099)",
+    "pictable": "+0x28, 13 x 16 bytes {u16 width_bytes, u16 height, u32 offset, char name[8]}; rest of header filled with '*'",
+    "plane_paragraphs": [
+     "0x10",
+     "0x480",
+     "0x8F0",
+     "0xD60"
+    ],
+    "pictures": [
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0x0"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0x300"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0x600"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0x900"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0xC00"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0xF00"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0x1200"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0x1500"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0x1800"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0x1B00"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0x1E00"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0x2100"
+     },
+     {
+      "width_bytes": 32,
+      "height": 24,
+      "offset": "0x2400"
+     }
+    ]
+   },
+   "evidence": [
+    "F_1321 (switch on g_video_mode at 0x1330) passes MK_FP(0x20CC,0) to F_6099 via relocated immediate",
+    "F_6099 0x60B5: for g_video_mode==2 the header far pointers are used as-is (A200:0, A240:0, A28E:0 = EGA VRAM); otherwise segment+header word (0x5F29..)",
+    "last plane paragraph + plane size == segment size exactly (no padding)"
+   ],
+   "padding": null
+  },
+  {
+   "name": "_INIT_/_EXIT_",
+   "class": "INITDATA/EXITDATA",
+   "paragraph": "0x254C",
+   "file_start": "0x256C0",
+   "file_end": "0x256D0",
+   "size": 16,
+   "data_end": "0x256CC",
+   "content": "Borland startup/exit routine tables: _INIT_ = 2 x 6-byte records, _EXIT_ empty",
+   "init_records": [
+    {
+     "calltype": "near",
+     "priority": 2,
+     "target_file": "0x9C6F"
+    },
+    {
+     "calltype": "near",
+     "priority": 16,
+     "target_file": "0xB49B"
+    }
+   ],
+   "status": "verified",
+   "evidence": [
+    "C0S at file 0x2DD: mov ax,0x254C; mov ds,ax; mov si,0x0; mov di,0xC; call (startup walk) and again with si=di=0xC (exit walk); relocations at lm 0xDE/0x110",
+    "records point at runtime init code: priority 2 -> setupio-style stdio init at file 0x9C6F (tests __streams flags at DS:0x4A4A), priority 16 -> __setenvp__ at file 0xB49B (stores _environ DS:0x4C5E)"
+   ],
+   "padding": {
+    "file_start": "0x256CC",
+    "file_end": "0x256D0",
+    "bytes": 4,
+    "all_zero": true
+   }
+  }
+ ],
+ "dgroup": {
+  "paragraph": "0x254D",
+  "file_base": "0x256D0",
+  "evidence": [
+   "entry point (file 0x200) `mov dx,0x254D` is relocated (lm 0x0001); C0S stores it in DGROUP@ (cs:[0x235]) and loads DS from it"
+  ],
+  "subsegments": [
+   {
+    "name": "_DATA (C0S)",
+    "ds_start": "0x0",
+    "ds_end": "0xA8",
+    "file_start": "0x256D0",
+    "file_end": "0x25778",
+    "status": "verified",
+    "evidence": "C0S.OBJ _DATA length 168 matches the file bytes at DS:0 (null-check area + copyright + runtime messages + startup variables)"
+   },
+   {
+    "name": "_DATA (game modules)",
+    "ds_start": "0xA8",
+    "ds_end": "0x493A",
+    "file_start": "0x25778",
+    "file_end": "0x2A00A",
+    "status": "verified",
+    "evidence": "between C0S's _DATA and the first CS.LIB module's _DATA; ends with g_levels (DS:0x173A..0x493A)"
+   },
+   {
+    "name": "_DATA (CS.LIB modules)",
+    "ds_start": "0x493A",
+    "ds_end": "0x4C60",
+    "file_start": "0x2A00A",
+    "file_end": "0x2A330",
+    "status": "verified",
+    "evidence": "first library-code DS reference in _DATA is __atexitcnt at 0x493A (LIB_ATEXIT 0x9616: cmp [0x493a],0x20); unique byte matches of CS.LIB modules listed in library_data_modules"
+   },
+   {
+    "name": "_BSS (game modules)",
+    "ds_start": "0x4C60",
+    "ds_end": "0x9EC8",
+    "file_start": null,
+    "file_end": null,
+    "status": "verified",
+    "evidence": "C0S clears [bdata=0x4C60, edata=0x9F12) at file 0x2C4; highest game-code reference 0x9EC6"
+   },
+   {
+    "name": "_BSS (CS.LIB modules)",
+    "ds_start": "0x9EC8",
+    "ds_end": "0x9F12",
+    "file_start": null,
+    "file_end": null,
+    "status": "verified",
+    "evidence": "__atexittbl referenced as [bx-0x6138] (= DS:0x9EC8) by LIB_ATEXIT; putc's 1-byte buffer at DS:0x9F08"
+   },
+   {
+    "name": "_STACK (C0S)",
+    "ds_start": "0x9F20",
+    "ds_end": "0x9FA0",
+    "file_start": null,
+    "file_end": null,
+    "status": "verified",
+    "evidence": "align16(edata) + C0S.OBJ _STACK length 0x80 == DS:0x9FA0 == initialised size + e_minalloc*16 (0x534 paragraphs). At run time C0S moves SP to edata + _stklen (DS:0x4BBE, = 0x1000)"
+   }
+  ],
+  "c0s_publics": [
+   {
+    "ds_offset": "0x0",
+    "name": "DATASEG@"
+   },
+   {
+    "ds_offset": "0x72",
+    "name": "__Int0Vector"
+   },
+   {
+    "ds_offset": "0x76",
+    "name": "__Int4Vector"
+   },
+   {
+    "ds_offset": "0x7A",
+    "name": "__Int5Vector"
+   },
+   {
+    "ds_offset": "0x7E",
+    "name": "__Int6Vector"
+   },
+   {
+    "ds_offset": "0x82",
+    "name": "__C0argc"
+   },
+   {
+    "ds_offset": "0x84",
+    "name": "__C0argv"
+   },
+   {
+    "ds_offset": "0x86",
+    "name": "__C0environ"
+   },
+   {
+    "ds_offset": "0x88",
+    "name": "__envLng"
+   },
+   {
+    "ds_offset": "0x8A",
+    "name": "__envseg"
+   },
+   {
+    "ds_offset": "0x8C",
+    "name": "__envSize"
+   },
+   {
+    "ds_offset": "0x8E",
+    "name": "__psp"
+   },
+   {
+    "ds_offset": "0x90",
+    "name": "__osmajor"
+   },
+   {
+    "ds_offset": "0x90",
+    "name": "__version"
+   },
+   {
+    "ds_offset": "0x91",
+    "name": "__osminor"
+   },
+   {
+    "ds_offset": "0x92",
+    "name": "_errno"
+   },
+   {
+    "ds_offset": "0x94",
+    "name": "__StartTime"
+   },
+   {
+    "ds_offset": "0x98",
+    "name": "___heapbase"
+   },
+   {
+    "ds_offset": "0x9A",
+    "name": "___brklvl"
+   },
+   {
+    "ds_offset": "0x9C",
+    "name": "__heapbase"
+   },
+   {
+    "ds_offset": "0xA0",
+    "name": "__brklvl"
+   },
+   {
+    "ds_offset": "0xA4",
+    "name": "__heaptop"
+   }
+  ],
+  "library_data_modules": [
+   {
+    "module": "CTYPE",
+    "ds_offset": "0x493C",
+    "size": 257,
+    "publics": [
+     {
+      "name": "__ctype",
+      "ds_offset": "0x493C"
+     }
+    ]
+   },
+   {
+    "module": "FILES",
+    "ds_offset": "0x4A46",
+    "size": 320,
+    "publics": [
+     {
+      "name": "__streams",
+      "ds_offset": "0x4A46"
+     }
+    ]
+   },
+   {
+    "module": "FILES2",
+    "ds_offset": "0x4B86",
+    "size": 40,
+    "publics": [
+     {
+      "name": "__openfd",
+      "ds_offset": "0x4B86"
+     }
+    ]
+   },
+   {
+    "module": "TIMECVT",
+    "ds_offset": "0x4BC0",
+    "size": 12,
+    "publics": []
+   },
+   {
+    "module": "IOERROR",
+    "ds_offset": "0x4BCC",
+    "size": 91,
+    "publics": [
+     {
+      "name": "__doserrno",
+      "ds_offset": "0x4BCC"
+     },
+     {
+      "name": "__dosErrorToSV",
+      "ds_offset": "0x4BCE"
+     }
+    ]
+   },
+   {
+    "module": "TZSET",
+    "ds_offset": "0x4C28",
+    "size": 47,
+    "publics": [
+     {
+      "name": "__monthDay",
+      "ds_offset": "0x4C28"
+     },
+     {
+      "name": "_tzname",
+      "ds_offset": "0x4C42"
+     },
+     {
+      "name": "_timezone",
+      "ds_offset": "0x4C46"
+     },
+     {
+      "name": "_daylight",
+      "ds_offset": "0x4C4A"
+     }
+    ]
+   }
+  ],
+  "library_data_refs": [
+   {
+    "ds_offset": "0x493A",
+    "lib_sites": [
+     "0x9616",
+     "0x9622",
+     "0x962F",
+     "0x9668"
+    ]
+   },
+   {
+    "ds_offset": "0x493D",
+    "lib_sites": [
+     "0xA134",
+     "0xAA30",
+     "0xAA40",
+     "0xAA50"
+    ]
+   },
+   {
+    "ds_offset": "0x4A3E",
+    "lib_sites": [
+     "0x9D61"
+    ]
+   },
+   {
+    "ds_offset": "0x4A44",
+    "lib_sites": [
+     "0x96A0",
+     "0x96E9"
+    ]
+   },
+   {
+    "ds_offset": "0x4A48",
+    "lib_sites": [
+     "0x9C7C",
+     "0x9C86"
+    ]
+   },
+   {
+    "ds_offset": "0x4A4A",
+    "lib_sites": [
+     "0x9C6F"
+    ]
+   },
+   {
+    "ds_offset": "0x4A58",
+    "lib_sites": [
+     "0x9CAE",
+     "0x9CB8"
+    ]
+   },
+   {
+    "ds_offset": "0x4A5A",
+    "lib_sites": [
+     "0x9CA1"
+    ]
+   },
+   {
+    "ds_offset": "0x4B86",
+    "lib_sites": [
+     "0x9654",
+     "0xA166",
+     "0xA185",
+     "0xA391"
+    ]
+   },
+   {
+    "ds_offset": "0x4BAE",
+    "lib_sites": [
+     "0xA716"
+    ]
+   },
+   {
+    "ds_offset": "0x4BB0",
+    "lib_sites": [
+     "0xA728"
+    ]
+   },
+   {
+    "ds_offset": "0x4BB6",
+    "lib_sites": [
+     "0x9C3E",
+     "0x9C4D",
+     "0x9C60"
+    ]
+   },
+   {
+    "ds_offset": "0x4BB8",
+    "lib_sites": [
+     "0x9C41",
+     "0x9C49",
+     "0x9C63",
+     "0x9C67"
+    ]
+   },
+   {
+    "ds_offset": "0x4BBA",
+    "lib_sites": [
+     "0x9D0B",
+     "0x9D18"
+    ]
+   },
+   {
+    "ds_offset": "0x4BBC",
+    "lib_sites": [
+     "0x9CF6",
+     "0x9D03"
+    ]
+   },
+   {
+    "ds_offset": "0x4BC0",
+    "lib_sites": [
+     "0x9EA9",
+     "0xA0EA",
+     "0xA0FF"
+    ]
+   },
+   {
+    "ds_offset": "0x4BCC",
+    "lib_sites": [
+     "0xA4AE",
+     "0xA4C6"
+    ]
+   },
+   {
+    "ds_offset": "0x4BCE",
+    "lib_sites": [
+     "0xA4B2"
+    ]
+   },
+   {
+    "ds_offset": "0x4C26",
+    "lib_sites": [
+     "0xABF8"
+    ]
+   },
+   {
+    "ds_offset": "0x4C28",
+    "lib_sites": [
+     "0xABAE",
+     "0xABD0",
+     "0xAC01"
+    ]
+   },
+   {
+    "ds_offset": "0x4C42",
+    "lib_sites": [
+     "0xAAA9",
+     "0xAAD8",
+     "0xAAE2"
+    ]
+   },
+   {
+    "ds_offset": "0x4C44",
+    "lib_sites": [
+     "0xAAB6",
+     "0xAAC9",
+     "0xAB5B",
+     "0xAB65"
+    ]
+   },
+   {
+    "ds_offset": "0x4C46",
+    "lib_sites": [
+     "0x9E3F",
+     "0x9F63",
+     "0xAA99",
+     "0xAB00"
+    ]
+   },
+   {
+    "ds_offset": "0x4C48",
+    "lib_sites": [
+     "0x9E3C",
+     "0x9F60",
+     "0xAA9F",
+     "0xAB03"
+    ]
+   },
+   {
+    "ds_offset": "0x4C4A",
+    "lib_sites": [
+     "0x9EDF",
+     "0xA038",
+     "0xAA93",
+     "0xAB07"
+    ]
+   },
+   {
+    "ds_offset": "0x4C58",
+    "lib_sites": [
+     "0xB20D",
+     "0xB221",
+     "0xB238",
+     "0xB249"
+    ]
+   },
+   {
+    "ds_offset": "0x4C5A",
+    "lib_sites": [
+     "0xB1FC",
+     "0xB21B",
+     "0xB22F",
+     "0xB23B"
+    ]
+   },
+   {
+    "ds_offset": "0x4C5C",
+    "lib_sites": [
+     "0xB23E",
+     "0xB287",
+     "0xB295",
+     "0xB29C"
+    ]
+   },
+   {
+    "ds_offset": "0x4C5E",
+    "lib_sites": [
+     "0xA401",
+     "0xB4C7",
+     "0xB4E6"
+    ]
+   }
+  ],
+  "library_bss_refs": [
+   {
+    "ds_offset": "0x9EC8",
+    "lib_sites": [
+     "0x962B",
+     "0x966E"
+    ]
+   },
+   {
+    "ds_offset": "0x9F08",
+    "lib_sites": [
+     "0x99BB",
+     "0x99CE",
+     "0x99DA",
+     "0x99E1"
+    ]
+   }
+  ]
+ },
+ "g_levels": {
+  "ds_offset": "0x173A",
+  "file_offset": "0x26E0A",
+  "far_pointer": "254D:173A",
+  "count": 10,
+  "record_size": 1280,
+  "record_layout": [
+   {
+    "offset": "0x000",
+    "size": 256,
+    "what": "monster path: signed (dx,dy) byte pairs, 0xEA in the dx slot ends/restarts the path"
+   },
+   {
+    "offset": "0x100",
+    "size": 1000,
+    "what": "tile map, 10 rows x 100 columns, row-major, EGADAVE.DAV fixed-tile index per byte"
+   },
+   {
+    "offset": "0x4E8",
+    "size": 24,
+    "what": "never read (padding to 0x500); non-zero editor leftovers, preserved"
+   }
+  ],
+  "init_stub_file": "0x8516",
+  "range_file": [
+   "0x26E0A",
+   "0x2A00A"
+  ],
+  "per_level": [
+   {
+    "level": 1,
+    "path_moves": 128,
+    "path_terminated": false,
+    "max_tile": 52,
+    "record_md5": "12e896cd4bf7d68cac506f84d9409b12"
+   },
+   {
+    "level": 2,
+    "path_moves": 128,
+    "path_terminated": false,
+    "max_tile": 52,
+    "record_md5": "81c56b184449507fcdb65be034bb9967"
+   },
+   {
+    "level": 3,
+    "path_moves": 51,
+    "path_terminated": true,
+    "max_tile": 52,
+    "record_md5": "76747354d55a59dea0de3eb56a3d2421"
+   },
+   {
+    "level": 4,
+    "path_moves": 40,
+    "path_terminated": true,
+    "max_tile": 52,
+    "record_md5": "6a19111b2baf09d6eb86e716b01d1a98"
+   },
+   {
+    "level": 5,
+    "path_moves": 34,
+    "path_terminated": true,
+    "max_tile": 50,
+    "record_md5": "a2f93ee5f1cc49d3e052d81b09029b23"
+   },
+   {
+    "level": 6,
+    "path_moves": 31,
+    "path_terminated": true,
+    "max_tile": 52,
+    "record_md5": "b4ea3dcd1e72adccf39c3949a24d3f93"
+   },
+   {
+    "level": 7,
+    "path_moves": 31,
+    "path_terminated": true,
+    "max_tile": 52,
+    "record_md5": "024bff9aede27f2bd5e9469ad9b7d8b4"
+   },
+   {
+    "level": 8,
+    "path_moves": 40,
+    "path_terminated": true,
+    "max_tile": 52,
+    "record_md5": "4ec5f829ea2f4dc9f2a17fe504e2c634"
+   },
+   {
+    "level": 9,
+    "path_moves": 16,
+    "path_terminated": true,
+    "max_tile": 52,
+    "record_md5": "8414e640c83f5fbdf0dafc1fd4b9de8b"
+   },
+   {
+    "level": 10,
+    "path_moves": 17,
+    "path_terminated": true,
+    "max_tile": 52,
+    "record_md5": "4dfec808951440414f484023d63d8410"
+   }
+  ],
+  "warp_bug_level_minus_1": {
+   "ds_offset": "0x123A",
+   "file_offset": "0x2690A",
+   "tiles_file_offset": "0x26A0A"
+  },
+  "roundtrip_exact": true
+ },
+ "per_level_tables_note": "DS:0x118..0x1CC and DS:0x496..0x7B6 are per-level parameter tables in initialised _DATA (indexed by g_current_level); see CURATED_GLOBALS.",
+ "string_regions": [
+  {
+   "ds_start": "0xAE",
+   "ds_end": "0xBA",
+   "file_start": "0x2577E",
+   "strings": 1,
+   "code_referenced": 1
+  },
+  {
+   "ds_start": "0x7CE",
+   "ds_end": "0x7D4",
+   "file_start": "0x25E9E",
+   "strings": 1,
+   "code_referenced": 1
+  },
+  {
+   "ds_start": "0x81A",
+   "ds_end": "0x838",
+   "file_start": "0x25EEA",
+   "strings": 1,
+   "code_referenced": 1
+  },
+  {
+   "ds_start": "0x8AD",
+   "ds_end": "0xF02",
+   "file_start": "0x25F7D",
+   "strings": 63,
+   "code_referenced": 62
+  },
+  {
+   "ds_start": "0xF63",
+   "ds_end": "0x12EF",
+   "file_start": "0x26633",
+   "strings": 57,
+   "code_referenced": 56
+  },
+  {
+   "ds_start": "0x131E",
+   "ds_end": "0x132D",
+   "file_start": "0x269EE",
+   "strings": 1,
+   "code_referenced": 1
+  }
+ ],
+ "string_count_game_data": 158,
+ "globals": [
+  {
+   "ds_offset": "0x9A",
+   "file_offset": "0x2576A",
+   "region": "_DATA:C0S",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 83,
+   "functions": [
+    "F_0439",
+    "F_04D2",
+    "F_04FC",
+    "F_07EB",
+    "F_088E",
+    "F_09DE",
+    "F_0BB2",
+    "F_0C34",
+    "F_0DFB",
+    "F_0E57",
+    "F_0EDF",
+    "F_124B",
+    "F_12B9",
+    "F_1321",
+    "F_13FF",
+    "F_15A5",
+    "F_1780",
+    "F_1830",
+    "F_18F6",
+    "F_1B29",
+    "F_1B84",
+    "F_1BD6",
+    "F_1C28",
+    "F_1C6A",
+    "F_1D16",
+    "F_2D38",
+    "F_2D87",
+    "F_301B",
+    "F_3205",
+    "F_332C",
+    "F_3435",
+    "F_34CB",
+    "F_371F",
+    "F_376E",
+    "F_37ED",
+    "F_3BA3",
+    "F_3FD5",
+    "F_47F8",
+    "F_483F",
+    "F_4886",
+    "F_4997",
+    "F_4A27",
+    "F_4D9C",
+    "F_4E69",
+    "F_519B",
+    "F_535A",
+    "F_53C3",
+    "F_55BC",
+    "F_564D",
+    "F_5815",
+    "F_59EC",
+    "F_5B10",
+    "F_5DD5",
+    "F_6099",
+    "F_6213",
+    "F_6293",
+    "F_6388",
+    "F_664B",
+    "F_66F2",
+    "F_688C",
+    "F_6A26",
+    "F_6A62",
+    "F_6ADE",
+    "F_6B94",
+    "F_6D64",
+    "F_6DC2",
+    "F_6EB9",
+    "F_6EF1",
+    "F_7005",
+    "F_7071"
+   ],
+   "sites": [
+    "0x43C",
+    "0x4D5",
+    "0x504",
+    "0x7F2",
+    "0x896",
+    "0x9E6"
+   ],
+   "initial_value_hex": "129f",
+   "proposed_name": "___brklvl",
+   "confidence": "verified",
+   "evidence": "C0S.OBJ PUBDEF ___brklvl @ _DATA+0x9A; every game function's -N prologue does `cmp [0x9a],sp; jb ok; call F_B4FF (stack overflow)`"
+  },
+  {
+   "ds_offset": "0xA8",
+   "file_offset": "0x25778",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_4A27"
+   ],
+   "sites": [
+    "0x4B8E"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0xAA",
+   "file_offset": "0x2577A",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 15,
+   "functions": [
+    "F_0439",
+    "F_09DE",
+    "F_0E57",
+    "F_13FF",
+    "F_4997",
+    "F_4A27"
+   ],
+   "sites": [
+    "0x47D",
+    "0x9EF",
+    "0xA61",
+    "0xA76",
+    "0xB3D",
+    "0xB8D"
+   ],
+   "initial_value_hex": "0000",
+   "address_taken_at": [
+    "0xBD7",
+    "0xBFA",
+    "0x1613",
+    "0x1639"
+   ],
+   "proposed_name": "g_demo_mode",
+   "confidence": "high",
+   "evidence": "F_09DE (0xB8D) sets 1 after picking a demo from far seg 0x0B31; F_4A27 (0x4A9D) increments it on the 0x30 end-of-demo byte; read by main loop F_0439"
+  },
+  {
+   "ds_offset": "0xAC",
+   "file_offset": "0x2577C",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 6,
+   "functions": [
+    "F_4A27"
+   ],
+   "sites": [
+    "0x4B48",
+    "0x4B55",
+    "0x4B59",
+    "0x4B66",
+    "0x4C05",
+    "0x4C14"
+   ],
+   "initial_value_hex": "1e"
+  },
+  {
+   "ds_offset": "0xAD",
+   "file_offset": "0x2577D",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 6,
+   "functions": [
+    "F_4A27"
+   ],
+   "sites": [
+    "0x4B6B",
+    "0x4B78",
+    "0x4B7C",
+    "0x4B89",
+    "0x4C84",
+    "0x4C99"
+   ],
+   "initial_value_hex": "1e"
+  },
+  {
+   "ds_offset": "0xBA",
+   "file_offset": "0x2578A",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x2569"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x100",
+   "file_offset": "0x257D0",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_4E69"
+   ],
+   "sites": [
+    "0x4F61"
+   ],
+   "initial_value_hex": "02"
+  },
+  {
+   "ds_offset": "0x118",
+   "file_offset": "0x257E8",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_15A5",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x1690",
+    "0x4E8D"
+   ],
+   "initial_value_hex": "24",
+   "proposed_name": "g_level_tile_0118[10] (per-level byte)",
+   "confidence": "medium",
+   "evidence": "byte table indexed by g_current_level in F_4E69 (0x4E8D: mov al,[bx+0x118] -> [0x6156]) and F_15A5; values 0x24/0x28; meaning not yet established",
+   "is_string_literal": true
+  },
+  {
+   "ds_offset": "0x122",
+   "file_offset": "0x257F2",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_15A5",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x169F",
+    "0x4E9C"
+   ],
+   "initial_value_hex": "2000",
+   "proposed_name": "g_level_start_x[10]",
+   "confidence": "high",
+   "evidence": "F_4E69 0x4E9C: g_player_x = [0x122 + 2*level]"
+  },
+  {
+   "ds_offset": "0x136",
+   "file_offset": "0x25806",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_15A5",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x16AC",
+    "0x4EA9"
+   ],
+   "initial_value_hex": "9000",
+   "proposed_name": "g_level_start_y[10]",
+   "confidence": "high",
+   "evidence": "F_4E69 0x4EA9: g_player_y = [0x136 + 2*level]"
+  },
+  {
+   "ds_offset": "0x146",
+   "file_offset": "0x25816",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_2D87",
+    "F_37ED"
+   ],
+   "sites": [
+    "0x3003",
+    "0x3863",
+    "0x3974"
+   ],
+   "initial_value_hex": "2000"
+  },
+  {
+   "ds_offset": "0x156",
+   "file_offset": "0x25826",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 4,
+   "functions": [
+    "F_2D87",
+    "F_37ED"
+   ],
+   "sites": [
+    "0x2FA5",
+    "0x2FE4",
+    "0x387B",
+    "0x3990"
+   ],
+   "initial_value_hex": "1000"
+  },
+  {
+   "ds_offset": "0x16A",
+   "file_offset": "0x2583A",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_34CB"
+   ],
+   "sites": [
+    "0x36B4"
+   ],
+   "initial_value_hex": "0000",
+   "proposed_name": "g_warp_target_level_plus1[10]",
+   "confidence": "verified",
+   "evidence": "F_34CB 0x36B4: g_current_level = [0x16a + 2*level] - 1; values (0,0,0,0,2,0,0,6,7,1); external fact EXT_WARP_TARGET_LEVEL_TABLE (file 0x2583A = DS:0x16A)"
+  },
+  {
+   "ds_offset": "0x17E",
+   "file_offset": "0x2584E",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_34CB"
+   ],
+   "sites": [
+    "0x357E",
+    "0x3593"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x192",
+   "file_offset": "0x25862",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_15A5",
+    "F_34CB"
+   ],
+   "sites": [
+    "0x16F8",
+    "0x369D"
+   ],
+   "initial_value_hex": "0000",
+   "proposed_name": "g_warp_start_scroll_x[10]",
+   "confidence": "high",
+   "evidence": "F_34CB 0x369D/0x36C2: g_scroll_x = [0x192 + 2*level] after warp"
+  },
+  {
+   "ds_offset": "0x1A6",
+   "file_offset": "0x25876",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_15A5",
+    "F_34CB"
+   ],
+   "sites": [
+    "0x1705",
+    "0x36AA"
+   ],
+   "initial_value_hex": "0000",
+   "proposed_name": "g_warp_start_x[10]",
+   "confidence": "high",
+   "evidence": "F_34CB 0x36AA/0x36C5: g_player_x = [0x1a6 + 2*level] after warp"
+  },
+  {
+   "ds_offset": "0x1BA",
+   "file_offset": "0x2588A",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_34CB"
+   ],
+   "sites": [
+    "0x35AE"
+   ],
+   "initial_value_hex": "db00"
+  },
+  {
+   "ds_offset": "0x1C0",
+   "file_offset": "0x25890",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_34CB"
+   ],
+   "sites": [
+    "0x35C6"
+   ],
+   "initial_value_hex": "dc00"
+  },
+  {
+   "ds_offset": "0x1C6",
+   "file_offset": "0x25896",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_3205",
+    "F_37ED",
+    "F_4886"
+   ],
+   "sites": [
+    "0x3303",
+    "0x39D6",
+    "0x4965"
+   ],
+   "initial_value_hex": "c900"
+  },
+  {
+   "ds_offset": "0x1CC",
+   "file_offset": "0x2589C",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_3205",
+    "F_37ED",
+    "F_4886"
+   ],
+   "sites": [
+    "0x32D7",
+    "0x39E5",
+    "0x4975"
+   ],
+   "initial_value_hex": "cb00"
+  },
+  {
+   "ds_offset": "0x1D2",
+   "file_offset": "0x258A2",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x20E5",
+    "0x2144",
+    "0x2482"
+   ],
+   "initial_value_hex": "5300"
+  },
+  {
+   "ds_offset": "0x1D8",
+   "file_offset": "0x258A8",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x2101",
+    "0x211D",
+    "0x2545"
+   ],
+   "initial_value_hex": "5100"
+  },
+  {
+   "ds_offset": "0x1DE",
+   "file_offset": "0x258AE",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x20F2",
+    "0x2151",
+    "0x248F"
+   ],
+   "initial_value_hex": "5700"
+  },
+  {
+   "ds_offset": "0x1E4",
+   "file_offset": "0x258B4",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x210E",
+    "0x212A",
+    "0x2552"
+   ],
+   "initial_value_hex": "5500"
+  },
+  {
+   "ds_offset": "0x1EA",
+   "file_offset": "0x258BA",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 7,
+   "functions": [
+    "F_0C34",
+    "F_0DFB"
+   ],
+   "sites": [
+    "0xD49",
+    "0xD6D",
+    "0xD91",
+    "0xDB5",
+    "0xDD9",
+    "0xE0D"
+   ],
+   "initial_value_hex": "e500"
+  },
+  {
+   "ds_offset": "0x1F0",
+   "file_offset": "0x258C0",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_09DE"
+   ],
+   "sites": [
+    "0xAA8"
+   ],
+   "initial_value_hex": "e100"
+  },
+  {
+   "ds_offset": "0x208",
+   "file_offset": "0x258D8",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 25,
+   "functions": [
+    "F_0BB2",
+    "F_0C34",
+    "F_15A5",
+    "F_1780",
+    "F_34CB",
+    "F_376E",
+    "F_3BA3",
+    "F_3FD5",
+    "F_4E69"
+   ],
+   "sites": [
+    "0xBCB",
+    "0xBEE",
+    "0xC12",
+    "0xCB8",
+    "0x15D0",
+    "0x1604"
+   ],
+   "initial_value_hex": "0800"
+  },
+  {
+   "ds_offset": "0x20A",
+   "file_offset": "0x258DA",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 8,
+   "functions": [
+    "F_0BB2",
+    "F_15A5",
+    "F_1780",
+    "F_3FD5",
+    "F_4E69"
+   ],
+   "sites": [
+    "0xBD3",
+    "0x160F",
+    "0x17EE",
+    "0x41BF",
+    "0x434B",
+    "0x44D8"
+   ],
+   "initial_value_hex": "d500"
+  },
+  {
+   "ds_offset": "0x20C",
+   "file_offset": "0x258DC",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 7,
+   "functions": [
+    "F_0BB2",
+    "F_15A5",
+    "F_3FD5",
+    "F_4E69"
+   ],
+   "sites": [
+    "0xBF6",
+    "0x1635",
+    "0x4190",
+    "0x431C",
+    "0x44A9",
+    "0x4637"
+   ],
+   "initial_value_hex": "d600"
+  },
+  {
+   "ds_offset": "0x20E",
+   "file_offset": "0x258DE",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_376E"
+   ],
+   "sites": [
+    "0x37B2"
+   ],
+   "initial_value_hex": "d700"
+  },
+  {
+   "ds_offset": "0x210",
+   "file_offset": "0x258E0",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_376E"
+   ],
+   "sites": [
+    "0x379D"
+   ],
+   "initial_value_hex": "d800"
+  },
+  {
+   "ds_offset": "0x212",
+   "file_offset": "0x258E2",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_376E"
+   ],
+   "sites": [
+    "0x3789"
+   ],
+   "initial_value_hex": "d900"
+  },
+  {
+   "ds_offset": "0x214",
+   "file_offset": "0x258E4",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 7,
+   "functions": [
+    "F_0BB2",
+    "F_34CB",
+    "F_3BA3",
+    "F_3FD5"
+   ],
+   "sites": [
+    "0xC1A",
+    "0x3661",
+    "0x3BDB",
+    "0x4147",
+    "0x42D3",
+    "0x4460"
+   ],
+   "initial_value_hex": "da00"
+  },
+  {
+   "ds_offset": "0x216",
+   "file_offset": "0x258E6",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_0C34",
+    "F_15A5",
+    "F_376E"
+   ],
+   "sites": [
+    "0xCC3",
+    "0x15D8",
+    "0x37CB"
+   ],
+   "initial_value_hex": "e000"
+  },
+  {
+   "ds_offset": "0x23A",
+   "file_offset": "0x2590A",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 4,
+   "functions": [
+    "F_3FD5"
+   ],
+   "sites": [
+    "0x4074",
+    "0x41FE",
+    "0x438A",
+    "0x4517"
+   ],
+   "initial_value_hex": "0200",
+   "proposed_name": "g_pickup_tile_ids[10]",
+   "confidence": "high",
+   "evidence": "F_3FD5 0x41FE: compared with the tile under Dave; values 2 (door), 4 (jetpack), 0x14 (gun), 0x0A (trophy), 0x2F..0x34 (treasures); each case handled in the switch at 0x40CA"
+  },
+  {
+   "ds_offset": "0x24E",
+   "file_offset": "0x2591E",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 8,
+   "functions": [
+    "F_3FD5"
+   ],
+   "sites": [
+    "0x408A",
+    "0x416D",
+    "0x4214",
+    "0x42F9",
+    "0x43A0",
+    "0x4486"
+   ],
+   "initial_value_hex": "d007",
+   "proposed_name": "g_pickup_points[10]",
+   "confidence": "high",
+   "evidence": "F_3FD5 0x416D: score += [0x24e + 2*i] (cwd; add [0x4c60]; adc [0x4c62]) parallel to g_pickup_tile_ids"
+  },
+  {
+   "ds_offset": "0x262",
+   "file_offset": "0x25932",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 7,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x2073",
+    "0x2402",
+    "0x24C5",
+    "0x2795",
+    "0x27FD",
+    "0x284D"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x2CC",
+   "file_offset": "0x2599C",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_2D38"
+   ],
+   "sites": [
+    "0x2D7D"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x336",
+   "file_offset": "0x25A06",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 9,
+   "functions": [
+    "F_13FF",
+    "F_15A5",
+    "F_1780",
+    "F_1D16",
+    "F_34CB",
+    "F_4A27",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x144F",
+    "0x16C5",
+    "0x181A",
+    "0x2098",
+    "0x2311",
+    "0x2A1D"
+   ],
+   "initial_value_hex": "3b00"
+  },
+  {
+   "ds_offset": "0x33C",
+   "file_offset": "0x25A0C",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 9,
+   "functions": [
+    "F_13FF",
+    "F_15A5",
+    "F_1780",
+    "F_1D16",
+    "F_34CB",
+    "F_4A27",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x145C",
+    "0x16D2",
+    "0x1827",
+    "0x20A5",
+    "0x231E",
+    "0x2A2A"
+   ],
+   "initial_value_hex": "4900"
+  },
+  {
+   "ds_offset": "0x342",
+   "file_offset": "0x25A12",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_371F"
+   ],
+   "sites": [
+    "0x3732"
+   ],
+   "initial_value_hex": "dd00"
+  },
+  {
+   "ds_offset": "0x348",
+   "file_offset": "0x25A18",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_1780",
+    "F_371F"
+   ],
+   "sites": [
+    "0x17AC",
+    "0x374E"
+   ],
+   "initial_value_hex": "de00"
+  },
+  {
+   "ds_offset": "0x34E",
+   "file_offset": "0x25A1E",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_4E69"
+   ],
+   "sites": [
+    "0x4F76"
+   ],
+   "initial_value_hex": "0600",
+   "proposed_name": "g_animated_tile_ids[4]",
+   "confidence": "high",
+   "evidence": "F_4E69 0x4F76: every tile of the new level is compared against [0x34e + 2*k] for k<4; matches are registered in g_anim_tiles (0x57E8)"
+  },
+  {
+   "ds_offset": "0x356",
+   "file_offset": "0x25A26",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_4E69"
+   ],
+   "sites": [
+    "0x4FB2",
+    "0x4FFB"
+   ],
+   "initial_value_hex": "0400",
+   "proposed_name": "g_animated_tile_frames[4]",
+   "confidence": "medium",
+   "evidence": "F_4E69 0x4FB2/0x4FFB: per-kind frame count copied into each g_anim_tiles record"
+  },
+  {
+   "ds_offset": "0x35E",
+   "file_offset": "0x25A2E",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 5,
+   "functions": [
+    "F_1830",
+    "F_18F6",
+    "F_4D9C"
+   ],
+   "sites": [
+    "0x18CC",
+    "0x1967",
+    "0x1A24",
+    "0x1A5D",
+    "0x4E3C"
+   ],
+   "initial_value_hex": "cd00"
+  },
+  {
+   "ds_offset": "0x376",
+   "file_offset": "0x25A46",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_3205",
+    "F_37ED",
+    "F_4886"
+   ],
+   "sites": [
+    "0x329B",
+    "0x3B00",
+    "0x4946"
+   ],
+   "initial_value_hex": "bd00"
+  },
+  {
+   "ds_offset": "0x38E",
+   "file_offset": "0x25A5E",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_3205",
+    "F_37ED",
+    "F_4886"
+   ],
+   "sites": [
+    "0x325B",
+    "0x3B31",
+    "0x4955"
+   ],
+   "initial_value_hex": "c300"
+  },
+  {
+   "ds_offset": "0x3A6",
+   "file_offset": "0x25A76",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_0EDF",
+    "F_1D16",
+    "F_4A27"
+   ],
+   "sites": [
+    "0x105F",
+    "0x2B5E",
+    "0x4CDC"
+   ],
+   "initial_value_hex": "6500"
+  },
+  {
+   "ds_offset": "0x3BE",
+   "file_offset": "0x25A8E",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_0EDF",
+    "F_1D16",
+    "F_4A27"
+   ],
+   "sites": [
+    "0x1051",
+    "0x2B73",
+    "0x4CF1"
+   ],
+   "initial_value_hex": "7100"
+  },
+  {
+   "ds_offset": "0x3D6",
+   "file_offset": "0x25AA6",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_0EDF",
+    "F_1D16",
+    "F_4A27"
+   ],
+   "sites": [
+    "0x1089",
+    "0x2B32",
+    "0x4D21"
+   ],
+   "initial_value_hex": "6b00"
+  },
+  {
+   "ds_offset": "0x3EE",
+   "file_offset": "0x25ABE",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_0EDF",
+    "F_1D16",
+    "F_4A27"
+   ],
+   "sites": [
+    "0x107B",
+    "0x2B47",
+    "0x4D36"
+   ],
+   "initial_value_hex": "7700"
+  },
+  {
+   "ds_offset": "0x406",
+   "file_offset": "0x25AD6",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_0EDF"
+   ],
+   "sites": [
+    "0x117B"
+   ],
+   "initial_value_hex": "5900"
+  },
+  {
+   "ds_offset": "0x40A",
+   "file_offset": "0x25ADA",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_0EDF"
+   ],
+   "sites": [
+    "0x11A5"
+   ],
+   "initial_value_hex": "5d00"
+  },
+  {
+   "ds_offset": "0x41E",
+   "file_offset": "0x25AEE",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_0EDF"
+   ],
+   "sites": [
+    "0x116D"
+   ],
+   "initial_value_hex": "5f00"
+  },
+  {
+   "ds_offset": "0x422",
+   "file_offset": "0x25AF2",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_0EDF"
+   ],
+   "sites": [
+    "0x1197"
+   ],
+   "initial_value_hex": "6300"
+  },
+  {
+   "ds_offset": "0x427",
+   "file_offset": "0x25AF7",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x2BD8"
+   ],
+   "initial_value_hex": "008d"
+  },
+  {
+   "ds_offset": "0x436",
+   "file_offset": "0x25B06",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_0EDF",
+    "F_1D16"
+   ],
+   "sites": [
+    "0xF61",
+    "0x1ECB",
+    "0x21F3"
+   ],
+   "initial_value_hex": "3d00"
+  },
+  {
+   "ds_offset": "0x438",
+   "file_offset": "0x25B08",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x22DE",
+    "0x25FC"
+   ],
+   "initial_value_hex": "3f00"
+  },
+  {
+   "ds_offset": "0x44E",
+   "file_offset": "0x25B1E",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_0EDF",
+    "F_1D16"
+   ],
+   "sites": [
+    "0xF53",
+    "0x1ED6",
+    "0x2204"
+   ],
+   "initial_value_hex": "4b00"
+  },
+  {
+   "ds_offset": "0x450",
+   "file_offset": "0x25B20",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x22EF",
+    "0x260D"
+   ],
+   "initial_value_hex": "4d00"
+  },
+  {
+   "ds_offset": "0x466",
+   "file_offset": "0x25B36",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 5,
+   "functions": [
+    "F_0EDF",
+    "F_1D16",
+    "F_3BA3"
+   ],
+   "sites": [
+    "0xF37",
+    "0x202E",
+    "0x2259",
+    "0x3CDF",
+    "0x3D48"
+   ],
+   "initial_value_hex": "3500"
+  },
+  {
+   "ds_offset": "0x468",
+   "file_offset": "0x25B38",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x2344",
+    "0x2633"
+   ],
+   "initial_value_hex": "3700"
+  },
+  {
+   "ds_offset": "0x47E",
+   "file_offset": "0x25B4E",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 5,
+   "functions": [
+    "F_0EDF",
+    "F_1D16",
+    "F_3BA3"
+   ],
+   "sites": [
+    "0xF29",
+    "0x2039",
+    "0x226A",
+    "0x3CF4",
+    "0x3D5D"
+   ],
+   "initial_value_hex": "4300"
+  },
+  {
+   "ds_offset": "0x480",
+   "file_offset": "0x25B50",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x2355",
+    "0x2644"
+   ],
+   "initial_value_hex": "4500"
+  },
+  {
+   "ds_offset": "0x496",
+   "file_offset": "0x25B66",
+   "region": "_DATA:game",
+   "access_widths": [],
+   "access_kinds": [],
+   "written": false,
+   "ref_count": 0,
+   "functions": [],
+   "sites": [],
+   "proposed_name": "g_level_monster_init[10][0x50]",
+   "confidence": "high",
+   "evidence": "F_4E69 0x504A..0x505A: struct copy (N_SCOPY@ at 0xB1C2, cx=0x50) from DS:0x496 + level*0x50 to g_monsters (DS:0x5742)"
+  },
+  {
+   "ds_offset": "0xF02",
+   "file_offset": "0x265D2",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct",
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 12,
+   "functions": [
+    "F_5B10",
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5B40",
+    "0x5B5A",
+    "0x5B7F",
+    "0x5B9F",
+    "0x5BC4",
+    "0x5BE4"
+   ],
+   "initial_value_hex": "0400",
+   "proposed_name": "g_ctrl_panel_state (0x0F02..0x0F12)",
+   "confidence": "low",
+   "evidence": "small block used only by F_5B10/F_5DD5 (control panel / input configuration)"
+  },
+  {
+   "ds_offset": "0xF04",
+   "file_offset": "0x265D4",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 4,
+   "functions": [
+    "F_5B10"
+   ],
+   "sites": [
+    "0x5BFE",
+    "0x5C19",
+    "0x5C37",
+    "0x5D76"
+   ],
+   "initial_value_hex": "0900"
+  },
+  {
+   "ds_offset": "0xF06",
+   "file_offset": "0x265D6",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 9,
+   "functions": [
+    "F_5B10"
+   ],
+   "sites": [
+    "0x5C51",
+    "0x5C6C",
+    "0x5C91",
+    "0x5CB1",
+    "0x5CD6",
+    "0x5CF6"
+   ],
+   "initial_value_hex": "0e00"
+  },
+  {
+   "ds_offset": "0xF08",
+   "file_offset": "0x265D8",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_5B10",
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5D66",
+    "0x5F6E"
+   ],
+   "initial_value_hex": "1300"
+  },
+  {
+   "ds_offset": "0xF0A",
+   "file_offset": "0x265DA",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct",
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 9,
+   "functions": [
+    "F_5B10",
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5B64",
+    "0x5C23",
+    "0x5C76",
+    "0x5D83",
+    "0x5DA0",
+    "0x5E41"
+   ],
+   "initial_value_hex": "0e00"
+  },
+  {
+   "ds_offset": "0xF0C",
+   "file_offset": "0x265DC",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 5,
+   "functions": [
+    "F_5B10"
+   ],
+   "sites": [
+    "0x5B89",
+    "0x5BA9",
+    "0x5C41",
+    "0x5C9B",
+    "0x5CBB"
+   ],
+   "initial_value_hex": "1400"
+  },
+  {
+   "ds_offset": "0xF0E",
+   "file_offset": "0x265DE",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 4,
+   "functions": [
+    "F_5B10"
+   ],
+   "sites": [
+    "0x5BCE",
+    "0x5BEE",
+    "0x5CE0",
+    "0x5D00"
+   ],
+   "initial_value_hex": "1a00"
+  },
+  {
+   "ds_offset": "0xF10",
+   "file_offset": "0x265E0",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_5B10"
+   ],
+   "sites": [
+    "0x5D25",
+    "0x5D45"
+   ],
+   "initial_value_hex": "2000"
+  },
+  {
+   "ds_offset": "0xF12",
+   "file_offset": "0x265E2",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_564D"
+   ],
+   "sites": [
+    "0x57F8"
+   ],
+   "initial_value_hex": "3f"
+  },
+  {
+   "ds_offset": "0x12F0",
+   "file_offset": "0x269C0",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_688C"
+   ],
+   "sites": [
+    "0x68B1"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x12F2",
+   "file_offset": "0x269C2",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5DFC",
+    "0x6079"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x12F4",
+   "file_offset": "0x269C4",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5E05",
+    "0x607F"
+   ],
+   "initial_value_hex": "0200"
+  },
+  {
+   "ds_offset": "0x12F6",
+   "file_offset": "0x269C6",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_53C3",
+    "F_66F2"
+   ],
+   "sites": [
+    "0x5582",
+    "0x674F",
+    "0x677B"
+   ],
+   "initial_value_hex": "1400"
+  },
+  {
+   "ds_offset": "0x12FC",
+   "file_offset": "0x269CC",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_53C3",
+    "F_66F2"
+   ],
+   "sites": [
+    "0x5590",
+    "0x6767"
+   ],
+   "initial_value_hex": "3c00"
+  },
+  {
+   "ds_offset": "0x1302",
+   "file_offset": "0x269D2",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_53C3",
+    "F_66F2"
+   ],
+   "sites": [
+    "0x559E",
+    "0x675B",
+    "0x67A1"
+   ],
+   "initial_value_hex": "1400"
+  },
+  {
+   "ds_offset": "0x1308",
+   "file_offset": "0x269D8",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_53C3",
+    "F_66F2"
+   ],
+   "sites": [
+    "0x55AC",
+    "0x678D"
+   ],
+   "initial_value_hex": "3200"
+  },
+  {
+   "ds_offset": "0x130E",
+   "file_offset": "0x269DE",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 9,
+   "functions": [
+    "F_55BC",
+    "F_6388"
+   ],
+   "sites": [
+    "0x5633",
+    "0x6546",
+    "0x6551",
+    "0x6569",
+    "0x6578",
+    "0x6588"
+   ],
+   "initial_value_hex": "0500"
+  },
+  {
+   "ds_offset": "0x1310",
+   "file_offset": "0x269E0",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct",
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_5815",
+    "F_6388"
+   ],
+   "sites": [
+    "0x58C7",
+    "0x5991",
+    "0x63C4"
+   ],
+   "initial_value_hex": "48"
+  },
+  {
+   "ds_offset": "0x1311",
+   "file_offset": "0x269E1",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_6388"
+   ],
+   "sites": [
+    "0x640C"
+   ],
+   "initial_value_hex": "49"
+  },
+  {
+   "ds_offset": "0x1312",
+   "file_offset": "0x269E2",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_6388"
+   ],
+   "sites": [
+    "0x63D6"
+   ],
+   "initial_value_hex": "4d"
+  },
+  {
+   "ds_offset": "0x1313",
+   "file_offset": "0x269E3",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_6388"
+   ],
+   "sites": [
+    "0x6436"
+   ],
+   "initial_value_hex": "51"
+  },
+  {
+   "ds_offset": "0x1314",
+   "file_offset": "0x269E4",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_6388"
+   ],
+   "sites": [
+    "0x63E8"
+   ],
+   "initial_value_hex": "50"
+  },
+  {
+   "ds_offset": "0x1315",
+   "file_offset": "0x269E5",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_6388"
+   ],
+   "sites": [
+    "0x644B"
+   ],
+   "initial_value_hex": "4f"
+  },
+  {
+   "ds_offset": "0x1316",
+   "file_offset": "0x269E6",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_6388"
+   ],
+   "sites": [
+    "0x63FA"
+   ],
+   "initial_value_hex": "4b"
+  },
+  {
+   "ds_offset": "0x1317",
+   "file_offset": "0x269E7",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_6388"
+   ],
+   "sites": [
+    "0x6421"
+   ],
+   "initial_value_hex": "47"
+  },
+  {
+   "ds_offset": "0x1318",
+   "file_offset": "0x269E8",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_5815",
+    "F_6388"
+   ],
+   "sites": [
+    "0x58E4",
+    "0x599D",
+    "0x64B9"
+   ],
+   "initial_value_hex": "1d"
+  },
+  {
+   "ds_offset": "0x1319",
+   "file_offset": "0x269E9",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_5815",
+    "F_6388"
+   ],
+   "sites": [
+    "0x58FA",
+    "0x59A8",
+    "0x64C8"
+   ],
+   "initial_value_hex": "38"
+  },
+  {
+   "ds_offset": "0x131A",
+   "file_offset": "0x269EA",
+   "region": "_DATA:game",
+   "access_widths": [
+    2,
+    4
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_6293",
+    "F_6388"
+   ],
+   "sites": [
+    "0x62ED",
+    "0x6363",
+    "0x639F"
+   ],
+   "initial_value_hex": "00000000",
+   "proposed_name": "g_old_int9 (far)",
+   "confidence": "high",
+   "evidence": "F_6293 0x62ED/0x62F1: old INT 9 vector stored here unless it already equals _TEXT:0x610B (the keyboard ISR); then runtime 0xA44F (setvect-shaped) installs _TEXT:0x610B as INT 9; the `seg _TEXT` immediates are the two value-0 relocations"
+  },
+  {
+   "ds_offset": "0x131C",
+   "file_offset": "0x269EC",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_6293",
+    "F_6388"
+   ],
+   "sites": [
+    "0x62F1",
+    "0x639B"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x132E",
+   "file_offset": "0x269FE",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_7719",
+    "F_77E1"
+   ],
+   "sites": [
+    "0x77B4",
+    "0x77F5",
+    "0x781E"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x1330",
+   "file_offset": "0x26A00",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_7719",
+    "F_77E1"
+   ],
+   "sites": [
+    "0x77BA",
+    "0x77F9",
+    "0x7822"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x1332",
+   "file_offset": "0x26A02",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct",
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 6,
+   "functions": [
+    "F_7719",
+    "F_77E1"
+   ],
+   "sites": [
+    "0x779E",
+    "0x77FD",
+    "0x7801",
+    "0x7805",
+    "0x7809",
+    "0x780D"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x1334",
+   "file_offset": "0x26A04",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_7719"
+   ],
+   "sites": [
+    "0x77A9"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x1336",
+   "file_offset": "0x26A06",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_7719"
+   ],
+   "sites": [
+    "0x77AD"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x1378",
+   "file_offset": "0x26A48",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_75D6",
+    "F_760F"
+   ],
+   "sites": [
+    "0x75D6",
+    "0x7604",
+    "0x7619",
+    "0x7631"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x137A",
+   "file_offset": "0x26A4A",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_519B"
+   ],
+   "sites": [
+    "0x51D3"
+   ],
+   "initial_value_hex": "0000",
+   "proposed_name": "g_sound_data (far)",
+   "confidence": "verified",
+   "evidence": "F_519B 0x51D3/0x51D9: = MK_FP(0x1C2E,0) -- the relocated paragraph of the SPK sound segment"
+  },
+  {
+   "ds_offset": "0x137C",
+   "file_offset": "0x26A4C",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_519B",
+    "F_763E",
+    "F_7719"
+   ],
+   "sites": [
+    "0x51D9",
+    "0x764F",
+    "0x7724"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x137E",
+   "file_offset": "0x26A4E",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_5DD5",
+    "F_75D6",
+    "F_7719"
+   ],
+   "sites": [
+    "0x5DF3",
+    "0x608B",
+    "0x760B",
+    "0x776B"
+   ],
+   "initial_value_hex": "0100"
+  },
+  {
+   "ds_offset": "0x1380",
+   "file_offset": "0x26A50",
+   "region": "_DATA:game",
+   "access_widths": [
+    2,
+    4
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_75D6",
+    "F_760F",
+    "F_7719"
+   ],
+   "sites": [
+    "0x75E6",
+    "0x7622",
+    "0x773A"
+   ],
+   "initial_value_hex": "00000000"
+  },
+  {
+   "ds_offset": "0x1382",
+   "file_offset": "0x26A52",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_75D6",
+    "F_760F"
+   ],
+   "sites": [
+    "0x75EC",
+    "0x7626"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x1384",
+   "file_offset": "0x26A54",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 6,
+   "functions": [
+    "F_75D6",
+    "F_763E",
+    "F_769B",
+    "F_76BF",
+    "F_76E1",
+    "F_7719"
+   ],
+   "sites": [
+    "0x75F2",
+    "0x766B",
+    "0x76B8",
+    "0x76CB",
+    "0x76F0",
+    "0x7733"
+   ],
+   "initial_value_hex": "00",
+   "proposed_name": "g_sound_state (0x1384..0x1392)",
+   "confidence": "medium",
+   "evidence": "bytes/words used only by the sound routines F_75D6..F_7719 and play_sound F_763E"
+  },
+  {
+   "ds_offset": "0x1385",
+   "file_offset": "0x26A55",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 7,
+   "functions": [
+    "F_75D6",
+    "F_763E",
+    "F_769B",
+    "F_76BF",
+    "F_76E1",
+    "F_7719"
+   ],
+   "sites": [
+    "0x75F5",
+    "0x766F",
+    "0x76BB",
+    "0x76D1",
+    "0x76F6",
+    "0x772D"
+   ],
+   "initial_value_hex": "00"
+  },
+  {
+   "ds_offset": "0x1386",
+   "file_offset": "0x26A56",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_763E",
+    "F_769B",
+    "F_76BF"
+   ],
+   "sites": [
+    "0x7688",
+    "0x76A3",
+    "0x76D7"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x1388",
+   "file_offset": "0x26A58",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 8,
+   "functions": [
+    "F_763E",
+    "F_769B",
+    "F_76BF",
+    "F_76E1",
+    "F_770A",
+    "F_7719"
+   ],
+   "sites": [
+    "0x7664",
+    "0x769D",
+    "0x76BF",
+    "0x76E4",
+    "0x7710",
+    "0x773E"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x138A",
+   "file_offset": "0x26A5A",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_763E",
+    "F_769B",
+    "F_76BF",
+    "F_76E1"
+   ],
+   "sites": [
+    "0x7658",
+    "0x765E",
+    "0x76A0",
+    "0x76C5",
+    "0x76EA"
+   ],
+   "initial_value_hex": "00"
+  },
+  {
+   "ds_offset": "0x138B",
+   "file_offset": "0x26A5B",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_76BF",
+    "F_76E1"
+   ],
+   "sites": [
+    "0x76C2",
+    "0x76E1"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x138D",
+   "file_offset": "0x26A5D",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_76BF",
+    "F_76E1"
+   ],
+   "sites": [
+    "0x76C8",
+    "0x76E7"
+   ],
+   "initial_value_hex": "00"
+  },
+  {
+   "ds_offset": "0x138E",
+   "file_offset": "0x26A5E",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_76BF",
+    "F_76E1"
+   ],
+   "sites": [
+    "0x76CE",
+    "0x76ED"
+   ],
+   "initial_value_hex": "00"
+  },
+  {
+   "ds_offset": "0x138F",
+   "file_offset": "0x26A5F",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_76BF",
+    "F_76E1"
+   ],
+   "sites": [
+    "0x76D4",
+    "0x76F3"
+   ],
+   "initial_value_hex": "00"
+  },
+  {
+   "ds_offset": "0x1390",
+   "file_offset": "0x26A60",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_76BF",
+    "F_76E1"
+   ],
+   "sites": [
+    "0x76DA",
+    "0x76F9"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x1392",
+   "file_offset": "0x26A62",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 10,
+   "functions": [
+    "F_13FF",
+    "F_3BA3",
+    "F_5B10",
+    "F_78B5"
+   ],
+   "sites": [
+    "0x14EF",
+    "0x1528",
+    "0x3C62",
+    "0x3CBF",
+    "0x3EB4",
+    "0x3F26"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x1394",
+   "file_offset": "0x26A64",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 7,
+   "functions": [
+    "F_7D87",
+    "F_7E00",
+    "F_7E32",
+    "F_7ED4"
+   ],
+   "sites": [
+    "0x7DE0",
+    "0x7E0D",
+    "0x7E5C",
+    "0x7E97",
+    "0x7F05",
+    "0x7F1F"
+   ],
+   "initial_value_hex": "0000",
+   "proposed_name": "g_rle_src_seg",
+   "confidence": "verified",
+   "evidence": "asm RLE codec entry 0x7E00: 0x7E0D ss:[0x1394] = arg2 (source segment); 0x7F1F: mov ds,ss:[0x1394]"
+  },
+  {
+   "ds_offset": "0x1396",
+   "file_offset": "0x26A66",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 7,
+   "functions": [
+    "F_7D87",
+    "F_7E00",
+    "F_7E32",
+    "F_7ED4"
+   ],
+   "sites": [
+    "0x7DD2",
+    "0x7E1B",
+    "0x7EBC",
+    "0x7EDC",
+    "0x7EF3",
+    "0x7F44"
+   ],
+   "initial_value_hex": "0000",
+   "proposed_name": "g_rle_dst_seg",
+   "confidence": "verified",
+   "evidence": "0x7E1B: ss:[0x1396] = arg4 (destination segment); 0x7EDC: mov es,ss:[0x1396]"
+  },
+  {
+   "ds_offset": "0x1398",
+   "file_offset": "0x26A68",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_7D87",
+    "F_7E00",
+    "F_7E32"
+   ],
+   "sites": [
+    "0x7DD9",
+    "0x7E06",
+    "0x7E53"
+   ],
+   "initial_value_hex": "0000",
+   "proposed_name": "g_rle_src_off",
+   "confidence": "verified",
+   "evidence": "0x7E06: ss:[0x1398] = arg1"
+  },
+  {
+   "ds_offset": "0x139A",
+   "file_offset": "0x26A6A",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 8,
+   "functions": [
+    "F_7D87",
+    "F_7E00",
+    "F_7E32",
+    "F_7ED4"
+   ],
+   "sites": [
+    "0x7DCB",
+    "0x7E14",
+    "0x7E4E",
+    "0x7E6D",
+    "0x7E78",
+    "0x7EB6"
+   ],
+   "initial_value_hex": "0000",
+   "proposed_name": "g_rle_dst_off",
+   "confidence": "verified",
+   "evidence": "0x7E14: ss:[0x139a] = arg3"
+  },
+  {
+   "ds_offset": "0x139C",
+   "file_offset": "0x26A6C",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_7D87",
+    "F_7E00",
+    "F_7ED4"
+   ],
+   "sites": [
+    "0x7DE7",
+    "0x7E22",
+    "0x7F0F",
+    "0x7F8B"
+   ],
+   "initial_value_hex": "0000",
+   "proposed_name": "g_rle_remaining (long)",
+   "confidence": "verified",
+   "evidence": "0x7E22/0x7E29: ss:[0x139c..0x139f] = arg5 (length); decremented per chunk at 0x7F0F"
+  },
+  {
+   "ds_offset": "0x139E",
+   "file_offset": "0x26A6E",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_7D87",
+    "F_7E00",
+    "F_7ED4"
+   ],
+   "sites": [
+    "0x7DEE",
+    "0x7E29",
+    "0x7F14",
+    "0x7F91"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x13A0",
+   "file_offset": "0x26A70",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_7D87",
+    "F_7E32"
+   ],
+   "sites": [
+    "0x7DF5",
+    "0x7E40",
+    "0x7E7D",
+    "0x7EAB"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x13A2",
+   "file_offset": "0x26A72",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_7D87",
+    "F_7E32"
+   ],
+   "sites": [
+    "0x7DF9",
+    "0x7E47",
+    "0x7E83",
+    "0x7EB0"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x13A4",
+   "file_offset": "0x26A74",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 10,
+   "functions": [
+    "F_7E32",
+    "F_7ED4"
+   ],
+   "sites": [
+    "0x7E32",
+    "0x7E61",
+    "0x7E73",
+    "0x7E89",
+    "0x7FA7",
+    "0x7FAC"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x13A6",
+   "file_offset": "0x26A76",
+   "region": "_DATA:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_7E32",
+    "F_7ED4"
+   ],
+   "sites": [
+    "0x7E68",
+    "0x7F4C",
+    "0x7FA0",
+    "0x8009"
+   ],
+   "initial_value_hex": "00"
+  },
+  {
+   "ds_offset": "0x13A7",
+   "file_offset": "0x26A77",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 15,
+   "functions": [
+    "F_7E32",
+    "F_7ED4"
+   ],
+   "sites": [
+    "0x7E39",
+    "0x7E9C",
+    "0x7EA3",
+    "0x7EC4",
+    "0x7F84",
+    "0x7FB4"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x13AC",
+   "file_offset": "0x26A7C",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_4E69",
+    "F_8516"
+   ],
+   "sites": [
+    "0x4EF0",
+    "0x8519"
+   ],
+   "initial_value_hex": "0000",
+   "proposed_name": "g_levels (far)",
+   "confidence": "verified",
+   "evidence": "asm stub file 0x8516: mov ax,0x173A; mov [0x13ac],ax; mov ax,DGROUP(reloc lm 0x831D); mov [0x13ae],ax. Only the offset half is read (F_4E69 0x4EF0)"
+  },
+  {
+   "ds_offset": "0x13AE",
+   "file_offset": "0x26A7E",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_8516"
+   ],
+   "sites": [
+    "0x851F"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x13C9",
+   "file_offset": "0x26A99",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_8EDA"
+   ],
+   "sites": [
+    "0x8EE6"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x13DD",
+   "file_offset": "0x26AAD",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_2D38",
+    "F_3FD5"
+   ],
+   "sites": [
+    "0x2D70",
+    "0x402A"
+   ],
+   "initial_value_hex": "0000"
+  },
+  {
+   "ds_offset": "0x13F1",
+   "file_offset": "0x26AC1",
+   "region": "_DATA:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_92E9"
+   ],
+   "sites": [
+    "0x9308"
+   ],
+   "initial_value_hex": "8002"
+  },
+  {
+   "ds_offset": "0x143A",
+   "file_offset": "0x26B0A",
+   "region": "_DATA:game",
+   "access_widths": [],
+   "access_kinds": [],
+   "written": false,
+   "ref_count": 0,
+   "functions": [],
+   "sites": [],
+   "proposed_name": "g_vga_palette[256][3]",
+   "confidence": "verified",
+   "evidence": "F_6D64 (set_video_mode) case 3: les dx,MK_FP(DS,0x143A); bx=0; cx=0x100; int 10h ax=1012h (set 256 DAC registers); 768 bytes end exactly at g_levels (DS:0x173A); renders the VGA tileset correctly"
+  },
+  {
+   "ds_offset": "0x4C60",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 18,
+   "functions": [
+    "F_04FC",
+    "F_0C34",
+    "F_37ED",
+    "F_3FD5",
+    "F_535A"
+   ],
+   "sites": [
+    "0x52C",
+    "0x5E9",
+    "0x65B",
+    "0xC66",
+    "0xC81",
+    "0xCF1"
+   ],
+   "proposed_name": "g_score (long)",
+   "confidence": "verified",
+   "evidence": "first _BSS word; F_3FD5 0x4172: add [0x4c60],ax; adc [0x4c62],dx; F_0C34 caps at 99999 (EXT_SCORE_LIVES_LOGIC); F_535A zeroes it"
+  },
+  {
+   "ds_offset": "0x4C62",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 17,
+   "functions": [
+    "F_04FC",
+    "F_0C34",
+    "F_37ED",
+    "F_3FD5",
+    "F_535A"
+   ],
+   "sites": [
+    "0x521",
+    "0x657",
+    "0xC63",
+    "0xC7E",
+    "0xCE8",
+    "0xCFF"
+   ]
+  },
+  {
+   "ds_offset": "0x4F84",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 9,
+   "functions": [
+    "F_0BB2",
+    "F_15A5",
+    "F_3FD5",
+    "F_4A27",
+    "F_4E69"
+   ],
+   "sites": [
+    "0xBE4",
+    "0x1623",
+    "0x417F",
+    "0x430B",
+    "0x4498",
+    "0x4626"
+   ],
+   "proposed_name": "g_has_gun",
+   "confidence": "high",
+   "evidence": "F_3FD5 0x417F: set to 1 when the tile is 0x14 (gun); also draws the HUD gun icon at (0xF0,0xAA)"
+  },
+  {
+   "ds_offset": "0x4F86",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    1,
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 139,
+   "functions": [
+    "F_09DE",
+    "F_0BB2",
+    "F_0C34",
+    "F_0DFB",
+    "F_0EDF",
+    "F_1321",
+    "F_13FF",
+    "F_15A5",
+    "F_1780",
+    "F_1830",
+    "F_18F6",
+    "F_1B29",
+    "F_1B84",
+    "F_1BD6",
+    "F_1C28",
+    "F_1C6A",
+    "F_1D16",
+    "F_2D87",
+    "F_3205",
+    "F_34CB",
+    "F_371F",
+    "F_376E",
+    "F_37ED",
+    "F_3BA3",
+    "F_3FD5",
+    "F_4886",
+    "F_4A27",
+    "F_4D9C",
+    "F_4E69",
+    "F_8EDA",
+    "F_9211",
+    "F_92E9"
+   ],
+   "sites": [
+    "0xA97",
+    "0xBC8",
+    "0xBEB",
+    "0xC0F",
+    "0xCBB",
+    "0xD43"
+   ],
+   "proposed_name": "g_gfx_index (video mode - 1)",
+   "confidence": "verified",
+   "evidence": "F_1321 0x13F8: [0x4f86] = [0x8b32] - 1; 139 uses as an index into per-video-mode tables (e.g. 0x336/0x33C)"
+  },
+  {
+   "ds_offset": "0x4F88",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 15,
+   "functions": [
+    "F_0BB2",
+    "F_34CB",
+    "F_3FD5",
+    "F_4E69"
+   ],
+   "sites": [
+    "0xC08",
+    "0x364F",
+    "0x40F2",
+    "0x40F9",
+    "0x415C",
+    "0x427E"
+   ],
+   "proposed_name": "g_got_trophy",
+   "confidence": "high",
+   "evidence": "F_3FD5 0x40F9: set to 1 when the tile is 0x0A (trophy); door case 0x415C requires it to finish the level"
+  },
+  {
+   "ds_offset": "0x4F8A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 18,
+   "functions": [
+    "F_0BB2",
+    "F_15A5",
+    "F_1780",
+    "F_3FD5",
+    "F_4A27",
+    "F_4E69"
+   ],
+   "sites": [
+    "0xBBE",
+    "0x15FD",
+    "0x17DD",
+    "0x41AD",
+    "0x41D0",
+    "0x41E9"
+   ],
+   "proposed_name": "g_has_jetpack",
+   "confidence": "high",
+   "evidence": "F_3FD5 0x41E9: set to 1 when the tile is 4 (jetpack); also sets jetpack fuel 0x5798=0x3C"
+  },
+  {
+   "ds_offset": "0x4F8C",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 22,
+   "functions": [
+    "F_04FC",
+    "F_088E",
+    "F_519B"
+   ],
+   "sites": [
+    "0x5BE",
+    "0x5CD",
+    "0x62B",
+    "0x642",
+    "0x6A1",
+    "0x711"
+   ],
+   "proposed_name": "g_hiscores (near ptr)",
+   "confidence": "medium",
+   "evidence": "F_519B 0x51FA: = runtime allocation (lm 0xB0BF) of 0x2D bytes; filled by load-file helper F_6ADE(DS:0xAE = the high-score file name); if that fails a default table is written via F_6B94 (0x5220)"
+  },
+  {
+   "ds_offset": "0x4F8E",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 7,
+   "functions": [
+    "F_15A5",
+    "F_1830",
+    "F_18F6",
+    "F_4D9C",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x174C",
+    "0x184F",
+    "0x188F",
+    "0x1914",
+    "0x1A3D",
+    "0x4E1B"
+   ]
+  },
+  {
+   "ds_offset": "0x4F90",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 6,
+   "functions": [
+    "F_1830",
+    "F_18F6",
+    "F_3FD5",
+    "F_4D9C"
+   ],
+   "sites": [
+    "0x1865",
+    "0x1939",
+    "0x1A77",
+    "0x4727",
+    "0x47C3",
+    "0x4E56"
+   ]
+  },
+  {
+   "ds_offset": "0x4F92",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_1830",
+    "F_18F6",
+    "F_4D9C"
+   ],
+   "sites": [
+    "0x1875",
+    "0x1949",
+    "0x1A03",
+    "0x1A6A",
+    "0x4E49"
+   ]
+  },
+  {
+   "ds_offset": "0x4F94",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 8,
+   "functions": [
+    "F_1830",
+    "F_18F6",
+    "F_4D9C"
+   ],
+   "sites": [
+    "0x189E",
+    "0x195F",
+    "0x198D",
+    "0x1991",
+    "0x19A3",
+    "0x1A1C"
+   ]
+  },
+  {
+   "ds_offset": "0x4F96",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_1830",
+    "F_18F6"
+   ],
+   "sites": [
+    "0x18AD",
+    "0x1927"
+   ]
+  },
+  {
+   "ds_offset": "0x4F98",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_1830",
+    "F_18F6"
+   ],
+   "sites": [
+    "0x18BC",
+    "0x197E",
+    "0x19B0",
+    "0x19BF"
+   ]
+  },
+  {
+   "ds_offset": "0x4F9A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_1830"
+   ],
+   "sites": [
+    "0x1882"
+   ]
+  },
+  {
+   "ds_offset": "0x56EA",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 51,
+   "functions": [
+    "F_15A5",
+    "F_1C6A",
+    "F_1D16",
+    "F_2D87",
+    "F_34CB",
+    "F_37ED",
+    "F_3BA3",
+    "F_3FD5",
+    "F_4A27",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x16A3",
+    "0x1709",
+    "0x1C96",
+    "0x1CAC",
+    "0x1CC4",
+    "0x1CDA"
+   ],
+   "proposed_name": "g_player_x",
+   "confidence": "high",
+   "evidence": "F_4E69 0x4EA0 = g_level_start_x[level]; F_34CB edge tests (<2, >0x132) trigger warps"
+  },
+  {
+   "ds_offset": "0x56EC",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 70,
+   "functions": [
+    "F_15A5",
+    "F_1C6A",
+    "F_1D16",
+    "F_34CB",
+    "F_37ED",
+    "F_3BA3",
+    "F_3FD5",
+    "F_4A27",
+    "F_4D9C",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x16B0",
+    "0x170C",
+    "0x1C92",
+    "0x1CA8",
+    "0x1CC0",
+    "0x1CD6"
+   ],
+   "proposed_name": "g_player_y",
+   "confidence": "high",
+   "evidence": "F_4E69 0x4EAD = g_level_start_y[level]; F_34CB sets 0x10 after a warp (EXT g_start_y)"
+  },
+  {
+   "ds_offset": "0x56EE",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 9,
+   "functions": [
+    "F_0C34",
+    "F_15A5",
+    "F_376E",
+    "F_535A"
+   ],
+   "sites": [
+    "0xCB1",
+    "0xCCA",
+    "0xCDB",
+    "0x15C6",
+    "0x15DF",
+    "0x15F1"
+   ],
+   "proposed_name": "g_lives",
+   "confidence": "verified",
+   "evidence": "F_535A sets 3 (EXT_INIT_FUNCTION); F_0C34 increments on extra life"
+  },
+  {
+   "ds_offset": "0x56F0",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 8,
+   "functions": [
+    "F_1321",
+    "F_519B",
+    "F_8EDA"
+   ],
+   "sites": [
+    "0x136E",
+    "0x139F",
+    "0x13D8",
+    "0x51C9",
+    "0x8F14",
+    "0x8FA1"
+   ],
+   "proposed_name": "g_tileset (far ptr)",
+   "confidence": "high",
+   "evidence": "F_519B 0x51C9: = F_6A62(0x16000) (far allocation helper, result in dx:ax); destination of the RLE-unpacked CGA/VGA tileset (F_1321 0x136E) or EGADAVE.DAV"
+  },
+  {
+   "ds_offset": "0x56F2",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 23,
+   "functions": [
+    "F_1321",
+    "F_519B",
+    "F_8525",
+    "F_86A9",
+    "F_8778",
+    "F_8871",
+    "F_88FD",
+    "F_89E6",
+    "F_8A88",
+    "F_8B9F",
+    "F_8C66",
+    "F_8D17",
+    "F_8D95",
+    "F_8E5E",
+    "F_8EDA",
+    "F_92E9",
+    "F_95D1"
+   ],
+   "sites": [
+    "0x136A",
+    "0x139B",
+    "0x13D4",
+    "0x51CC",
+    "0x8565",
+    "0x86C3"
+   ]
+  },
+  {
+   "ds_offset": "0x56F4",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    1,
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 50,
+   "functions": [
+    "F_04FC",
+    "F_09DE",
+    "F_0DFB",
+    "F_13FF",
+    "F_15A5",
+    "F_2D87",
+    "F_34CB",
+    "F_37ED",
+    "F_3BA3",
+    "F_4E69",
+    "F_535A",
+    "F_8EDA"
+   ],
+   "sites": [
+    "0x5FA",
+    "0x648",
+    "0x74E",
+    "0xB9F",
+    "0xE12",
+    "0xE39"
+   ],
+   "proposed_name": "g_current_level",
+   "confidence": "verified",
+   "evidence": "F_535A sets 0; F_4E69 0x4EE8 level*0x500; F_3BA3 increments and compares with 0xA"
+  },
+  {
+   "ds_offset": "0x56F6",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 14,
+   "functions": [
+    "F_15A5",
+    "F_301B",
+    "F_37ED",
+    "F_47F8",
+    "F_483F",
+    "F_4886",
+    "F_4D9C",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x1765",
+    "0x3039",
+    "0x309C",
+    "0x3128",
+    "0x315A",
+    "0x31E6"
+   ],
+   "proposed_name": "g_bullets (5 x 14 bytes)",
+   "confidence": "low",
+   "evidence": "array of 0x0E-byte records cleared in F_4E69 0x4F26 (5 iterations)"
+  },
+  {
+   "ds_offset": "0x56F8",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 18,
+   "functions": [
+    "F_301B",
+    "F_3205",
+    "F_37ED",
+    "F_3FD5",
+    "F_4886"
+   ],
+   "sites": [
+    "0x304C",
+    "0x30E9",
+    "0x3107",
+    "0x3117",
+    "0x31A7",
+    "0x31C5"
+   ]
+  },
+  {
+   "ds_offset": "0x56FA",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 10,
+   "functions": [
+    "F_301B",
+    "F_3205",
+    "F_37ED",
+    "F_4886"
+   ],
+   "sites": [
+    "0x305C",
+    "0x3268",
+    "0x32A8",
+    "0x32E4",
+    "0x3310",
+    "0x3955"
+   ]
+  },
+  {
+   "ds_offset": "0x56FC",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 6,
+   "functions": [
+    "F_301B",
+    "F_3205",
+    "F_37ED",
+    "F_4886"
+   ],
+   "sites": [
+    "0x3069",
+    "0x323A",
+    "0x32CA",
+    "0x39A5",
+    "0x3B10",
+    "0x491E"
+   ]
+  },
+  {
+   "ds_offset": "0x56FE",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 11,
+   "functions": [
+    "F_301B",
+    "F_3205",
+    "F_37ED",
+    "F_4886"
+   ],
+   "sites": [
+    "0x30C6",
+    "0x30CA",
+    "0x30DC",
+    "0x3184",
+    "0x3188",
+    "0x319A"
+   ]
+  },
+  {
+   "ds_offset": "0x5700",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_301B",
+    "F_3205",
+    "F_4886"
+   ],
+   "sites": [
+    "0x30F7",
+    "0x31B5",
+    "0x321E",
+    "0x493D"
+   ]
+  },
+  {
+   "ds_offset": "0x5702",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_47F8",
+    "F_483F",
+    "F_4886"
+   ],
+   "sites": [
+    "0x4826",
+    "0x486D",
+    "0x490E"
+   ]
+  },
+  {
+   "ds_offset": "0x573C",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 7,
+   "functions": [
+    "F_15A5",
+    "F_34CB",
+    "F_3BA3",
+    "F_535A"
+   ],
+   "sites": [
+    "0x16EB",
+    "0x3506",
+    "0x3713",
+    "0x3CA4",
+    "0x3D95",
+    "0x3D9C"
+   ],
+   "proposed_name": "g_in_warp_zone",
+   "confidence": "verified",
+   "evidence": "F_535A clears; F_3BA3 0x3D95: if 1, restore g_current_level from 0x6152 (EXT g_is_warp_zone)"
+  },
+  {
+   "ds_offset": "0x573E",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 32,
+   "functions": [
+    "F_13FF",
+    "F_15A5",
+    "F_1780",
+    "F_1C6A",
+    "F_1D16",
+    "F_34CB",
+    "F_3BA3",
+    "F_4A27",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x1453",
+    "0x16C9",
+    "0x181E",
+    "0x1CA4",
+    "0x1CD2",
+    "0x1D00"
+   ]
+  },
+  {
+   "ds_offset": "0x5740",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 18,
+   "functions": [
+    "F_15A5",
+    "F_1D16",
+    "F_4A27",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x16E5",
+    "0x1DBA",
+    "0x1F1C",
+    "0x20D1",
+    "0x2131",
+    "0x2158"
+   ]
+  },
+  {
+   "ds_offset": "0x5742",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 10,
+   "functions": [
+    "F_13FF",
+    "F_15A5",
+    "F_2D87",
+    "F_34CB",
+    "F_37ED",
+    "F_4D9C"
+   ],
+   "sites": [
+    "0x146B",
+    "0x166A",
+    "0x1720",
+    "0x2D9E",
+    "0x36DB",
+    "0x381C"
+   ],
+   "proposed_name": "g_monsters (struct of 10 x int[4])",
+   "confidence": "high",
+   "evidence": "destination of the per-level 0x50-byte copy (F_4E69 0x5045); [0x5742+2i] is the active flag tested by F_2D87 0x2D9E"
+  },
+  {
+   "ds_offset": "0x574A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 22,
+   "functions": [
+    "F_15A5",
+    "F_2D87",
+    "F_34CB",
+    "F_37ED",
+    "F_3FD5",
+    "F_4D9C"
+   ],
+   "sites": [
+    "0x167C",
+    "0x1732",
+    "0x2DD3",
+    "0x2E23",
+    "0x2EED",
+    "0x2F26"
+   ]
+  },
+  {
+   "ds_offset": "0x5752",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 12,
+   "functions": [
+    "F_2D87",
+    "F_37ED",
+    "F_4D9C"
+   ],
+   "sites": [
+    "0x2DCB",
+    "0x2E49",
+    "0x2EE5",
+    "0x2F9A",
+    "0x2FD9",
+    "0x3848"
+   ]
+  },
+  {
+   "ds_offset": "0x575A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_2D87"
+   ],
+   "sites": [
+    "0x2DE1",
+    "0x2E01",
+    "0x2E51"
+   ],
+   "proposed_name": "g_monster_path_pos[4]",
+   "confidence": "high",
+   "evidence": "F_2D87 0x2DE1: index into g_level_path; reset to 0 when the path byte is 0xEA (0x2DF7)"
+  },
+  {
+   "ds_offset": "0x5762",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_2D87",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x2F72",
+    "0x509E"
+   ]
+  },
+  {
+   "ds_offset": "0x576A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 14,
+   "functions": [
+    "F_13FF",
+    "F_2D87",
+    "F_37ED",
+    "F_4D9C",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x1498",
+    "0x14B3",
+    "0x14CA",
+    "0x2DC3",
+    "0x2E89",
+    "0x2EB3"
+   ]
+  },
+  {
+   "ds_offset": "0x5772",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_2D87",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x2EFB",
+    "0x2F05",
+    "0x5066"
+   ]
+  },
+  {
+   "ds_offset": "0x577A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 7,
+   "functions": [
+    "F_2D87",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x2E6D",
+    "0x2E93",
+    "0x2EBD",
+    "0x2F0F",
+    "0x2F13",
+    "0x2F1E"
+   ]
+  },
+  {
+   "ds_offset": "0x5782",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_2D87",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x2F53",
+    "0x2F57",
+    "0x2F7A",
+    "0x50A6"
+   ]
+  },
+  {
+   "ds_offset": "0x578A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_2D87",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x2DAC",
+    "0x2DB9",
+    "0x5094"
+   ]
+  },
+  {
+   "ds_offset": "0x5792",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_0439",
+    "F_15A5",
+    "F_3BA3",
+    "F_535A"
+   ],
+   "sites": [
+    "0x4AA",
+    "0x4B1",
+    "0x1647",
+    "0x3FC9",
+    "0x5399"
+   ],
+   "proposed_name": "g_game_over",
+   "confidence": "verified",
+   "evidence": "F_535A clears; F_15A5 0x1647 / F_3BA3 0x3FC9 set 1 (EXT g_is_game_over)"
+  },
+  {
+   "ds_offset": "0x5794",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 7,
+   "functions": [
+    "F_15A5",
+    "F_1D16",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x16B3",
+    "0x1D33",
+    "0x1D37",
+    "0x1D46",
+    "0x1D55",
+    "0x1D72"
+   ]
+  },
+  {
+   "ds_offset": "0x5796",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_301B",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x30B1",
+    "0x30B7",
+    "0x316F",
+    "0x3175",
+    "0x4EFA"
+   ]
+  },
+  {
+   "ds_offset": "0x5798",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 8,
+   "functions": [
+    "F_1780",
+    "F_371F",
+    "F_3FD5"
+   ],
+   "sites": [
+    "0x17B4",
+    "0x17C3",
+    "0x17C7",
+    "0x3765",
+    "0x41DA",
+    "0x4366"
+   ],
+   "proposed_name": "g_jetpack_fuel",
+   "confidence": "medium",
+   "evidence": "set to 0x3C when the jetpack is collected (F_3FD5 0x41DA)"
+  },
+  {
+   "ds_offset": "0x579A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 6,
+   "functions": [
+    "F_1D16"
+   ],
+   "sites": [
+    "0x20AF",
+    "0x2563",
+    "0x26C8",
+    "0x2707",
+    "0x2745",
+    "0x27BB"
+   ]
+  },
+  {
+   "ds_offset": "0x579C",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_0439",
+    "F_519B"
+   ],
+   "sites": [
+    "0x4B7",
+    "0x4C1",
+    "0x523D"
+   ]
+  },
+  {
+   "ds_offset": "0x579E",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 41,
+   "functions": [
+    "F_1780",
+    "F_1D16",
+    "F_4A27"
+   ],
+   "sites": [
+    "0x180B",
+    "0x1D96",
+    "0x1DB6",
+    "0x1DD5",
+    "0x1DFE",
+    "0x1E80"
+   ]
+  },
+  {
+   "ds_offset": "0x57A0",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 26,
+   "functions": [
+    "F_15A5",
+    "F_2D38",
+    "F_332C",
+    "F_34CB",
+    "F_3FD5",
+    "F_4E69",
+    "F_535A",
+    "F_8EDA"
+   ],
+   "sites": [
+    "0x1671",
+    "0x1686",
+    "0x16FC",
+    "0x1727",
+    "0x2D52",
+    "0x33BC"
+   ],
+   "proposed_name": "g_scroll_x (tile column of the view)",
+   "confidence": "high",
+   "evidence": "range 0..0x50 (=100-20) checked in F_3FD5 0x46C9/0x4765; F_34CB warp trigger at 0 / 0x50"
+  },
+  {
+   "ds_offset": "0x57A2",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 18,
+   "functions": [
+    "F_09DE",
+    "F_4A27"
+   ],
+   "sites": [
+    "0xB8A",
+    "0xB97",
+    "0xBA2",
+    "0x4A6D",
+    "0x4A77",
+    "0x4A7F"
+   ],
+   "proposed_name": "g_demo_pos",
+   "confidence": "high",
+   "evidence": "F_09DE 0xB8A: = demo offset from seg 0x0B31 table; F_4A27 reads es:[g_demo_data + g_demo_pos] and increments"
+  },
+  {
+   "ds_offset": "0x57A4",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 13,
+   "functions": [
+    "F_09DE",
+    "F_4A27",
+    "F_519B"
+   ],
+   "sites": [
+    "0xB67",
+    "0xB80",
+    "0xB93",
+    "0x4A69",
+    "0x4A7B",
+    "0x4A8F"
+   ],
+   "proposed_name": "g_demo_data (far ptr)",
+   "confidence": "verified",
+   "evidence": "F_519B 0x51E5/0x51EB: = MK_FP(0x0B31,0) (relocated paragraph)"
+  },
+  {
+   "ds_offset": "0x57A6",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_519B"
+   ],
+   "sites": [
+    "0x51EB"
+   ]
+  },
+  {
+   "ds_offset": "0x57A8",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 20,
+   "functions": [
+    "F_0E57",
+    "F_15A5",
+    "F_2D38",
+    "F_34CB",
+    "F_3BA3",
+    "F_3FD5",
+    "F_4997",
+    "F_4A27",
+    "F_4E69"
+   ],
+   "sites": [
+    "0xEBC",
+    "0x1651",
+    "0x2D6D",
+    "0x3677",
+    "0x3BF1",
+    "0x4034"
+   ],
+   "proposed_name": "g_level (near ptr into g_levels)",
+   "confidence": "verified",
+   "evidence": "F_4E69 0x4EF6: = g_levels.off + level*0x500; += 0x100 at 0x511B so it then points at the tile map"
+  },
+  {
+   "ds_offset": "0x57AA",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_34CB",
+    "F_535A"
+   ],
+   "sites": [
+    "0x3513",
+    "0x368B",
+    "0x536F"
+   ],
+   "proposed_name": "g_level_visited[10]",
+   "confidence": "medium",
+   "evidence": "F_34CB 0x368B: set [0x57aa+2*level]=1 when warping; tested at 0x3513 to suppress a second warp"
+  },
+  {
+   "ds_offset": "0x57B7",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_04FC"
+   ],
+   "sites": [
+    "0x580"
+   ]
+  },
+  {
+   "ds_offset": "0x57B9",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_04FC"
+   ],
+   "sites": [
+    "0x564"
+   ]
+  },
+  {
+   "ds_offset": "0x57BE",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_04FC",
+    "F_519B"
+   ],
+   "sites": [
+    "0x58F",
+    "0x601",
+    "0x52EB"
+   ]
+  },
+  {
+   "ds_offset": "0x57C0",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_04FC",
+    "F_519B"
+   ],
+   "sites": [
+    "0x51B",
+    "0x573",
+    "0x5EF",
+    "0x52CC"
+   ]
+  },
+  {
+   "ds_offset": "0x57C2",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_519B"
+   ],
+   "sites": [
+    "0x530A"
+   ]
+  },
+  {
+   "ds_offset": "0x57C3",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_519B"
+   ],
+   "sites": [
+    "0x5329"
+   ]
+  },
+  {
+   "ds_offset": "0x57C4",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_519B"
+   ],
+   "sites": [
+    "0x5348"
+   ]
+  },
+  {
+   "ds_offset": "0x57E2",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 78,
+   "functions": [
+    "F_15A5",
+    "F_1780",
+    "F_1D16",
+    "F_4A27",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x16DF",
+    "0x1808",
+    "0x180E",
+    "0x1D83",
+    "0x1DB3",
+    "0x1DD2"
+   ]
+  },
+  {
+   "ds_offset": "0x57E4",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 35,
+   "functions": [
+    "F_13FF",
+    "F_15A5",
+    "F_1780",
+    "F_1C6A",
+    "F_1D16",
+    "F_34CB",
+    "F_3BA3",
+    "F_4A27",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x1460",
+    "0x16D6",
+    "0x182B",
+    "0x1C8E",
+    "0x1CA0",
+    "0x1CBC"
+   ]
+  },
+  {
+   "ds_offset": "0x57E6",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_1D16",
+    "F_4A27"
+   ],
+   "sites": [
+    "0x2A95",
+    "0x2AFC",
+    "0x2B1D",
+    "0x4CC8",
+    "0x4D0D"
+   ]
+  },
+  {
+   "ds_offset": "0x57E8",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 7,
+   "functions": [
+    "F_332C",
+    "F_3FD5",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x3356",
+    "0x4125",
+    "0x42B1",
+    "0x443E",
+    "0x45CC",
+    "0x4F3F"
+   ],
+   "proposed_name": "g_anim_tiles[200] (12-byte records)",
+   "confidence": "high",
+   "evidence": "cleared for 200 entries in F_4E69 0x4F36; filled for every animated tile found in the level"
+  },
+  {
+   "ds_offset": "0x57EA",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 7,
+   "functions": [
+    "F_332C",
+    "F_3FD5",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x3369",
+    "0x339C",
+    "0x4115",
+    "0x42A1",
+    "0x442E",
+    "0x45BC"
+   ]
+  },
+  {
+   "ds_offset": "0x57EC",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_332C",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x3386",
+    "0x338A",
+    "0x33AB",
+    "0x33F5",
+    "0x4FD2"
+   ]
+  },
+  {
+   "ds_offset": "0x57EE",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_332C",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x33B8",
+    "0x33DA",
+    "0x340F",
+    "0x4FE2"
+   ]
+  },
+  {
+   "ds_offset": "0x57F0",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_332C",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x3402",
+    "0x4FF2"
+   ]
+  },
+  {
+   "ds_offset": "0x57F2",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 7,
+   "functions": [
+    "F_332C",
+    "F_3FD5",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x3378",
+    "0x3428",
+    "0x4135",
+    "0x42C1",
+    "0x444E",
+    "0x45DC"
+   ]
+  },
+  {
+   "ds_offset": "0x57FE",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_4E69"
+   ],
+   "sites": [
+    "0x5017"
+   ]
+  },
+  {
+   "ds_offset": "0x6148",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_0C34",
+    "F_535A"
+   ],
+   "sites": [
+    "0xC6A",
+    "0xC85",
+    "0xC97",
+    "0xCAA",
+    "0x538D"
+   ],
+   "proposed_name": "g_next_extra_life_score (long)",
+   "confidence": "verified",
+   "evidence": "F_535A zeroes; F_0C34 compares/advances (EXT g_next_goal)"
+  },
+  {
+   "ds_offset": "0x614A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_0C34",
+    "F_535A"
+   ],
+   "sites": [
+    "0xC6E",
+    "0xC89",
+    "0xC93",
+    "0xCAD",
+    "0x5393"
+   ]
+  },
+  {
+   "ds_offset": "0x614C",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_2D87",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x2DED",
+    "0x2E11",
+    "0x2E2F",
+    "0x5114"
+   ],
+   "proposed_name": "g_level_path (far ptr)",
+   "confidence": "verified",
+   "evidence": "F_4E69 0x5114/0x5117: = MK_FP(DS, g_level) before g_level += 0x100; F_2D87 reads path bytes through it and restarts at 0xEA"
+  },
+  {
+   "ds_offset": "0x614E",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_2D87",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x2DE9",
+    "0x2E0D",
+    "0x2E2B",
+    "0x5117"
+   ]
+  },
+  {
+   "ds_offset": "0x6150",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 28,
+   "functions": [
+    "F_15A5",
+    "F_1D16",
+    "F_3BA3",
+    "F_4A27",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x16D9",
+    "0x1EAD",
+    "0x1EB1",
+    "0x1EB7",
+    "0x1EC1",
+    "0x2010"
+   ],
+   "proposed_name": "g_6150 (per-level counter)",
+   "confidence": "low",
+   "evidence": "cleared at level load (F_4E69 0x4ED6); 28 refs"
+  },
+  {
+   "ds_offset": "0x6152",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_15A5",
+    "F_34CB",
+    "F_3BA3"
+   ],
+   "sites": [
+    "0x16F2",
+    "0x16FF",
+    "0x3694",
+    "0x3DA2"
+   ],
+   "proposed_name": "g_warp_return_level",
+   "confidence": "verified",
+   "evidence": "F_34CB 0x3694: = g_current_level before warping; F_3BA3 0x3DA2 restores it (EXT g_curr_warp_zone_mapping)"
+  },
+  {
+   "ds_offset": "0x6154",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 6,
+   "functions": [
+    "F_1780",
+    "F_3FD5"
+   ],
+   "sites": [
+    "0x1797",
+    "0x17A0",
+    "0x41E0",
+    "0x436C",
+    "0x44F9",
+    "0x4687"
+   ]
+  },
+  {
+   "ds_offset": "0x6156",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 102,
+   "functions": [
+    "F_15A5",
+    "F_1780",
+    "F_1D16",
+    "F_2D87",
+    "F_3435",
+    "F_34CB",
+    "F_37ED",
+    "F_3FD5",
+    "F_4A27",
+    "F_4D9C",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x15B2",
+    "0x1696",
+    "0x1712",
+    "0x178C",
+    "0x17D1",
+    "0x17DA"
+   ]
+  },
+  {
+   "ds_offset": "0x6158",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 6,
+   "functions": [
+    "F_3BA3",
+    "F_3FD5",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x3BC6",
+    "0x4163",
+    "0x42EF",
+    "0x447C",
+    "0x460A",
+    "0x4E7A"
+   ],
+   "proposed_name": "g_level_done",
+   "confidence": "high",
+   "evidence": "F_4E69 clears; F_3FD5 0x4163 sets 1 at the door when g_got_trophy"
+  },
+  {
+   "ds_offset": "0x615A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_332C",
+    "F_535A"
+   ],
+   "sites": [
+    "0x3339",
+    "0x3344",
+    "0x53AB"
+   ],
+   "proposed_name": "g_anim_tick_divider",
+   "confidence": "high",
+   "evidence": "F_535A sets 10; F_332C 0x3339 decrements it and, on reaching 0, reloads 10 (0x3344) and advances every g_anim_tiles record (0x3356..). EXT called it g_maybe_levels_left; usage contradicts that"
+  },
+  {
+   "ds_offset": "0x615C",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [],
+   "access_kinds": [],
+   "written": false,
+   "ref_count": 0,
+   "functions": [],
+   "sites": [],
+   "address_taken_at": [
+    "0xEC0",
+    "0x1655",
+    "0x367B",
+    "0x3BF5"
+   ],
+   "proposed_name": "g_tiles[1000]",
+   "confidence": "verified",
+   "evidence": "working copy of the level's tile map: movmem(g_level, 0x615C, 1000) in F_4E69 0x5121..0x512D (and re-copied in F_34CB/F_3BA3/F_4A27)"
+  },
+  {
+   "ds_offset": "0x6544",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 7,
+   "functions": [
+    "F_4A27"
+   ],
+   "sites": [
+    "0x4A5F",
+    "0x4A86",
+    "0x4AF6",
+    "0x4BA7",
+    "0x4BC3",
+    "0x4BE2"
+   ],
+   "proposed_name": "g_demo_repeat",
+   "confidence": "high",
+   "evidence": "F_4A27 0x4A86: = count byte after a 0x20 run marker in the demo stream; decremented per frame (0x4AF6)"
+  },
+  {
+   "ds_offset": "0x6546",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_15A5",
+    "F_1830"
+   ],
+   "sites": [
+    "0x15BD",
+    "0x18E1"
+   ]
+  },
+  {
+   "ds_offset": "0x6548",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 8,
+   "functions": [
+    "F_15A5",
+    "F_1D16",
+    "F_4E69"
+   ],
+   "sites": [
+    "0x16B9",
+    "0x1EA1",
+    "0x1EA7",
+    "0x2004",
+    "0x200A",
+    "0x2B04"
+   ]
+  },
+  {
+   "ds_offset": "0x654C",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_59EC",
+    "F_5B10"
+   ],
+   "sites": [
+    "0x59FB",
+    "0x5A15",
+    "0x5A35",
+    "0x5B74"
+   ]
+  },
+  {
+   "ds_offset": "0x654E",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_59EC",
+    "F_5B10"
+   ],
+   "sites": [
+    "0x5A01",
+    "0x5A29",
+    "0x5A3B",
+    "0x5BB9"
+   ]
+  },
+  {
+   "ds_offset": "0x6550",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_59EC",
+    "F_5B10"
+   ],
+   "sites": [
+    "0x5A6B",
+    "0x5A90",
+    "0x5AAF",
+    "0x5AFA",
+    "0x5CCB"
+   ]
+  },
+  {
+   "ds_offset": "0x6552",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_59EC",
+    "F_5B10"
+   ],
+   "sites": [
+    "0x5A71",
+    "0x5B00",
+    "0x5D10"
+   ]
+  },
+  {
+   "ds_offset": "0x6554",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 18,
+   "functions": [
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5E38",
+    "0x5E3B",
+    "0x5EA1",
+    "0x5EAD",
+    "0x5EC4",
+    "0x5ECB"
+   ]
+  },
+  {
+   "ds_offset": "0x6556",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_59EC",
+    "F_5B10"
+   ],
+   "sites": [
+    "0x5AB5",
+    "0x5AD2",
+    "0x5AE8",
+    "0x5AF4",
+    "0x5C86"
+   ]
+  },
+  {
+   "ds_offset": "0x65A8",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct",
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_6099",
+    "F_6213"
+   ],
+   "sites": [
+    "0x611D",
+    "0x624A",
+    "0x6262"
+   ],
+   "proposed_name": "g_pic_planes[4] (segments)",
+   "confidence": "high",
+   "evidence": "F_6099 0x611D: [0x65a8+2i] = picfile.seg + plane[i].seg for the shell picfile segments 0x1D58/0x1E84/0x20CC"
+  },
+  {
+   "ds_offset": "0x65AA",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_6213"
+   ],
+   "sites": [
+    "0x6247"
+   ]
+  },
+  {
+   "ds_offset": "0x65B0",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct",
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_59EC",
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5A2F",
+    "0x5EB7",
+    "0x5EE9",
+    "0x5F1B"
+   ]
+  },
+  {
+   "ds_offset": "0x65B2",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5A38"
+   ]
+  },
+  {
+   "ds_offset": "0x65B4",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5A3E"
+   ]
+  },
+  {
+   "ds_offset": "0x65B6",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5A41"
+   ]
+  },
+  {
+   "ds_offset": "0x65B8",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5A47"
+   ]
+  },
+  {
+   "ds_offset": "0x65BA",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5A4D"
+   ]
+  },
+  {
+   "ds_offset": "0x65BC",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5A53"
+   ]
+  },
+  {
+   "ds_offset": "0x65BE",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5A59"
+   ]
+  },
+  {
+   "ds_offset": "0x65C0",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5A5F"
+   ]
+  },
+  {
+   "ds_offset": "0x65C2",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5A65"
+   ]
+  },
+  {
+   "ds_offset": "0x65C4",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5AEE"
+   ]
+  },
+  {
+   "ds_offset": "0x65C6",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5AF7"
+   ]
+  },
+  {
+   "ds_offset": "0x65C8",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5AFD"
+   ]
+  },
+  {
+   "ds_offset": "0x65CA",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5B03"
+   ]
+  },
+  {
+   "ds_offset": "0x65CC",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_59EC"
+   ],
+   "sites": [
+    "0x5B06"
+   ]
+  },
+  {
+   "ds_offset": "0x65D8",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5DED"
+   ]
+  },
+  {
+   "ds_offset": "0x65FA",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5DF6"
+   ]
+  },
+  {
+   "ds_offset": "0x7A33",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_7C59"
+   ],
+   "sites": [
+    "0x7CB4",
+    "0x7CC1"
+   ]
+  },
+  {
+   "ds_offset": "0x7A50",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_7C59"
+   ],
+   "sites": [
+    "0x7CCC"
+   ]
+  },
+  {
+   "ds_offset": "0x7A53",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_7C59"
+   ],
+   "sites": [
+    "0x7CC7",
+    "0x7D0E"
+   ]
+  },
+  {
+   "ds_offset": "0x7A56",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_7C59"
+   ],
+   "sites": [
+    "0x7CD1",
+    "0x7CE9",
+    "0x7D15"
+   ]
+  },
+  {
+   "ds_offset": "0x8002",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    1
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_7071",
+    "F_7ED4"
+   ],
+   "sites": [
+    "0x7145",
+    "0x8079"
+   ]
+  },
+  {
+   "ds_offset": "0x85FC",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 6,
+   "functions": [
+    "F_5B10",
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5D60",
+    "0x5DF0",
+    "0x5F4D",
+    "0x5F68",
+    "0x5F7E",
+    "0x6082"
+   ]
+  },
+  {
+   "ds_offset": "0x8600",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5DFF"
+   ]
+  },
+  {
+   "ds_offset": "0x8602",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5E08"
+   ]
+  },
+  {
+   "ds_offset": "0x8604",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_7B3B"
+   ],
+   "sites": [
+    "0x7B4C"
+   ]
+  },
+  {
+   "ds_offset": "0x8606",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_7B3B"
+   ],
+   "sites": [
+    "0x7B54"
+   ]
+  },
+  {
+   "ds_offset": "0x8608",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": false,
+   "ref_count": 1,
+   "functions": [
+    "F_7B3B"
+   ],
+   "sites": [
+    "0x7B5C"
+   ]
+  },
+  {
+   "ds_offset": "0x8932",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 1,
+   "functions": [
+    "F_6293"
+   ],
+   "sites": [
+    "0x6336"
+   ]
+  },
+  {
+   "ds_offset": "0x8A08",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_5B10",
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5D7D",
+    "0x5DF9",
+    "0x5FC6",
+    "0x5FDB",
+    "0x6088"
+   ]
+  },
+  {
+   "ds_offset": "0x8A0A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 15,
+   "functions": [
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5E2E",
+    "0x5E4A",
+    "0x5E7B",
+    "0x5E81",
+    "0x5E8D",
+    "0x5E91"
+   ]
+  },
+  {
+   "ds_offset": "0x8A0E",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 9,
+   "functions": [
+    "F_5B10",
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5D9A",
+    "0x5E02",
+    "0x5FF2",
+    "0x6007",
+    "0x600A",
+    "0x6016"
+   ]
+  },
+  {
+   "ds_offset": "0x8A10",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_5DD5"
+   ],
+   "sites": [
+    "0x5E0B",
+    "0x607C"
+   ]
+  },
+  {
+   "ds_offset": "0x8A12",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 47,
+   "functions": [
+    "F_04FC",
+    "F_07EB",
+    "F_088E",
+    "F_0E57",
+    "F_0EDF",
+    "F_124B",
+    "F_12B9",
+    "F_13FF",
+    "F_3BA3",
+    "F_53C3",
+    "F_564D",
+    "F_5815",
+    "F_5B10",
+    "F_5DD5",
+    "F_6DC2",
+    "F_7005",
+    "F_7071"
+   ],
+   "sites": [
+    "0x6D1",
+    "0x6E6",
+    "0x76D",
+    "0x843",
+    "0x846",
+    "0x873"
+   ]
+  },
+  {
+   "ds_offset": "0x8A14",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 39,
+   "functions": [
+    "F_04FC",
+    "F_07EB",
+    "F_088E",
+    "F_0E57",
+    "F_0EDF",
+    "F_124B",
+    "F_12B9",
+    "F_13FF",
+    "F_3BA3",
+    "F_53C3",
+    "F_564D",
+    "F_5815",
+    "F_5B10",
+    "F_5DD5",
+    "F_6DC2",
+    "F_7005",
+    "F_7071"
+   ],
+   "sites": [
+    "0x6D7",
+    "0x6F3",
+    "0x773",
+    "0x83F",
+    "0x86F",
+    "0x8D3"
+   ]
+  },
+  {
+   "ds_offset": "0x8A16",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_6099"
+   ],
+   "sites": [
+    "0x60C6",
+    "0x6133"
+   ],
+   "proposed_name": "g_pic_charptr (far)",
+   "confidence": "high",
+   "evidence": "F_6099 0x60C6: picfile header +0 (font glyphs)"
+  },
+  {
+   "ds_offset": "0x8A18",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 5,
+   "functions": [
+    "F_6099",
+    "F_78B5"
+   ],
+   "sites": [
+    "0x60CA",
+    "0x6139",
+    "0x78C8",
+    "0x7945",
+    "0x7A8E"
+   ]
+  },
+  {
+   "ds_offset": "0x8A1A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_6099"
+   ],
+   "sites": [
+    "0x60FC",
+    "0x616C"
+   ],
+   "proposed_name": "g_pic_spriteptr (far)",
+   "confidence": "medium",
+   "evidence": "F_6099 0x60FC: picfile header +0xC"
+  },
+  {
+   "ds_offset": "0x8A1C",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_6099"
+   ],
+   "sites": [
+    "0x6100",
+    "0x6172"
+   ]
+  },
+  {
+   "ds_offset": "0x8A1E",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_6099"
+   ],
+   "sites": [
+    "0x60EA",
+    "0x6159"
+   ],
+   "proposed_name": "g_pic_picptr (far)",
+   "confidence": "high",
+   "evidence": "F_6099 0x60EA: picfile header +8 (the 13 32x24 control-panel pictures)"
+  },
+  {
+   "ds_offset": "0x8A20",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 3,
+   "functions": [
+    "F_6099",
+    "F_7B3B"
+   ],
+   "sites": [
+    "0x60EE",
+    "0x615F",
+    "0x7B6B"
+   ]
+  },
+  {
+   "ds_offset": "0x8A22",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 14,
+   "functions": [
+    "F_088E",
+    "F_0EDF",
+    "F_13FF",
+    "F_3BA3",
+    "F_5B10",
+    "F_6DC2",
+    "F_7071"
+   ],
+   "sites": [
+    "0x8D9",
+    "0xF05",
+    "0xF0A",
+    "0x102E",
+    "0x1032",
+    "0x114A"
+   ]
+  },
+  {
+   "ds_offset": "0x8A24",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_6DC2",
+    "F_6EB9"
+   ],
+   "sites": [
+    "0x6DD3",
+    "0x6ECD"
+   ]
+  },
+  {
+   "ds_offset": "0x8A26",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_6DC2",
+    "F_6EB9"
+   ],
+   "sites": [
+    "0x6DDF",
+    "0x6EE0"
+   ]
+  },
+  {
+   "ds_offset": "0x8A28",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_6DC2",
+    "F_6EB9"
+   ],
+   "sites": [
+    "0x6DD9",
+    "0x6EC7"
+   ]
+  },
+  {
+   "ds_offset": "0x8A2A",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_6DC2",
+    "F_6EB9"
+   ],
+   "sites": [
+    "0x6DE5",
+    "0x6EE7"
+   ]
+  },
+  {
+   "ds_offset": "0x8A2C",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_688C"
+   ],
+   "sites": [
+    "0x695B",
+    "0x6964",
+    "0x696A",
+    "0x6974"
+   ]
+  },
+  {
+   "ds_offset": "0x8A2E",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_6099"
+   ],
+   "sites": [
+    "0x60D8",
+    "0x6146"
+   ],
+   "proposed_name": "g_pic_tileptr (far)",
+   "confidence": "medium",
+   "evidence": "F_6099 0x60D8: picfile header +4"
+  },
+  {
+   "ds_offset": "0x8A30",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_6099"
+   ],
+   "sites": [
+    "0x60DC",
+    "0x614C"
+   ]
+  },
+  {
+   "ds_offset": "0x8A32",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 14,
+   "functions": [
+    "F_5815",
+    "F_6293",
+    "F_6388",
+    "F_6A26"
+   ],
+   "sites": [
+    "0x5976",
+    "0x62BA",
+    "0x6343",
+    "0x63CC",
+    "0x63DE",
+    "0x63F0"
+   ]
+  },
+  {
+   "ds_offset": "0x8A34",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 2,
+   "functions": [
+    "F_53C3"
+   ],
+   "sites": [
+    "0x5463",
+    "0x5516"
+   ]
+  },
+  {
+   "ds_offset": "0x8B32",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 20,
+   "functions": [
+    "F_0439",
+    "F_12B9",
+    "F_1321",
+    "F_13FF",
+    "F_3BA3",
+    "F_535A",
+    "F_5DD5",
+    "F_6099",
+    "F_7878",
+    "F_7B3B"
+   ],
+   "sites": [
+    "0x462",
+    "0x46A",
+    "0x472",
+    "0x130E",
+    "0x1330",
+    "0x13F4"
+   ],
+   "proposed_name": "g_video_mode (1=CGA 2=EGA 3=VGA)",
+   "confidence": "verified",
+   "evidence": "F_1321 switch: 1 -> unpack seg 0x0C42 + picfile 0x1D58, 2 -> load EGADAVE.DAV + picfile 0x1E84, 3 -> unpack seg 0x11EF + picfile 0x20CC"
+  },
+  {
+   "ds_offset": "0x9001",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "indexed"
+   ],
+   "written": true,
+   "ref_count": 2,
+   "functions": [
+    "F_7071",
+    "F_7ED4"
+   ],
+   "sites": [
+    "0x7139",
+    "0x806D"
+   ]
+  },
+  {
+   "ds_offset": "0x9EC0",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 6,
+   "functions": [
+    "F_0439",
+    "F_59EC"
+   ],
+   "sites": [
+    "0x44B",
+    "0x44E",
+    "0x5A07",
+    "0x5A0E",
+    "0x5A1B",
+    "0x5A22"
+   ]
+  },
+  {
+   "ds_offset": "0x9EC2",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": false,
+   "ref_count": 3,
+   "functions": [
+    "F_688C"
+   ],
+   "sites": [
+    "0x689B",
+    "0x68A2",
+    "0x6940"
+   ]
+  },
+  {
+   "ds_offset": "0x9EC4",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_6A62",
+    "F_6B94"
+   ],
+   "sites": [
+    "0x6A8D",
+    "0x6CE7",
+    "0x6D38",
+    "0x6D48"
+   ]
+  },
+  {
+   "ds_offset": "0x9EC6",
+   "file_offset": null,
+   "region": "_BSS:game",
+   "access_widths": [
+    2
+   ],
+   "access_kinds": [
+    "direct"
+   ],
+   "written": true,
+   "ref_count": 4,
+   "functions": [
+    "F_6A62",
+    "F_6B94"
+   ],
+   "sites": [
+    "0x6A90",
+    "0x6CE4",
+    "0x6D34",
+    "0x6D4C"
+   ]
+  }
+ ],
+ "text_resident_data_refs": [
+  {
+   "cs_offset": "0x29D1",
+   "file_offset": "0x2BD1",
+   "functions": [
+    "F_1D16"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x29E1",
+   "file_offset": "0x2BE1",
+   "functions": [
+    "F_1D16"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x29F1",
+   "file_offset": "0x2BF1",
+   "functions": [
+    "F_1D16"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x29FF",
+   "file_offset": "0x2BFF",
+   "functions": [
+    "F_1D16"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x2A0F",
+   "file_offset": "0x2C0F",
+   "functions": [
+    "F_1D16"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x4B8C",
+   "file_offset": "0x4D8C",
+   "functions": [
+    "F_4A27"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x62F3",
+   "file_offset": "0x64F3",
+   "functions": [
+    "F_6388"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x6439",
+   "file_offset": "0x6639",
+   "functions": [
+    "F_6388"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x667A",
+   "file_offset": "0x687A",
+   "functions": [
+    "F_66F2"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x67B1",
+   "file_offset": "0x69B1",
+   "functions": [
+    "F_688C"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x6BBA",
+   "file_offset": "0x6DBA",
+   "functions": [
+    "F_6D64"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x6F26",
+   "file_offset": "0x7126",
+   "functions": [
+    "F_78B5",
+    "F_7B9E"
+   ],
+   "ref_count": 2
+  },
+  {
+   "cs_offset": "0x70B6",
+   "file_offset": "0x72B6",
+   "functions": [
+    "F_78B5",
+    "F_7BC9"
+   ],
+   "ref_count": 2
+  },
+  {
+   "cs_offset": "0x7246",
+   "file_offset": "0x7446",
+   "functions": [
+    "F_78B5",
+    "F_7C02"
+   ],
+   "ref_count": 2
+  },
+  {
+   "cs_offset": "0x7998",
+   "file_offset": "0x7B98",
+   "functions": [
+    "F_7B3B",
+    "F_7B9E",
+    "F_7BC9",
+    "F_7C02"
+   ],
+   "ref_count": 4
+  },
+  {
+   "cs_offset": "0x799A",
+   "file_offset": "0x7B9A",
+   "functions": [
+    "F_7B9E",
+    "F_7BC9",
+    "F_7C02"
+   ],
+   "ref_count": 6
+  },
+  {
+   "cs_offset": "0x799C",
+   "file_offset": "0x7B9C",
+   "functions": [
+    "F_7B3B",
+    "F_7B9E",
+    "F_7BC9",
+    "F_7C02"
+   ],
+   "ref_count": 4
+  },
+  {
+   "cs_offset": "0x7A29",
+   "file_offset": "0x7C29",
+   "functions": [
+    "F_7C59"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x7A50",
+   "file_offset": "0x7C50",
+   "functions": [
+    "F_7C59"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x7A53",
+   "file_offset": "0x7C53",
+   "functions": [
+    "F_7C59"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x7A56",
+   "file_offset": "0x7C56",
+   "functions": [
+    "F_7C59"
+   ],
+   "ref_count": 1
+  },
+  {
+   "cs_offset": "0x7E5A",
+   "file_offset": "0x805A",
+   "functions": [
+    "F_88FD",
+    "F_8994",
+    "F_89E6",
+    "F_8D95",
+    "F_8E5E"
+   ],
+   "ref_count": 5
+  },
+  {
+   "cs_offset": "0x7FEA",
+   "file_offset": "0x81EA",
+   "functions": [
+    "F_8525",
+    "F_862A",
+    "F_86A9",
+    "F_8A88",
+    "F_8B9F"
+   ],
+   "ref_count": 5
+  },
+  {
+   "cs_offset": "0x817A",
+   "file_offset": "0x837A",
+   "functions": [
+    "F_8778",
+    "F_882C",
+    "F_8871",
+    "F_8C66",
+    "F_8D17"
+   ],
+   "ref_count": 6
+  },
+  {
+   "cs_offset": "0x8323",
+   "file_offset": "0x8523",
+   "functions": [
+    "F_8525"
+   ],
+   "ref_count": 5
+  },
+  {
+   "cs_offset": "0x8426",
+   "file_offset": "0x8626",
+   "functions": [
+    "F_862A",
+    "F_86A9",
+    "F_8871",
+    "F_8994",
+    "F_89E6"
+   ],
+   "ref_count": 14
+  },
+  {
+   "cs_offset": "0x8576",
+   "file_offset": "0x8776",
+   "functions": [
+    "F_8778"
+   ],
+   "ref_count": 2
+  },
+  {
+   "cs_offset": "0x8B8F",
+   "file_offset": "0x8D8F",
+   "functions": [
+    "F_8A88",
+    "F_8B9F"
+   ],
+   "ref_count": 4
+  },
+  {
+   "cs_offset": "0x8B91",
+   "file_offset": "0x8D91",
+   "functions": [
+    "F_8A88",
+    "F_8C66",
+    "F_8D95"
+   ],
+   "ref_count": 9
+  },
+  {
+   "cs_offset": "0x8B93",
+   "file_offset": "0x8D93",
+   "functions": [
+    "F_8A88",
+    "F_8C66",
+    "F_8D95"
+   ],
+   "ref_count": 9
+  }
+ ]
+}
