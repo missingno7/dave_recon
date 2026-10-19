@@ -1,0 +1,4 @@
+# Reference scenario 1: start the original and let the title screen and the
+# built-in attract-mode demos run with no input (docs/FIDELITY.md).
+duration 30000
+png_every 50
