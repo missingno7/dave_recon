@@ -20,6 +20,17 @@ Original game files live in `assets/` and are not committed to git (see
 `.gitignore`) — they are the read-only verification fixtures a fresh
 checkout must supply locally.
 
+## Setup
+
+```
+python tools/bootstrap.py   # install pinned toolchain, copy+verify assets, unpack DAVE.EXE
+python -m pytest -q
+```
+
+The toolchain source defaults to `C:/tools/borland-turbo-c++-1.00/files`
+(override with `DAVE_TOOLCHAIN_SRC`); assets default to the primary checkout's
+`assets/` (override with `DAVE_ASSETS`). Works in fresh git worktrees.
+
 ## Layout
 
 ```text
