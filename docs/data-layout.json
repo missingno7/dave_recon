@@ -89,7 +89,7 @@
     "load_module": "0x6115",
     "file": "0x6315",
     "value": "0x254D",
-    "in_function": "F_6293"
+    "in_function": "F_630B"
    },
    {
     "load_module": "0x7520",
@@ -107,13 +107,13 @@
     "load_module": "0x786E",
     "file": "0x7A6E",
     "value": "0x254D",
-    "in_function": "F_78B5"
+    "in_function": "F_7915"
    },
    {
     "load_module": "0x7936",
     "file": "0x7B36",
     "value": "0x254D",
-    "in_function": "F_78B5"
+    "in_function": "F_7A73"
    },
    {
     "load_module": "0x7990",
@@ -1388,7 +1388,7 @@
     "direct"
    ],
    "written": false,
-   "ref_count": 83,
+   "ref_count": 89,
    "functions": [
     "F_0439",
     "F_04D2",
@@ -1405,16 +1405,22 @@
     "F_12B9",
     "F_1321",
     "F_13FF",
+    "F_156E",
     "F_15A5",
     "F_1780",
     "F_1830",
     "F_18F6",
+    "F_1A90",
+    "F_1ACE",
     "F_1B29",
     "F_1B84",
     "F_1BD6",
     "F_1C28",
     "F_1C6A",
     "F_1D16",
+    "F_2C1F",
+    "F_2C70",
+    "F_2CD8",
     "F_2D38",
     "F_2D87",
     "F_301B",
@@ -1427,6 +1433,7 @@
     "F_37ED",
     "F_3BA3",
     "F_3FD5",
+    "F_46B0",
     "F_47F8",
     "F_483F",
     "F_4886",
@@ -1447,19 +1454,31 @@
     "F_6213",
     "F_6293",
     "F_6388",
+    "F_63AF",
+    "F_6505",
     "F_664B",
     "F_66F2",
     "F_688C",
+    "F_69B9",
+    "F_69D3",
+    "F_69FB",
     "F_6A26",
     "F_6A62",
     "F_6ADE",
     "F_6B94",
+    "F_6C1E",
+    "F_6C8A",
     "F_6D64",
     "F_6DC2",
     "F_6EB9",
     "F_6EF1",
+    "F_6F3B",
+    "F_6F9D",
+    "F_6FD1",
     "F_7005",
-    "F_7071"
+    "F_7071",
+    "F_70CB",
+    "F_70F8"
    ],
    "sites": [
     "0x43C",
@@ -2354,11 +2373,13 @@
     "indexed"
    ],
    "written": false,
-   "ref_count": 1,
+   "ref_count": 2,
    "functions": [
+    "F_2C70",
     "F_2D38"
    ],
    "sites": [
+    "0x2CCE",
     "0x2D7D"
    ],
    "initial_value_hex": "0000"
@@ -2695,12 +2716,14 @@
     "indexed"
    ],
    "written": false,
-   "ref_count": 1,
+   "ref_count": 2,
    "functions": [
-    "F_0EDF"
+    "F_0EDF",
+    "F_2C1F"
    ],
    "sites": [
-    "0x117B"
+    "0x117B",
+    "0x2C52"
    ],
    "initial_value_hex": "5900"
   },
@@ -2735,12 +2758,14 @@
     "indexed"
    ],
    "written": false,
-   "ref_count": 1,
+   "ref_count": 2,
    "functions": [
-    "F_0EDF"
+    "F_0EDF",
+    "F_2C1F"
    ],
    "sites": [
-    "0x116D"
+    "0x116D",
+    "0x2C67"
    ],
    "initial_value_hex": "5f00"
   },
@@ -3361,7 +3386,7 @@
    "ref_count": 9,
    "functions": [
     "F_55BC",
-    "F_6388"
+    "F_6505"
    ],
    "sites": [
     "0x5633",
@@ -3388,7 +3413,7 @@
    "ref_count": 3,
    "functions": [
     "F_5815",
-    "F_6388"
+    "F_63AF"
    ],
    "sites": [
     "0x58C7",
@@ -3410,7 +3435,7 @@
    "written": false,
    "ref_count": 1,
    "functions": [
-    "F_6388"
+    "F_63AF"
    ],
    "sites": [
     "0x640C"
@@ -3430,7 +3455,7 @@
    "written": false,
    "ref_count": 1,
    "functions": [
-    "F_6388"
+    "F_63AF"
    ],
    "sites": [
     "0x63D6"
@@ -3450,7 +3475,7 @@
    "written": false,
    "ref_count": 1,
    "functions": [
-    "F_6388"
+    "F_63AF"
    ],
    "sites": [
     "0x6436"
@@ -3470,7 +3495,7 @@
    "written": false,
    "ref_count": 1,
    "functions": [
-    "F_6388"
+    "F_63AF"
    ],
    "sites": [
     "0x63E8"
@@ -3490,7 +3515,7 @@
    "written": false,
    "ref_count": 1,
    "functions": [
-    "F_6388"
+    "F_63AF"
    ],
    "sites": [
     "0x644B"
@@ -3510,7 +3535,7 @@
    "written": false,
    "ref_count": 1,
    "functions": [
-    "F_6388"
+    "F_63AF"
    ],
    "sites": [
     "0x63FA"
@@ -3530,7 +3555,7 @@
    "written": false,
    "ref_count": 1,
    "functions": [
-    "F_6388"
+    "F_63AF"
    ],
    "sites": [
     "0x6421"
@@ -3551,7 +3576,7 @@
    "ref_count": 3,
    "functions": [
     "F_5815",
-    "F_6388"
+    "F_63AF"
    ],
    "sites": [
     "0x58E4",
@@ -3574,7 +3599,7 @@
    "ref_count": 3,
    "functions": [
     "F_5815",
-    "F_6388"
+    "F_63AF"
    ],
    "sites": [
     "0x58FA",
@@ -3598,6 +3623,7 @@
    "ref_count": 3,
    "functions": [
     "F_6293",
+    "F_630B",
     "F_6388"
    ],
    "sites": [
@@ -3645,7 +3671,7 @@
    "written": true,
    "ref_count": 3,
    "functions": [
-    "F_7719",
+    "F_778C",
     "F_77E1"
    ],
    "sites": [
@@ -3668,7 +3694,7 @@
    "written": true,
    "ref_count": 3,
    "functions": [
-    "F_7719",
+    "F_778C",
     "F_77E1"
    ],
    "sites": [
@@ -3692,7 +3718,7 @@
    "written": true,
    "ref_count": 6,
    "functions": [
-    "F_7719",
+    "F_778C",
     "F_77E1"
    ],
    "sites": [
@@ -3718,7 +3744,7 @@
    "written": true,
    "ref_count": 1,
    "functions": [
-    "F_7719"
+    "F_778C"
    ],
    "sites": [
     "0x77A9"
@@ -3738,7 +3764,7 @@
    "written": true,
    "ref_count": 1,
    "functions": [
-    "F_7719"
+    "F_778C"
    ],
    "sites": [
     "0x77AD"
@@ -4158,7 +4184,9 @@
     "F_13FF",
     "F_3BA3",
     "F_5B10",
-    "F_78B5"
+    "F_78B5",
+    "F_7915",
+    "F_7A73"
    ],
    "sites": [
     "0x14EF",
@@ -4543,12 +4571,16 @@
     "indexed"
    ],
    "written": false,
-   "ref_count": 2,
+   "ref_count": 4,
    "functions": [
+    "F_2C70",
+    "F_2CD8",
     "F_2D38",
     "F_3FD5"
    ],
    "sites": [
+    "0x2CC1",
+    "0x2D29",
     "0x2D70",
     "0x402A"
    ],
@@ -4690,7 +4722,7 @@
     "direct"
    ],
    "written": true,
-   "ref_count": 139,
+   "ref_count": 141,
    "functions": [
     "F_09DE",
     "F_0BB2",
@@ -4703,12 +4735,15 @@
     "F_1780",
     "F_1830",
     "F_18F6",
+    "F_1A90",
+    "F_1ACE",
     "F_1B29",
     "F_1B84",
     "F_1BD6",
     "F_1C28",
     "F_1C6A",
     "F_1D16",
+    "F_2C1F",
     "F_2D87",
     "F_3205",
     "F_34CB",
@@ -4871,7 +4906,7 @@
    "functions": [
     "F_1830",
     "F_18F6",
-    "F_3FD5",
+    "F_46B0",
     "F_4D9C"
    ],
    "sites": [
@@ -5008,16 +5043,19 @@
     "direct"
    ],
    "written": true,
-   "ref_count": 51,
+   "ref_count": 53,
    "functions": [
     "F_15A5",
     "F_1C6A",
     "F_1D16",
+    "F_2C70",
+    "F_2CD8",
     "F_2D87",
     "F_34CB",
     "F_37ED",
     "F_3BA3",
     "F_3FD5",
+    "F_46B0",
     "F_4A27",
     "F_4E69"
    ],
@@ -5044,15 +5082,18 @@
     "direct"
    ],
    "written": true,
-   "ref_count": 70,
+   "ref_count": 74,
    "functions": [
     "F_15A5",
     "F_1C6A",
     "F_1D16",
+    "F_2C70",
+    "F_2CD8",
     "F_34CB",
     "F_37ED",
     "F_3BA3",
     "F_3FD5",
+    "F_46B0",
     "F_4A27",
     "F_4D9C",
     "F_4E69"
@@ -5257,7 +5298,7 @@
     "F_301B",
     "F_3205",
     "F_37ED",
-    "F_3FD5",
+    "F_46B0",
     "F_4886"
    ],
    "sites": [
@@ -5438,13 +5479,14 @@
     "direct"
    ],
    "written": true,
-   "ref_count": 32,
+   "ref_count": 33,
    "functions": [
     "F_13FF",
     "F_15A5",
     "F_1780",
     "F_1C6A",
     "F_1D16",
+    "F_2C1F",
     "F_34CB",
     "F_3BA3",
     "F_4A27",
@@ -5535,7 +5577,7 @@
     "F_2D87",
     "F_34CB",
     "F_37ED",
-    "F_3FD5",
+    "F_46B0",
     "F_4D9C"
    ],
    "sites": [
@@ -5929,13 +5971,16 @@
     "direct"
    ],
    "written": true,
-   "ref_count": 26,
+   "ref_count": 28,
    "functions": [
     "F_15A5",
+    "F_2C70",
+    "F_2CD8",
     "F_2D38",
     "F_332C",
     "F_34CB",
     "F_3FD5",
+    "F_46B0",
     "F_4E69",
     "F_535A",
     "F_8EDA"
@@ -5945,8 +5990,8 @@
     "0x1686",
     "0x16FC",
     "0x1727",
-    "0x2D52",
-    "0x33BC"
+    "0x2C9A",
+    "0x2D02"
    ],
    "proposed_name": "g_scroll_x (tile column of the view)",
    "confidence": "high",
@@ -6039,10 +6084,12 @@
     "direct"
    ],
    "written": true,
-   "ref_count": 20,
+   "ref_count": 22,
    "functions": [
     "F_0E57",
     "F_15A5",
+    "F_2C70",
+    "F_2CD8",
     "F_2D38",
     "F_34CB",
     "F_3BA3",
@@ -6054,10 +6101,10 @@
    "sites": [
     "0xEBC",
     "0x1651",
+    "0x2CBE",
+    "0x2D26",
     "0x2D6D",
-    "0x3677",
-    "0x3BF1",
-    "0x4034"
+    "0x3677"
    ],
    "proposed_name": "g_level (near ptr into g_levels)",
    "confidence": "verified",
@@ -6267,13 +6314,14 @@
     "direct"
    ],
    "written": true,
-   "ref_count": 35,
+   "ref_count": 36,
    "functions": [
     "F_13FF",
     "F_15A5",
     "F_1780",
     "F_1C6A",
     "F_1D16",
+    "F_2C1F",
     "F_34CB",
     "F_3BA3",
     "F_4A27",
@@ -6591,10 +6639,11 @@
     "direct"
    ],
    "written": true,
-   "ref_count": 28,
+   "ref_count": 33,
    "functions": [
     "F_15A5",
     "F_1D16",
+    "F_2C1F",
     "F_3BA3",
     "F_4A27",
     "F_4E69"
@@ -6830,10 +6879,11 @@
     "direct"
    ],
    "written": true,
-   "ref_count": 8,
+   "ref_count": 10,
    "functions": [
     "F_15A5",
     "F_1D16",
+    "F_2C1F",
     "F_4E69"
    ],
    "sites": [
@@ -7451,7 +7501,7 @@
    "written": false,
    "ref_count": 2,
    "functions": [
-    "F_7071",
+    "F_70F8",
     "F_7ED4"
    ],
    "sites": [
@@ -7592,7 +7642,7 @@
    "written": true,
    "ref_count": 1,
    "functions": [
-    "F_6293"
+    "F_630B"
    ],
    "sites": [
     "0x6336"
@@ -7808,7 +7858,9 @@
    "ref_count": 5,
    "functions": [
     "F_6099",
-    "F_78B5"
+    "F_78B5",
+    "F_7915",
+    "F_7A73"
    ],
    "sites": [
     "0x60CA",
@@ -8031,15 +8083,20 @@
     "direct"
    ],
    "written": true,
-   "ref_count": 4,
+   "ref_count": 7,
    "functions": [
-    "F_688C"
+    "F_688C",
+    "F_69B9",
+    "F_69D3",
+    "F_69FB"
    ],
    "sites": [
     "0x695B",
     "0x6964",
     "0x696A",
-    "0x6974"
+    "0x6974",
+    "0x69C5",
+    "0x69ED"
    ]
   },
   {
@@ -8100,7 +8157,8 @@
    "functions": [
     "F_5815",
     "F_6293",
-    "F_6388",
+    "F_630B",
+    "F_63AF",
     "F_6A26"
    ],
    "sites": [
@@ -8181,7 +8239,7 @@
    "written": true,
    "ref_count": 2,
    "functions": [
-    "F_7071",
+    "F_70F8",
     "F_7ED4"
    ],
    "sites": [
@@ -8224,15 +8282,21 @@
    "access_kinds": [
     "direct"
    ],
-   "written": false,
-   "ref_count": 3,
+   "written": true,
+   "ref_count": 6,
    "functions": [
-    "F_688C"
+    "F_688C",
+    "F_69B9",
+    "F_69D3",
+    "F_69FB"
    ],
    "sites": [
     "0x689B",
     "0x68A2",
-    "0x6940"
+    "0x6940",
+    "0x69CB",
+    "0x69F3",
+    "0x6A1E"
    ]
   },
   {
@@ -8249,7 +8313,7 @@
    "ref_count": 4,
    "functions": [
     "F_6A62",
-    "F_6B94"
+    "F_6C8A"
    ],
    "sites": [
     "0x6A8D",
@@ -8272,7 +8336,7 @@
    "ref_count": 4,
    "functions": [
     "F_6A62",
-    "F_6B94"
+    "F_6C8A"
    ],
    "sites": [
     "0x6A90",
@@ -8335,7 +8399,7 @@
    "cs_offset": "0x62F3",
    "file_offset": "0x64F3",
    "functions": [
-    "F_6388"
+    "F_63AF"
    ],
    "ref_count": 1
   },
@@ -8343,7 +8407,7 @@
    "cs_offset": "0x6439",
    "file_offset": "0x6639",
    "functions": [
-    "F_6388"
+    "F_6505"
    ],
    "ref_count": 1
   },
@@ -8384,7 +8448,7 @@
    "cs_offset": "0x70B6",
    "file_offset": "0x72B6",
    "functions": [
-    "F_78B5",
+    "F_7915",
     "F_7BC9"
    ],
    "ref_count": 2
@@ -8393,7 +8457,7 @@
    "cs_offset": "0x7246",
    "file_offset": "0x7446",
    "functions": [
-    "F_78B5",
+    "F_7A73",
     "F_7C02"
    ],
    "ref_count": 2
