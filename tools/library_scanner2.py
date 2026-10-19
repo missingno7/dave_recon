@@ -59,7 +59,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 import omf  # noqa: E402
 
 UNPACKED_PATH = ROOT / "build" / "DAVE_unpacked.exe"
-CENSUS_PATH = ROOT / "docs" / "function-census.json"
+CENSUS_PATH = ROOT / "docs" / "function-census-callgraph-v2.json"  # v2 call-graph census (includes library functions)
 PROLOGUE_CENSUS_PATH = ROOT / "docs" / "function-census-prologue-scan.json"
 MANIFEST_PATH = ROOT / "layout" / "manifest.json"
 LIB_DIR = ROOT / "toolchain" / "LIB"

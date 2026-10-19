@@ -30,18 +30,18 @@
   }
  },
  "runtime": {
-  "known_library_bytes": 3301,
+  "known_library_bytes": 9454,
   "text_bytes_after_game_code": 7933,
-  "raw_bytes_in_runtime_area": 5201
+  "raw_bytes_in_runtime_area": 0
  },
  "data": {
   "far_and_dgroup_bytes": 126496,
   "structured_bytes": 0,
-  "raw_bytes": 126496
+  "raw_bytes": 125506
  },
  "raw": {
-  "code_bytes": 42445,
-  "data_bytes": 126496
+  "code_bytes": 37244,
+  "data_bytes": 125506
  },
  "unresolved": {
   "indirect_control_flow_sites": 3,
@@ -83,5 +83,11 @@
    "target": "ASM modules: assembler identity, module boundaries, MATCHING_ASM"
   }
  ],
- "delta_vs_HEAD": null
+ "delta_vs_HEAD": {
+  "c_matched_functions": 0,
+  "c_matched_bytes": 0,
+  "asm_matched_bytes": 0,
+  "known_library_bytes": 6153,
+  "structured_data_bytes": 0
+ }
 }
