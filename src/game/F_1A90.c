@@ -1,3 +1,12 @@
+/*
+ * F_1A90 -- restore_background
+ * cs [0x1890,0x18ce) / file [0x1a90,0x1ace), 62 bytes.
+ *
+ * Per-video-mode dispatch (D_4F86: 0 CGA, 1 EGA, 2 VGA) to the assembler
+ * routine that restores a saved background buffer.
+ *
+ * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
+ */
 /* @flags -G */
 extern int D_4F86;
 void F_8994(int);

@@ -1,3 +1,13 @@
+/*
+ * F_124B -- ask_quit
+ * cs [0x104b,0x10b9) / file [0x124b,0x12b9), 110 bytes.
+ *
+ * F10/ESC handler: "Quit? (Y or N):"; N redraws (F_13FF), Y exits via
+ * quit_game(0); then F_76E1.
+ * @name ask_quit -- evidence: the prompt string.
+ *
+ * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
+ */
 /* @flags -G */
 /* @seg _DATA 0x0d37 */
 #include <ctype.h>

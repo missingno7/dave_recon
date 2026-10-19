@@ -1,3 +1,19 @@
+/*
+ * F_15A5 -- handle_death
+ * cs [0x13a5,0x1580) / file [0x15a5,0x1780), 475 bytes.
+ *
+ * Runs while Dave is dying (D_6156 bit 0x20 clear) once the death timer
+ * D_6546 expires: removes a life icon, and either ends the game (lives < 0:
+ * clears trophy/jetpack icons, D_5792 = game over, restores the level
+ * tiles) or restarts the level: re-applies the scroll offset to the doors,
+ * resets Dave's start position/state from the per-level tables (or the warp
+ * zone tables when D_573C), clears all monsters (6 x 0x13A) and shots
+ * (5 x 0xE) and redraws.
+ * @name handle_death -- evidence: g_lives decrement, game-over flag.
+ *
+ * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
+ * `if (--x == -1)` compiles to dec [x]; mov ax,[x]; cmp ax,-1.
+ */
 /* @flags -G */
 #include <mem.h>
 struct obj {

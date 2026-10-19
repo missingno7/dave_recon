@@ -1,3 +1,17 @@
+/*
+ * F_18F6 -- update_explosions
+ * cs [0x16f6,0x1890) / file [0x18f6,0x1a90), 410 bytes.
+ *
+ * Ages each active object of F_1830: XOR-erases it, advances its 4-frame
+ * animation every 13 frames, lets it fall 2 px when nothing solid is below
+ * (F_2D38 probes at +4 and +14) and y < 0x98, redraws; when its life ends
+ * it is erased and freed.
+ * @name update_explosions
+ *
+ * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
+ * the first two int locals declared get SI and DI; the third (x) stays on
+ * the stack.
+ */
 /* @flags -G */
 struct obj {
     int active;

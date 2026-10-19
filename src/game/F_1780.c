@@ -1,3 +1,15 @@
+/*
+ * F_1780 -- update_jetpack
+ * cs [0x1580,0x1630) / file [0x1780,0x1830), 176 bytes.
+ *
+ * While the jetpack is on (D_6156 bit 0) every 15 frames consumes one unit
+ * of fuel (D_5798) and erases one segment of the fuel bar; when it runs
+ * out, switches Dave back to walking, removes the trophy indicator(?),
+ * plays sound 2 and restores Dave's normal sprites.
+ * @name update_jetpack -- evidence: bar drawn at x = 0x4A + 2*D_5798.
+ *
+ * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
+ */
 /* @flags -G */
 extern int D_6156;
 extern int D_6154;

@@ -1,3 +1,13 @@
+/*
+ * F_12B9 -- pause_game
+ * cs [0x10b9,0x1121) / file [0x12b9,0x1321), 104 bytes.
+ *
+ * F9 handler: prints "Press F9 to end pause:", flushes one key, waits for
+ * a key with scan code 0x43 (F9), re-sets the video mode and redraws.
+ * @name pause_game -- evidence: the prompt string and the F9 scan code.
+ *
+ * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
+ */
 /* @flags -G */
 /* @seg _DATA 0x0d47 */
 #include <bios.h>

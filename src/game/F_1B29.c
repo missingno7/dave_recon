@@ -1,3 +1,12 @@
+/*
+ * F_1B29 -- draw_masked_sprite
+ * cs [0x1929,0x1984) / file [0x1b29,0x1b84), 91 bytes.
+ *
+ * Per-video-mode dispatch of (x, y, sprite, mask) to the masked sprite
+ * blitter (used for Dave and the help-screen monsters).
+ *
+ * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
+ */
 /* @flags -G */
 extern int D_4F86;
 void F_88FD(int, int, int, int);

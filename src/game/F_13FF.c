@@ -1,3 +1,22 @@
+/*
+ * F_13FF -- redraw_screen
+ * cs [0x11ff,0x136e) / file [0x13ff,0x156e), 367 bytes.
+ *
+ * Re-sets the video mode (EGA also F_95D1). In play/demo/score states
+ * (D_00AA < 3) redraws the level view, status bar (F_0BB2) and Dave's sprite
+ * ids, re-positions the active doors/warp markers (D_576A from the level
+ * number per gfx mode), and in state 2 shows the high scores. In the title
+ * state (3) prints the credits and draws the 7x10 "DAVE" tile logo held in
+ * an initialised local array.
+ * @name redraw_screen -- evidence: called after every popup (help, pause,
+ * quit, restart) and from the attract loop.
+ *
+ * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
+ * the logo initialiser is SCOPY'd from DS 0x07D4 (verified); the three
+ * literals live in the module's literal pool and are referenced by address.
+ * `(lvl - 2) * 16` compiles to `mov cl,4; shl ax,cl`; the original's four
+ * single `shl ax,1` need `(lvl - 2) * 8 * 2`.
+ */
 /* @flags -G */
 /* @seg _DATA 0x07d4 */
 extern int D_8B32;

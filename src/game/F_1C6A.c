@@ -1,3 +1,12 @@
+/*
+ * F_1C6A -- draw_dave
+ * cs [0x1a6a,0x1b16) / file [0x1c6a,0x1d16), 172 bytes.
+ *
+ * Per-video-mode: saves the background under Dave (x D_56EA, y D_56EC,
+ * mask D_57E4) into D_4C64, then draws his masked sprite D_573E.
+ *
+ * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
+ */
 /* @flags -G */
 extern int D_4F86;
 extern int D_56EA;

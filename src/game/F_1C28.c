@@ -1,3 +1,12 @@
+/*
+ * F_1C28 -- erase_dave
+ * cs [0x1a28,0x1a6a) / file [0x1c28,0x1c6a), 66 bytes.
+ *
+ * Per-video-mode restore of the background saved under Dave (buffer
+ * D_4C64).
+ *
+ * Codegen: built with -G (2-byte argument cleanup is inc sp; inc sp).
+ */
 /* @flags -G */
 extern int D_4F86;
 extern unsigned char D_4C64[];
