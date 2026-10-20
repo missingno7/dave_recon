@@ -38,6 +38,23 @@ def _c_array(path, name):
     return [int(v) for v in re.findall(r"-?\d+", re.sub(r"/\*.*?\*/", "", body, flags=re.S))]
 
 
+def _sprite_ids_checked(test, run):
+    """Compare g_monsters.sprite after the native move_monsters (the last
+    native_check of it, on `run`) with the original's; returns ticks compared."""
+    import oracle
+    native = (ROOT / "build" / "native_check" / "move_monsters" / "native.bin").read_bytes()
+    L, k, cur = oracle.DGROUP_LIVE_LEN, 0, None
+    for tick, site, snap in oracle.iter_boundaries(run / "boundaries.bin"):
+        if site == "move_monsters":
+            cur = tick
+        elif site == "move_bullets" and cur == tick:
+            mine = native[k * L:(k + 1) * L]
+            test.assertEqual(mine[MONSTER_SPRITE_DS:MONSTER_SPRITE_DS + 8],
+                             snap[MONSTER_SPRITE_DS:MONSTER_SPRITE_DS + 8], "tick %d" % tick)
+            k += 1
+    return k
+
+
 class NativeConstantsTest(unittest.TestCase):
     """The constant windows the native code keeps for out-of-range reads equal
     the original's initialised data (docs/semantic-inventory.json file offsets)."""
@@ -96,24 +113,41 @@ class NativeMonstersShotsExplosionsTest(unittest.TestCase):
 
     def test_move_monsters_sprite_ids(self):
         """Beyond the game view: the per-mode sprite ids the bridge rebuilds
-        from shown_frame (D3) equal the original's after every tick."""
-        import oracle
+        from shown_frame (D3) equal the original's after every tick (VGA)."""
         self._equivalent("move_monsters")
-        native = (ROOT / "build" / "native_check" / "move_monsters" / "native.bin").read_bytes()
-        L, k, cur = oracle.DGROUP_LIVE_LEN, 0, None
-        for tick, site, snap in oracle.iter_boundaries(DEMOS / "boundaries.bin"):
-            if site == "move_monsters":
-                cur = tick
-            elif site == "move_bullets" and cur == tick:
-                mine = native[k * L:(k + 1) * L]
-                self.assertEqual(mine[MONSTER_SPRITE_DS:MONSTER_SPRITE_DS + 8],
-                                 snap[MONSTER_SPRITE_DS:MONSTER_SPRITE_DS + 8], "tick %d" % tick)
-                k += 1
-        self.assertGreater(k, 0)
+        self.assertGreater(_sprite_ids_checked(self, DEMOS), 0)
 
     def test_move_bullets(self):
         self._equivalent("move_bullets")
         self._mutant_caught("move_bullets")
+
+
+# EGA / CGA runs of demo 2 (level 4): python tools/oracle.py
+# tests/oracle/n1_ega_demo2.txt (n1_cga_demo2.txt) --out <abs>/build/oracle/n1_ega_demo2
+N1_MODE_RUNS = {"ega": ROOT / "build" / "oracle" / "n1_ega_demo2" / "run1",
+                "cga": ROOT / "build" / "oracle" / "n1_cga_demo2" / "run1"}
+
+
+class NativeMonstersOtherModesTest(unittest.TestCase):
+    """Same subsystems in EGA (mode 0Dh) and CGA (mode 4): the game state
+    must not depend on the mode, and the bridge's per-mode monster sprite
+    ids must match the original's."""
+
+    def _run(self, mode):
+        import native_check
+        run = N1_MODE_RUNS[mode]
+        if not (run / "boundaries.bin").exists():
+            self.skipTest("no %s oracle run" % mode)
+        for name in ("update_explosions", "move_bullets", "move_monsters"):
+            r = native_check.check(name, run)
+            self.assertTrue(r["equivalent"], r)
+        self.assertGreater(_sprite_ids_checked(self, run), 0)
+
+    def test_ega(self):
+        self._run("ega")
+
+    def test_cga(self):
+        self._run("cga")
 
 
 if __name__ == "__main__":
