@@ -16,6 +16,7 @@ Builds port/ with CMake (MinGW gcc) into build/port first.
 from __future__ import annotations
 
 import argparse
+import functools
 import os
 import pathlib
 import subprocess
@@ -41,7 +42,13 @@ DEFERRED_RANGES = [(0x5742 + 5 * 8, 0x5742 + 6 * 8,
                     "g_monsters.sprite[4]: per-mode presentation id (state-model D3)")]
 
 
-def game_view_mask(snapshot: bytes) -> bytearray:
+def game_view_mask(snapshot: bytes) -> bytes:
+    level = int.from_bytes(snapshot[0x56F4:0x56F6], "little", signed=True)
+    return _game_view_mask_for_level(level)
+
+
+@functools.lru_cache(maxsize=None)
+def _game_view_mask_for_level(level: int) -> bytes:
     import json
     inv = json.loads((ROOT / "docs" / "semantic-inventory.json").read_text())
     entries = inv["entries"] if isinstance(inv["entries"], list) else list(inv["entries"].values())
@@ -53,13 +60,32 @@ def game_view_mask(snapshot: bytes) -> bytearray:
                 mask[i] = 1
     for a, b, _ in DEFERRED_RANGES:
         mask[a:b] = bytes(b - a)
-    level = int.from_bytes(snapshot[0x56F4:0x56F6], "little", signed=True)
     m = (0x173A + 0x500 * level + 0x100) & 0xFFFF
     for i in range(m, min(m + 1000, len(mask))):
         mask[i] = 1
     for lo, hi in oracle.ASYNC_RANGES:
         mask[lo:hi] = bytes(hi - lo)
-    return mask
+    return bytes(mask)
+
+
+@functools.lru_cache(maxsize=64)
+def _mask_int(mask: bytes) -> int:
+    return int.from_bytes(bytes(0xFF if v else 0 for v in mask), "little")
+
+
+@functools.lru_cache(maxsize=64)
+def _inverse(mask: bytes) -> bytes:
+    return bytes(1 - v for v in mask)
+
+
+def _masked_diff(a: bytes, b: bytes, mask: bytes) -> list:
+    """DS offsets where a and b differ under mask (byte 1 = compared)."""
+    if a == b:
+        return []
+    x = (int.from_bytes(a, "little") ^ int.from_bytes(b, "little")) & _mask_int(mask)
+    if not x:
+        return []
+    return [i for i, v in enumerate(x.to_bytes(len(a), "little")) if v]
 
 
 def build_port() -> pathlib.Path:
@@ -72,7 +98,9 @@ def build_port() -> pathlib.Path:
     return out / "dave_bridge.exe"
 
 
-def check(subsystem: str, run: pathlib.Path) -> dict:
+def check(subsystem: str, run: pathlib.Path, variant: str | None = None) -> dict:
+    """variant: run this bridge registry entry instead of `subsystem` on the
+    same snapshot pairs (e.g. "move_monsters/mutant" for a mutation check)."""
     pairs, cur = [], {}
     if subsystem == "identity":
         # bridge self-check: import + export must reproduce every snapshot
@@ -85,23 +113,24 @@ def check(subsystem: str, run: pathlib.Path) -> dict:
                 cur = {"tick": tick, "pre": snap}
             elif site == after_site and cur.get("tick") == tick:
                 pairs.append((tick, cur["pre"], snap))
-    work = ROOT / "build" / "native_check" / subsystem
+    work = ROOT / "build" / "native_check" / (variant or subsystem).replace("/", "_")
     work.mkdir(parents=True, exist_ok=True)
     (work / "pre.bin").write_bytes(b"".join(p for _, p, _ in pairs))
     exe = build_port()
     env = dict(os.environ, PATH=MINGW + os.pathsep + os.environ["PATH"])
-    subprocess.run([str(exe), subsystem, str(work / "pre.bin"), str(work / "native.bin"),
+    subprocess.run([str(exe), variant or subsystem, str(work / "pre.bin"), str(work / "native.bin"),
                     str(work / "events.txt")], env=env, check=True)
     native = (work / "native.bin").read_bytes()
     L = oracle.DGROUP_LIVE_LEN
     changed_in_original = presentation_bytes = 0
     for k, (tick, pre, post) in enumerate(pairs):
         mine = native[k * L:(k + 1) * L]
-        mask = game_view_mask(pre) if subsystem != "identity" else bytearray([1]) * L
-        if any(pre[i] != post[i] for i in range(L) if mask[i]):
+        mask = game_view_mask(pre) if subsystem != "identity" else bytes([1]) * L
+        changed = _masked_diff(pre, post, mask)
+        if changed:
             changed_in_original += 1
-        presentation_bytes += sum(1 for i in range(L) if not mask[i] and pre[i] != post[i])
-        diff = [i for i in range(L) if mask[i] and mine[i] != post[i]]
+        presentation_bytes += len(_masked_diff(pre, post, _inverse(mask)))
+        diff = _masked_diff(mine, post, mask)
         if diff:
             return {"subsystem": subsystem, "ticks": len(pairs), "equivalent": False,
                     "first_divergence": {"tick": tick, "ds_offsets": [hex(i) for i in diff[:16]]}}
@@ -114,10 +143,11 @@ def check(subsystem: str, run: pathlib.Path) -> dict:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("subsystem")
+    ap.add_argument("--variant", help="bridge registry entry to run instead (mutation checks)")
     ap.add_argument("--run", type=pathlib.Path,
                     default=ROOT / "build" / "oracle" / "attract_boundaries" / "run1")
     args = ap.parse_args()
-    r = check(args.subsystem, args.run)
+    r = check(args.subsystem, args.run, args.variant)
     print(r)
     sys.exit(0 if r["equivalent"] else 1)
 

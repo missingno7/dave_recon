@@ -63,7 +63,12 @@ struct monster {             /* g_monsters (struct of arrays in the original) */
     int16_t  active, x, y;   /* x in view pixels */
     uint16_t path_pos;       /* byte index into the level's monster path */
     int16_t  reload, anim_count, anim_frame, fire_count, move_count;
+    int16_t  shown_frame;    /* g_monsters.sprite as a mode-independent frame (D3, state-model
+                                section 5): the anim_frame the monster was last drawn with,
+                                which move_monsters erases next; MONSTER_FRAME_UNKNOWN when an
+                                imported sprite id decodes to no frame */
 };
+#define MONSTER_FRAME_UNKNOWN (-1)
 
 struct shot {                /* g_shots */
     int16_t active, x, y, dir, frame, kind;

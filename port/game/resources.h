@@ -17,11 +17,15 @@
 #include "state.h"
 
 #define LEVEL_PATH_BYTES 256
+#define LEVEL_TRAILER_BYTES 24
+#define LEVEL_RECORD_BYTES (LEVEL_PATH_BYTES + LEVEL_ROWS * LEVEL_COLS + LEVEL_TRAILER_BYTES)  /* 0x500 */
 
 struct level_record {
     int8_t path[LEVEL_PATH_BYTES];
     int8_t map[LEVEL_ROWS][LEVEL_COLS];
-    /* the original's 24 trailing bytes per record are never read */
+    int8_t trailer[LEVEL_TRAILER_BYTES]; /* the record's 24 trailing bytes: never read in
+                                            range; tile probes past row 9 column 99 and
+                                            monster paths without 0xEA reach them (U-M1 item 2) */
 };
 
 struct resources {
