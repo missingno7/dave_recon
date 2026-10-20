@@ -328,7 +328,17 @@ docs/FIDELITY.md sections 1 and 5.
   warp zones (levels 5, 8, 9, 10) and the level -1 warp (U-M3; level 6's
   top row is open at columns 85-98, collision tests return 0 above the
   playfield, so Dave can pass x 0x132 at view 80 there); fire/jetpack on
-  release (U-G9 b) with keys; control panel and F-key screens.
+  release (U-G9 b) with keys; control panel and F-key screens. Notes for
+  whoever continues: replaying a demo's per-tick input live reproduces its
+  path (demo 1's inputs from the tick after a straight-up jump at level 2's
+  start -- the jump clears `g_prev_dir` = 6 left by level 1 -- reached the
+  trophy and the column 16-20 ledge), but no demo reaches a door. On level
+  2 the door (47,1) is reached through the shaft at column 32 (rows 1-3)
+  from the maze around columns 23-36; stepping from the (23,3) brick onto
+  the row-2 bricks at columns 24-28 leaves about 1 px of margin, because
+  the row-0 ceiling stops the jump at y 31. Level 3 has a top-row opening
+  at columns 72-74 (jetpack at (66,8)): the cheapest route to the level -1
+  warp once level 2 is done (demo 0 collects that jetpack).
 - **U-O2** A true 4-plane EGA image at every tick head needs an emulator
   command that reads DOSBox-X's `vga.mem.linear` (not in acceptance build
   v3); today: the read-map plane per tick plus 4-plane images inside
