@@ -1,0 +1,73 @@
+# Death, restart, game over and high-score entry with DSCORES.DAV
+# persistence (docs/FIDELITY.md section 5).
+#
+# Level 1 is played exactly as in level1_complete.txt (same events, same
+# ticks 1-884). On level 2 Right is held from the wait_for_input exit until
+# the game is over: Dave walks into the fire at column 3 four times.
+#
+# Covers: death on a deadly tile (attr 2, sound 3), the killed state 0x60 and
+# the death tick without a WaitVBL (two ticks in one retrace: tick 921 has
+# frames_since_prev 0), the 300-tick death timer (death_timer 299..1), the
+# restart at the level start with a life removed (handle_death), the
+# wait_for_input after each restart (left at once because Right is held),
+# lives 3 -> 2 -> 1 -> 0 -> -1 = game over, check_high_score: the table with
+# sounds 11/6 and WaitSound, "You got a high score!", initials typed as
+# o, r, c (upper-cased by input_initials), Enter, DSCORES.DAV rewritten,
+# then the title again.
+#
+# Tick ranges / evidence (run1, VGA):
+#   ticks 2-883       level 1 (see level1_complete.txt), score 3200
+#   ticks 884-2236    level 2 (index 1), 33.15-53.28 s
+#     919/920/921     death 1: fire at x 40 (sound 3), state 0x60, explosion
+#                     (state 0, death_timer 299, tick 921 in the same retrace)
+#     1220            restart: x 16, lives 2
+#     1258, 1597,     deaths 2, 3, 4 (lives 2, 1, 0)
+#     1936
+#     2236            death timer expires with lives 0: lives -1, game over
+#   tick 2237         title (game_state 3) at 59.90 s, after the high-score
+#                     entry (PIT sound activity of the table ends ~54.0 s)
+#   DSCORES.DAV       first record: level 2, score 03200, "ORC"; the other
+#                     four the defaults (level 1, 00100, "JON") that the game
+#                     itself wrote at start-up (assets/ has no DSCORES.DAV)
+#
+# Right is released and the initials typed inside the game-over interval
+# (no tick heads between tick 2236 and 2237), so their exact times do not
+# reach the per-tick state.
+# retraces: per-retrace capture (M1.6) of the whole run; every event is
+# snapped half-way between two WaitVBL exits (oracle.py --snap).
+duration 66000
+png_every 100
+retraces 6000
+4051 key space
+11942 keydown right
+12156 keydown pageup
+12255 keyup pageup
+14453 keyup right
+14952 keydown pageup
+14952 keydown right
+15052 keyup pageup
+16151 keyup right
+16507 keydown right
+17206 keyup right
+17506 keydown left
+17506 keydown up
+17606 keyup up
+18348 keyup left
+19004 keydown left
+19004 keydown up
+19104 keyup up
+19846 keyup left
+20303 keydown right
+23299 keyup right
+23299 keydown left
+27494 keyup left
+33001 keydown right
+56001 keyup right
+57999 key o
+58498 key r
+58998 key c
+# Enter is pressed ~7 ms after a poll of wait_key_cursor (5-retrace polls,
+# one at ~59903.5 ms) and released 40 ms before the next, so key_down[Enter]
+# is 0 at the title tick head in every run (a 50 ms tap could still be down).
+60053 keydown enter
+60082 keyup enter

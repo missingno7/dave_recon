@@ -1,0 +1,14 @@
+# CGA presentation (M1.4): DOSBox-X machine=cga, so VideoID finds only a
+# 6845 at 3D4h and the game runs in mode 4 (g_video_mode 1, CGA tileset
+# RLE-expanded from the EXE). Title, then the first attract demo (demo 1,
+# level 2), as in attract.txt.
+#
+# Capture: per tick, B800:0000, 16 KB (even lines at +0, odd lines at
+# +2000h, 80 bytes per line, 2 bits per pixel); a plain memory dump is the
+# complete image.
+#
+# Evidence (run1): retrace period 16.688 ms (59.92 Hz) in mode 4; tick 1
+# title at 3.49 s, ticks 2.. demo 1 on level 2 from 23.5 s; seed 5990.
+duration 32000
+png_every 100
+video cga
