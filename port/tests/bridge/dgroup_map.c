@@ -210,31 +210,47 @@ void dgroup_export_player_view(const struct game *g, unsigned char *m)
     wr16(m, DS_DAVE_MASK, pose_ids[g->dave.pose][1][mode][g->dave.pose_frame & 3]);
 }
 
-#define DS_INPUT_DEVICE 0x12F0   /* int g_input_device[3] */
-#define DS_KEY_SCANS 0x1310      /* char g_key_scans[10] */
-#define DS_KEYDOWN 0x8A32        /* int g_keydown[128] */
+/* ---- world (N3) additions ---- */
 
-void dgroup_import_input_settings(struct input_settings *s, const unsigned char *m)
-{
-    s->device = rd16(m, DS_INPUT_DEVICE + 2 * 1);
-    for (int k = 0; k < BIND_COUNT; k++)
-        s->keys[k] = m[DS_KEY_SCANS + k];
+#define G_LEVELS_DS 0x173A
+#define G_TILES_DS 0x615C
+#define G_KEYDOWN_DS 0x8A32
+#define G_KEY_SCANS_DS 0x1310
+#define G_INPUT_DEVICE_DS 0x12F0
+
+void dgroup_import_world(struct game *g, struct resources *r, const unsigned char *m,
+                         const unsigned char *pristine_levels) {
+    if (pristine_levels) {
+        /* the immutable resource itself: g_levels as DAVE.EXE initialises it */
+        for (int lv = 0; lv < LEVEL_COUNT; lv++) {
+            const unsigned char *rec = pristine_levels + LEVEL_RECORD_BYTES * lv;
+            memcpy(r->levels[lv].path, rec, LEVEL_PATH_BYTES);
+            memcpy(r->levels[lv].map, rec + LEVEL_PATH_BYTES, LEVEL_ROWS * LEVEL_COLS);
+            memcpy(r->levels[lv].trailer, rec + LEVEL_PATH_BYTES + LEVEL_ROWS * LEVEL_COLS,
+                   LEVEL_TRAILER_BYTES);
+        }
+    }   /* else: dgroup_import_resources took them from the snapshot */
+    /* data:g_tiles -> level.pristine_loaded: still all zero before the first load_level */
+    g->level.pristine_loaded = 0;
+    for (int i = 0; i < LEVEL_ROWS * LEVEL_COLS; i++)
+        if (m[G_TILES_DS + i])
+            g->level.pristine_loaded = 1;
 }
 
-int dgroup_import_input(struct frame_input *in, const unsigned char *m)
-{
-    struct input_settings s;
-    dgroup_import_input_settings(&s, m);
-    in->dir = DIR_NONE;
-    in->fire = 0;
-    in->jump = 0;
-    in->menu_key = 0;
-    in->dos_seconds = 0;
-    if (s.device != DEVICE_KEYBOARD)
-        return -1;
-    uint8_t down[128];
-    for (int k = 0; k < 128; k++)
-        down[k] = rd16(m, DS_KEYDOWN + 2 * k) != 0;
-    input_from_keyboard(in, down, &s);
-    return 0;
+void dgroup_export_levels(const struct game *g, const struct resources *r, unsigned char *m) {
+    for (int lv = 0; lv < LEVEL_COUNT; lv++)
+        if (lv != g->level.index)
+            memcpy(m + G_LEVELS_DS + LEVEL_RECORD_BYTES * lv + LEVEL_PATH_BYTES,
+                   r->levels[lv].map, LEVEL_ROWS * LEVEL_COLS);
+    if (g->level.pristine_loaded && g->level.index >= 0 && g->level.index < LEVEL_COUNT)
+        memcpy(m + G_TILES_DS, r->levels[g->level.index].map, LEVEL_ROWS * LEVEL_COLS);
+    else if (!g->level.pristine_loaded)
+        memset(m + G_TILES_DS, 0, LEVEL_ROWS * LEVEL_COLS);
+}
+
+void dgroup_import_keyboard(struct dgroup_keyboard *k, const unsigned char *m) {
+    for (int i = 0; i < 128; i++)
+        k->keydown[i] = (int16_t)(m[G_KEYDOWN_DS + 2 * i] | m[G_KEYDOWN_DS + 2 * i + 1] << 8);
+    memcpy(k->scans, m + G_KEY_SCANS_DS, 10);
+    k->device = (int16_t)(m[G_INPUT_DEVICE_DS + 2] | m[G_INPUT_DEVICE_DS + 3] << 8);
 }

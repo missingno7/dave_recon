@@ -50,6 +50,8 @@ Scenario files (tests/oracle/*.txt):
   retraces <n>                      per-retrace capture (M1.6) for the first n
                                     retraces: DGROUP + BIOS key buffer at every
                                     WaitVBL exit, see RETRACE_SITE
+  dscores none|user                 starting high-score file: none (default; the game
+                                    writes its default table) or assets/DSCORES.DAV
   ega_planes <n>                    EGA only: capture up to n true 4-plane
                                     images (at SaveUnderEGA, see EGA_PLANE_SITE)
   <ms> key|keydown|keyup <name>     input (DOSBox-X mapper key names)
@@ -178,6 +180,7 @@ class Scenario:
     dos_time: str = "00:00:00"
     ega_planes: int = 0
     retraces: int = 0
+    dscores: str = "none"     # "none": game writes its default table; "user": assets/DSCORES.DAV
     inputs: list = field(default_factory=list)
 
 
@@ -202,6 +205,8 @@ def parse_scenario(path: pathlib.Path) -> Scenario:
             sc.ega_planes = int(parts[1])
         elif parts[0] == "retraces":
             sc.retraces = int(parts[1])
+        elif parts[0] == "dscores" and len(parts) == 2 and parts[1] in ("none", "user"):
+            sc.dscores = parts[1]
         elif len(parts) == 3 and parts[1] in ("key", "keydown", "keyup"):
             sc.inputs.append(f"{int(parts[0])} {parts[1]} {parts[2]}")
         else:
@@ -219,9 +224,14 @@ def run_once(work: pathlib.Path, sc: Scenario, calibrate=False):
         shutil.rmtree(work)
     game = work / "game"
     game.mkdir(parents=True)
-    for name in ("DAVE.EXE", "EGADAVE.DAV", "DSCORES.DAV"):
-        if (ROOT / "assets" / name).exists():
-            shutil.copyfile(ROOT / "assets" / name, game / name)
+    # The starting file set is pinned: the two hash-verified originals
+    # (tools/bootstrap.py). DSCORES.DAV is user data (a high-score table, not
+    # pinned), so by default it is absent and the game writes its default
+    # table at start-up; `dscores user` opts in (its hash goes to summary.json).
+    for name in ("DAVE.EXE", "EGADAVE.DAV"):
+        shutil.copyfile(ROOT / "assets" / name, game / name)
+    if sc.dscores == "user":
+        shutil.copyfile(ROOT / "assets" / "DSCORES.DAV", game / "DSCORES.DAV")
     ds_linear = (LOAD_SEG + DGROUP_PARA) * 16
     fb_at, fb_len = VIDEO[sc.video]["fb"]
     # DAVE is started by typing its name at a fixed EMULATED time rather than

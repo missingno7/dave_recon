@@ -15,8 +15,7 @@
  */
 #include "player.h"
 #include "level_probe.h"
-#include "monsters.h"
-#include "shots.h"
+#include "world.h"   /* tile_at/tile_attr_at, spawn_explosion, draw_actors, wait_for_input ... (N3) */
 
 /* ---- constant tables of the original (src/DAVE.C _DATA) ------------------ */
 
@@ -29,22 +28,6 @@ static const int16_t jump_dy[47] = {
     2, 2, 3, JUMP_END, 0
 };
 
-/* g_level_flags (DS 0x0118): Dave's state on (re)entering each level (U-G3). */
-static const uint8_t level_start_state[LEVEL_COUNT] = {36, 36, 36, 40, 36, 36, 40, 36, 40, 36};
-static const int16_t level_start_x[LEVEL_COUNT] = {32, 16, 32, 16, 32, 32, 16, 32, 96, 32};
-static const int16_t level_start_y[LEVEL_COUNT] = {144, 144, 96, 96, 144, 144, 48, 144, 32, 144};
-/* g_warp_start_scroll_x / g_warp_start_x: where a warp zone (re)starts Dave,
- * indexed by the level the warp was taken from (level.warp_return). */
-static const int16_t warp_start_scroll_x[LEVEL_COUNT] = {0, 0, 0, 0, 42, 0, 0, 67, 71, 11};
-static const int16_t warp_start_x[LEVEL_COUNT] = {0, 0, 0, 0, 144, 0, 0, 64, 144, 144};
-
-#define TILE_IDS 53
-/* g_tile_climbable (DS 0x0262) per tile id; g_tile_attr lives in level_probe.c. */
-static const int16_t tile_climbable[TILE_IDS] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0,
-    0, 0, 0, 0
-};
 enum { ATTR_FREE = 0, ATTR_SOLID = 1, ATTR_DEADLY = 2 };   /* g_tile_attr values (level_probe.c) */
 
 /* Sounds (PlaySound ids, sound bank SPK). */
@@ -53,7 +36,6 @@ enum {
     SND_JETPACK = 9, SND_JETPACK_ON = 11
 };
 
-enum { EXPLOSION_DEATH = 5 };
 enum { DIR_LEFT = 0, DIR_RIGHT = 1 };   /* dave.facing / jet_facing / shot.dir */
 
 /* ---- output helpers ------------------------------------------------------- */
@@ -61,50 +43,40 @@ enum { DIR_LEFT = 0, DIR_RIGHT = 1 };   /* dave.facing / jet_facing / shot.dir *
 /* WaitVBL(). Every call is a boundary between two retrace segments (D2). */
 static void retrace(struct frame_output *out) { out->retraces++; }
 
-static void set_pose(struct game *g, int pose, int frame)
+/* DRAW_SET_DAVE_SPRITE's image code of each pose (output.h). */
+static int pose_sprite_code(int pose)
+{
+    switch (pose) {
+    case POSE_WALK_LEFT: return 9;
+    case POSE_WALK_RIGHT: return 11;
+    case POSE_CLIMB: return 7;
+    case POSE_JET_RIGHT: return 3;
+    case POSE_JET_LEFT: return 5;
+    case POSE_JUMP_LEFT: return -2;
+    case POSE_JUMP_RIGHT: return -3;
+    default: return -1;                 /* POSE_FRONT */
+    }
+}
+
+void dave_set_pose(struct game *g, int pose, int frame, struct frame_output *out)
 {
     g->dave.pose = (uint8_t)pose;
     g->dave.pose_frame = (uint8_t)frame;
+    out_draw(out, DRAW_SET_DAVE_SPRITE, pose_sprite_code(pose), frame, 0, 0);
 }
 
-/* draw_dave(): save the background under Dave, then draw him. */
+/* draw_dave(): save the background under Dave, then draw his current sprite. */
 static void draw_dave(const struct game *g, struct frame_output *out)
 {
-    out_draw(out, DRAW_DAVE, g->dave.x, g->dave.y, g->dave.pose, g->dave.pose_frame);
+    out_draw(out, DRAW_DAVE, g->dave.x, g->dave.y, 0, 0);
 }
 
 /* erase_dave(): restore what draw_dave saved. */
-static void erase_dave(struct frame_output *out) { out_draw(out, ERASE_DAVE, 0, 0, 0, 0); }
+static void erase_dave(struct frame_output *out) { out_draw(out, DRAW_ERASE_DAVE, 0, 0, 0, 0); }
 
 static void xor_sprite(struct frame_output *out, int x, int y, int set, int index)
 {
     out_draw(out, DRAW_XOR_SPRITE, x, y, set, index);
-}
-
-/* draw_status_meter(): jetpack meter frame and one bar per fuel unit. */
-static void draw_status_meter(const struct game *g, struct frame_output *out)
-{
-    xor_sprite(out, 0x48, 0xAA, SPRITE_METER_LABEL, 0);
-    for (int i = 0; i < g->inv.jetpack_fuel; i++)
-        xor_sprite(out, i * 2 + 0x4C, 0xAE, SPRITE_METER_BAR, 0);
-}
-
-/* draw_actors(): Dave (if on the playfield and alive), the monsters, the
- * shots and the explosions, in that order. */
-static void draw_actors(const struct game *g, struct frame_output *out)
-{
-    if (g->dave.y > 15 && (g->dave.state & DAVE_ALIVE))
-        draw_dave(g, out);
-    for (int i = 0; i < MONSTER_COUNT; i++)
-        if (g->monsters[i].active == 1)
-            xor_sprite(out, g->monsters[i].x, g->monsters[i].y, SPRITE_MONSTER,
-                       monster_sprite_index(g->level.index, g->monsters[i].shown_frame));
-    for (int i = 0; i < SHOT_COUNT; i++)
-        if (g->shots[i].active == 1)
-            shot_draw(g, i, out);
-    for (int i = 0; i < EXPLOSION_COUNT; i++)
-        if (g->explosions[i].active == 1)
-            xor_sprite(out, g->explosions[i].x, g->explosions[i].y, SPRITE_EXPLOSION, g->explosions[i].frame);
 }
 
 /* The end-of-move redraw shared by every movement branch: erase and redraw
@@ -128,52 +100,18 @@ static void finish_move(const struct game *g, int moved, struct frame_output *ou
         retrace(out);
 }
 
-/* ---- level probes --------------------------------------------------------- */
+/* ---- level probes ---------------------------------------------------------- */
 
-/* RowTimes100 (tiles.asm, DS 0x13DD) has 10 entries; rows 10..19 read the
- * following table TileRowOfs ((n + 1) * 640). Only tile_at can ask for
- * rows 10 and 11 (and tile_attr_at_offset is unchecked). */
-static int row_offset(int row)
+/* tile_attr_at / tile_at (tiles.c) take 16-bit offsets from Dave. */
+static int attr(const struct game *g, const struct resources *r, int dx, int dy)
 {
-    if (row >= 0 && row < 10)
-        return row * LEVEL_COLS;
-    if (row >= 10 && row < 20)
-        return (row - 9) * 640;
-    return -1000000;   /* out of the equivalence contract (never reached) */
+    return tile_attr_at(g, r, (int16_t)dx, (int16_t)dy);
 }
 
-/* g_tile_climbable lookup of a raw tile byte. Ids outside 0..52 come only
- * from out-of-map bytes and read neighbouring tables in the original:
- * outside the equivalence contract (no shipped level reaches them, N2-1). */
-static int climbable(int tile) { return tile >= 0 && tile < TILE_IDS ? tile_climbable[tile] : 0; }
-
-/* Column of a view pixel. C division truncates toward zero, so the 15
- * pixels left of the view still map to column scroll_x. */
-static int column_at(const struct game *g, int view_x) { return view_x / 16 + g->level.scroll_x; }
-
-/* tile_attr_at(dx, dy): attribute of the tile under Dave + (dx, dy); 0 above
- * the playfield (y < 16) and below row 9. Inside rows 0..9 it is the same
- * lookup as tile_attr_at_offset (level_probe.c), unchecked columns included. */
-static int tile_attr_at(const struct game *g, const struct resources *r, int dx, int dy)
+/* g_tile_climbable[tile_at(dx, dy)] (tile_at accepts rows 10, 11: N2-1). */
+static int climbable_at(const struct game *g, const struct resources *r, int dx, int dy)
 {
-    if (g->dave.y + dy < 16)
-        return 0;
-    if ((g->dave.y + dy - 16) / 16 > 9)
-        return 0;
-    return tile_attr_at_offset(g, r, g->dave.x, g->dave.y, (int16_t)dx, (int16_t)dy);
-}
-
-/* tile_at(dx, dy): raw tile id under Dave + (dx, dy); rows 10 and 11 are
- * accepted (see row_offset). */
-static int tile_at(const struct game *g, const struct resources *r, int dx, int dy)
-{
-    if (g->dave.y + dy < 16)
-        return 0;
-    int col = column_at(g, dx + g->dave.x);
-    int row = (g->dave.y + dy - 16) / 16;
-    if (row > 11)
-        return 0;
-    return level_record_byte(g, r, LEVEL_PATH_BYTES + row_offset(row) + col);
+    return tile_climbable((int8_t)tile_at(g, r, (int16_t)dx, (int16_t)dy));
 }
 
 /* ---- shared sub-routines ---------------------------------------------------- */
@@ -183,27 +121,6 @@ static void kill_dave(struct game *g)
     /* every deadly-tile death: movement bits cleared, killed bit set; Dave
      * stays alive (0x20) until the next move_dave turns it into the explosion */
     g->dave.state = (uint16_t)((g->dave.state & 0xE0) | DAVE_KILLED);
-}
-
-/* spawn_explosion(x, y, type): first free slot; type 5 arms the death timer. */
-static void spawn_explosion(struct game *g, int x, int y, int type, struct frame_output *out)
-{
-    for (int i = 0; i < EXPLOSION_COUNT; i++) {
-        struct explosion *e = &g->explosions[i];
-        if (e->active == 0) {
-            e->x = (int16_t)x;
-            e->y = (int16_t)y;
-            e->type = (int16_t)type;
-            e->active = 1;
-            e->frame = 0;
-            e->life = 0x6E;
-            e->anim = 0xD;
-            xor_sprite(out, x, y, SPRITE_EXPLOSION, 0);
-            if (type == EXPLOSION_DEATH)
-                g->dave.death_timer = 300;
-            break;
-        }
-    }
 }
 
 /* scroll_screen(): when Dave passes x 0x118 (or drops below 0x20) the view
@@ -238,7 +155,7 @@ static void scroll_screen(struct game *g, struct frame_output *out)
             g->explosions[i].x = (int16_t)(g->explosions[i].x - 16 * step);
         g->dave.x = (int16_t)(g->dave.x - 16 * step);
         retrace(out);
-        out_draw(out, DRAW_LEVEL_VIEW, g->level.scroll_x, g->level.index, 0, 0);
+        out_draw(out, DRAW_LEVEL_VIEW, g->level.index, g->level.scroll_x, 0, 0);
         draw_actors(g, out);
     }
     out_sound(out, SOUND_RESUME);
@@ -247,12 +164,12 @@ static void scroll_screen(struct game *g, struct frame_output *out)
 }
 
 /* animate_tick(): the climbing animation (every 2nd call). */
-static void animate_climb(struct game *g)
+static void animate_climb(struct game *g, struct frame_output *out)
 {
     if (--g->dave.anim_delay == 0) {
         g->dave.anim_delay = 2;
         g->dave.anim_frame = (int16_t)((g->dave.anim_frame + 1) & 3);
-        set_pose(g, POSE_CLIMB, g->dave.anim_frame);
+        dave_set_pose(g, POSE_CLIMB, g->dave.anim_frame, out);
     }
 }
 
@@ -270,12 +187,6 @@ static int prev_dir_is_right(const struct player *d)
 
 /* ---- process_input ------------------------------------------------------- */
 
-static int demo_byte(const struct resources *r, int16_t pos)
-{
-    /* the bank is read through a signed `char far *` */
-    return pos >= 0 && pos < DEMO_BANK_BYTES ? (int8_t)r->demo_bank[pos] : 0;
-}
-
 /* `signed char >> 6`: arithmetic shift written out (floor division). */
 static int16_t shift_right_6(int b) { return (int16_t)(b >= 0 ? b / 64 : -((-b + 63) / 64)); }
 
@@ -291,15 +202,6 @@ static enum menu_request handle_menu_key(const struct game *g, const struct fram
     default:
         return g->mode == MODE_DEMO && in->menu_key != 0 ? MENU_END_DEMO : MENU_NONE;
     }
-}
-
-static void restore_level_map(struct game *g, const struct resources *r)
-{
-    /* movmem(g_tiles, g_level, 1000): back to the pristine map */
-    if (g->level.index >= 0 && g->level.index < LEVEL_COUNT)
-        for (int row = 0; row < LEVEL_ROWS; row++)
-            for (int col = 0; col < LEVEL_COLS; col++)
-                g->level.map[row][col] = r->levels[g->level.index].map[row][col];
 }
 
 enum menu_request player_process_input(struct game *g, const struct resources *r,
@@ -374,16 +276,16 @@ enum menu_request player_process_input(struct game *g, const struct resources *r
             out_sound(out, SND_JETPACK_ON);
             d->state = (uint16_t)((d->state & 0xE0) | DAVE_JETPACK);
             d->jet_facing = DIR_RIGHT;
-            set_pose(g, POSE_JET_RIGHT, d->anim_frame);
+            dave_set_pose(g, POSE_JET_RIGHT, d->anim_frame, out);
             if (d->input_dir == DIR_W || d->input_dir == DIR_NW || d->input_dir == DIR_SW) {
                 d->jet_facing = DIR_LEFT;
-                set_pose(g, POSE_JET_LEFT, d->anim_frame);
+                dave_set_pose(g, POSE_JET_LEFT, d->anim_frame, out);
             }
         } else if ((d->state & DAVE_JETPACK) == DAVE_JETPACK) {
             d->state = (uint16_t)((d->state & 0xFE) | DAVE_FALL);
             out_sound(out, SND_FALL);
             consume_dir(d);
-            set_pose(g, POSE_FRONT, 0);
+            dave_set_pose(g, POSE_FRONT, 0, out);
         }
     }
 
@@ -399,31 +301,31 @@ static void walk(struct game *g, const struct resources *r, struct frame_output 
 
     switch (d->input_dir) {
     case DIR_W:
-        if (d->prev_dir == DIR_E && tile_attr_at(g, r, -2, 0) == ATTR_FREE) {
+        if (d->prev_dir == DIR_E && attr(g, r, -2, 0) == ATTR_FREE) {
             d->x -= 2;              /* turn-around step */
             d->prev_dir = d->input_dir;
             moved++;
         }
         d->facing = DIR_LEFT;
-        if (tile_attr_at(g, r, -2, 0) == ATTR_SOLID) {
+        if (attr(g, r, -2, 0) == ATTR_SOLID) {
             consume_dir(d);
             out_sound(out, SND_BUMP);
             break;
         }
-        if (tile_attr_at(g, r, 0, 0) == ATTR_DEADLY) {
+        if (attr(g, r, 0, 0) == ATTR_DEADLY) {
             consume_dir(d);
             out_sound(out, SND_DEATH);
             kill_dave(g);
             break;
         }
-        if (tile_attr_at(g, r, 2, 16) == ATTR_FREE && tile_attr_at(g, r, 8, 16) == ATTR_FREE) {
+        if (attr(g, r, 2, 16) == ATTR_FREE && attr(g, r, 8, 16) == ATTR_FREE) {
             out_sound(out, SND_FALL);
             d->state = (uint16_t)((d->state & 0xFB) | DAVE_FALL);
             d->y = (int16_t)((d->y + 1) & 0xFF);    /* 8-bit y (U-G2) */
             d->x--;
             moved++;
         }
-        if (tile_attr_at(g, r, 2, 16) == ATTR_DEADLY) {
+        if (attr(g, r, 2, 16) == ATTR_DEADLY) {
             consume_dir(d);
             out_sound(out, SND_DEATH);
             kill_dave(g);
@@ -433,7 +335,7 @@ static void walk(struct game *g, const struct resources *r, struct frame_output 
             d->anim_delay = 2;
             d->anim_frame = (int16_t)((d->anim_frame + 1) & 3);
         }
-        set_pose(g, POSE_WALK_LEFT, d->anim_frame);
+        dave_set_pose(g, POSE_WALK_LEFT, d->anim_frame, out);
         d->x -= 2;
         scroll_screen(g, out);
         out_sound(out, SND_STEP);
@@ -441,31 +343,31 @@ static void walk(struct game *g, const struct resources *r, struct frame_output 
         d->input_dir = DIR_NONE;    /* quirk: prev_dir not updated (walking right does) */
         break;
     case DIR_E:
-        if (d->prev_dir == DIR_W && tile_attr_at(g, r, 13, 0) == ATTR_FREE) {
+        if (d->prev_dir == DIR_W && attr(g, r, 13, 0) == ATTR_FREE) {
             d->x += 2;              /* turn-around step */
             moved++;
             d->prev_dir = d->input_dir;
         }
         d->facing = DIR_RIGHT;
-        if (tile_attr_at(g, r, 15, 0) == ATTR_SOLID) {
+        if (attr(g, r, 15, 0) == ATTR_SOLID) {
             consume_dir(d);
             out_sound(out, SND_BUMP);
             break;
         }
-        if (tile_attr_at(g, r, 13, 0) == ATTR_DEADLY) {
+        if (attr(g, r, 13, 0) == ATTR_DEADLY) {
             consume_dir(d);
             out_sound(out, SND_DEATH);
             kill_dave(g);
             break;
         }
-        if (tile_attr_at(g, r, 5, 16) == ATTR_FREE && tile_attr_at(g, r, 11, 16) == ATTR_FREE) {
+        if (attr(g, r, 5, 16) == ATTR_FREE && attr(g, r, 11, 16) == ATTR_FREE) {
             out_sound(out, SND_FALL);
             d->state = (uint16_t)((d->state & 0xFB) | DAVE_FALL);
             d->y = (int16_t)((d->y + 1) & 0xFF);
             d->x++;
             moved++;
         }
-        if (tile_attr_at(g, r, 9, 16) == ATTR_DEADLY) {
+        if (attr(g, r, 9, 16) == ATTR_DEADLY) {
             consume_dir(d);
             out_sound(out, SND_DEATH);
             kill_dave(g);
@@ -475,7 +377,7 @@ static void walk(struct game *g, const struct resources *r, struct frame_output 
             d->anim_delay = 2;
             d->anim_frame = (int16_t)((d->anim_frame + 1) & 3);
         }
-        set_pose(g, POSE_WALK_RIGHT, d->anim_frame);
+        dave_set_pose(g, POSE_WALK_RIGHT, d->anim_frame, out);
         d->x += 2;
         scroll_screen(g, out);
         out_sound(out, SND_STEP);
@@ -483,10 +385,10 @@ static void walk(struct game *g, const struct resources *r, struct frame_output 
         consume_dir(d);
         break;
     case DIR_N:
-        if (climbable(tile_at(g, r, 6, -2)) == 1) {   /* grab a ladder above */
+        if (climbable_at(g, r, 6, -2) == 1) {   /* grab a ladder above */
             d->state = (uint16_t)((d->state & 0xFB) | DAVE_CLIMB);
             consume_dir(d);
-            set_pose(g, POSE_FRONT, 0);
+            dave_set_pose(g, POSE_FRONT, 0, out);
             break;
         }
         /* no ladder: jump straight up (falls through, as in the original) */
@@ -498,14 +400,14 @@ static void walk(struct game *g, const struct resources *r, struct frame_output 
         d->state = (uint16_t)((d->state & 0xFB) | DAVE_JUMP);
         if (d->input_dir == DIR_N) {
             if (d->facing == DIR_LEFT)
-                set_pose(g, POSE_JUMP_LEFT, 0);
+                dave_set_pose(g, POSE_JUMP_LEFT, 0, out);
             else if (d->facing == DIR_RIGHT)
-                set_pose(g, POSE_JUMP_RIGHT, 0);
+                dave_set_pose(g, POSE_JUMP_RIGHT, 0, out);
         } else {
-            set_pose(g, POSE_JUMP_RIGHT, 0);
+            dave_set_pose(g, POSE_JUMP_RIGHT, 0, out);
             d->facing = DIR_RIGHT;
             if (d->input_dir == DIR_NW) {
-                set_pose(g, POSE_JUMP_LEFT, 0);
+                dave_set_pose(g, POSE_JUMP_LEFT, 0, out);
                 d->facing = DIR_LEFT;
             }
         }
@@ -528,9 +430,9 @@ static void fall(struct game *g, const struct resources *r, struct frame_output 
     case DIR_SW:
     case DIR_W:
     case DIR_NW:
-        if (tile_attr_at(g, r, -2, 6) != ATTR_SOLID && tile_attr_at(g, r, -4, 15) != ATTR_SOLID) {
+        if (attr(g, r, -2, 6) != ATTR_SOLID && attr(g, r, -4, 15) != ATTR_SOLID) {
             d->x--;
-            set_pose(g, POSE_WALK_LEFT, 0);
+            dave_set_pose(g, POSE_WALK_LEFT, 0, out);
             scroll_screen(g, out);
             moved++;
         } else {
@@ -541,9 +443,9 @@ static void fall(struct game *g, const struct resources *r, struct frame_output 
     case DIR_NE:
     case DIR_E:
     case DIR_SE:
-        if (tile_attr_at(g, r, 13, 6) != ATTR_SOLID && tile_attr_at(g, r, 15, 15) != ATTR_SOLID) {
+        if (attr(g, r, 13, 6) != ATTR_SOLID && attr(g, r, 15, 15) != ATTR_SOLID) {
             d->x++;
-            set_pose(g, POSE_WALK_RIGHT, 0);
+            dave_set_pose(g, POSE_WALK_RIGHT, 0, out);
             scroll_screen(g, out);
             moved++;
         } else {
@@ -553,17 +455,17 @@ static void fall(struct game *g, const struct resources *r, struct frame_output 
         break;
     }
     /* what is under the feet: the two attributes ORed (3 = do nothing) */
-    switch (tile_attr_at(g, r, 5, 17) | tile_attr_at(g, r, 8, 17)) {
+    switch (attr(g, r, 5, 17) | attr(g, r, 8, 17)) {
     case ATTR_FREE:
         d->y = (int16_t)((d->y + 1) & 0xFF);    /* 8-bit y (U-G2) */
         moved++;
         break;
     case ATTR_SOLID:                            /* landed */
-        set_pose(g, POSE_WALK_LEFT, 1);
+        dave_set_pose(g, POSE_WALK_LEFT, 1, out);
         if (d->prev_dir == DIR_N || d->prev_dir == DIR_S || d->prev_dir == DIR_NONE)
-            set_pose(g, POSE_FRONT, 0);
+            dave_set_pose(g, POSE_FRONT, 0, out);
         if (prev_dir_is_right(d))
-            set_pose(g, POSE_WALK_RIGHT, 1);
+            dave_set_pose(g, POSE_WALK_RIGHT, 1, out);
         d->state = (uint16_t)((d->state & 0xF7) | DAVE_WALK);
         d->y = (int16_t)((d->y + 1) & 0xF0);    /* snap to the tile row */
         out_sound(out, SOUND_STOP);
@@ -588,18 +490,18 @@ static void jump(struct game *g, const struct resources *r, struct frame_output 
     case DIR_NW:
         consume_dir(d);
         d->facing = DIR_LEFT;
-        if (climbable(tile_at(g, r, -2, -2)) == 1) {
+        if (climbable_at(g, r, -2, -2) == 1) {
             d->state = (uint16_t)((d->state & 0xEF) | DAVE_CLIMB);   /* grab the ladder */
             break;
         }
-        if ((tile_attr_at(g, r, -4, 2) | tile_attr_at(g, r, 0, 15)) == ATTR_SOLID)
+        if ((attr(g, r, -4, 2) | attr(g, r, 0, 15)) == ATTR_SOLID)
             break;
-        if ((tile_attr_at(g, r, -2, 2) | tile_attr_at(g, r, 2, 13)) == ATTR_DEADLY) {
+        if ((attr(g, r, -2, 2) | attr(g, r, 2, 13)) == ATTR_DEADLY) {
             out_sound(out, SOUND_STOP);
             out_sound(out, SND_DEATH);
             kill_dave(g);
         }
-        set_pose(g, POSE_JUMP_LEFT, 0);
+        dave_set_pose(g, POSE_JUMP_LEFT, 0, out);
         d->x -= 2;
         scroll_screen(g, out);
         break;
@@ -607,18 +509,18 @@ static void jump(struct game *g, const struct resources *r, struct frame_output 
     case DIR_E:
         consume_dir(d);
         d->facing = DIR_RIGHT;
-        if (climbable(tile_at(g, r, 13, -2)) == 1) {
+        if (climbable_at(g, r, 13, -2) == 1) {
             d->state = (uint16_t)((d->state & 0xEF) | DAVE_CLIMB);
             break;
         }
-        if ((tile_attr_at(g, r, 15, 2) | tile_attr_at(g, r, 13, 15)) == ATTR_SOLID)
+        if ((attr(g, r, 15, 2) | attr(g, r, 13, 15)) == ATTR_SOLID)
             break;
-        if ((tile_attr_at(g, r, 13, 2) | tile_attr_at(g, r, 13, 13)) == ATTR_DEADLY) {
+        if ((attr(g, r, 13, 2) | attr(g, r, 13, 13)) == ATTR_DEADLY) {
             out_sound(out, SOUND_STOP);
             out_sound(out, SND_DEATH);
             kill_dave(g);
         }
-        set_pose(g, POSE_JUMP_RIGHT, 0);
+        dave_set_pose(g, POSE_JUMP_RIGHT, 0, out);
         d->x += 2;
         scroll_screen(g, out);
         break;
@@ -632,7 +534,7 @@ static void jump(struct game *g, const struct resources *r, struct frame_output 
         d->state = (uint16_t)((d->state & 0xEF) | DAVE_FALL);
     }
     if (t > 0) {                                /* descending: land or die */
-        int hit = tile_attr_at(g, r, 4, t + 15) | tile_attr_at(g, r, 11, t + 15);
+        int hit = attr(g, r, 4, t + 15) | attr(g, r, 11, t + 15);
         if (hit == ATTR_DEADLY) {
             out_sound(out, SOUND_STOP);
             out_sound(out, SND_DEATH);
@@ -643,14 +545,14 @@ static void jump(struct game *g, const struct resources *r, struct frame_output 
             d->state = (uint16_t)((d->state & 0xEF) | DAVE_WALK);
             d->y = (int16_t)((d->y + t) & 0xF0);
             t = 0;
-            set_pose(g, POSE_WALK_LEFT, 1);
+            dave_set_pose(g, POSE_WALK_LEFT, 1, out);
             if (prev_dir_is_right(d))
-                set_pose(g, POSE_WALK_RIGHT, 1);
+                dave_set_pose(g, POSE_WALK_RIGHT, 1, out);
             consume_dir(d);
         }
     }
     if (t < 0) {                                /* rising: bump the head or die */
-        int hit = tile_attr_at(g, r, 4, t + 1) | tile_attr_at(g, r, 9, t + 1);
+        int hit = attr(g, r, 4, t + 1) | attr(g, r, 9, t + 1);
         if (hit == ATTR_DEADLY) {
             out_sound(out, SOUND_STOP);
             out_sound(out, SND_DEATH);
@@ -689,11 +591,11 @@ static void climb(struct game *g, const struct resources *r, struct frame_output
         moved++;
         break;
     case DIR_N:
-        if (climbable(tile_at(g, r, 6, -2)) == 1) {
+        if (climbable_at(g, r, 6, -2) == 1) {
             consume_dir(d);
             d->y -= 2;
             out_sound(out, SND_STEP);
-            animate_climb(g);
+            animate_climb(g, out);
         } else {                                /* top of the ladder: a jump */
             d->jump_pos = 0;
             out_sound(out, SND_JUMP);
@@ -704,24 +606,24 @@ static void climb(struct game *g, const struct resources *r, struct frame_output
         moved++;
         break;
     case DIR_S:
-        if (climbable(tile_at(g, r, 6, 16)) == 1) {
+        if (climbable_at(g, r, 6, 16) == 1) {
             consume_dir(d);
             out_sound(out, SND_STEP);
             d->y += 2;
             out_sound(out, SND_STEP);           /* requested twice, as in the original */
-            animate_climb(g);
+            animate_climb(g, out);
             moved++;
         } else {
             d->state = (uint16_t)((d->state & 0xFD) | DAVE_FALL);
         }
         break;
     case DIR_W:
-        if (climbable(tile_at(g, r, 0, 8)) == 1) {
+        if (climbable_at(g, r, 0, 8) == 1) {
             consume_dir(d);
             d->x -= 2;
             scroll_screen(g, out);
             out_sound(out, SND_STEP);
-            animate_climb(g);
+            animate_climb(g, out);
             moved++;
         } else {
             d->state = (uint16_t)((d->state & 0xFD) | DAVE_FALL);
@@ -729,12 +631,12 @@ static void climb(struct game *g, const struct resources *r, struct frame_output
         d->facing = DIR_LEFT;
         break;
     case DIR_E:
-        if (climbable(tile_at(g, r, 13, 8)) == 1) {
+        if (climbable_at(g, r, 13, 8) == 1) {
             consume_dir(d);
             d->x += 2;
             scroll_screen(g, out);
             out_sound(out, SND_STEP);
-            animate_climb(g);
+            animate_climb(g, out);
             moved++;
         } else {
             d->state = (uint16_t)((d->state & 0xFD) | DAVE_FALL);
@@ -757,7 +659,7 @@ static void fly(struct game *g, const struct resources *r, struct frame_output *
     case DIR_NE:
     case DIR_NW:
         consume_dir(d);
-        t = tile_attr_at(g, r, 2, 0) | tile_attr_at(g, r, 11, 0);
+        t = attr(g, r, 2, 0) | attr(g, r, 11, 0);
         if ((t & 1) == 1) {
             d->state = (uint16_t)((d->state & 0xFE) | DAVE_JETPACK);   /* (no change) */
             break;
@@ -773,7 +675,7 @@ static void fly(struct game *g, const struct resources *r, struct frame_output *
         break;
     case DIR_S:
         consume_dir(d);
-        t = tile_attr_at(g, r, 2, 16) | tile_attr_at(g, r, 11, 16);
+        t = attr(g, r, 2, 16) | attr(g, r, 11, 16);
         if ((t & 1) == 1) {
             d->state = (uint16_t)((d->state & 0xFE) | DAVE_JETPACK);
             break;
@@ -787,14 +689,14 @@ static void fly(struct game *g, const struct resources *r, struct frame_output *
             d->y++;
         } else {                                /* bottom of the screen: drop out */
             d->state = (uint16_t)((d->state & 0xFE) | DAVE_FALL);
-            set_pose(g, POSE_FRONT, 0);
+            dave_set_pose(g, POSE_FRONT, 0, out);
         }
         moved++;
         break;
     case DIR_W:
         consume_dir(d);
         d->facing = DIR_LEFT;
-        t = tile_attr_at(g, r, -2, 4) | tile_attr_at(g, r, -2, 12);
+        t = attr(g, r, -2, 4) | attr(g, r, -2, 12);
         if (t == ATTR_SOLID)
             break;
         if (t == ATTR_DEADLY) {
@@ -810,7 +712,7 @@ static void fly(struct game *g, const struct resources *r, struct frame_output *
     case DIR_E:
         consume_dir(d);
         d->facing = DIR_RIGHT;
-        t = tile_attr_at(g, r, 13, 4) | tile_attr_at(g, r, 13, 12);
+        t = attr(g, r, 13, 4) | attr(g, r, 13, 12);
         if (t == ATTR_SOLID)
             break;
         if (t == ATTR_DEADLY) {
@@ -827,7 +729,7 @@ static void fly(struct game *g, const struct resources *r, struct frame_output *
     if (--d->anim_delay == 0) {
         d->anim_delay = 4;
         d->anim_frame = (int16_t)((d->anim_frame + 1) & 3);
-        set_pose(g, d->jet_facing == DIR_LEFT ? POSE_JET_LEFT : POSE_JET_RIGHT, d->anim_frame);
+        dave_set_pose(g, d->jet_facing == DIR_LEFT ? POSE_JET_LEFT : POSE_JET_RIGHT, d->anim_frame, out);
         moved++;
     }
     finish_move(g, moved, out);
@@ -867,7 +769,7 @@ void player_move(struct game *g, const struct resources *r, struct frame_output 
         /* killed on a tile: no retrace on this path */
         d->state = 0;
         erase_dave(out);
-        spawn_explosion(g, d->x, d->y + 3, EXPLOSION_DEATH, out);
+        spawn_explosion(g, d->x, (int16_t)(d->y + 3), EXPLOSION_DAVE, out);
     }
 }
 
@@ -891,14 +793,14 @@ void player_update_jetpack(struct game *g, struct frame_output *out)
         xor_sprite(out, 0, 0xAA, SPRITE_STATUS, 0);                              /* jetpack icon */
         out_sound(out, SND_FALL);
         consume_dir(d);
-        set_pose(g, POSE_FRONT, 0);
+        dave_set_pose(g, POSE_FRONT, 0, out);
     }
 }
 
 /* ---- handle_death -------------------------------------------------------- */
 
 enum death_result player_handle_death(struct game *g, const struct resources *r,
-                                      struct frame_output *out)
+                                      const struct world_io *io, struct frame_output *out)
 {
     struct player *d = &g->dave;
 
@@ -928,24 +830,15 @@ enum death_result player_handle_death(struct game *g, const struct resources *r,
         if (g->monsters[i].active == 1)
             g->monsters[i].x = (int16_t)(g->monsters[i].x + g->level.scroll_x * 16);
     g->level.scroll_x = 0;
-    int lv = g->level.index;
-    if (lv >= 0 && lv < LEVEL_COUNT) {          /* level -1: out of contract (D4) */
-        d->state = level_start_state[lv];
-        d->x = level_start_x[lv];
-        d->y = level_start_y[lv];
-    }
+    level_start_position(g->level.index, &d->state, &d->x, &d->y);   /* as load_level */
     d->move_throttle = 3;
     d->anim_delay = 2;
-    set_pose(g, POSE_FRONT, 0);
+    dave_set_pose(g, POSE_FRONT, 0, out);
     d->anim_frame = 0;
     d->input_dir = DIR_NONE;
     d->facing = DIR_RIGHT;
     if (g->level.in_warp_zone == 1) {
-        int from = g->level.warp_return;
-        if (from >= 0 && from < LEVEL_COUNT) {
-            g->level.scroll_x = warp_start_scroll_x[from];
-            d->x = warp_start_x[from];
-        }
+        warp_start_position(g->level.warp_return, &g->level.scroll_x, &d->x);
         d->y = 0x10;
         d->state = DAVE_ALIVE | DAVE_FALL;
         for (int i = 0; i < MONSTER_COUNT; i++)
@@ -958,27 +851,9 @@ enum death_result player_handle_death(struct game *g, const struct resources *r,
     for (int i = 0; i < SHOT_COUNT; i++)
         g->shots[i].active = 0;
     retrace(out);
-    out_draw(out, DRAW_LEVEL_VIEW, g->level.scroll_x, g->level.index, 0, 0);
+    out_draw(out, DRAW_LEVEL_VIEW, g->level.index, g->level.scroll_x, 0, 0);
     draw_actors(g, out);
-    return DEATH_RESTARTED;                     /* the caller runs wait_for_input */
+    wait_for_input(g, io, out);
+    return DEATH_RESTARTED;
 }
 
-int player_wait_for_input_round(struct game *g, const struct frame_input *in,
-                                struct frame_output *out)
-{
-    erase_dave(out);
-    for (int i = 0; i < 10; i++) {
-        retrace(out);
-        anim_step(&g->anim, g->level.scroll_x, out);
-    }
-    draw_dave(g, out);
-    for (int i = 0; i < 10; i++) {
-        retrace(out);
-        anim_step(&g->anim, g->level.scroll_x, out);
-    }
-    if (in->dir == DIR_NONE && in->menu_key == 0)
-        return 0;
-    if ((g->dave.state & DAVE_FALL) == DAVE_FALL)
-        out_sound(out, SND_FALL);
-    return 1;
-}

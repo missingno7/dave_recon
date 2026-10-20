@@ -39,7 +39,10 @@ class NativeEquivalenceTest(unittest.TestCase):
 PLAYER_RUNS = {"demos_all": ROOT / "build" / "oracle" / "demos_all" / "run1",
                "n2_demos": ROOT / "build" / "oracle" / "n2_demos" / "run1",
                "n2_death": ROOT / "build" / "oracle" / "n2_death" / "run1",
-               "n2_buttons": ROOT / "build" / "oracle" / "n2_buttons" / "run1"}
+               "n2_buttons": ROOT / "build" / "oracle" / "n2_buttons" / "run1",
+               # the world lane's runs (live level 1, the out-of-range demo's garbage stream)
+               "n3_level1_complete": ROOT / "build" / "oracle" / "n3_level1_complete" / "run1",
+               "n3_out_of_range_demo": ROOT / "build" / "oracle" / "n3_out_of_range_demo" / "run1"}
 PLAYER_SUBSYSTEMS = ("process_input", "move_dave", "update_jetpack", "handle_death")
 DAVE_VIEW_BYTES = (0x573E, 0x573F, 0x57E4, 0x57E5)   # g_dave_sprite, g_dave_mask
 _PAIR_CACHE = {}
@@ -63,14 +66,10 @@ def _player_pairs(run, subsystem):
     return _PAIR_CACHE[key]
 
 
-def _mask_int(pre, cache={}):
+def _mask_int(pre, post):
     """native_check's game-view mask as a big int (one 0xFF byte per compared byte)."""
     import native_check
-    level = int.from_bytes(pre[0x56F4:0x56F6], "little", signed=True)
-    if level not in cache:
-        m = native_check.game_view_mask(pre)
-        cache[level] = int.from_bytes(bytes(0xFF if b else 0 for b in m), "little")
-    return cache[level]
+    return native_check._mask_int(native_check.game_view_mask(pre, post))
 
 
 def _first_divergence(native, pairs, extra=()):
@@ -83,7 +82,7 @@ def _first_divergence(native, pairs, extra=()):
         extra_mask |= 0xFF << (8 * a)
     for k, (tick, pre, post) in enumerate(pairs):
         mine = native[k * L:(k + 1) * L]
-        diff = (int.from_bytes(mine, "little") ^ int.from_bytes(post, "little")) & (_mask_int(pre) | extra_mask)
+        diff = (int.from_bytes(mine, "little") ^ int.from_bytes(post, "little")) & (_mask_int(pre, post) | extra_mask)
         if diff:
             return tick, hex(((diff & -diff).bit_length() - 1) // 8)
     return None
@@ -119,41 +118,6 @@ def _parse_events(path):
     return ev
 
 
-def _build_mutant(old, new):
-    """Build port/ with one textual change to game/player.c into build/port_mutant."""
-    import os
-    import shutil
-    import subprocess
-    import native_check
-    src = ROOT / "build" / "port_mutant_src"
-    if src.exists():
-        shutil.rmtree(src)
-    shutil.copytree(ROOT / "port", src)
-    p = src / "game" / "player.c"
-    text = p.read_text()
-    assert text.count(old) == 1, old
-    p.write_text(text.replace(old, new))
-    out = ROOT / "build" / "port_mutant"
-    env = dict(os.environ, PATH=native_check.MINGW + os.pathsep + os.environ["PATH"])
-    subprocess.run([native_check.CMAKE, "-S", str(src), "-B", str(out), "-G", "MinGW Makefiles",
-                    "-DCMAKE_C_COMPILER=gcc", "-DCMAKE_MAKE_PROGRAM=mingw32-make"],
-                   env=env, check=True, capture_output=True)
-    subprocess.run([native_check.CMAKE, "--build", str(out)], env=env, check=True, capture_output=True)
-    return out / "dave_bridge.exe"
-
-
-def _run_exe(exe, subsystem, pairs):
-    import os
-    import subprocess
-    import native_check
-    work = ROOT / "build" / "native_check_mutant"
-    work.mkdir(parents=True, exist_ok=True)
-    (work / "pre.bin").write_bytes(b"".join(p for _, p, _ in pairs))
-    env = dict(os.environ, PATH=native_check.MINGW + os.pathsep + os.environ["PATH"],
-               DAVE_UNPACKED_EXE=str(ROOT / "build" / "DAVE_unpacked.exe"))
-    subprocess.run([str(exe), subsystem, str(work / "pre.bin"), str(work / "native.bin")],
-                   env=env, check=True)
-    return (work / "native.bin").read_bytes()
 
 
 # One mutant per behaviour worth guarding: (subsystem, runs, old, new).
@@ -161,8 +125,8 @@ PLAYER_MUTANTS = [
     ("move_dave", ("n2_buttons",), "d->move_throttle = 3;\n\n", "d->move_throttle = 2;\n\n"),
     ("move_dave", ("demos_all",), "d->y = (int16_t)((d->y + t) & 0xFF);", "d->y = (int16_t)(d->y + t);"),
     ("move_dave", ("n2_buttons",), "d->x -= 2;              /* turn-around step */", "/* no turn-around */"),
-    ("move_dave", ("n2_death",), "        spawn_explosion(g, d->x, d->y + 3, EXPLOSION_DEATH, out);",
-     "        spawn_explosion(g, d->x, d->y + 2, EXPLOSION_DEATH, out);"),
+    ("move_dave", ("n2_death",), "spawn_explosion(g, d->x, (int16_t)(d->y + 3), EXPLOSION_DAVE, out);",
+     "spawn_explosion(g, d->x, (int16_t)(d->y + 2), EXPLOSION_DAVE, out);"),
     ("process_input", ("n2_buttons",), "        g->buttons.fire_repeat = 30;\n        if (g->inv.has_gun",
      "        g->buttons.fire_repeat = 31;\n        if (g->inv.has_gun"),
     ("process_input", ("n2_buttons",), "if (g->buttons.jetpack_repeat != 30 && jump == 0)",
@@ -170,8 +134,8 @@ PLAYER_MUTANTS = [
     ("process_input", ("demos_all",), "case DIR_SE: d->input_dir = DIR_E; break;", "case DIR_SE: d->input_dir = DIR_SE; break;"),
     # (the signed `byte >> 6` jump quirk is unobservable in the shipped demos:
     # every fire byte meets a jetpack counter at 30, see the ledger)
-    ("move_dave", ("n2_demos", "demos_all"), "        g->dave.anim_delay = 2;\n        g->dave.anim_frame = (int16_t)((g->dave.anim_frame + 1) & 3);\n        set_pose(g, POSE_CLIMB",
-     "        g->dave.anim_delay = 3;\n        g->dave.anim_frame = (int16_t)((g->dave.anim_frame + 1) & 3);\n        set_pose(g, POSE_CLIMB"),
+    ("move_dave", ("n2_demos", "demos_all"), "        g->dave.anim_delay = 2;\n        g->dave.anim_frame = (int16_t)((g->dave.anim_frame + 1) & 3);\n        dave_set_pose(g, POSE_CLIMB",
+     "        g->dave.anim_delay = 3;\n        g->dave.anim_frame = (int16_t)((g->dave.anim_frame + 1) & 3);\n        dave_set_pose(g, POSE_CLIMB"),
     ("move_dave", ("n2_demos", "demos_all"), "        d->anim_delay = 4;", "        d->anim_delay = 3;"),
     ("update_jetpack", ("n2_demos", "demos_all"), "g->inv.fuel_tick = 15;", "g->inv.fuel_tick = 14;"),
     ("handle_death", ("n2_death",), "d->death_timer = (int16_t)(d->death_timer - 1);",
@@ -257,15 +221,16 @@ class NativePlayerTest(unittest.TestCase):
                 self.assertFalse(r["equivalent"], r)
 
     def test_player_mutants_caught(self):
+        """Source mutants of game/player.c (native_check's `mutation`)."""
+        import native_check
         for sub, names, old, new in PLAYER_MUTANTS:
             runs = self._runs(names)
             with self.subTest(subsystem=sub, mutant=new):
-                exe = _build_mutant(old, new)
                 caught = None
                 for name, run in runs.items():
-                    pairs = _player_pairs(run, sub)
-                    caught = _first_divergence(_run_exe(exe, sub, pairs), pairs, DAVE_VIEW_BYTES)
-                    if caught:
+                    r = native_check.check(sub, run, mutation=("game/player.c", old, new))
+                    if not r["equivalent"]:
+                        caught = r["first_divergence"]
                         break
                 self.assertIsNotNone(caught, f"mutant not caught: {new}")
 
@@ -394,6 +359,83 @@ class NativeMonstersOtherModesTest(unittest.TestCase):
 
     def test_cga(self):
         self._run("cga")
+
+# ---- world (N3): collisions, pickups, level completion, warps, attract mode.
+# Runs: python tools/oracle.py tests/oracle/n3_<name>.txt --out build/oracle/n3_<name>
+N3_RUNS = {name: ROOT / "build" / "oracle" / f"n3_{name}" / "run1"
+           for name in ("level1_complete", "attract_demos", "out_of_range_demo")}
+
+
+def _n3(name):
+    return unittest.skipUnless((N3_RUNS[name] / "boundaries.bin").exists(),
+                               f"no oracle run n3_{name}")
+
+
+class WorldEquivalenceTest(unittest.TestCase):
+    def check(self, subsystem, run, min_changed=1):
+        import native_check
+        r = native_check.check(subsystem, N3_RUNS[run])
+        self.assertTrue(r["equivalent"], r)
+        self.assertGreaterEqual(r["ticks_where_original_changed_game_state"], min_changed, r)
+        return r
+
+    def mutant(self, subsystem, run, path, old, new):
+        import native_check
+        r = native_check.check(subsystem, N3_RUNS[run], (path, old, new))
+        self.assertFalse(r["equivalent"], f"mutation {old!r} -> {new!r} in {path} not caught")
+
+    @_n3("attract_demos")
+    def test_check_collisions(self):
+        self.check("check_collisions", "attract_demos")
+        # Dave's shot kills score (level + 1) * 100
+        self.mutant("check_collisions", "attract_demos", "game/world.c",
+                    "(g->level.index + 1) * 100", "(g->level.index + 1) * 101")
+
+    @_n3("attract_demos")
+    def test_pick_up_items_demos(self):
+        self.check("pick_up_items", "attract_demos")
+
+    @_n3("level1_complete")
+    def test_pick_up_items_level1(self):
+        self.check("pick_up_items", "level1_complete")
+        # the gem value table (100 points for tile 47)
+        self.mutant("pick_up_items", "level1_complete", "game/items.c",
+                    "{2000, 0, 0, 1000, 100,", "{2000, 0, 0, 1000, 110,")
+
+    @_n3("level1_complete")
+    def test_level_complete(self):
+        self.check("level_complete", "level1_complete")
+        # wait_for_input animates the tiles 20 times per blink
+        self.mutant("level_complete", "level1_complete", "game/level.c",
+                    "out_draw(out, DRAW_DAVE, g->dave.x, g->dave.y, 0, 0);\n"
+                    "        for (int i = 0; i < 10; i++)",
+                    "out_draw(out, DRAW_DAVE, g->dave.x, g->dave.y, 0, 0);\n"
+                    "        for (int i = 0; i < 9; i++)")
+
+    @_n3("level1_complete")
+    def test_check_warp_transition_no_warp(self):
+        # no warp in the corpus: the call must leave everything unchanged
+        self.check("check_warp_transition", "level1_complete", min_changed=0)
+
+    @_n3("level1_complete")
+    def test_attract_mode_game_start(self):
+        self.check("attract_mode", "level1_complete")
+
+    @_n3("attract_demos")
+    def test_attract_mode_demo_choice(self):
+        self.check("attract_mode", "attract_demos")
+        # load_level's srand(100)
+        self.mutant("attract_mode", "attract_demos", "game/level.c",
+                    "#define LEVEL_SEED 100", "#define LEVEL_SEED 101")
+
+    @_n3("out_of_range_demo")
+    def test_attract_mode_out_of_range_demo(self):
+        # U-M1 item 4: rand() == 32767 picks offsets[5]; level byte from the CGA tileset
+        self.check("attract_mode", "out_of_range_demo")
+        # (the level byte now comes from resources.demo_overrun: read one byte further)
+        self.mutant("attract_mode", "out_of_range_demo", "game/attract.c",
+                    "return (int8_t)r->demo_overrun[pos - DEMO_BANK_BYTES];",
+                    "return (int8_t)r->demo_overrun[pos - DEMO_BANK_BYTES + 1];")
 
 
 if __name__ == "__main__":

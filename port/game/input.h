@@ -40,7 +40,7 @@
  * (player.c) driven by game.demo and the demo-bank resource.
  *
  * The test bridge reconstructs a frame_input from an original DGROUP
- * snapshot (port/tests/bridge/dgroup_map.c dgroup_import_input); the
+ * snapshot plus the scenario's key events (port/tests/bridge/world_io.c); the
  * platform layer (later) fills it from the real devices once per retrace.
  */
 #ifndef DAVE_INPUT_H

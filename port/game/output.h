@@ -22,6 +22,62 @@ enum draw_op {
                              pixels), c = sprite set (enum sprite_set), d = index in the set */
     /* Further ops are added with the subsystem that first needs them; each
      * must name its original routine (C function or asm proc) and arguments. */
+
+    /* --- world (N3): collisions, items, levels, warps, attract mode --- */
+    DRAW_PIC = 20,        /* draw_tile(x, y, tile) -> DrawPic*: a = x px, b = y px,
+                             c = enum pic_table, d = index (digits, title animation) */
+    DRAW_ERASE_DAVE = 22, /* erase_dave(): restore the background saved under Dave */
+    DRAW_DAVE = 23,       /* draw_dave(): a = x, b = y; save-under, then Dave's current sprite
+                             (the last DRAW_SET_DAVE_SPRITE) */
+    DRAW_SET_DAVE_SPRITE = 24, /* g_dave_sprite/g_dave_mask assignment (presentation, D3):
+                             a = sprite set of the image (mask = set a + 1), b = frame;
+                             a = -1: the front-facing pose g_spr_dave_front/g_mask_dave_front;
+                             a = -2 / -3: g_spr_jump_left / g_spr_jump_right (+ their masks).
+                             Emitted together with game.dave.pose by dave_set_pose (player.c) */
+    DRAW_LEVEL_VIEW = 25, /* DrawLevelView(): a = level index, b = scroll column; the 20x10
+                             view of the live map (game.level.map: no world call edits the
+                             map after this command within the same step) */
+    DRAW_VIEW_BORDERS = 26, /* DrawViewBorders() */
+    DRAW_SET_VIDEO_MODE = 27, /* set_video_mode(g_video_mode) (+ CacheEGATiles in EGA):
+                             clears the screen */
+    DRAW_TEXT_CURSOR = 28,/* g_text_x = a, g_text_y = b, g_text_left = c; -1 = unchanged */
+    DRAW_TEXT_XOR = 29,   /* XorMask = a (0 or -1) */
+    DRAW_PRINT_STRING = 30, /* print_string(text): a = enum text_id, b = parameter
+                             (TEXT_GOOD_WORK: the digit of "N more to go") */
+    DRAW_CENTERED_WINDOW = 31, /* draw_centered_window(w, h): a = w, b = h */
+    DRAW_HISCORE_ROW = 33,/* show_high_scores' row a: score digits, initials, level of
+                             DSCORES.DAV entry a at the current text cursor */
+};
+
+/* Picture tables addressed by DRAW_PIC (c). */
+enum pic_table {
+    PIC_DIGIT = 0,        /* g_tile_digit0[mode] + index */
+    PIC_TITLE_ANIM = 1,   /* g_title_anim_tiles[mode * 4 + index] */
+};
+
+/* Texts printed by DRAW_PRINT_STRING (DAVE.C string pool, in order of use). */
+enum text_id {
+    TEXT_GOOD_WORK = 1,   /* "good work! only N more to go!" (b = N) */
+    TEXT_LAST_LEVEL,      /* "  this is the last level!!!" */
+    TEXT_FINISHED,        /* " yes! you finished the game!" */
+    TEXT_CONGRATS_1,      /* the ending's 10 strings, "         congratulations!..." */
+    TEXT_CONGRATS_2, TEXT_CONGRATS_3, TEXT_CONGRATS_4, TEXT_CONGRATS_5,
+    TEXT_CONGRATS_6, TEXT_CONGRATS_7, TEXT_CONGRATS_8, TEXT_CONGRATS_9,
+    TEXT_CONGRATS_10,     /* "           press space" */
+    TEXT_TITLE_BY,        /* "     BY JOHN ROMERO\n\r" */
+    TEXT_TITLE_COPYRIGHT, /* " (C) 1990 SOFTDISK, INC.\n\r" */
+    TEXT_TITLE_HELP,      /* "PRESS THE F1 KEY FOR HELP" */
+    TEXT_HIGH_SCORES,     /* "High Scores\r\n\nScore  Name  Level\r\n-----  ----  -----\r\n" */
+    TEXT_ROW_BREAK,       /* "\n\n\r" */
+};
+
+/* Sound control requests (out_sound with a negative code), in call order
+ * among the PlaySound(n >= 0) requests. */
+enum sound_control {
+    SOUND_STOP = -1,      /* StopSound() */
+    SOUND_PAUSE = -2,     /* PauseSound() */
+    SOUND_RESUME = -3,    /* ResumeSound() */
+    SOUND_WAIT = -4,      /* WaitSound(): block until the playing sound has ended */
 };
 
 /* Logical sprite names for DRAW_XOR_SPRITE (D3): (set, index) resolved per
@@ -40,6 +96,13 @@ enum sprite_set {
     SPRITE_SHOT_B0 = 13,      /* g_spr_shot_b0: kind-1 (Dave's) shot, dir 0 */
     SPRITE_SHOT_B1 = 14,      /* g_spr_shot_b1: kind-1 (Dave's) shot, dir != 0 */
     SPRITE_MONSTER = 15,      /* per-level monster frames (move_monsters, redraw_screen, load_level) */
+    /* world (N3): status bar and warp tube */
+    SPRITE_STATUS = 16,       /* g_status_tiles[mode * g_status_row_len + index]: 0 jetpack,
+                                 1 gun, 2..4 labels, 5 trophy ("go thru the door"), 6 life */
+    SPRITE_WARP_LEFT = 17,    /* g_spr_warp_left[mode] (index 0) */
+    SPRITE_WARP_RIGHT = 18,   /* g_spr_warp_right[mode] */
+    SPRITE_METER_LABEL = 19,  /* g_spr_meter_label[mode]: jetpack fuel meter frame */
+    SPRITE_METER_BAR = 20,    /* g_spr_meter_bar[mode]: one fuel unit */
 };
 
 struct draw_cmd {
@@ -74,34 +137,5 @@ static inline void out_sound(struct frame_output *o, int n)
     if (o && o->n_sounds < OUTPUT_MAX_SOUNDS)
         o->sounds[o->n_sounds++] = (int16_t)n;
 }
-
-/* ---- player (N2): Dave, the view, the sprite routines it calls ---------- */
-
-/* Draw ops of the player subsystems, each named after the original routine
- * it mirrors (values continue DRAW_TILE's numbering). */
-enum draw_op_player {
-    DRAW_DAVE = 20,       /* draw_dave(): SaveUnder* the area under Dave's mask at (x, y), then
-                             DrawMasked* his sprite. a = x, b = y, c = enum dave_pose, d = pose frame 0..3 */
-    ERASE_DAVE = 21,      /* erase_dave(): RestoreUnder* the area saved by the last DRAW_DAVE. no args */
-    DRAW_LEVEL_VIEW = 22, /* DrawLevelView() (tiles.asm): the 20 x 9.5-tile playfield from line 16,
-                             tiles from the live level map as it is when the command is issued.
-                             a = scroll_x (first visible column), b = level index */
-};
-
-/* More DRAW_XOR_SPRITE sets (enum sprite_set continued): the status bar. */
-enum sprite_set_status {
-    SPRITE_STATUS = 16,       /* g_status_tiles[mode * g_status_row_len + index]: 0 jetpack icon,
-                                 1 gun icon, 2..4 labels, 5 'go thru the door', 6 life icon */
-    SPRITE_METER_LABEL = 17,  /* g_spr_meter_label[mode]: the jetpack meter frame; index 0 */
-    SPRITE_METER_BAR = 18,    /* g_spr_meter_bar[mode]: one fuel unit of the meter; index 0 */
-};
-
-/* Sound requests other than PlaySound(n) (n >= 0), mirroring the driver
- * calls of lowlevel.asm, in the same ordered request list. */
-enum sound_control {
-    SOUND_STOP = -1,      /* StopSound() */
-    SOUND_PAUSE = -2,     /* PauseSound(): remember the playing sound, then stop */
-    SOUND_RESUME = -3,    /* ResumeSound(): continue the remembered sound */
-};
 
 #endif

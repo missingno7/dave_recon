@@ -21,10 +21,8 @@
 #include "output.h"
 #include "state.h"
 #include "player.h"
-
-/* The snapshot being processed (set by main before each run): subsystems
- * that read input reconstruct it from here (dgroup_import_input). */
-static const unsigned char *current_snapshot;
+#include "world.h"
+#include "world_io.h"
 
 /* Every native subsystem gets the state, the immutable resources and the
  * output of the step. */
@@ -38,10 +36,17 @@ static void run_animate_tiles(struct game *g, const struct resources *r, struct 
     anim_step(&g->anim, g->level.scroll_x, o);
 }
 
-/* ---- player (N2) ---- */
+/* ---- player (N2): input from bridge_world_io() (world_io.c) ---- */
+/* process_input's sample: get_player_input(1) and the waiting BIOS key, as
+ * the world's input model sees them at the start of the call. */
+static struct frame_input bridge_frame_input(void) {
+    const struct world_io *io = bridge_world_io();
+    struct frame_input in = io->player(io->ctx, 0);
+    in.menu_key = (int16_t)((uint16_t)io->key_peek(io->ctx, 0) >> 8);
+    return in;
+}
 static void run_process_input(struct game *g, const struct resources *r, struct frame_output *o) {
-    struct frame_input in;
-    dgroup_import_input(&in, current_snapshot);
+    struct frame_input in = bridge_frame_input();
     (void)player_process_input(g, r, &in, o);
 }
 static void run_move_dave(struct game *g, const struct resources *r, struct frame_output *o) {
@@ -51,16 +56,9 @@ static void run_update_jetpack(struct game *g, const struct resources *r, struct
     (void)r;
     player_update_jetpack(g, o);
 }
-/* handle_death incl. its closing wait_for_input. The snapshot holds the
- * input at the start of the call only, so every poll sees that input: the
- * wait ends at its first poll if a direction is held (n2_death.txt holds
- * Right), and cannot be reproduced otherwise (one round is run). */
+/* handle_death incl. its closing wait_for_input (polls through the world io). */
 static void run_handle_death(struct game *g, const struct resources *r, struct frame_output *o) {
-    if (player_handle_death(g, r, o) == DEATH_RESTARTED) {
-        struct frame_input in;
-        dgroup_import_input(&in, current_snapshot);
-        (void)player_wait_for_input_round(g, &in, o);
-    }
+    (void)player_handle_death(g, r, bridge_world_io(), o);
 }
 
 /* Player mutants (tests/test_native.py, the `<name>/mutant` pattern): one
@@ -91,37 +89,23 @@ static void run_handle_death_mutant(struct game *g, const struct resources *r, s
         g->dave.death_timer--;
 }
 
-/* The demo bank (far segment 0x0B31 of the load module) from the unpacked
- * DAVE.EXE: $DAVE_UNPACKED_EXE, else build/DAVE_unpacked.exe next to
- * build/port/dave_bridge.exe. */
-static void load_demo_bank(struct resources *res, const char *argv0) {
-    char path[1024];
-    const char *env = getenv("DAVE_UNPACKED_EXE");
-    if (env) {
-        snprintf(path, sizeof path, "%s", env);
-    } else {
-        snprintf(path, sizeof path, "%s", argv0);
-        char *slash = NULL;
-        for (char *p = path; *p; p++)
-            if (*p == '/' || *p == '\\')
-                slash = p;
-        if (slash)
-            snprintf(slash + 1, sizeof path - (size_t)(slash + 1 - path), "../DAVE_unpacked.exe");
-        else
-            snprintf(path, sizeof path, "../DAVE_unpacked.exe");
-    }
-    FILE *f = fopen(path, "rb");
-    if (!f)
-        return;
-    unsigned char hdr[10];
-    if (fread(hdr, 1, sizeof hdr, f) == sizeof hdr) {
-        long at = (long)(hdr[8] | (hdr[9] << 8)) * 16 + 0x0B31L * 16;
-        if (fseek(f, at, SEEK_SET) == 0 && fread(res->demo_bank, 1, DEMO_BANK_BYTES, f) != DEMO_BANK_BYTES)
-            memset(res->demo_bank, 0, DEMO_BANK_BYTES);
-    }
-    fclose(f);
-}
 
+/* world (N3): the waiting loops' input comes from bridge_world_io() */
+static void run_check_collisions(struct game *g, const struct resources *r, struct frame_output *o) {
+    check_collisions(g, r, o);
+}
+static void run_pick_up_items(struct game *g, const struct resources *r, struct frame_output *o) {
+    pick_up_items(g, r, o);
+}
+static void run_level_complete(struct game *g, const struct resources *r, struct frame_output *o) {
+    level_complete(g, r, bridge_world_io(), o);
+}
+static void run_check_warp_transition(struct game *g, const struct resources *r, struct frame_output *o) {
+    check_warp_transition(g, r, bridge_world_io(), o);
+}
+static void run_attract_mode(struct game *g, const struct resources *r, struct frame_output *o) {
+    attract_mode(g, r, bridge_world_io(), o);
+}
 static void run_update_explosions(struct game *g, const struct resources *r, struct frame_output *o) {
     explosions_step(g, r, o);
 }
@@ -164,6 +148,11 @@ static const struct { const char *name; subsystem_fn run; } subsystems[] = {
     {"move_dave", run_move_dave},
     {"update_jetpack", run_update_jetpack},
     {"handle_death", run_handle_death},
+    {"check_collisions", run_check_collisions},
+    {"pick_up_items", run_pick_up_items},
+    {"level_complete", run_level_complete},
+    {"check_warp_transition", run_check_warp_transition},
+    {"attract_mode", run_attract_mode},
     {"update_explosions", run_update_explosions},
     {"move_monsters", run_move_monsters},
     {"move_bullets", run_move_bullets},
@@ -215,13 +204,14 @@ int main(int argc, char **argv) {
     static struct frame_output o;
     static struct resources res;
     long index = 0;
-    load_demo_bank(&res, argv[0]);
+    bridge_world_load(&res);              /* world (N3): demo bank, scenario input */
     while (fread(snap, 1, DGROUP_LEN, in) == DGROUP_LEN) {
-        current_snapshot = snap;
         dgroup_import(&g, snap);
         dgroup_import_resources(&res, snap);
+        bridge_world_begin(index, snap, &g, &res);   /* world (N3): resources, g_tiles, input */
         memset(&o, 0, sizeof o);
         run(&g, &res, &o);
+        dgroup_export_levels(&g, &res, snap);    /* world (N3): g_levels records, g_tiles */
         dgroup_export(&g, snap);
         if (events)
             write_events(events, index, &o);

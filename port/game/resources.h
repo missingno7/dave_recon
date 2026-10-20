@@ -19,7 +19,6 @@
 #define LEVEL_PATH_BYTES 256
 #define LEVEL_TRAILER_BYTES 24
 #define LEVEL_RECORD_BYTES (LEVEL_PATH_BYTES + LEVEL_ROWS * LEVEL_COLS + LEVEL_TRAILER_BYTES)  /* 0x500 */
-#define DEMO_BANK_BYTES 4368     /* the demo segment, zero padding included */
 
 struct level_record {
     int8_t path[LEVEL_PATH_BYTES];
@@ -30,12 +29,20 @@ struct level_record {
                                             and so do tile_at's rows 10/11 (N2-1) */
 };
 
+/* The attract-mode demo bank (format:demo_stream, docs/data-layout.md far
+ * segment 0x0B31, codec tools/demos.py): u32 count, u32 offsets[count], then
+ * per demo the start level byte and the input stream. */
+#define DEMO_BANK_BYTES 4368
+/* What a demo position past the bank reads (U-M1 item 4: the out-of-range
+ * demo choice starts at 0x2002 and plays on from there): the load-module
+ * bytes that follow the bank, i.e. the start of the CGA tileset segment,
+ * which the game never modifies. Deterministic constant data (D4). */
+#define DEMO_OVERRUN_BYTES 0x3000
+
 struct resources {
     struct level_record levels[LEVEL_COUNT];
-    /* The attract-demo bank (far segment 0B31, format:demo_stream): u32
-     * count, u32 offsets[count], per demo a start-level byte and the input
-     * stream read by process_input through game.demo.pos (player.c). */
-    uint8_t demo_bank[DEMO_BANK_BYTES];
+    uint8_t demos[DEMO_BANK_BYTES];   /* demo bank, byte image */
+    uint8_t demo_overrun[DEMO_OVERRUN_BYTES];   /* the bytes after it (see above) */
 };
 
 #endif

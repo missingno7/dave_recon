@@ -1,0 +1,33 @@
+# N3 (world lane): tests/oracle/level1_complete.txt with per-subsystem
+# boundary snapshots for every tick up to the start of level 2 (tick 884).
+# Verifies pick_up_items (gems, trophy, door), level_complete (corridor walk,
+# load of level 2, wait_for_input ended by Right at 33001 ms) and
+# attract_mode (game started from the title by Space, then wait_for_input
+# until Right at 11942 ms). Input timing: see level1_complete.txt.
+duration 34000
+png_every 0
+boundaries 890
+4051 key space
+11942 keydown right
+12156 keydown pageup
+12255 keyup pageup
+14453 keyup right
+14952 keydown pageup
+14952 keydown right
+15052 keyup pageup
+16151 keyup right
+16507 keydown right
+17206 keyup right
+17506 keydown left
+17506 keydown up
+17606 keyup up
+18348 keyup left
+19004 keydown left
+19004 keydown up
+19104 keyup up
+19846 keyup left
+20303 keydown right
+23299 keyup right
+23299 keydown left
+27494 keyup left
+33001 keydown right

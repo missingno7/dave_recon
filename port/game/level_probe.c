@@ -44,6 +44,26 @@ int8_t level_record_byte(const struct game *g, const struct resources *r, int32_
     return r->levels[lv].trailer[at - LEVEL_ROWS * LEVEL_COLS];
 }
 
+int32_t row_offset(int16_t row)
+{
+    if (row >= 0 && row <= 9)
+        return row * LEVEL_COLS;                  /* RowTimes100 */
+    if (row >= 10 && row <= 19)
+        return (row - 9) * 640;                   /* TileRowOfs, read past RowTimes100 (N2-1) */
+    if (row >= 20 && row <= 29)
+        return (int16_t)((row - 19) * 16 * 320);  /* VgaTileRowOfs (16-bit words) */
+    if (row >= -10 && row <= -1)
+        return (row + 10) * LEVEL_RECORD_BYTES;   /* LevelOfs, read before RowTimes100 */
+    return INT32_MIN;   /* further tables: never reached (D4) */
+}
+
+int16_t tile_climbable(int8_t tile)
+{
+    /* g_tile_climbable is the 53 words before g_tile_attr: index tile + 75
+     * of the window; bytes below -75 lie before it (never reached, D4) */
+    return tile + 75 >= 0 ? tile_attr_window[tile + 75] : 0;
+}
+
 int16_t tile_attr_at_offset(const struct game *g, const struct resources *r,
                             int16_t x, int16_t y, int16_t dx, int16_t dy)
 {
@@ -51,10 +71,18 @@ int16_t tile_attr_at_offset(const struct game *g, const struct resources *r,
      * original's idiv (U-M1 item 2: no range checks). */
     int16_t col = (int16_t)((int16_t)(dx + x) / 16 + g->level.scroll_x);
     int16_t row = (int16_t)((int16_t)(y + dy - 16) / 16);
-    if (row < 0 || row >= LEVEL_ROWS)
-        return 0;                          /* RowTimes100[row] out of its table: D4 */
+    /* RowTimes100[row] has 10 entries; other rows read its neighbouring
+     * tables (row_offset, N2-1) */
+    int32_t ro = row_offset(row);
+    if (ro == INT32_MIN)
+        return 0;                          /* further tables: D4 */
     /* (g_level + RowTimes100[row])[col]: one flat index, so a column outside
      * 0..99 lands in a neighbouring row or outside the map */
-    int8_t tile = level_record_byte(g, r, LEVEL_PATH_BYTES + row * LEVEL_COLS + col);
+    int8_t tile = level_record_byte(g, r, LEVEL_PATH_BYTES + ro + col);
+    return tile_attr_window[tile + 128];
+}
+
+int16_t tile_attribute(int8_t tile)
+{
     return tile_attr_window[tile + 128];
 }

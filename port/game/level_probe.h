@@ -14,11 +14,13 @@
  * outside 0..52 read the constant words around the table, given as
  * tile_attr_window below.
  *
+ * Rows: RowTimes100 has 10 entries, and a row outside 0..9 reads the
+ * neighbouring word tables (row_offset: TileRowOfs, VgaTileRowOfs after it,
+ * LevelOfs before it; ledger N2-1), deterministic constants.
+ *
  * Outside the contract (decision D4): addresses before g_levels or after its
- * last record (only the level -1 warp, U-M3, gets there) read as 0, and a
- * probe row outside 0..9 (RowTimes100 has 10 entries) reads attribute 0.
- * No corpus tick reaches either; see the callers for why the row case is
- * unobservable in update_explosions.
+ * last record (only the level -1 warp, U-M3, gets there) read as 0, and so
+ * do rows beyond those tables. No corpus tick reaches either.
  */
 #ifndef DAVE_LEVEL_PROBE_H
 #define DAVE_LEVEL_PROBE_H
@@ -37,5 +39,19 @@ int8_t level_record_byte(const struct game *g, const struct resources *r, int32_
  * both truncating toward zero (a pixel at -15..-1 maps to column/row 0). */
 int16_t tile_attr_at_offset(const struct game *g, const struct resources *r,
                             int16_t x, int16_t y, int16_t dx, int16_t dy);
+
+/* g_tile_attr[tile] for a signed tile byte, including the constant words
+ * around the table that out-of-range bytes read (U-M1 item 3). Shared by
+ * tile_attr_at (world lane, tiles.c). */
+int16_t tile_attribute(int8_t tile);
+
+/* g_tile_climbable[tile] for a signed tile byte (the same constant window:
+ * the table lies just before g_tile_attr). */
+int16_t tile_climbable(int8_t tile);
+
+/* Row -> offset as the original's RowTimes100[row] reads it, including the
+ * neighbouring tables for rows outside 0..9 (N2-1, U-M1 item 2);
+ * INT32_MIN beyond them (D4). */
+int32_t row_offset(int16_t row);
 
 #endif
