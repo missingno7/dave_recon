@@ -1,0 +1,21 @@
+# EGA presentation (M1.4): DOSBox-X machine=ega, so VideoID reports an EGA
+# and the game runs in mode 0Dh (g_video_mode 2, EGADAVE.DAV tiles cached
+# in video memory at A800h). Title, then the first attract demo (demo 1,
+# level 2), as in attract.txt.
+#
+# Capture: per tick, 8000 bytes at A000:0000 = ONE bit plane, the one the
+# graphics controller's read map selects at the tick head (plane 0 in
+# practice: every EGA blitter leaves read map 0 behind). Plus up to 40 true
+# 4-plane images taken inside SaveUnderEGA (ega_planes; oracle.py
+# EGA_PLANE_SITE): the first line's four read-map selects of each call, a
+# read-only routine, so the four dumps are one consistent image (the screen
+# just before draw_dave draws Dave).
+#
+# Evidence (run1): retrace period 16.689 ms (59.92 Hz) in mode 0Dh; tick 1
+# title at 3.49 s, ticks 2.. demo 1 on level 2 from 23.5 s (the title is
+# 1200 retraces at 59.92 Hz = 20.0 s); seed 5990 (time() 3 s later than in
+# VGA, where the title takes 17.1 s).
+duration 32000
+png_every 100
+video ega
+ega_planes 40

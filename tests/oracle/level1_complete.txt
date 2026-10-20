@@ -1,0 +1,58 @@
+# Level 1 played to completion from the title (docs/FIDELITY.md section 5).
+#
+# Covers: starting a game from the title (any key; the game then waits in
+# wait_for_input until a direction or key), walking (2 px every 3rd tick),
+# the extra 2 px "turn-around" step when reversing direction, NE/NW jumps
+# (PgUp/Home and Up+Left: the 46-entry g_jump_dy table, one step every 2nd
+# tick, horizontal moves only while the key is held), bumping into walls
+# (sound 1), walking off a platform (falling: 1 px/tick, sound 2), landing,
+# gem pickups (sound 6, +100), the trophy (sound 7, +1000), the door with the
+# trophy (+2000), the level-complete corridor animation and the start of
+# level 2.
+#
+# Tick ranges / evidence (run1, VGA):
+#   tick 1            title (game_state 3), 3.49 s
+#   ticks 2-883       level 1 (index 0): tick 2 first play tick 12.09 s
+#     95              NE jump landed on the left platform (x 86, y 112)
+#     110             gem at column 7 row 6: score 100
+#     155-187         walked off the platform, fell to the floor (x 160)
+#     262             NE jump onto the right platform (y 112)
+#     408             gem on the column-13 block: score 200
+#     440             landed on the column-13 block (y 80)
+#     512             trophy: score 1200, got_trophy 1, sound 7
+#     604-722         walked off, fell twice, bumped the right wall (sound 1)
+#     883             door reached (x 209): sound 10, corridor walk inside
+#                     this tick (420 retraces), score 3200
+#   tick 884          level 2 (index 1) after wait_for_input, 33.15 s
+#
+# retraces: per-retrace capture (M1.6) of the whole run. Every input event
+# sits half-way between two WaitVBL exits (oracle.py --snap with retraces),
+# so neither its tick nor its retrace depends on the emulator jitter; the
+# release of Left at 27494 falls inside the level-complete tick.
+duration 34000
+png_every 100
+retraces 4000
+4051 key space
+11942 keydown right
+12156 keydown pageup
+12255 keyup pageup
+14453 keyup right
+14952 keydown pageup
+14952 keydown right
+15052 keyup pageup
+16151 keyup right
+16507 keydown right
+17206 keyup right
+17506 keydown left
+17506 keydown up
+17606 keyup up
+18348 keyup left
+19004 keydown left
+19004 keydown up
+19104 keyup up
+19846 keyup left
+20303 keydown right
+23299 keyup right
+23299 keydown left
+27494 keyup left
+33001 keydown right
