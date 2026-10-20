@@ -17,15 +17,25 @@
 #include "state.h"
 
 #define LEVEL_PATH_BYTES 256
+#define LEVEL_TAIL_BYTES 24
+#define LEVEL_RECORD_BYTES (LEVEL_PATH_BYTES + LEVEL_ROWS * LEVEL_COLS + LEVEL_TAIL_BYTES)
 
 struct level_record {
     int8_t path[LEVEL_PATH_BYTES];
     int8_t map[LEVEL_ROWS][LEVEL_COLS];
-    /* the original's 24 trailing bytes per record are never read */
+    /* The 24 trailing bytes of the original's 0x500-byte record. Normally
+     * never read; the unchecked map probes (U-M1 item 2) can reach them. */
+    int8_t tail[LEVEL_TAIL_BYTES];
 };
+
+/* The attract-mode demo bank (format:demo_stream, docs/data-layout.md far
+ * segment 0x0B31, codec tools/demos.py): u32 count, u32 offsets[count], then
+ * per demo the start level byte and the input stream. */
+#define DEMO_BANK_BYTES 4368
 
 struct resources {
     struct level_record levels[LEVEL_COUNT];
+    uint8_t demos[DEMO_BANK_BYTES];   /* demo bank, byte image */
 };
 
 #endif

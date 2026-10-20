@@ -19,6 +19,79 @@ enum draw_op {
     DRAW_TILE = 1,        /* DrawTile(view_col, row, tile): a = view column, b = row, c = tile id */
     /* Further ops are added with the subsystem that first needs them; each
      * must name its original routine (C function or asm proc) and arguments. */
+
+    /* --- world (N3): collisions, items, levels, warps, attract mode --- */
+    DRAW_PIC = 20,        /* draw_tile(x, y, tile) -> DrawPic*: a = x px, b = y px,
+                             c = enum pic_table, d = index (digits, title animation) */
+    DRAW_XOR_SPRITE = 21, /* xor_sprite(x, y, sprite) -> DrawXor*: a = x, b = y,
+                             c = enum sprite_table, d = index in that table */
+    DRAW_ERASE_DAVE = 22, /* erase_dave(): restore the background saved under Dave */
+    DRAW_DAVE = 23,       /* draw_dave(): a = x, b = y; save-under, then Dave's current sprite
+                             (the last DRAW_SET_DAVE_SPRITE) */
+    DRAW_SET_DAVE_SPRITE = 24, /* g_dave_sprite/g_dave_mask assignment (presentation, D3):
+                             a = sprite set of the image (mask = set a + 1), b = frame;
+                             a = -1: the front-facing pose g_spr_dave_front/g_mask_dave_front */
+    DRAW_LEVEL_VIEW = 25, /* DrawLevelView(): a = level index, b = scroll column; the 20x10
+                             view of the live map (game.level.map: no world call edits the
+                             map after this command within the same step) */
+    DRAW_VIEW_BORDERS = 26, /* DrawViewBorders() */
+    DRAW_SET_VIDEO_MODE = 27, /* set_video_mode(g_video_mode) (+ CacheEGATiles in EGA):
+                             clears the screen */
+    DRAW_TEXT_CURSOR = 28,/* g_text_x = a, g_text_y = b, g_text_left = c; -1 = unchanged */
+    DRAW_TEXT_XOR = 29,   /* XorMask = a (0 or -1) */
+    DRAW_PRINT_STRING = 30, /* print_string(text): a = enum text_id, b = parameter
+                             (TEXT_GOOD_WORK: the digit of "N more to go") */
+    DRAW_CENTERED_WINDOW = 31, /* draw_centered_window(w, h): a = w, b = h */
+    DRAW_SET_MONSTER_SPRITE = 32, /* g_monsters.sprite[a] = per-mode id of monster frame b
+                             of level c (load_level, redraw_screen) */
+    DRAW_HISCORE_ROW = 33,/* show_high_scores' row a: score digits, initials, level of
+                             DSCORES.DAV entry a at the current text cursor */
+};
+
+/* Sprite tables addressed by DRAW_XOR_SPRITE (c); the presentation resolves
+ * (table, index) for the selected video mode. */
+enum sprite_table {
+    /* 0..12: g_sprite_sets[set][mode][index] */
+    SPR_STATUS = 13,      /* g_status_tiles[mode * g_status_row_len + index] */
+    SPR_MONSTER_SHOWN = 14, /* g_monsters.sprite[index]: the id monster slot `index` was
+                             last drawn with (DRAW_SET_MONSTER_SPRITE / monster updates) */
+    SPR_SHOT_B0 = 15,     /* g_spr_shot_b0[mode] (index unused) */
+    SPR_SHOT_B1 = 16,     /* g_spr_shot_b1[mode] */
+    SPR_WARP_LEFT = 17,   /* g_spr_warp_left[mode] */
+    SPR_WARP_RIGHT = 18,  /* g_spr_warp_right[mode] */
+    SPR_METER_LABEL = 19, /* g_spr_meter_label[mode] */
+    SPR_METER_BAR = 20,   /* g_spr_meter_bar[mode] */
+};
+
+/* Picture tables addressed by DRAW_PIC (c). */
+enum pic_table {
+    PIC_DIGIT = 0,        /* g_tile_digit0[mode] + index */
+    PIC_TITLE_ANIM = 1,   /* g_title_anim_tiles[mode * 4 + index] */
+};
+
+/* Texts printed by DRAW_PRINT_STRING (DAVE.C string pool, in order of use). */
+enum text_id {
+    TEXT_GOOD_WORK = 1,   /* "good work! only N more to go!" (b = N) */
+    TEXT_LAST_LEVEL,      /* "  this is the last level!!!" */
+    TEXT_FINISHED,        /* " yes! you finished the game!" */
+    TEXT_CONGRATS_1,      /* the ending's 10 strings, "         congratulations!..." */
+    TEXT_CONGRATS_2, TEXT_CONGRATS_3, TEXT_CONGRATS_4, TEXT_CONGRATS_5,
+    TEXT_CONGRATS_6, TEXT_CONGRATS_7, TEXT_CONGRATS_8, TEXT_CONGRATS_9,
+    TEXT_CONGRATS_10,     /* "           press space" */
+    TEXT_TITLE_BY,        /* "     BY JOHN ROMERO\n\r" */
+    TEXT_TITLE_COPYRIGHT, /* " (C) 1990 SOFTDISK, INC.\n\r" */
+    TEXT_TITLE_HELP,      /* "PRESS THE F1 KEY FOR HELP" */
+    TEXT_HIGH_SCORES,     /* "High Scores\r\n\nScore  Name  Level\r\n-----  ----  -----\r\n" */
+    TEXT_ROW_BREAK,       /* "\n\n\r" */
+};
+
+/* Sound control requests (out_sound with a negative code), in call order
+ * among the PlaySound(n >= 0) requests. */
+enum sound_control {
+    SOUND_STOP = -1,      /* StopSound() */
+    SOUND_PAUSE = -2,     /* PauseSound() */
+    SOUND_RESUME = -3,    /* ResumeSound() */
+    SOUND_WAIT = -4,      /* WaitSound(): block until the playing sound has ended */
 };
 
 struct draw_cmd {

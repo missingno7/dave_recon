@@ -10,14 +10,25 @@ Comparing the whole DGROUP (not just the fields the native code owns) also
 proves the original subsystem touched nothing the native one ignores.
 
     python tools/native_check.py animate_tiles [--run build/oracle/attract_boundaries/run1]
+    python tools/native_check.py pick_up_items --mutate game/items.c "60;" "59;"
+
+--mutate builds a copy of port/ with one textual replacement (a deliberate
+small change) into build/mutant; the check must then report a divergence.
+
+Inputs the world's waiting loops need (port/tests/bridge/world_io.c) are
+reconstructed from the run: the scenario's key events (script.txt), the
+emulated time of each verified tick head and time(NULL) (ticks.jsonl), and
+the demo bank (far segment 0x0B31 of the unpacked DAVE.EXE).
 
 Builds port/ with CMake (MinGW gcc) into build/port first.
 """
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import pathlib
+import shutil
 import subprocess
 import sys
 
@@ -32,47 +43,139 @@ SITES = [name for _, name in oracle.PIPELINE]
 
 # Game-layer comparisons cover exactly the objects the semantic inventory
 # classifies as game_state (docs/semantic-inventory.json), plus the live
-# record of the current level inside g_levels, minus documented deferrals.
-DEFERRED = {
-    "data:g_tiles": "pristine copy of the current level map: derived from the level resource "
-                    "by the native game, rebuilt by the bridge once resources are loaded",
-}
+# records of the current level (before and after the call) inside g_levels,
+# minus documented deferrals. g_tiles is compared: the bridge rebuilds it
+# from the level resources and level.index (dgroup_export_levels).
+DEFERRED: dict = {}
 DEFERRED_RANGES = [(0x5742 + 5 * 8, 0x5742 + 6 * 8,
                     "g_monsters.sprite[4]: per-mode presentation id (state-model D3)")]
 
+# Borland time(): local time + timezone (TZ unset: EST, 5 h); the oracle pins
+# the DOS clock to 1991-01-01 00:00:00 in its autoexec.
+DOS_EPOCH_1991 = 662688000 + 5 * 3600
+# Emulated ms at which the pinned DOS clock reads 00:00:00 (the autoexec's
+# TIME command), calibrated on the attract demo choices (docs/NATIVIZATION_LEDGER.md D).
+DOS_CLOCK_ZERO_MS = 0.0
 
-def game_view_mask(snapshot: bytes) -> bytearray:
-    import json
-    inv = json.loads((ROOT / "docs" / "semantic-inventory.json").read_text())
-    entries = inv["entries"] if isinstance(inv["entries"], list) else list(inv["entries"].values())
-    mask = bytearray(oracle.DGROUP_LIVE_LEN)
-    for e in entries:
-        if isinstance(e, dict) and e.get("role") == "game_state" and e["id"] not in DEFERRED:
-            a = int(e["identity"]["ds"], 16)
-            for i in range(a, min(a + e["identity"]["size"], len(mask))):
-                mask[i] = 1
-    for a, b, _ in DEFERRED_RANGES:
-        mask[a:b] = bytes(b - a)
-    level = int.from_bytes(snapshot[0x56F4:0x56F6], "little", signed=True)
-    m = (0x173A + 0x500 * level + 0x100) & 0xFFFF
-    for i in range(m, min(m + 1000, len(mask))):
-        mask[i] = 1
+# DOSBox-X mapper names used in scenarios -> PC scan codes (set 1)
+SCANCODES = {"esc": 0x01, "enter": 0x1C, "lctrl": 0x1D, "lshift": 0x2A, "lalt": 0x38,
+             "space": 0x39, "up": 0x48, "left": 0x4B, "right": 0x4D, "down": 0x50,
+             "f1": 0x3B, "f2": 0x3C, "f3": 0x3D, "f9": 0x43, "f10": 0x44}
+for _row, _first in (("qwertyuiop", 0x10), ("asdfghjkl", 0x1E), ("zxcvbnm", 0x2C)):
+    for _k, _c in enumerate(_row):
+        SCANCODES[_c] = _first + _k
+for _k, _c in enumerate("1234567890"):
+    SCANCODES[_c] = 0x02 + _k
+
+_BASE_MASK = None
+
+
+def _base_mask() -> bytearray:
+    global _BASE_MASK
+    if _BASE_MASK is None:
+        inv = json.loads((ROOT / "docs" / "semantic-inventory.json").read_text())
+        entries = inv["entries"] if isinstance(inv["entries"], list) else list(inv["entries"].values())
+        mask = bytearray(oracle.DGROUP_LIVE_LEN)
+        for e in entries:
+            if isinstance(e, dict) and e.get("role") == "game_state" and e["id"] not in DEFERRED:
+                a = int(e["identity"]["ds"], 16)
+                for i in range(a, min(a + e["identity"]["size"], len(mask))):
+                    mask[i] = 1
+        for a, b, _ in DEFERRED_RANGES:
+            mask[a:b] = bytes(b - a)
+        _BASE_MASK = mask
+    return _BASE_MASK
+
+
+def game_view_mask(snapshot: bytes, post: bytes | None = None) -> bytearray:
+    mask = bytearray(_base_mask())
+    for snap in (snapshot, post) if post is not None else (snapshot,):
+        level = int.from_bytes(snap[0x56F4:0x56F6], "little", signed=True)
+        m = (0x173A + 0x500 * level + 0x100) & 0xFFFF
+        mask[m:min(m + 1000, len(mask))] = b"\x01" * (min(m + 1000, len(mask)) - m)
     for lo, hi in oracle.ASYNC_RANGES:
         mask[lo:hi] = bytes(hi - lo)
     return mask
 
 
-def build_port() -> pathlib.Path:
+def build_port(src: pathlib.Path = ROOT / "port", out: pathlib.Path = ROOT / "build" / "port") -> pathlib.Path:
     env = dict(os.environ, PATH=MINGW + os.pathsep + os.environ["PATH"])
-    out = ROOT / "build" / "port"
-    subprocess.run([CMAKE, "-S", str(ROOT / "port"), "-B", str(out), "-G", "MinGW Makefiles",
+    subprocess.run([CMAKE, "-S", str(src), "-B", str(out), "-G", "MinGW Makefiles",
                     "-DCMAKE_C_COMPILER=gcc", "-DCMAKE_MAKE_PROGRAM=mingw32-make"],
                    env=env, check=True, capture_output=True)
-    subprocess.run([CMAKE, "--build", str(out)], env=env, check=True, capture_output=True)
+    r = subprocess.run([CMAKE, "--build", str(out)], env=env, capture_output=True, text=True)
+    if r.returncode != 0:
+        raise SystemExit(f"build of {src} failed:\n{r.stdout[-4000:]}{r.stderr[-4000:]}")
     return out / "dave_bridge.exe"
 
 
-def check(subsystem: str, run: pathlib.Path) -> dict:
+def build_mutant(mutation: tuple) -> pathlib.Path:
+    """port/ with one textual replacement (path relative to port/, old, new)."""
+    rel, old, new = mutation
+    src = ROOT / "build" / "mutant" / "port"
+    if src.exists():
+        shutil.rmtree(src)
+    shutil.copytree(ROOT / "port", src)
+    f = src / rel
+    text = f.read_text()
+    if text.count(old) != 1:
+        raise SystemExit(f"mutation: {old!r} occurs {text.count(old)} times in {rel}")
+    f.write_text(text.replace(old, new))
+    return build_port(src, ROOT / "build" / "mutant" / "build")
+
+
+def borland_time(ms: float) -> int:
+    return DOS_EPOCH_1991 + int((ms - DOS_CLOCK_ZERO_MS) // 1000)
+
+
+def key_events(run: pathlib.Path) -> list:
+    """(ms, 'down'|'up', scan) from the run's acceptance script (key = 50 ms tap)."""
+    events = []
+    script = run / "script.txt"
+    if not script.exists():
+        return events
+    for line in script.read_text().splitlines():
+        parts = line.split()
+        if len(parts) != 3 or parts[1] not in ("key", "keydown", "keyup"):
+            continue
+        ms, cmd, name = int(parts[0]), parts[1], parts[2]
+        name = name[4:] if name.startswith("key_") else name
+        if name.lower() not in SCANCODES:
+            continue
+        scan = SCANCODES[name.lower()]
+        if cmd == "key":
+            events += [(ms, "down", scan), (ms + 50, "up", scan)]
+        else:
+            events.append((ms, "down" if cmd == "keydown" else "up", scan))
+    return sorted(events)
+
+
+def write_world_inputs(run: pathlib.Path, ticks: list, work: pathlib.Path) -> dict:
+    """The bridge's world input file and demo bank (port/tests/bridge/world_io.c)."""
+    head = {}
+    if (run / "ticks.jsonl").exists():
+        for line in (run / "ticks.jsonl").read_text().splitlines():
+            r = json.loads(line)
+            head[r["tick"]] = r["emulated_ms"]
+    lines = [f"event {ms} {kind} {scan}" for ms, kind, scan in key_events(run)]
+    for k, tick in enumerate(ticks):
+        if tick in head:
+            # srand(time(NULL)) is the end of the call; the next tick head
+            # follows within about one retrace (move_dave's WaitVBL)
+            end = head.get(tick + 1, head[tick]) - oracle.VBL_MS
+            lines.append(f"pair {k} start {head[tick]} time {borland_time(end)}")
+    (work / "inputs.txt").write_text("\n".join(lines) + "\n")
+    import far_data
+    import levels
+    exe = (ROOT / "build" / "DAVE_unpacked.exe").read_bytes()
+    (work / "demos.bin").write_bytes(far_data.segment_bytes(exe, "demos"))
+    _, base, _ = levels.find_levels_base(exe)
+    (work / "levels.bin").write_bytes(exe[base:base + levels.NUM_LEVELS * levels.RECORD_SIZE])
+    return {"DAVE_BRIDGE_INPUTS": str(work / "inputs.txt"), "DAVE_BRIDGE_DEMOS": str(work / "demos.bin"),
+            "DAVE_BRIDGE_LEVELS": str(work / "levels.bin")}
+
+
+def collect_pairs(subsystem: str, run: pathlib.Path) -> list:
     pairs, cur = [], {}
     if subsystem == "identity":
         # bridge self-check: import + export must reproduce every snapshot
@@ -85,24 +188,34 @@ def check(subsystem: str, run: pathlib.Path) -> dict:
                 cur = {"tick": tick, "pre": snap}
             elif site == after_site and cur.get("tick") == tick:
                 pairs.append((tick, cur["pre"], snap))
-    work = ROOT / "build" / "native_check" / subsystem
+    return pairs
+
+
+def check(subsystem: str, run: pathlib.Path, mutation: tuple | None = None) -> dict:
+    pairs = collect_pairs(subsystem, run)
+    work = ROOT / "build" / "native_check" / (subsystem + ("_mutant" if mutation else ""))
     work.mkdir(parents=True, exist_ok=True)
     (work / "pre.bin").write_bytes(b"".join(p for _, p, _ in pairs))
-    exe = build_port()
+    exe = build_mutant(mutation) if mutation else build_port()
     env = dict(os.environ, PATH=MINGW + os.pathsep + os.environ["PATH"])
+    env.update(write_world_inputs(run, [t for t, _, _ in pairs], work))
     subprocess.run([str(exe), subsystem, str(work / "pre.bin"), str(work / "native.bin"),
                     str(work / "events.txt")], env=env, check=True)
     native = (work / "native.bin").read_bytes()
     L = oracle.DGROUP_LIVE_LEN
     changed_in_original = presentation_bytes = 0
+    full = bytearray([1]) * L
     for k, (tick, pre, post) in enumerate(pairs):
         mine = native[k * L:(k + 1) * L]
-        mask = game_view_mask(pre) if subsystem != "identity" else bytearray([1]) * L
-        if any(pre[i] != post[i] for i in range(L) if mask[i]):
+        mask = game_view_mask(pre, post) if subsystem != "identity" else full
+        m = int.from_bytes(mask, "little")
+        changes = int.from_bytes(pre, "little") ^ int.from_bytes(post, "little")
+        if changes & m:
             changed_in_original += 1
-        presentation_bytes += sum(1 for i in range(L) if not mask[i] and pre[i] != post[i])
-        diff = [i for i in range(L) if mask[i] and mine[i] != post[i]]
-        if diff:
+        nonmask = changes & ~m
+        presentation_bytes += sum(1 for b in nonmask.to_bytes(L, "little") if b)
+        if (int.from_bytes(mine, "little") ^ int.from_bytes(post, "little")) & m:
+            diff = [i for i in range(L) if mask[i] and mine[i] != post[i]]
             return {"subsystem": subsystem, "ticks": len(pairs), "equivalent": False,
                     "first_divergence": {"tick": tick, "ds_offsets": [hex(i) for i in diff[:16]]}}
     return {"subsystem": subsystem, "ticks": len(pairs), "equivalent": True,
@@ -116,9 +229,13 @@ def main():
     ap.add_argument("subsystem")
     ap.add_argument("--run", type=pathlib.Path,
                     default=ROOT / "build" / "oracle" / "attract_boundaries" / "run1")
+    ap.add_argument("--mutate", nargs=3, metavar=("FILE", "OLD", "NEW"),
+                    help="check a mutant: replace OLD by NEW in port/FILE (must diverge)")
     args = ap.parse_args()
-    r = check(args.subsystem, args.run)
+    r = check(args.subsystem, args.run, tuple(args.mutate) if args.mutate else None)
     print(r)
+    if args.mutate:
+        sys.exit(0 if not r["equivalent"] else 1)
     sys.exit(0 if r["equivalent"] else 1)
 
 
