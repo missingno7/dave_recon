@@ -1,0 +1,45 @@
+# Native player verification (worker N2): death, respawn and game over, with
+# per-subsystem boundary snapshots for every tick up to the game over.
+#
+# Input events: the oracle-corpus lane's game_over_highscore.txt (level 1
+# played to completion as in level1_complete.txt, then Right held on level 2
+# so Dave walks into the fire at column 3 four times). Expected course (that
+# lane's run1): level 2 from tick 884; deaths at ticks ~919, 1258, 1597, 1936;
+# each restart (handle_death: life icon removed, Dave back at the start,
+# actors/shots cleared, one WaitVBL, DrawLevelView, draw_actors, then
+# wait_for_input, left at its first poll because Right is still held); the
+# 4th death timer expiry takes lives 0 -> -1 = game over (tick ~2236).
+#
+# Covers for N2: move_dave's walking (incl. the turn-around step), NE/NW
+# jumps, walking off platforms, the deadly-tile check (state & 0xE0 | 0x40,
+# sound 3), the killed branch (state 0, erase, death explosion: death timer
+# 300), handle_death's countdown, restart and game-over paths, and
+# wait_for_input inside handle_death.
+duration 56000
+png_every 0
+boundaries 2300
+4050 key space
+11948 keydown right
+12155 keydown pageup
+12255 keyup pageup
+14452 keyup right
+14951 keydown pageup
+14951 keydown right
+15051 keyup pageup
+16150 keyup right
+16507 keydown right
+17206 keyup right
+17505 keydown left
+17505 keydown up
+17605 keyup up
+18347 keyup left
+19003 keydown left
+19003 keydown up
+19103 keyup up
+19845 keyup left
+20302 keydown right
+23298 keyup right
+23298 keydown left
+27500 keyup left
+33008 keydown right
+55000 keyup right

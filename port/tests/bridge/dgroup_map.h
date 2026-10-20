@@ -23,4 +23,29 @@ void dgroup_export(const struct game *g, unsigned char *m);
  * copy is taken from g_tiles (DS 0x615C) instead. */
 void dgroup_import_resources(struct resources *r, const unsigned char *m);
 
+/* ---- player (N2) ---------------------------------------------------------- */
+#include "input.h"
+#include "input_map.h"
+
+/* Dave's pose (D3) <-> g_dave_sprite / g_dave_mask (presentation ids, per
+ * g_gfx_index). Called by dgroup_import / dgroup_export. */
+void dgroup_import_player_view(struct game *g, const unsigned char *m);
+void dgroup_export_player_view(const struct game *g, unsigned char *m);
+
+/* Reconstruct the frame_input that get_player_input(1) returns in snapshot
+ * `m`: the device g_input_device[1] (DS 0x12F2); for the keyboard,
+ * g_keydown[128] (DS 0x8A32, ints) through the bindings g_key_scans
+ * (DS 0x1310), decoded by platform/input_map.c (read_keyboard_input). Mouse
+ * and joystick state is not in DGROUP: returns -1 for them. menu_key (the
+ * BIOS keyboard buffer at 0040:001E) and dos_seconds are not in the
+ * snapshot either and are 0. */
+int dgroup_import_input(struct frame_input *in, const unsigned char *m);
+/* The input settings of a snapshot (D6: outside struct game). */
+void dgroup_import_input_settings(struct input_settings *s, const unsigned char *m);
+
+/* The 24-byte tails of the level records (resources.h); called by
+ * dgroup_import_resources. The demo bank is far data outside DGROUP: the
+ * bridge reads it from the unpacked DAVE.EXE (bridge.c). */
+void dgroup_import_level_tails(struct resources *r, const unsigned char *m);
+
 #endif

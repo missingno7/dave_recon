@@ -47,8 +47,11 @@ struct player {
     int16_t  anim_frame;     /* g_anim_frame: 0..3 */
     int16_t  anim_delay;     /* g_anim_delay */
     int16_t  death_timer;    /* g_bonus_timer (misnamed historically) */
-    /* Pose/frame replacing the per-mode sprite ids g_dave_sprite/g_dave_mask
-     * (D3) are added together with the presentation tables that map them. */
+    /* Pose/frame replacing the per-mode sprite ids g_dave_sprite (DS 0x573E)
+     * and g_dave_mask (DS 0x57E4) (D3): what Dave looks like, chosen by the
+     * game logic; present/ (and the bridge) map it to the per-mode ids. */
+    uint8_t  pose;           /* enum dave_pose (data:g_dave_sprite + data:g_dave_mask) */
+    uint8_t  pose_frame;     /* frame 0..3 within an animated pose (0 for still poses) */
 };
 
 struct inventory {
@@ -121,6 +124,22 @@ struct game {
     struct score_entry scores[SCORE_ENTRIES];
     /* struct sequence (D2: resumable multi-retrace sequences) is added with
      * the retrace-level step function. */
+};
+
+
+/* What Dave looks like (struct player.pose), named after the original's
+ * per-mode sprite/mask tables (src/DAVE.C). Animated poses index a frame
+ * 0..3 of g_sprite_sets[set][mode][frame] (frames 1 and 3 share a picture). */
+enum dave_pose {
+    POSE_UNSET = 0,          /* no sprite chosen yet (g_dave_sprite 0 before the first level) */
+    POSE_FRONT = 1,          /* g_spr_dave_front / g_mask_dave_front */
+    POSE_WALK_LEFT = 2,      /* g_sprite_sets[9] / [10] */
+    POSE_WALK_RIGHT = 3,     /* g_sprite_sets[11] / [12] */
+    POSE_JUMP_LEFT = 4,      /* g_spr_jump_left / g_mask_jump_left */
+    POSE_JUMP_RIGHT = 5,     /* g_spr_jump_right / g_mask_jump_right */
+    POSE_CLIMB = 6,          /* g_sprite_sets[7] / [8] */
+    POSE_JET_RIGHT = 7,      /* g_sprite_sets[3] / [4] */
+    POSE_JET_LEFT = 8,       /* g_sprite_sets[5] / [6] */
 };
 
 #endif

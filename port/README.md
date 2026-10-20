@@ -48,3 +48,22 @@ memory. Plan: `docs/PORT_ROADMAP.md`; state design: `docs/state-model.md`
 ```
 python tools/native_check.py identity      # builds build/port with CMake + MinGW gcc
 ```
+
+## Input model
+
+A step consumes a `struct frame_input` (`game/input.h`): the LOGICAL
+input sample -- direction 0..7 / 8 none, fire, jump/jetpack, the waiting
+menu key's scan code, and the DOS time of day (D7). It is already decoded
+through the user's settings (device, key bindings, calibration), which live
+outside `struct game` (D6). Layers:
+
+| layer | role |
+|---|---|
+| `game/` | consumes `frame_input` only; the attract-demo stream is game logic (process_input reads the demo-bank resource through `game.demo`), not an input |
+| `platform/input_map.c` | pure settings decoding: `input_from_keyboard()` = the original `read_keyboard_input` (key table + bindings -> dir/fire/jump) |
+| `platform/` backends (later) | real-time device reading (key events, gamepad, mouse) and the one-key BIOS-buffer semantics of `menu_key` |
+| `tests/bridge/` | `dgroup_import_input()` rebuilds the sample from an original snapshot: `g_keydown[]` (DS 0x8A32) through `g_key_scans` (DS 0x1310) for the device in `g_input_device[1]` (DS 0x12F2); mouse/joystick state and the BIOS buffer are not in the snapshot |
+
+One `frame_input` is one poll of the original's `get_player_input`. A call
+that polls repeatedly (wait_for_input inside handle_death) takes one sample
+per poll; until D2 the bridge feeds every poll the call's starting input.

@@ -16,3 +16,11 @@ target_include_directories(dave_game PUBLIC game)
 
 add_executable(dave_bridge tests/bridge/bridge.c tests/bridge/dgroup_map.c)
 target_link_libraries(dave_bridge PRIVATE dave_game)
+
+# player (N2): Dave, the input model; platform/input_map.c decodes device
+# state through the settings (used by the bridge now, the platform later).
+target_sources(dave_game PRIVATE game/player.c)
+add_library(dave_platform STATIC platform/input_map.c)
+target_include_directories(dave_platform PUBLIC platform)
+target_link_libraries(dave_platform PUBLIC dave_game)
+target_link_libraries(dave_bridge PRIVATE dave_platform)
