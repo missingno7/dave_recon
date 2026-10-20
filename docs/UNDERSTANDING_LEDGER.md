@@ -343,3 +343,52 @@ docs/FIDELITY.md sections 1 and 5.
   command that reads DOSBox-X's `vga.mem.linear` (not in acceptance build
   v3); today: the read-map plane per tick plus 4-plane images inside
   `SaveUnderEGA` (oracle.py `ega_planes`).
+
+## Native player lane additions (N2, 2026-10-20)
+
+Evidence: `port/game/player.c` equivalent to the original over the corpus
+below (`tests/test_native.py` NativePlayerTest), and code reading.
+
+- **U-G9 (b) observed** (tests/oracle/n2_buttons.txt): the fire and
+  jump/jetpack buttons act when their signed-char counter reaches 0. A tap
+  of a few ticks counts 30 -> 27, the release tick drops it to 0 and the
+  action runs (counter back to 30) on that same tick; a hold triggers after
+  30 held ticks and then every 30 (10 fire and 9 jetpack triggers on level 1,
+  where neither has an effect besides the counters). Both buttons count
+  independently when held together. (a) is still open: no multi-bit
+  movement state occurs in any corpus tick, and the corpus has no live play
+  on a level with ladders (levels 1, 5, 7, 8, 10 in 1-based numbering have
+  them; level 1's room does not).
+- **N2-1 RowTimes100 overrun.** `RowTimes100` (tiles.asm, DS 0x13DD) has 10
+  entries and `TileRowOfs` follows it, so `tile_at`'s accepted rows 10 and 11
+  use flat offsets 640 and 1280 (not 1000 and 1100): row 10 reads map row 6
+  column 40 + col, row 11 reads past the map (the record's 24-byte tail, then
+  the next record's path). `tile_attr_at_offset` (no checks) continues with
+  1920.. for rows 12-19. Correction to U-M1 item 2 ("rows 10-11 past the
+  map"). Unreached in the corpus (ladders end at row 8 in every level, so a
+  climbing probe never asks for row 10); reproduced in `player.c
+  row_offset()`/`level_byte()`.
+- **N2-2 Demo jump bit is signed.** process_input reads demo bytes through a
+  signed `char far *`: `jump = byte >> 6` is -1 / -2 for a byte with the
+  fire bit (0x80) set, so such a byte neither counts the jetpack button down
+  nor releases it (`== 1` / `== 0` both fail). In the shipped demos every
+  fire byte meets a jetpack counter at 30, so the quirk has no observable
+  effect there (a mutant `(byte >> 6) & 1` is equivalent on the corpus).
+- **N2-3 Movement-branch asymmetries** (reproduced): walking left does not
+  record `g_prev_dir` at the end of the step (walking right does); a walk
+  step that starts a fall still animates and moves 2 px; the fall's landing
+  probe ORs the two attributes, so solid + deadly (3) does nothing (no move,
+  no landing, no death) and the jetpack's sideways probe treats 3 as free;
+  climbing down requests sound 4 twice.
+- **N2-4 Retraces per tick** (U-T1, partial): in play and demo ticks without
+  a level change, the original's retraces between tick heads equal exactly
+  the WaitVBL calls of move_dave (1 per call, + up to 15 when scroll_screen
+  scrolls, 0 on the killed tick and when no movement bit is set) plus
+  handle_death's restart (1 + 20 per wait_for_input round). Evidence: the
+  native counts equal `frames_since_prev` on every such tick of the corpus.
+- **N2-5 The BIOS key buffer holds the last key.** The INT 9 handler empties
+  the BIOS buffer on every make code before chaining to the BIOS, which then
+  stores that key, so `bioskey(1)` sees the LAST key pressed until something
+  reads it. During play the arrow keys stay in the buffer: handle_menu_key
+  sees e.g. 0x4D, which is inert outside demos; wait_for_input's flush
+  removes it. The input model carries it as `frame_input.menu_key`.

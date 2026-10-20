@@ -1,7 +1,7 @@
 # Native player verification (worker N2): the fire and jump/jetpack buttons'
 # release-triggered scheme (U-G9 b), with per-subsystem boundary snapshots.
 #
-# Level 1 is played as in the oracle-corpus lane's level1_complete.txt (same
+# Level 1 is played as in tests/oracle/level1_complete.txt (same
 # movement events), with Ctrl (fire, g_key_scans[8] = 0x1D) and Alt
 # (jump/jetpack, g_key_scans[9] = 0x38) pressed in between. On level 1 Dave
 # has neither gun nor jetpack, so the buttons change nothing but the counters
@@ -13,46 +13,47 @@
 duration 29000
 png_every 0
 boundaries 1000
-4050 key space
-11948 keydown right
-12155 keydown pageup
+4051 key space
+11942 keydown right
+12156 keydown pageup
 12255 keyup pageup
 12500 keydown lctrl
 12540 keyup lctrl
 13000 keydown lctrl
 14000 keyup lctrl
-14452 keyup right
+14453 keyup right
 14500 keydown lalt
 14560 keyup lalt
-14951 keydown pageup
-14951 keydown right
-15051 keyup pageup
+14952 keydown pageup
+14952 keydown right
+15052 keyup pageup
 15500 keydown lalt
 16100 keyup lalt
-16150 keyup right
+16151 keyup right
 16507 keydown right
 17000 keydown lctrl
 17000 keydown lalt
 17206 keyup right
-17505 keydown left
-17505 keydown up
-17605 keyup up
+17506 keydown left
+17506 keydown up
+17606 keyup up
 17800 keyup lctrl
 17800 keyup lalt
-18347 keyup left
-19003 keydown left
-19003 keydown up
-19103 keyup up
-19845 keyup left
+18348 keyup left
+19004 keydown left
+19004 keydown up
+19104 keyup up
+19846 keyup left
 20000 keydown lctrl
-20302 keydown right
+20303 keydown right
 20430 keyup lctrl
 21000 keydown lalt
 21020 keyup lalt
 22000 keydown lalt
 23000 keydown lctrl
 23100 keyup lalt
-23298 keyup right
-23298 keydown left
+23299 keyup right
+23299 keydown left
 24000 keyup lctrl
-27500 keyup left
+27494 keyup left
+33001 keydown right

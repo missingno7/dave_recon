@@ -26,8 +26,8 @@ class NativeEquivalenceTest(unittest.TestCase):
 
 # ---- player (N2): process_input, move_dave, update_jetpack, handle_death ----
 #
-# Corpus: tests/oracle/inv_demos_all.txt (the attract demos, every tick) and
-# the scripted tests/oracle/n2_death.txt (death, restart, game over) and
+# Corpus: tests/oracle/inv_demos_all.txt and n2_demos.txt (the attract demos,
+# every tick) and the scripted tests/oracle/n2_death.txt (death, restart, game over) and
 # n2_buttons.txt (fire / jetpack buttons, U-G9 b), each run with
 #   python tools/oracle.py tests/oracle/<name>.txt --out <abs path>/build/oracle/<dir>
 # Besides native_check's whole-game-state comparison, the player checks
@@ -37,6 +37,7 @@ class NativeEquivalenceTest(unittest.TestCase):
 # oracle's sound log; and mutants of player.c must be caught.
 
 PLAYER_RUNS = {"demos_all": ROOT / "build" / "oracle" / "demos_all" / "run1",
+               "n2_demos": ROOT / "build" / "oracle" / "n2_demos" / "run1",
                "n2_death": ROOT / "build" / "oracle" / "n2_death" / "run1",
                "n2_buttons": ROOT / "build" / "oracle" / "n2_buttons" / "run1"}
 PLAYER_SUBSYSTEMS = ("process_input", "move_dave", "update_jetpack", "handle_death")
@@ -49,6 +50,7 @@ def _player_pairs(run, subsystem):
     import oracle
     key = (str(run), subsystem)
     if key not in _PAIR_CACHE:
+        _PAIR_CACHE.clear()      # keep one run's pairs only (a run can be ~1 GB)
         sites = [n for _, n in oracle.PIPELINE]
         after = sites[sites.index(subsystem) + 1]
         pairs, cur = [], None
@@ -87,10 +89,24 @@ def _first_divergence(native, pairs, extra=()):
     return None
 
 
-def _events(subsystem):
-    """events.txt of the last native_check run: {pair index: (retraces, [sounds])}."""
+_CHECKED = {}
+
+
+def _checked(run, subsystem):
+    """native_check.check(subsystem, run), once per test session, with the
+    native snapshots and the parsed events of that run."""
+    import native_check
+    key = (str(run), subsystem)
+    if key not in _CHECKED:
+        r = native_check.check(subsystem, run)
+        work = ROOT / "build" / "native_check" / subsystem
+        _CHECKED[key] = (r, (work / "native.bin").read_bytes(), _parse_events(work / "events.txt"))
+    return _CHECKED[key]
+
+
+def _parse_events(path):
+    """events.txt: {pair index: (retraces, [sounds])}."""
     ev = {}
-    path = ROOT / "build" / "native_check" / subsystem / "events.txt"
     for line in path.read_text().splitlines():
         parts = line.split()
         k = int(parts[0])
@@ -147,10 +163,17 @@ PLAYER_MUTANTS = [
     ("move_dave", ("n2_buttons",), "d->x -= 2;              /* turn-around step */", "/* no turn-around */"),
     ("move_dave", ("n2_death",), "        spawn_explosion(g, d->x, d->y + 3, EXPLOSION_DEATH, out);",
      "        spawn_explosion(g, d->x, d->y + 2, EXPLOSION_DEATH, out);"),
-    ("process_input", ("n2_buttons",), "if (g->buttons.fire_repeat != 30 && fire == 0)",
-     "if (g->buttons.fire_repeat != 29 && fire == 0)"),
+    ("process_input", ("n2_buttons",), "        g->buttons.fire_repeat = 30;\n        if (g->inv.has_gun",
+     "        g->buttons.fire_repeat = 31;\n        if (g->inv.has_gun"),
+    ("process_input", ("n2_buttons",), "if (g->buttons.jetpack_repeat != 30 && jump == 0)",
+     "if (g->buttons.jetpack_repeat != 30 && jump == 0 && 0)"),
     ("process_input", ("demos_all",), "case DIR_SE: d->input_dir = DIR_E; break;", "case DIR_SE: d->input_dir = DIR_SE; break;"),
-    ("process_input", ("demos_all",), "jump = shift_right_6(b);", "jump = (int16_t)((b >> 6) & 1);"),
+    # (the signed `byte >> 6` jump quirk is unobservable in the shipped demos:
+    # every fire byte meets a jetpack counter at 30, see the ledger)
+    ("move_dave", ("n2_demos", "demos_all"), "        g->dave.anim_delay = 2;\n        g->dave.anim_frame = (int16_t)((g->dave.anim_frame + 1) & 3);\n        set_pose(g, POSE_CLIMB",
+     "        g->dave.anim_delay = 3;\n        g->dave.anim_frame = (int16_t)((g->dave.anim_frame + 1) & 3);\n        set_pose(g, POSE_CLIMB"),
+    ("move_dave", ("n2_demos", "demos_all"), "        d->anim_delay = 4;", "        d->anim_delay = 3;"),
+    ("update_jetpack", ("n2_demos", "demos_all"), "g->inv.fuel_tick = 15;", "g->inv.fuel_tick = 14;"),
     ("handle_death", ("n2_death",), "d->death_timer = (int16_t)(d->death_timer - 1);",
      "d->death_timer = (int16_t)(d->death_timer - 2);"),
     ("handle_death", ("n2_death",), "d->facing = DIR_RIGHT;\n    if (g->level.in_warp_zone",
@@ -167,14 +190,12 @@ class NativePlayerTest(unittest.TestCase):
         return runs
 
     def test_player_subsystems_equivalent(self):
-        import native_check
         for name, run in self._runs().items():
             for sub in PLAYER_SUBSYSTEMS:
                 with self.subTest(run=name, subsystem=sub):
-                    r = native_check.check(sub, run)
+                    r, native, _ = _checked(run, sub)
                     self.assertTrue(r["equivalent"], r)
                     # Dave's presentation ids rebuilt from the native pose (D3)
-                    native = (ROOT / "build" / "native_check" / sub / "native.bin").read_bytes()
                     self.assertIsNone(_first_divergence(native, _player_pairs(run, sub), DAVE_VIEW_BYTES))
                     if sub in ("move_dave", "handle_death"):
                         self._check_retraces_and_sounds(run, sub)
@@ -191,7 +212,7 @@ class NativePlayerTest(unittest.TestCase):
         for l in (run / "sounds.jsonl").read_text().splitlines():
             s = json.loads(l)
             oracle_sounds.setdefault(s["tick"], []).append(s["sound"])
-        ev = _events(sub)
+        ev = _checked(run, sub)[2]
         pairs = _player_pairs(run, sub)
         for k, (tick, pre, post) in enumerate(pairs):
             retr, sounds = ev.get(k, (0, []))
@@ -199,18 +220,15 @@ class NativePlayerTest(unittest.TestCase):
             it = iter(got)
             self.assertTrue(all(any(x == y for y in it) for x in sounds if x >= 0),
                             (sub, tick, sounds, got))
-        self._retraces_checked = getattr(self, "_retraces_checked", 0) + len(pairs)
 
     def test_player_retraces_per_tick(self):
         """move_dave + handle_death retraces == the original's retraces per tick
         on every tick where Dave is in play and the level does not change."""
         import json
-        import native_check
         for name, run in self._runs().items():
             per = {}
             for sub in ("move_dave", "handle_death"):
-                native_check.check(sub, run)
-                ev = _events(sub)
+                ev = _checked(run, sub)[2]
                 for k, (tick, _, _) in enumerate(_player_pairs(run, sub)):
                     per[tick] = per.get(tick, 0) + ev.get(k, (0, []))[0]
             rows = {json.loads(l)["tick"]: json.loads(l) for l in (run / "ticks.jsonl").read_text().splitlines()}

@@ -1,0 +1,48 @@
+# Native player verification (worker N2): tests/oracle/attract_all_demos.txt
+# with per-subsystem boundary snapshots for every tick (all five demos:
+# walking, jumping, climbing, jetpack flight and fuel, the gun, deaths).
+#
+# Attract mode with no input until all five built-in demos have played
+# (docs/FIDELITY.md section 5).
+#
+# How attract mode sequences the demos (src/DAVE.C attract_mode,
+# process_input): state 3 (title) waits 200 x 6 = 1200 retraces, then
+# srand(time(NULL)) and demo = rand() * 5 / 32767 (5 = the bank's count
+# byte). srand takes an unsigned int, so the seed is the LOW WORD of time();
+# Borland's time() adds the default timezone (TZ unset: EST, 18000 s), so
+# at DOS 01/01/1991 hh:mm:ss the seed is (662706000 + seconds) & 0xFFFF =
+# 5968 + seconds. A demo ends at its 0x30 byte (game_state 2); the next tick
+# shows the high-score table for 1000 retraces (with sounds and WaitSound),
+# falls through into the title (1200 retraces) and picks the next demo.
+# The first rand() after srand(s) changes by ~345 per second of s, so the
+# chosen index walks 0,1,2,3,4 with ~19 s per index and a 94.9 s period.
+# Between two choices the DOS clock advances 39-40 s (after demo 3), 45 s
+# (demo 1), 42 s (demo 2), 48-50 s (demo 4), 62 s (demo 0) -- less than the
+# emulated time, see FIDELITY.md section 1. From 00:00:00 the sequence is
+# 1,3,0,4 and then locks into 1,4,1,4,... (demo 2 never plays; observed for
+# 600 s). Started at 00:00:28 the choices are 2,0,3,0,3,0,4,1: all five.
+# (Seeds 3501 and 7002 make rand() return 32767, i.e. index 5, outside the
+# table: see attract_out_of_range_demo.txt.)
+#
+# Tick ranges / evidence (run1, VGA):
+#   tick 1            title, 3.49 s
+#   ticks 2-819       demo 2, level 4 (index 3)  20.62-32.49 s  seed 6015
+#   tick 820          high-score table + title (tick takes 2250+ retraces)
+#   ticks 821-3144    demo 0, level 3 (index 2)  64.60-98.60 s  (gun, jetpack,
+#                     jetpack flight, shooting, two monsters shot: sound 8)
+#   tick 3145         high scores + title
+#   ticks 3146-3728   demo 3, level 9 (index 8)  130.70-139.20 s (dies)
+#   tick 3729         high scores + title
+#   ticks 3730-6053   demo 0 again; 6054 high scores + title
+#   ticks 6055-6637   demo 3 again; 6638 high scores + title
+#   ticks 6639-8962   demo 0 again; 8963 high scores + title
+#   ticks 8964-10263  demo 4, level 5 (index 4)  344.15-363.11 s (climbing:
+#                     state bit 0x02, gun, two monsters shot)
+#   tick 10264        high scores + title
+#   ticks 10265-11440 demo 1, level 2 (index 1)  395.49-412.45 s (trophy, dies)
+#   tick 11441        high scores, 412.47 s
+# The demo index of each segment: `python tools/oracle.py --report RUN`.
+duration 413500
+png_every 0
+boundaries 11500
+dos_time 00:00:28

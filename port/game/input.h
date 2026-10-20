@@ -30,9 +30,9 @@
  *                       times out into a demo.
  *
  * Direction quirks kept by the device decoders (platform), not the game: the
- * keyboard reader lets the diagonal keys override the straight ones in the
- * order NE, NW, SE, SW, and opposite straight keys resolve to the later one
- * tested (right over nothing, down over up, left over right).
+ * keyboard reader tests N, E, S, W, then the diagonal keys NE, NW, SE, SW,
+ * each later key overriding the axes it sets (down beats up, left beats
+ * right, any diagonal beats the straight keys, SW beats all).
  *
  * The demo stream is NOT an input: during attract demos the original still
  * reads the live device (an idle-run byte's own frame keeps it) and then
