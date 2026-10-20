@@ -17,3 +17,9 @@ target_include_directories(dave_game PUBLIC game)
 
 add_executable(dave_bridge tests/bridge/bridge.c tests/bridge/dgroup_map.c)
 target_link_libraries(dave_bridge PRIVATE dave_game)
+
+# world (N3): tiles, collisions, items, scoring, levels, warps, attract mode
+target_sources(dave_game PRIVATE game/rng.c game/tiles.c game/spawn.c game/score.c game/world.c
+               game/items.c game/level.c game/transitions.c game/attract.c)
+target_sources(dave_bridge PRIVATE tests/bridge/world_io.c)
+target_include_directories(dave_bridge PRIVATE tests/bridge)

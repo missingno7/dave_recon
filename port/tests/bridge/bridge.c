@@ -20,6 +20,8 @@
 #include "shots.h"
 #include "output.h"
 #include "state.h"
+#include "world.h"
+#include "world_io.h"
 
 /* Every native subsystem gets the state, the immutable resources and the
  * output of the step. */
@@ -33,6 +35,22 @@ static void run_animate_tiles(struct game *g, const struct resources *r, struct 
     anim_step(&g->anim, g->level.scroll_x, o);
 }
 
+/* world (N3): the waiting loops' input comes from bridge_world_io() */
+static void run_check_collisions(struct game *g, const struct resources *r, struct frame_output *o) {
+    check_collisions(g, r, o);
+}
+static void run_pick_up_items(struct game *g, const struct resources *r, struct frame_output *o) {
+    pick_up_items(g, r, o);
+}
+static void run_level_complete(struct game *g, const struct resources *r, struct frame_output *o) {
+    level_complete(g, r, bridge_world_io(), o);
+}
+static void run_check_warp_transition(struct game *g, const struct resources *r, struct frame_output *o) {
+    check_warp_transition(g, r, bridge_world_io(), o);
+}
+static void run_attract_mode(struct game *g, const struct resources *r, struct frame_output *o) {
+    attract_mode(g, r, bridge_world_io(), o);
+}
 static void run_update_explosions(struct game *g, const struct resources *r, struct frame_output *o) {
     explosions_step(g, r, o);
 }
@@ -70,6 +88,11 @@ static void run_update_explosions_mutant(struct game *g, const struct resources 
 static const struct { const char *name; subsystem_fn run; } subsystems[] = {
     {"identity", run_identity},
     {"animate_tiles", run_animate_tiles},
+    {"check_collisions", run_check_collisions},
+    {"pick_up_items", run_pick_up_items},
+    {"level_complete", run_level_complete},
+    {"check_warp_transition", run_check_warp_transition},
+    {"attract_mode", run_attract_mode},
     {"update_explosions", run_update_explosions},
     {"move_monsters", run_move_monsters},
     {"move_bullets", run_move_bullets},
@@ -117,11 +140,14 @@ int main(int argc, char **argv) {
     static struct frame_output o;
     static struct resources res;
     long index = 0;
+    bridge_world_load(&res);              /* world (N3): demo bank, scenario input */
     while (fread(snap, 1, DGROUP_LEN, in) == DGROUP_LEN) {
         dgroup_import(&g, snap);
         dgroup_import_resources(&res, snap);
+        bridge_world_begin(index, snap, &g, &res);   /* world (N3): resources, g_tiles, input */
         memset(&o, 0, sizeof o);
         run(&g, &res, &o);
+        dgroup_export_levels(&g, &res, snap);    /* world (N3): g_levels records, g_tiles */
         dgroup_export(&g, snap);
         if (events)
             write_events(events, index, &o);

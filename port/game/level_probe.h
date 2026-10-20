@@ -38,4 +38,9 @@ int8_t level_record_byte(const struct game *g, const struct resources *r, int32_
 int16_t tile_attr_at_offset(const struct game *g, const struct resources *r,
                             int16_t x, int16_t y, int16_t dx, int16_t dy);
 
+/* g_tile_attr[tile] for a signed tile byte, including the constant words
+ * around the table that out-of-range bytes read (U-M1 item 3). Shared by
+ * tile_attr_at (world lane, tiles.c). */
+int16_t tile_attribute(int8_t tile);
+
 #endif

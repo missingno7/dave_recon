@@ -28,8 +28,14 @@ struct level_record {
                                             monster paths without 0xEA reach them (U-M1 item 2) */
 };
 
+/* The attract-mode demo bank (format:demo_stream, docs/data-layout.md far
+ * segment 0x0B31, codec tools/demos.py): u32 count, u32 offsets[count], then
+ * per demo the start level byte and the input stream. */
+#define DEMO_BANK_BYTES 4368
+
 struct resources {
     struct level_record levels[LEVEL_COUNT];
+    uint8_t demos[DEMO_BANK_BYTES];   /* demo bank, byte image */
 };
 
 #endif

@@ -343,3 +343,68 @@ docs/FIDELITY.md sections 1 and 5.
   command that reads DOSBox-X's `vga.mem.linear` (not in acceptance build
   v3); today: the read-map plane per tick plus 4-plane images inside
   `SaveUnderEGA` (oracle.py `ega_planes`).
+
+## World lane (N3) additions (2026-10-20)
+
+Appended by the native world worker (check_collisions, pick_up_items,
+level_complete, check_warp_transition, attract_mode and their helpers in
+`port/game/`). Evidence: the native code is byte-equal to the original on
+the oracle runs named in docs/NATIVIZATION_LEDGER.md section D, or (marked
+*code only*) read from src/DAVE.C.
+
+### Closed (with evidence)
+
+- **g_tiles before the first level load** is still all zero (BSS): the
+  title tick's pre-state has a pristine level-1 record in g_levels but a
+  zero g_tiles. A movmem(g_tiles, g_level, 1000) at that point would
+  therefore clear the live map. Native: `level.pristine_loaded`
+  (data:g_tiles); after a load g_tiles is exactly the resource map of
+  `level.index` (rebuilt by the bridge, compared on every corpus tick).
+- **load_level leaves stale animated-tile records**: it clears only the
+  `active` word of the 200 records and writes `count = 0` into the record
+  after the last new one; first/cur/col/row (and counts further on) keep the
+  previous level's values. Observable state; reproduced (attract_mode and
+  level_complete ticks equal on the whole g_anim_tiles).
+- **load_level keeps the jetpack fuel and fuel tick** while dropping gun,
+  jetpack and trophy (their icons are XOR-erased first).
+- **Pickup order**: the four tiles under Dave are read first, then tested
+  per pickup kind in table order (door, jetpack, gun, trophy, gems 47..52)
+  and per kind in the order TL, TR, BL, BR; several items are collected in
+  one tick. The 0-point gun and jetpack still run the score path
+  (update_score, StopSound, PlaySound 6, tile cleared). The door scores 2000
+  and sets `g_level_done` on every tick it is touched with the trophy.
+- **Collision pass 1 does not stop at a hit** (*code only*): after
+  `state &= 0xC0` the loop continues, so a second overlapping monster also
+  dies and spawns a second type-5 explosion (re-arming the death timer).
+- **redraw_screen can change game state** (*code only*): it calls
+  draw_inventory -> update_score, so a pending extra life would be awarded
+  there.
+- **Warp-zone return** (*code only*): level_complete increments the level and
+  draws its number, then a warp zone sets `g_current_level =
+  g_warp_return_level`, the level the warp was ENTERED from; that level is
+  loaded from its start, with its warp now marked used.
+- **RowTimes100 overrun** (refines U-M1 item 2): the 10-entry row table is
+  followed by TileRowOfs (n * 640, n = 1..10) and VgaTileRowOfs (n * 5120)
+  and preceded by LevelOfs (n * 1280). So `tile_at` row 10 reads map offset
+  640 + col (row 6, column 40 + col) and row 11 offset 1280 + col (the next
+  record at the same column), not "past the map". Native `row_offset()`
+  keeps these values (*code only*: no corpus tick reaches them).
+- **Borland rand() in the port** (U-S1): `port/game/rng.c` on
+  game.rng_seed, verified by every attract_mode tick that loads a level
+  (rand_seed, every random tile phase and monster frame equal) and by the
+  out-of-range demo: srand(7002) gives rand() = 32767 and index 5 natively
+  too.
+
+### Open
+
+- **U-W1** The bridge's per-call input reconstruction
+  (port/tests/bridge/world_io.c) places the poll after r retraces at
+  tick-head time + r retrace periods and models the BIOS buffer as empty at
+  the start of the call. Exact for the corpus (keys half-way between WaitVBL
+  exits); a call entered with a key already buffered by an earlier tick, or
+  typematic repeat, is not modelled. To be replaced by the per-retrace input
+  of D2 (the oracle's `retraces` capture records `bios_keys`).
+- **U-W2** The ending after level 10 (border chase, U-G8) and the warp
+  sequences (real warp zones and the level -1 warp, U-M3/U-O1) have native
+  code but no corpus tick; check_warp_transition is verified only as "no
+  change" on non-warp ticks.

@@ -88,6 +88,9 @@ struct level_state {
     int16_t in_warp_zone;    /* g_in_warp_zone */
     int16_t warp_return;     /* g_warp_return_level */
     int16_t warp_used[LEVEL_COUNT];       /* g_level_visited */
+    int16_t pristine_loaded; /* g_tiles: 1 once a level was loaded (it then holds the pristine
+                                map of `index`, a resource); 0 before the first load_level,
+                                when the original's g_tiles is still all zero */
 };
 
 struct buttons {             /* process_input's release-triggered buttons (U-G9) */

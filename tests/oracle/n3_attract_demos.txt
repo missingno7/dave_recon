@@ -1,0 +1,9 @@
+# N3 (world lane): tests/oracle/attract_all_demos.txt with per-subsystem
+# boundary snapshots for the first 6060 ticks: the title timeouts of ticks
+# 1, 820, 3145, 3729 and 6054 (high-score table + title + demo choice from
+# srand(time()) in one attract_mode call) and the demos' collisions (monster
+# shots, Dave's shots) and pickups (gun, jetpack, gems).
+duration 262000
+png_every 0
+dos_time 00:00:28
+boundaries 6060

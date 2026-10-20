@@ -58,3 +58,8 @@ int16_t tile_attr_at_offset(const struct game *g, const struct resources *r,
     int8_t tile = level_record_byte(g, r, LEVEL_PATH_BYTES + row * LEVEL_COLS + col);
     return tile_attr_window[tile + 128];
 }
+
+int16_t tile_attribute(int8_t tile)
+{
+    return tile_attr_window[tile + 128];
+}
