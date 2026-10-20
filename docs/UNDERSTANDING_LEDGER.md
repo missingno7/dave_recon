@@ -248,3 +248,98 @@ static writer set (call closure) contains that subsystem.
   `set_video_mode` sets modes 4 / 0Dh / 13h (+ DAC palette load).
 - **Tileset compression** = the game's own RLE encoder (0x7F41), proven by
   exact re-encoding.
+
+## Oracle corpus lane additions (2026-10-20)
+
+Appended by the oracle-corpus worker (M1.3/M1.4/M1.6); evidence is the
+scenario corpus in `tests/oracle/` (all EQUIVALENT under `--repeat 2`) and
+docs/FIDELITY.md sections 1 and 5.
+
+### Closed (with evidence)
+
+- **U-T2** Refresh rates: EGA mode 0Dh 16.6897 ms (59.92 Hz), CGA mode 4
+  16.6880 ms (59.92 Hz), VGA mode 13h 14.2689 ms (70.08 Hz), mean over the
+  play/demo ticks (`summary.json` `retrace_ms_mean`; ega_attract.txt,
+  cga_attract.txt, attract.txt). These are DOSBox-X's models of the real
+  200-line EGA/CGA timing (14.318 MHz / 912 / 262) and VGA (25.175 MHz /
+  800 / 449); the simulation runs 14.5% slower on EGA/CGA.
+- **U-T3** (completes the partial entry above) The title loop is 1200
+  `WaitVBL`; the +-1 retrace seen earlier was the emulator, not the game:
+  DOSBox-X's vertical-timer drift compensation shifted the retrace timeline
+  by whole frames with `frameskip=0` (FIDELITY.md section 1). With the
+  pinned `frameskip=1` the title tick interval is the same in every run
+  (VGA 1201 retraces). So the uninitialised counter `j` (U-R5) is not the
+  cause: it only selects the tile drawn, and the title framebuffers are
+  byte-equal across repeats (U-R5 itself stays open: its value is
+  reproducible but not yet derived).
+- **Key bindings (default `g_key_scans`, DS 0x1310)**: N 0x48 Up, NE 0x49
+  PgUp, E 0x4D Right, SE 0x51 PgDn, S 0x50 Down, SW 0x4F End, W 0x4B Left,
+  NW 0x47 Home, fire 0x1D Ctrl, jetpack 0x38 Alt (DOSBox-X mapper names up,
+  pageup, right, pagedown, down, end, left, home, lctrl, lalt). Diagonal keys
+  override the cardinal ones (`read_keyboard_input`). Jump = N/NE/NW while
+  walking. Observed: `keys_down` 77/75/72/73/71 with the expected moves in
+  level1_complete.txt.
+- **Starting a game**: any key with a BIOS code (or fire) during the title
+  (polled every 6 retraces) -> `init_game_state`, `load_level`,
+  `redraw_screen`, then `wait_for_input` (polls every 20 retraces) until a
+  direction is held or a key is in the BIOS buffer. Level transitions and
+  restarts after a death end in the same `wait_for_input`.
+- **Movement cadence** (oracle, level1_complete.txt): walking 2 px every 3rd
+  tick; jump steps and horizontal jump moves every 2nd tick (the 46-entry
+  `g_jump_dy`, apex 32 px, horizontal motion only while the key is held);
+  falling 1 px down (+1 px sideways if held) every tick; reversing while
+  walking adds a 2 px step (`g_prev_dir`). A tapped direction still acts
+  (g_input_dir is kept until an acting tick consumes it).
+- **Death sequence** (game_over_highscore.txt): deadly tile -> sound 3,
+  state 0x60; the next tick erases Dave and spawns the explosion WITHOUT a
+  `WaitVBL` (two ticks in one retrace); 300-tick death timer; `handle_death`
+  removes a life and restarts at the level start (`wait_for_input`); lives
+  -1 ends the game; `check_high_score` writes DSCORES.DAV (9-byte records:
+  level, 5 score digits, 3 initials, upper-cased).
+- **Default high-score file**: `assets/` has no DSCORES.DAV; the game
+  writes its default (5 x level 1, 00100, "JON") at start-up
+  (`init_game_once`); the oracle records and compares it.
+- **Attract demo sequencing**: seed = low word of time() = 5968 + DOS
+  seconds of day at 01/01/1991 (Borland's default EST offset); demo =
+  rand() * 5 / 32767; next choice after the demo, the high scores (1000
+  retraces) and the title (1200). From 00:00:00 the choices are 1,3,0,4,
+  then 1,4,1,4,... (demo 2 never, 600 s observed); from 00:00:28 they are
+  2,0,3,0,3,0,4,1 (attract_all_demos.txt). Demo lengths in ticks: 0: 2324,
+  1: 1176, 2: 818, 3: 583, 4: 1300 (one tick per input byte; `0x20 n` =
+  n + 1 idle ticks).
+- **U-M1 item 4 observed** (attract_out_of_range_demo.txt, dos_time
+  00:16:55, seed 7002): index 5, g_demo_pos 0x2002, level byte 2 (level 3),
+  the CGA tileset bytes played as input; Dave dies at tick 600, and 300
+  ticks later `handle_death`'s `wait_for_input` waits for LIVE input inside
+  the demo: the attract mode freezes until a key is pressed. (A built-in
+  demo always reaches its 0x30 within 300 ticks of a death.)
+
+### Open
+
+- **U-S3** The DOS time of day runs slow while sounds are requested: each
+  accepted `PlaySound` (and `StopSound`/`PauseSound`) reprograms PIT
+  channel 0 and resets `TickCount`, dropping the partial BIOS tick. Measured
+  (seeds of attract_all_demos.txt): 39-62 DOS seconds per 40.6-66.1 s of
+  emulated time between demo choices, overall 0.93-0.94. Model it exactly
+  (per restart loss) so the native clock input reproduces the demo choices
+  after the first one (state-model.md D7).
+- **U-O1** Corpus gaps (FIDELITY.md section 5): live keyboard play beyond
+  level 1 (jetpack, gun, climbing are only covered through demo input);
+  warp zones (levels 5, 8, 9, 10) and the level -1 warp (U-M3; level 6's
+  top row is open at columns 85-98, collision tests return 0 above the
+  playfield, so Dave can pass x 0x132 at view 80 there); fire/jetpack on
+  release (U-G9 b) with keys; control panel and F-key screens. Notes for
+  whoever continues: replaying a demo's per-tick input live reproduces its
+  path (demo 1's inputs from the tick after a straight-up jump at level 2's
+  start -- the jump clears `g_prev_dir` = 6 left by level 1 -- reached the
+  trophy and the column 16-20 ledge), but no demo reaches a door. On level
+  2 the door (47,1) is reached through the shaft at column 32 (rows 1-3)
+  from the maze around columns 23-36; stepping from the (23,3) brick onto
+  the row-2 bricks at columns 24-28 leaves about 1 px of margin, because
+  the row-0 ceiling stops the jump at y 31. Level 3 has a top-row opening
+  at columns 72-74 (jetpack at (66,8)): the cheapest route to the level -1
+  warp once level 2 is done (demo 0 collects that jetpack).
+- **U-O2** A true 4-plane EGA image at every tick head needs an emulator
+  command that reads DOSBox-X's `vga.mem.linear` (not in acceptance build
+  v3); today: the read-map plane per tick plus 4-plane images inside
+  `SaveUnderEGA` (oracle.py `ega_planes`).
