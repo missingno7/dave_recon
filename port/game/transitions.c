@@ -98,8 +98,8 @@ void check_warp_transition(struct game *g, const struct resources *r, const stru
         out_draw(out, DRAW_TILE, 8, y, warp_entry(warp_tube_tile, L), 0);
         out_draw(out, DRAW_TILE, 10, y, warp_entry(warp_tube_tile, L), 0);
     }
-    out_draw(out, DRAW_XOR_SPRITE, 0x20, 0x5A, SPR_WARP_LEFT, 0);
-    out_draw(out, DRAW_XOR_SPRITE, 0xC8, 0x5A, SPR_WARP_RIGHT, 0);
+    out_draw(out, DRAW_XOR_SPRITE, 0x20, 0x5A, SPRITE_WARP_LEFT, 0);
+    out_draw(out, DRAW_XOR_SPRITE, 0xC8, 0x5A, SPRITE_WARP_RIGHT, 0);
     g->dave.y = 0;
     g->dave.x = 0x90;
     out_draw(out, DRAW_DAVE, g->dave.x, g->dave.y, 0, 0);
@@ -115,7 +115,7 @@ void check_warp_transition(struct game *g, const struct resources *r, const stru
     out->retraces++;
     blank_view(out);
     if (g->inv.got_trophy == 1)
-        out_draw(out, DRAW_XOR_SPRITE, 0x48, 0xB8, SPR_STATUS, STATUS_TROPHY);
+        out_draw(out, DRAW_XOR_SPRITE, 0x48, 0xB8, SPRITE_STATUS, STATUS_TROPHY);
 
     /* leave the level (pristine map back) and load the target */
     restore_level_map(g, r);
@@ -184,7 +184,7 @@ void level_complete(struct game *g, const struct resources *r, const struct worl
 {
     if (g->level.done != 1)
         return;
-    out_draw(out, DRAW_XOR_SPRITE, 0x48, 0xB8, SPR_STATUS, STATUS_TROPHY);
+    out_draw(out, DRAW_XOR_SPRITE, 0x48, 0xB8, SPRITE_STATUS, STATUS_TROPHY);
     restore_level_map(g, r);
     out->retraces++;
 

@@ -299,6 +299,12 @@ def _hits(work: pathlib.Path, prefix: str, regs: bool = False):
         i += 1
 
 
+def _xor(a: bytes, b: bytes) -> bytes:
+    """Byte-wise XOR of two equal-length buffers (fast: one big-int operation)."""
+    n = len(a)
+    return (int.from_bytes(a, "little") ^ int.from_bytes(b, "little")).to_bytes(n, "little")
+
+
 def write_boundaries(work: pathlib.Path, tick_snapshots: list) -> int:
     """boundaries.bin: for each tick (up to the scenario's `boundaries`) and each
     PIPELINE site in order, the DGROUP snapshot as zlib(snapshot XOR previous
@@ -312,7 +318,7 @@ def write_boundaries(work: pathlib.Path, tick_snapshots: list) -> int:
         for t in range(n):
             for i, (cs, _) in enumerate(PIPELINE):
                 snap = tick_snapshots[t] if i == 0 else per_site[cs][t]
-                delta = zlib.compress(bytes(a ^ b for a, b in zip(snap, prev)), 6)
+                delta = zlib.compress(_xor(snap, prev), 6)
                 f.write(struct.pack("<IHI", t + 1, i, len(delta)) + delta)
                 prev = snap
     return n
@@ -409,7 +415,7 @@ def iter_boundaries(path: pathlib.Path):
     while at < len(data):
         tick, site, length = struct.unpack_from("<IHI", data, at)
         at += 10
-        snap = bytes(a ^ b for a, b in zip(zlib.decompress(data[at:at + length]), prev))
+        snap = _xor(zlib.decompress(data[at:at + length]), prev)
         at += length
         prev = snap
         yield tick, PIPELINE[site][1], snap
@@ -768,7 +774,8 @@ def main():
         ap.error("a scenario is required")
     if hashlib.sha256(DOSBOX.read_bytes()).hexdigest() != DOSBOX_SHA256:
         raise SystemExit(f"{DOSBOX} is not the pinned acceptance build")
-    out = args.out or ROOT / "build" / "oracle" / args.scenario.stem
+    # absolute: DOSBox runs in the run directory, a relative path would hang it
+    out = (args.out or ROOT / "build" / "oracle" / args.scenario.stem).resolve()
     sc = parse_scenario(args.scenario)
     seg = calibrate(out, sc.video)
     if seg != LOAD_SEG:

@@ -16,6 +16,7 @@
  *  - monsters at x >= 320 (off the right of the view) are never hit; there is
  *    no left-edge test.
  */
+#include "monsters.h"
 #include "world.h"
 
 #define VIEW_WIDTH 0x140
@@ -54,7 +55,8 @@ void check_collisions(struct game *g, const struct resources *r, struct frame_ou
             uint16_t d = (uint16_t)(m->y - g->dave.y);
             if ((a < DAVE_W || box_w(g) > (uint16_t)-a) && (d < DAVE_H || box_h(g) > (uint16_t)-d)) {
                 g->dave.state &= 0xC0;
-                out_draw(out, DRAW_XOR_SPRITE, m->x, m->y, SPR_MONSTER_SHOWN, i);
+                out_draw(out, DRAW_XOR_SPRITE, m->x, m->y, SPRITE_MONSTER,
+                         monster_sprite_index(g->level.index, m->shown_frame));
                 m->active = 0;
                 out_draw(out, DRAW_ERASE_DAVE, 0, 0, 0, 0);
                 spawn_explosion(g, g->dave.x, (int16_t)(g->dave.y + 3), EXPLOSION_DAVE, out);
@@ -64,7 +66,7 @@ void check_collisions(struct game *g, const struct resources *r, struct frame_ou
         }
     }
     /* 2. Dave's shot hits a monster: 100 points per level number */
-    if (object_exists(g, SHOT_OWNER_DAVE)) {
+    if (shot_owner_exists(g, SHOT_OWNER_DAVE)) {
         for (int i = 0; i < MONSTER_COUNT; i++) {
             struct monster *m = &g->monsters[i];
             if (m->active != 1 || m->x >= VIEW_WIDTH)
@@ -73,8 +75,9 @@ void check_collisions(struct game *g, const struct resources *r, struct frame_ou
             uint16_t a = (uint16_t)(s->x - m->x);
             uint16_t b = (uint16_t)(s->y - m->y);
             if (((uint16_t)-a < 6 || box_w(g) > a) && ((uint16_t)-b < 3 || box_h(g) > b)) {
-                out_draw(out, DRAW_XOR_SPRITE, m->x, m->y, SPR_MONSTER_SHOWN, i);
-                out_draw(out, DRAW_XOR_SPRITE, s->x, s->y, s->dir == 1 ? SPR_SHOT_B1 : SPR_SHOT_B0, 0);
+                out_draw(out, DRAW_XOR_SPRITE, m->x, m->y, SPRITE_MONSTER,
+                         monster_sprite_index(g->level.index, m->shown_frame));
+                out_draw(out, DRAW_XOR_SPRITE, s->x, s->y, s->dir == 1 ? SPRITE_SHOT_B1 : SPRITE_SHOT_B0, 0);
                 s->active = 0;
                 m->active = 0;
                 spawn_explosion(g, m->x, m->y, (int16_t)(i + 1), out);
@@ -89,14 +92,14 @@ void check_collisions(struct game *g, const struct resources *r, struct frame_ou
     /* 3. a monster's shot hits Dave */
     if (g->dave.state & DAVE_ALIVE) {
         for (int i = 0; i < MONSTER_COUNT; i++) {
-            if (!object_exists(g, (int16_t)(i + 1)))
+            if (!shot_owner_exists(g, (int16_t)(i + 1)))
                 continue;
             struct shot *s = &g->shots[find_object(g, (int16_t)(i + 1))];
             uint16_t b = (uint16_t)(s->x - g->dave.x);
             uint16_t c = (uint16_t)(s->y - g->dave.y);
             if (((uint16_t)-b < 16 || b < 13) && ((uint16_t)-c < 3 || c < 16)) {
                 /* animated monster shot: set 2 flying left, set 1 right */
-                out_draw(out, DRAW_XOR_SPRITE, s->x, s->y, s->dir == 0 ? 2 : 1, s->frame);
+                out_draw(out, DRAW_XOR_SPRITE, s->x, s->y, s->dir == 0 ? SPRITE_SHOT_LEFT : SPRITE_SHOT_RIGHT, s->frame);
                 s->active = 0;
                 out_sound(out, COLLISION_SOUND);
                 out_draw(out, DRAW_ERASE_DAVE, 0, 0, 0, 0);

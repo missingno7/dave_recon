@@ -58,6 +58,50 @@ static unsigned map_ds(int16_t index) {
     return (unsigned)(0x173A + 0x500 * (int)index + 0x100) & 0xFFFFu;
 }
 
+/* g_monsters.sprite[4] (DS 0x576A) <-> monster.shown_frame (D3, state-model
+ * section 5). The id is base[mode] + step[mode] * ((level - 2) * 4 + frame)
+ * with mode = g_gfx_index (DS 0x4F86: 0 CGA, 1 EGA, 2 VGA), as move_monsters,
+ * redraw_screen and load_level compute it. An id that decodes to no frame
+ * 0..3 (e.g. a slot never drawn on this level) imports as
+ * MONSTER_FRAME_UNKNOWN and is exported unchanged. */
+#define MONSTER_SPRITE_DS 0x576A
+#define GFX_INDEX_DS 0x4F86
+static const int monster_sprite_base[3] = {0x7D, 0xC5, 0x59};
+static const int monster_sprite_step[3] = {2, 4, 1};
+
+static int gfx_mode(const unsigned char *m) {
+    int mode = m[GFX_INDEX_DS] | (m[GFX_INDEX_DS + 1] << 8);
+    return mode >= 0 && mode <= 2 ? mode : -1;
+}
+
+static void import_monster_frames(struct game *g, const unsigned char *m) {
+    int mode = gfx_mode(m);
+    for (int i = 0; i < MONSTER_COUNT; i++) {
+        int16_t id = (int16_t)(m[MONSTER_SPRITE_DS + 2 * i] | (m[MONSTER_SPRITE_DS + 2 * i + 1] << 8));
+        g->monsters[i].shown_frame = MONSTER_FRAME_UNKNOWN;
+        if (mode < 0)
+            continue;
+        int rel = id - monster_sprite_base[mode];
+        if (rel % monster_sprite_step[mode] != 0)
+            continue;
+        int frame = rel / monster_sprite_step[mode] - (g->level.index - 2) * 4;
+        if (frame >= 0 && frame <= 3)
+            g->monsters[i].shown_frame = (int16_t)frame;
+    }
+}
+
+static void export_monster_frames(const struct game *g, unsigned char *m) {
+    int mode = gfx_mode(m);
+    for (int i = 0; i < MONSTER_COUNT; i++) {
+        if (mode < 0 || g->monsters[i].shown_frame == MONSTER_FRAME_UNKNOWN)
+            continue;
+        int id = monster_sprite_base[mode] +
+                 monster_sprite_step[mode] * ((g->level.index - 2) * 4 + g->monsters[i].shown_frame);
+        m[MONSTER_SPRITE_DS + 2 * i] = (unsigned char)(id & 0xFF);
+        m[MONSTER_SPRITE_DS + 2 * i + 1] = (unsigned char)((id >> 8) & 0xFF);
+    }
+}
+
 void dgroup_import(struct game *g, const unsigned char *m) {
     memset(g, 0, sizeof *g);
     for (size_t i = 0; i < sizeof fields / sizeof fields[0]; i++) {
@@ -71,6 +115,7 @@ void dgroup_import(struct game *g, const unsigned char *m) {
     unsigned ds = map_ds(g->level.index);
     if (ds + LEVEL_ROWS * LEVEL_COLS <= DGROUP_LEN)
         memcpy(g->level.map, m + ds, LEVEL_ROWS * LEVEL_COLS);
+    import_monster_frames(g, m);
 }
 
 void dgroup_export(const struct game *g, unsigned char *m) {
@@ -84,6 +129,7 @@ void dgroup_export(const struct game *g, unsigned char *m) {
     unsigned ds = map_ds(g->level.index);
     if (ds + LEVEL_ROWS * LEVEL_COLS <= DGROUP_LEN)
         memcpy(m + ds, g->level.map, LEVEL_ROWS * LEVEL_COLS);
+    export_monster_frames(g, m);
 }
 
 void dgroup_import_resources(struct resources *r, const unsigned char *m) {
@@ -91,6 +137,7 @@ void dgroup_import_resources(struct resources *r, const unsigned char *m) {
         const unsigned char *rec = m + 0x173A + 0x500 * lv;
         memcpy(r->levels[lv].path, rec, LEVEL_PATH_BYTES);
         memcpy(r->levels[lv].map, rec + 0x100, LEVEL_ROWS * LEVEL_COLS);
+        memcpy(r->levels[lv].trailer, rec + 0x100 + LEVEL_ROWS * LEVEL_COLS, LEVEL_TRAILER_BYTES);
     }
     int16_t cur = (int16_t)(m[0x56F4] | (m[0x56F5] << 8));
     if (cur >= 0 && cur < LEVEL_COUNT)
@@ -113,14 +160,10 @@ void dgroup_import_world(struct game *g, struct resources *r, const unsigned cha
             const unsigned char *rec = pristine_levels + LEVEL_RECORD_BYTES * lv;
             memcpy(r->levels[lv].path, rec, LEVEL_PATH_BYTES);
             memcpy(r->levels[lv].map, rec + LEVEL_PATH_BYTES, LEVEL_ROWS * LEVEL_COLS);
-            memcpy(r->levels[lv].tail, rec + LEVEL_PATH_BYTES + LEVEL_ROWS * LEVEL_COLS, LEVEL_TAIL_BYTES);
+            memcpy(r->levels[lv].trailer, rec + LEVEL_PATH_BYTES + LEVEL_ROWS * LEVEL_COLS,
+                   LEVEL_TRAILER_BYTES);
         }
-    } else {
-        for (int lv = 0; lv < LEVEL_COUNT; lv++)
-            memcpy(r->levels[lv].tail,
-                   m + G_LEVELS_DS + LEVEL_RECORD_BYTES * lv + LEVEL_PATH_BYTES + LEVEL_ROWS * LEVEL_COLS,
-                   LEVEL_TAIL_BYTES);
-    }
+    }   /* else: dgroup_import_resources took them from the snapshot */
     /* data:g_tiles -> level.pristine_loaded: still all zero before the first load_level */
     g->level.pristine_loaded = 0;
     for (int i = 0; i < LEVEL_ROWS * LEVEL_COLS; i++)

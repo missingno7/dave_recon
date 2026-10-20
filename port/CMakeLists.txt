@@ -11,7 +11,8 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
   add_compile_options(-Wall -Wextra -Wconversion -Wno-sign-conversion)
 endif()
 
-add_library(dave_game STATIC game/anim.c)
+add_library(dave_game STATIC game/anim.c
+  game/level_probe.c game/monsters.c game/shots.c game/explosions.c)
 target_include_directories(dave_game PUBLIC game)
 
 add_executable(dave_bridge tests/bridge/bridge.c tests/bridge/dgroup_map.c)

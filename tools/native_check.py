@@ -25,6 +25,7 @@ Builds port/ with CMake (MinGW gcc) into build/port first.
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import os
 import pathlib
@@ -69,36 +70,59 @@ for _row, _first in (("qwertyuiop", 0x10), ("asdfghjkl", 0x1E), ("zxcvbnm", 0x2C
 for _k, _c in enumerate("1234567890"):
     SCANCODES[_c] = 0x02 + _k
 
-_BASE_MASK = None
-_FULL_BYTE = bytes([0] + [0xFF] * 255)     # bytes.translate table: nonzero mask byte -> 0xFF
+def game_view_mask(snapshot: bytes, post: bytes | None = None) -> bytes:
+    """The compared bytes: game_state objects plus the live record of the
+    current level before and (when given) after the call."""
+    level = int.from_bytes(snapshot[0x56F4:0x56F6], "little", signed=True)
+    after = int.from_bytes(post[0x56F4:0x56F6], "little", signed=True) if post is not None else level
+    return _game_view_mask_for_levels(level, after)
 
 
-def _base_mask() -> bytearray:
-    global _BASE_MASK
-    if _BASE_MASK is None:
-        inv = json.loads((ROOT / "docs" / "semantic-inventory.json").read_text())
-        entries = inv["entries"] if isinstance(inv["entries"], list) else list(inv["entries"].values())
-        mask = bytearray(oracle.DGROUP_LIVE_LEN)
-        for e in entries:
-            if isinstance(e, dict) and e.get("role") == "game_state" and e["id"] not in DEFERRED:
-                a = int(e["identity"]["ds"], 16)
-                for i in range(a, min(a + e["identity"]["size"], len(mask))):
-                    mask[i] = 1
-        for a, b, _ in DEFERRED_RANGES:
-            mask[a:b] = bytes(b - a)
-        _BASE_MASK = mask
-    return _BASE_MASK
+@functools.lru_cache(maxsize=None)
+def _base_mask() -> bytes:
+    inv = json.loads((ROOT / "docs" / "semantic-inventory.json").read_text())
+    entries = inv["entries"] if isinstance(inv["entries"], list) else list(inv["entries"].values())
+    mask = bytearray(oracle.DGROUP_LIVE_LEN)
+    for e in entries:
+        if isinstance(e, dict) and e.get("role") == "game_state" and e["id"] not in DEFERRED:
+            a = int(e["identity"]["ds"], 16)
+            for i in range(a, min(a + e["identity"]["size"], len(mask))):
+                mask[i] = 1
+    for a, b, _ in DEFERRED_RANGES:
+        mask[a:b] = bytes(b - a)
+    return bytes(mask)
 
 
-def game_view_mask(snapshot: bytes, post: bytes | None = None) -> bytearray:
+@functools.lru_cache(maxsize=None)
+def _game_view_mask_for_levels(level: int, after: int) -> bytes:
     mask = bytearray(_base_mask())
-    for snap in (snapshot, post) if post is not None else (snapshot,):
-        level = int.from_bytes(snap[0x56F4:0x56F6], "little", signed=True)
-        m = (0x173A + 0x500 * level + 0x100) & 0xFFFF
-        mask[m:min(m + 1000, len(mask))] = b"\x01" * (min(m + 1000, len(mask)) - m)
+    for lv in {level, after}:
+        m = (0x173A + 0x500 * lv + 0x100) & 0xFFFF
+        for i in range(m, min(m + 1000, len(mask))):
+            mask[i] = 1
     for lo, hi in oracle.ASYNC_RANGES:
         mask[lo:hi] = bytes(hi - lo)
-    return mask
+    return bytes(mask)
+
+
+@functools.lru_cache(maxsize=64)
+def _mask_int(mask: bytes) -> int:
+    return int.from_bytes(bytes(0xFF if v else 0 for v in mask), "little")
+
+
+@functools.lru_cache(maxsize=64)
+def _inverse(mask: bytes) -> bytes:
+    return bytes(1 - v for v in mask)
+
+
+def _masked_diff(a: bytes, b: bytes, mask: bytes) -> list:
+    """DS offsets where a and b differ under mask (byte 1 = compared)."""
+    if a == b:
+        return []
+    x = (int.from_bytes(a, "little") ^ int.from_bytes(b, "little")) & _mask_int(mask)
+    if not x:
+        return []
+    return [i for i, v in enumerate(x.to_bytes(len(a), "little")) if v]
 
 
 def build_port(src: pathlib.Path = ROOT / "port", out: pathlib.Path = ROOT / "build" / "port") -> pathlib.Path:
@@ -206,31 +230,32 @@ def collect_pairs(subsystem: str, run: pathlib.Path) -> list:
     return pairs
 
 
-def check(subsystem: str, run: pathlib.Path, mutation: tuple | None = None) -> dict:
+def check(subsystem: str, run: pathlib.Path, mutation: tuple | None = None,
+          variant: str | None = None) -> dict:
+    """mutation: (file under port/, old, new) builds a mutant copy of port/;
+    variant: run this bridge registry entry instead of `subsystem` on the
+    same snapshot pairs (e.g. "move_monsters/mutant")."""
     pairs = collect_pairs(subsystem, run)
-    work = ROOT / "build" / "native_check" / (subsystem + ("_mutant" if mutation else ""))
+    name = (variant or subsystem).replace("/", "_") + ("_mutant" if mutation else "")
+    work = ROOT / "build" / "native_check" / name
     work.mkdir(parents=True, exist_ok=True)
     (work / "pre.bin").write_bytes(b"".join(p for _, p, _ in pairs))
     exe = build_mutant(mutation) if mutation else build_port()
     env = dict(os.environ, PATH=MINGW + os.pathsep + os.environ["PATH"])
     env.update(write_world_inputs(run, [t for t, _, _ in pairs], work))
-    subprocess.run([str(exe), subsystem, str(work / "pre.bin"), str(work / "native.bin"),
+    subprocess.run([str(exe), variant or subsystem, str(work / "pre.bin"), str(work / "native.bin"),
                     str(work / "events.txt")], env=env, check=True)
     native = (work / "native.bin").read_bytes()
     L = oracle.DGROUP_LIVE_LEN
     changed_in_original = presentation_bytes = 0
-    full = bytearray([1]) * L
     for k, (tick, pre, post) in enumerate(pairs):
         mine = native[k * L:(k + 1) * L]
-        mask = game_view_mask(pre, post) if subsystem != "identity" else full
-        m = int.from_bytes(bytes(mask).translate(_FULL_BYTE), "little")   # 1 -> 0xFF per byte
-        changes = int.from_bytes(pre, "little") ^ int.from_bytes(post, "little")
-        if changes & m:
+        mask = game_view_mask(pre, post) if subsystem != "identity" else bytes([1]) * L
+        if _masked_diff(pre, post, mask):
             changed_in_original += 1
-        nonmask = changes & ~m
-        presentation_bytes += sum(1 for b in nonmask.to_bytes(L, "little") if b)
-        if (int.from_bytes(mine, "little") ^ int.from_bytes(post, "little")) & m:
-            diff = [i for i in range(L) if mask[i] and mine[i] != post[i]]
+        presentation_bytes += len(_masked_diff(pre, post, _inverse(mask)))
+        diff = _masked_diff(mine, post, mask)
+        if diff:
             return {"subsystem": subsystem, "ticks": len(pairs), "equivalent": False,
                     "first_divergence": {"tick": tick, "ds_offsets": [hex(i) for i in diff[:16]]}}
     events = (work / "events.txt").read_text().splitlines()
@@ -264,12 +289,13 @@ def main():
     ap.add_argument("subsystem")
     ap.add_argument("--run", type=pathlib.Path,
                     default=ROOT / "build" / "oracle" / "attract_boundaries" / "run1")
+    ap.add_argument("--variant", help="bridge registry entry to run instead (mutation checks)")
     ap.add_argument("--mutate", nargs=3, metavar=("FILE", "OLD", "NEW"),
                     help="check a mutant: replace OLD by NEW in port/FILE (must diverge)")
     args = ap.parse_args()
-    r = check(args.subsystem, args.run, tuple(args.mutate) if args.mutate else None)
+    r = check(args.subsystem, args.run, tuple(args.mutate) if args.mutate else None, args.variant)
     print(r)
-    if args.mutate:
+    if args.mutate or (args.variant and args.variant.endswith("/mutant")):
         sys.exit(0 if not r["equivalent"] else 1)
     sys.exit(0 if r["equivalent"] else 1)
 

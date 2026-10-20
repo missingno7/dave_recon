@@ -23,7 +23,7 @@ void update_score(struct game *g, struct frame_output *out)
     if (g->score - g->next_extra_life >= EXTRA_LIFE_POINTS) {   /* uint32_t: wraps */
         g->next_extra_life = g->score / EXTRA_LIFE_POINTS * EXTRA_LIFE_POINTS;
         if (g->lives < MAX_LIVES_SHOWN) {
-            out_draw(out, DRAW_XOR_SPRITE, g->lives * 16 + 0x100, 0, SPR_STATUS, STATUS_LIFE);
+            out_draw(out, DRAW_XOR_SPRITE, g->lives * 16 + 0x100, 0, SPRITE_STATUS, STATUS_LIFE);
             g->lives++;
             out_sound(out, 0xC);
         }
@@ -50,30 +50,30 @@ void draw_level_number(const struct game *g, struct frame_output *out)
 
 void draw_status_meter(const struct game *g, struct frame_output *out)
 {
-    out_draw(out, DRAW_XOR_SPRITE, 0x48, 0xAA, SPR_METER_LABEL, 0);
+    out_draw(out, DRAW_XOR_SPRITE, 0x48, 0xAA, SPRITE_METER_LABEL, 0);
     for (int i = 0; i < g->inv.jetpack_fuel; i++)
-        out_draw(out, DRAW_XOR_SPRITE, i * 2 + 0x4C, 0xAE, SPR_METER_BAR, 0);
+        out_draw(out, DRAW_XOR_SPRITE, i * 2 + 0x4C, 0xAE, SPRITE_METER_BAR, 0);
 }
 
 void draw_status_bar(const struct game *g, struct frame_output *out)
 {
-    out_draw(out, DRAW_XOR_SPRITE, 0, 0, SPR_STATUS, 4);
-    out_draw(out, DRAW_XOR_SPRITE, 0x78, 0, SPR_STATUS, 3);
-    out_draw(out, DRAW_XOR_SPRITE, 0xC8, 0, SPR_STATUS, 2);
+    out_draw(out, DRAW_XOR_SPRITE, 0, 0, SPRITE_STATUS, 4);
+    out_draw(out, DRAW_XOR_SPRITE, 0x78, 0, SPRITE_STATUS, 3);
+    out_draw(out, DRAW_XOR_SPRITE, 0xC8, 0, SPRITE_STATUS, 2);
     for (int i = 0; i < g->lives; i++)
-        out_draw(out, DRAW_XOR_SPRITE, i * 16 + 0x100, 0, SPR_STATUS, STATUS_LIFE);
+        out_draw(out, DRAW_XOR_SPRITE, i * 16 + 0x100, 0, SPRITE_STATUS, STATUS_LIFE);
 }
 
 void draw_inventory(struct game *g, struct frame_output *out)
 {
     if (g->inv.has_jetpack) {
         draw_status_meter(g, out);
-        out_draw(out, DRAW_XOR_SPRITE, 0, 0xAA, SPR_STATUS, STATUS_JETPACK);
+        out_draw(out, DRAW_XOR_SPRITE, 0, 0xAA, SPRITE_STATUS, STATUS_JETPACK);
     }
     if (g->inv.has_gun)
-        out_draw(out, DRAW_XOR_SPRITE, 0xF0, 0xAA, SPR_STATUS, STATUS_GUN);
+        out_draw(out, DRAW_XOR_SPRITE, 0xF0, 0xAA, SPRITE_STATUS, STATUS_GUN);
     if (g->inv.got_trophy)
-        out_draw(out, DRAW_XOR_SPRITE, 0x48, 0xB8, SPR_STATUS, STATUS_TROPHY);
+        out_draw(out, DRAW_XOR_SPRITE, 0x48, 0xB8, SPRITE_STATUS, STATUS_TROPHY);
     update_score(g, out);
     draw_level_number(g, out);
 }

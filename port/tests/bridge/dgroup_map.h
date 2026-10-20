@@ -27,7 +27,7 @@ void dgroup_import_resources(struct resources *r, const unsigned char *m);
 
 /* After dgroup_import/dgroup_import_resources: the level resources from
  * `pristine_levels` (g_levels as DAVE.EXE initialises it, 10 x 0x500 bytes)
- * when given, else just the records' 24 trailing bytes from the snapshot;
+ * when given (else the snapshot's, as dgroup_import_resources took them);
  * and level.pristine_loaded from g_tiles (all zero = never loaded). */
 void dgroup_import_world(struct game *g, struct resources *r, const unsigned char *m,
                          const unsigned char *pristine_levels);

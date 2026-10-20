@@ -15,6 +15,9 @@
 #include <string.h>
 #include "anim.h"
 #include "dgroup_map.h"
+#include "explosions.h"
+#include "monsters.h"
+#include "shots.h"
 #include "output.h"
 #include "state.h"
 #include "world.h"
@@ -48,6 +51,37 @@ static void run_check_warp_transition(struct game *g, const struct resources *r,
 static void run_attract_mode(struct game *g, const struct resources *r, struct frame_output *o) {
     attract_mode(g, r, bridge_world_io(), o);
 }
+static void run_update_explosions(struct game *g, const struct resources *r, struct frame_output *o) {
+    explosions_step(g, r, o);
+}
+static void run_move_monsters(struct game *g, const struct resources *r, struct frame_output *o) {
+    monsters_step(g, r, o);
+}
+static void run_move_bullets(struct game *g, const struct resources *r, struct frame_output *o) {
+    shots_step(g, r, o);
+}
+
+/* Mutants (tests/test_native.py): a deliberate one-constant change of each
+ * subsystem, reproduced on the native result, which the check must catch. */
+static void run_move_monsters_mutant(struct game *g, const struct resources *r, struct frame_output *o) {
+    monsters_step(g, r, o);
+    for (int i = 0; i < MONSTER_COUNT; i++)      /* move period 4 instead of 5 */
+        if (g->monsters[i].active && g->monsters[i].move_count == 5)
+            g->monsters[i].move_count = 4;
+}
+static void run_move_bullets_mutant(struct game *g, const struct resources *r, struct frame_output *o) {
+    struct game before = *g;
+    shots_step(g, r, o);
+    for (int i = 0; i < SHOT_COUNT; i++)         /* speed 3 instead of 2 */
+        if (g->shots[i].active && g->shots[i].x != before.shots[i].x)
+            g->shots[i].x = (int16_t)(g->shots[i].x + (g->shots[i].x > before.shots[i].x ? 1 : -1));
+}
+static void run_update_explosions_mutant(struct game *g, const struct resources *r, struct frame_output *o) {
+    explosions_step(g, r, o);
+    for (int i = 0; i < EXPLOSION_COUNT; i++)    /* frame period 12 instead of 13 */
+        if (g->explosions[i].active && g->explosions[i].anim == 13)
+            g->explosions[i].anim = 12;
+}
 
 /* Registry: one line per native subsystem, named after the original
  * pipeline call it replaces (tools/oracle.py PIPELINE). */
@@ -59,6 +93,12 @@ static const struct { const char *name; subsystem_fn run; } subsystems[] = {
     {"level_complete", run_level_complete},
     {"check_warp_transition", run_check_warp_transition},
     {"attract_mode", run_attract_mode},
+    {"update_explosions", run_update_explosions},
+    {"move_monsters", run_move_monsters},
+    {"move_bullets", run_move_bullets},
+    {"move_monsters/mutant", run_move_monsters_mutant},
+    {"move_bullets/mutant", run_move_bullets_mutant},
+    {"update_explosions/mutant", run_update_explosions_mutant},
 };
 
 static void write_events(FILE *f, long index, const struct frame_output *o) {

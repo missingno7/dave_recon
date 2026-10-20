@@ -27,6 +27,7 @@
  */
 #include <string.h>
 #include "anim.h"
+#include "monsters.h"
 #include "rng.h"
 #include "world.h"
 
@@ -171,28 +172,19 @@ void load_level(struct game *g, const struct resources *r, struct frame_output *
         m->anim_frame = rng_scaled(g, 3);
         m->move_count = 5;
         m->fire_count = m->reload;
-        out_draw(out, DRAW_SET_MONSTER_SPRITE, i, 0, L, 0);
+        m->shown_frame = 0;            /* g_monsters.sprite = frame 0 of this level (D3) */
     }
 
     g->level.scroll_x = 0;
     if (g->inv.has_gun == 1)
-        out_draw(out, DRAW_XOR_SPRITE, 0xF0, 0xAA, SPR_STATUS, 1);
+        out_draw(out, DRAW_XOR_SPRITE, 0xF0, 0xAA, SPRITE_STATUS, 1);
     if (g->inv.has_jetpack == 1) {
         draw_status_meter(g, out);
-        out_draw(out, DRAW_XOR_SPRITE, 0, 0xAA, SPR_STATUS, 0);
+        out_draw(out, DRAW_XOR_SPRITE, 0, 0xAA, SPRITE_STATUS, 0);
     }
     g->inv.has_jetpack = 0;
     g->inv.got_trophy = 0;
     g->inv.has_gun = 0;
-}
-
-/* draw_object(i) of the shot table */
-static void draw_shot(const struct shot *s, struct frame_output *out)
-{
-    if (s->kind == 0)
-        out_draw(out, DRAW_XOR_SPRITE, s->x, s->y, s->dir == 0 ? 2 : 1, s->frame);
-    else if (s->kind == 1)
-        out_draw(out, DRAW_XOR_SPRITE, s->x, s->y, s->dir == 0 ? SPR_SHOT_B0 : SPR_SHOT_B1, 0);
 }
 
 void draw_actors(const struct game *g, struct frame_output *out)
@@ -201,13 +193,14 @@ void draw_actors(const struct game *g, struct frame_output *out)
         out_draw(out, DRAW_DAVE, g->dave.x, g->dave.y, 0, 0);
     for (int i = 0; i < MONSTER_COUNT; i++)
         if (g->monsters[i].active == 1)
-            out_draw(out, DRAW_XOR_SPRITE, g->monsters[i].x, g->monsters[i].y, SPR_MONSTER_SHOWN, i);
+            out_draw(out, DRAW_XOR_SPRITE, g->monsters[i].x, g->monsters[i].y, SPRITE_MONSTER,
+                     monster_sprite_index(g->level.index, g->monsters[i].shown_frame));
     for (int i = 0; i < SHOT_COUNT; i++)
         if (g->shots[i].active == 1)
-            draw_shot(&g->shots[i], out);
+            shot_draw(g, i, out);
     for (int i = 0; i < EXPLOSION_COUNT; i++)
         if (g->explosions[i].active == 1)
-            out_draw(out, DRAW_XOR_SPRITE, g->explosions[i].x, g->explosions[i].y, 0,
+            out_draw(out, DRAW_XOR_SPRITE, g->explosions[i].x, g->explosions[i].y, SPRITE_EXPLOSION,
                      g->explosions[i].frame);
 }
 
@@ -233,7 +226,7 @@ void redraw_screen(struct game *g, struct frame_output *out)
         out_draw(out, DRAW_SET_DAVE_SPRITE, -1, 0, 0, 0);
         for (int i = 0; i < MONSTER_COUNT; i++)
             if (g->monsters[i].active)
-                out_draw(out, DRAW_SET_MONSTER_SPRITE, i, 0, g->level.index, 0);
+                g->monsters[i].shown_frame = 0;   /* g_monsters.sprite reset to frame 0 */
         draw_actors(g, out);
         if (g->mode == MODE_SCORES)
             show_high_scores(0, out);

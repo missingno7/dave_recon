@@ -20,8 +20,10 @@
 #define DAVE_WORLD_H
 
 #include <stdint.h>
+#include "level_probe.h"     /* tile_attr_at_offset, level_record_byte, tile_attribute (N1) */
 #include "output.h"
 #include "resources.h"
+#include "shots.h"           /* shot_spawn = spawn_object, shot_owner_exists = object_exists (N1) */
 #include "state.h"
 
 /* ---- input seen by the waiting loops (D2, D7) ---- */
@@ -44,26 +46,17 @@ struct world_io {
 
 /* ---- tile lookups (U-M1 items 2 and 3) ---- */
 
-/* Byte `offset` of the level data, relative to the first tile of the live
- * map (row * 100 + column). Offsets outside the map read what the original
- * reads there: the neighbouring records' path / tiles / trailing bytes of
- * g_levels; outside g_levels, and on level -1, the documented stand-in 0
- * (state-model D4). */
-int8_t  level_byte(const struct game *g, const struct resources *r, int32_t offset);
-/* g_tile_attr[tile]: 0 free, 1 solid, 2 deadly (tiles outside 0..52: 0, D4) */
-int16_t tile_attribute(int16_t tile);
+/* Byte `offset` of the live map (row * 100 + column) as the original's flat
+ * read reaches it, out-of-range offsets included (level_record_byte). */
+int8_t  map_byte(const struct game *g, const struct resources *r, int32_t offset);
 /* Row -> offset as the original's RowTimes100[row] reads it, including the
  * neighbouring tables for rows outside 0..9 (U-M1 item 2). */
 int32_t row_offset(int16_t row);
 
 int16_t tile_at(const struct game *g, const struct resources *r, int16_t x, int16_t y);
 int16_t tile_attr_at(const struct game *g, const struct resources *r, int16_t x, int16_t y);
-int16_t tile_attr_at_offset(const struct game *g, const struct resources *r,
-                            int16_t x, int16_t y, int16_t dx, int16_t dy);
 
 /* ---- objects ---- */
-
-#define SHOT_OWNER_DAVE 5
 
 static inline int16_t find_object(const struct game *g, int16_t owner)
 {
@@ -73,16 +66,9 @@ static inline int16_t find_object(const struct game *g, int16_t owner)
     return -1;
 }
 
-static inline int16_t object_exists(const struct game *g, int16_t owner)
-{
-    return find_object(g, owner) >= 0;
-}
-
 #define EXPLOSION_DAVE 5     /* spawn_explosion type that arms the death timer */
 
 void spawn_explosion(struct game *g, int16_t x, int16_t y, int16_t type, struct frame_output *out);
-void spawn_object(struct game *g, const struct resources *r, int16_t x, int16_t y,
-                  int16_t dir, int16_t kind, int16_t owner, struct frame_output *out);
 
 /* ---- score and status bar ---- */
 

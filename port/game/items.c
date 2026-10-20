@@ -61,7 +61,7 @@ static void collect(struct game *g, int k, int16_t tile, int32_t offset,
             for (int i = 0; i < ANIM_MAX_TILES && g->anim.tiles[i].count > 0; i++)
                 if (g->anim.tiles[i].first == TILE_TROPHY)
                     g->anim.tiles[i].active = 0;
-            out_draw(out, DRAW_XOR_SPRITE, 0x48, 0xB8, SPR_STATUS, STATUS_TROPHY);
+            out_draw(out, DRAW_XOR_SPRITE, 0x48, 0xB8, SPRITE_STATUS, STATUS_TROPHY);
         }
         break;
     case TILE_DOOR:
@@ -73,12 +73,12 @@ static void collect(struct game *g, int k, int16_t tile, int32_t offset,
         break;
     case TILE_GUN:
         g->inv.has_gun = 1;
-        out_draw(out, DRAW_XOR_SPRITE, 0xF0, 0xAA, SPR_STATUS, STATUS_GUN);
+        out_draw(out, DRAW_XOR_SPRITE, 0xF0, 0xAA, SPRITE_STATUS, STATUS_GUN);
         out_sound(out, 12);
         break;
     case TILE_JETPACK:
         if (g->inv.has_jetpack != 1)
-            out_draw(out, DRAW_XOR_SPRITE, 0, 0xAA, SPR_STATUS, STATUS_JETPACK);
+            out_draw(out, DRAW_XOR_SPRITE, 0, 0xAA, SPRITE_STATUS, STATUS_JETPACK);
         if (g->inv.has_jetpack == 1)
             draw_status_meter(g, out);     /* XOR-erases the old meter */
         g->inv.jetpack_fuel = 60;
@@ -101,7 +101,7 @@ void pick_up_items(struct game *g, const struct resources *r, struct frame_outpu
         {0, 0, 0}, {1, 1, 0}, {LEVEL_COLS, 0, 1}, {LEVEL_COLS + 1, 1, 1}};
     int16_t tile[4];
     for (int c = 0; c < 4; c++)
-        tile[c] = level_byte(g, r, pos + corner[c].offset);
+        tile[c] = map_byte(g, r, pos + corner[c].offset);
     for (int k = 0; k < PICKUP_KINDS; k++)
         for (int c = 0; c < 4; c++)
             if (pickup_tile[k] == tile[c])
