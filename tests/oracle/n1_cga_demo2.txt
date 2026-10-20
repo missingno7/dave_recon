@@ -1,0 +1,10 @@
+# N1 (monsters/shots/explosions): CGA presentation ids. Like ega_attract.txt,
+# but started at DOS 00:00:25 so the first title timeout (3 s later in DOS
+# time than in VGA) picks demo 2 (level 4, monsters that fire), with
+# per-subsystem boundary snapshots on every tick: checks the bridge's
+# per-mode monster sprite ids (shown_frame, state-model D3) in mode 4.
+duration 42000
+png_every 0
+video cga
+dos_time 00:00:25
+boundaries 1200

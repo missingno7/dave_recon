@@ -17,8 +17,29 @@
 
 enum draw_op {
     DRAW_TILE = 1,        /* DrawTile(view_col, row, tile): a = view column, b = row, c = tile id */
+    DRAW_XOR_SPRITE = 2,  /* xor_sprite(x, y, sprite) (DAVE.C -> DrawXor{CGA,EGA,VGA}): XOR-blit,
+                             so the same command both draws and erases. a = x, b = y (view
+                             pixels), c = sprite set (enum sprite_set), d = index in the set */
     /* Further ops are added with the subsystem that first needs them; each
      * must name its original routine (C function or asm proc) and arguments. */
+};
+
+/* Logical sprite names for DRAW_XOR_SPRITE (D3): (set, index) resolved per
+ * video mode by the presentation layer.
+ *   0..12           = row of g_sprite_sets[13][3][4]; index = frame 0..3,
+ *                     id = g_sprite_sets[set][mode][index]
+ *   SPRITE_SHOT_B0/1 = g_spr_shot_b0[mode] / g_spr_shot_b1[mode]; index 0
+ *   SPRITE_MONSTER  = the monster sprites move_monsters computes; index =
+ *                     (level - 2) * 4 + frame, id = base[mode] + step[mode] *
+ *                     index with base {0x7D, 0xC5, 0x59}, step {2, 4, 1}
+ *                     (CGA, EGA, VGA) */
+enum sprite_set {
+    SPRITE_EXPLOSION = 0,     /* g_sprite_sets[0]: explosion actors */
+    SPRITE_SHOT_RIGHT = 1,    /* g_sprite_sets[1]: kind-0 (monster) shot, dir != 0 */
+    SPRITE_SHOT_LEFT = 2,     /* g_sprite_sets[2]: kind-0 (monster) shot, dir 0 */
+    SPRITE_SHOT_B0 = 13,      /* g_spr_shot_b0: kind-1 (Dave's) shot, dir 0 */
+    SPRITE_SHOT_B1 = 14,      /* g_spr_shot_b1: kind-1 (Dave's) shot, dir != 0 */
+    SPRITE_MONSTER = 15,      /* per-level monster frames (move_monsters, redraw_screen, load_level) */
 };
 
 struct draw_cmd {
@@ -65,22 +86,14 @@ enum draw_op_player {
     DRAW_LEVEL_VIEW = 22, /* DrawLevelView() (tiles.asm): the 20 x 9.5-tile playfield from line 16,
                              tiles from the live level map as it is when the command is issued.
                              a = scroll_x (first visible column), b = level index */
-    XOR_SPRITE = 23,      /* xor_sprite(x, y, sprite): DrawXor* (draws and erases). a = x, b = y,
-                             c = enum sprite_table, d = index in that table's per-mode row */
 };
 
-/* Logical sprite references (state-model D3): the original's per-mode id
- * tables, resolved by present/ for the selected video mode. */
-enum sprite_table {
-    SPRITES_SET0 = 0,         /* g_sprite_sets[set][mode][index], set 0..12 (index 0..3) */
-    SPRITES_SET12 = 12,
-    SPRITES_STATUS = 13,      /* g_status_tiles[mode * g_status_row_len + index] */
-    SPRITES_METER_LABEL = 14, /* g_spr_meter_label[mode] (index 0) */
-    SPRITES_METER_BAR = 15,   /* g_spr_meter_bar[mode] (index 0) */
-    SPRITES_SHOT_B0 = 16,     /* g_spr_shot_b0[mode]: Dave's bullet flying left */
-    SPRITES_SHOT_B1 = 17,     /* g_spr_shot_b1[mode]: Dave's bullet flying right */
-    SPRITES_MONSTER_SLOT = 18 /* the sprite last stored for monster slot `index` (g_monsters.sprite,
-                                 D3-deferred: to become (level, shown frame) with the monster model) */
+/* More DRAW_XOR_SPRITE sets (enum sprite_set continued): the status bar. */
+enum sprite_set_status {
+    SPRITE_STATUS = 16,       /* g_status_tiles[mode * g_status_row_len + index]: 0 jetpack icon,
+                                 1 gun icon, 2..4 labels, 5 'go thru the door', 6 life icon */
+    SPRITE_METER_LABEL = 17,  /* g_spr_meter_label[mode]: the jetpack meter frame; index 0 */
+    SPRITE_METER_BAR = 18,    /* g_spr_meter_bar[mode]: one fuel unit of the meter; index 0 */
 };
 
 /* Sound requests other than PlaySound(n) (n >= 0), mirroring the driver

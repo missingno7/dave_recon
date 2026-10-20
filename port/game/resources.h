@@ -17,16 +17,17 @@
 #include "state.h"
 
 #define LEVEL_PATH_BYTES 256
+#define LEVEL_TRAILER_BYTES 24
+#define LEVEL_RECORD_BYTES (LEVEL_PATH_BYTES + LEVEL_ROWS * LEVEL_COLS + LEVEL_TRAILER_BYTES)  /* 0x500 */
 #define DEMO_BANK_BYTES 4368     /* the demo segment, zero padding included */
 
 struct level_record {
     int8_t path[LEVEL_PATH_BYTES];
     int8_t map[LEVEL_ROWS][LEVEL_COLS];
-    /* The original's 24 trailing bytes per record (recorder leftovers in
-     * the shipped data). Normally unread, but tile_at() accepts map rows 10
-     * and 11 without a range check, and those flat indexes continue into
-     * this tail and then into the NEXT record's path (player.c). */
-    int8_t tail[24];
+    int8_t trailer[LEVEL_TRAILER_BYTES]; /* the record's 24 trailing bytes: never read in
+                                            range; tile probes past row 9 column 99 and
+                                            monster paths without 0xEA reach them (U-M1 item 2),
+                                            and so do tile_at's rows 10/11 (N2-1) */
 };
 
 struct resources {

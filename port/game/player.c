@@ -14,6 +14,9 @@
  *   g_actors      -> explosions         g_shots       -> shots
  */
 #include "player.h"
+#include "level_probe.h"
+#include "monsters.h"
+#include "shots.h"
 
 /* ---- constant tables of the original (src/DAVE.C _DATA) ------------------ */
 
@@ -36,18 +39,13 @@ static const int16_t warp_start_scroll_x[LEVEL_COUNT] = {0, 0, 0, 0, 42, 0, 0, 6
 static const int16_t warp_start_x[LEVEL_COUNT] = {0, 0, 0, 0, 144, 0, 0, 64, 144, 144};
 
 #define TILE_IDS 53
-/* g_tile_climbable (DS 0x0262) and g_tile_attr (DS 0x02CC) per tile id. */
+/* g_tile_climbable (DS 0x0262) per tile id; g_tile_attr lives in level_probe.c. */
 static const int16_t tile_climbable[TILE_IDS] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0,
     0, 0, 0, 0
 };
-enum { ATTR_FREE = 0, ATTR_SOLID = 1, ATTR_DEADLY = 2 };
-static const int16_t tile_attr[TILE_IDS] = {
-    0, 1, 0, 1, 0, 1, 2, 2, 2, 2, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1,
-    2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0
-};
+enum { ATTR_FREE = 0, ATTR_SOLID = 1, ATTR_DEADLY = 2 };   /* g_tile_attr values (level_probe.c) */
 
 /* Sounds (PlaySound ids, sound bank SPK). */
 enum {
@@ -55,7 +53,7 @@ enum {
     SND_JETPACK = 9, SND_JETPACK_ON = 11
 };
 
-enum { SHOT_KIND_DAVE = 1, SHOT_OWNER_DAVE = 5, EXPLOSION_DEATH = 5 };
+enum { EXPLOSION_DEATH = 5 };
 enum { DIR_LEFT = 0, DIR_RIGHT = 1 };   /* dave.facing / jet_facing / shot.dir */
 
 /* ---- output helpers ------------------------------------------------------- */
@@ -78,30 +76,17 @@ static void draw_dave(const struct game *g, struct frame_output *out)
 /* erase_dave(): restore what draw_dave saved. */
 static void erase_dave(struct frame_output *out) { out_draw(out, ERASE_DAVE, 0, 0, 0, 0); }
 
-static void xor_sprite(struct frame_output *out, int x, int y, int table, int index)
+static void xor_sprite(struct frame_output *out, int x, int y, int set, int index)
 {
-    out_draw(out, XOR_SPRITE, x, y, table, index);
+    out_draw(out, DRAW_XOR_SPRITE, x, y, set, index);
 }
 
 /* draw_status_meter(): jetpack meter frame and one bar per fuel unit. */
 static void draw_status_meter(const struct game *g, struct frame_output *out)
 {
-    xor_sprite(out, 0x48, 0xAA, SPRITES_METER_LABEL, 0);
+    xor_sprite(out, 0x48, 0xAA, SPRITE_METER_LABEL, 0);
     for (int i = 0; i < g->inv.jetpack_fuel; i++)
-        xor_sprite(out, i * 2 + 0x4C, 0xAE, SPRITES_METER_BAR, 0);
-}
-
-/* draw_object(i): one shot. */
-static void draw_shot(const struct shot *s, struct frame_output *out)
-{
-    switch (s->kind) {
-    case 0:   /* monster shot: animated */
-        xor_sprite(out, s->x, s->y, s->dir == 0 ? SPRITES_SET0 + 2 : SPRITES_SET0 + 1, s->frame);
-        break;
-    case SHOT_KIND_DAVE:
-        xor_sprite(out, s->x, s->y, s->dir == 0 ? SPRITES_SHOT_B0 : SPRITES_SHOT_B1, 0);
-        break;
-    }
+        xor_sprite(out, i * 2 + 0x4C, 0xAE, SPRITE_METER_BAR, 0);
 }
 
 /* draw_actors(): Dave (if on the playfield and alive), the monsters, the
@@ -112,13 +97,14 @@ static void draw_actors(const struct game *g, struct frame_output *out)
         draw_dave(g, out);
     for (int i = 0; i < MONSTER_COUNT; i++)
         if (g->monsters[i].active == 1)
-            xor_sprite(out, g->monsters[i].x, g->monsters[i].y, SPRITES_MONSTER_SLOT, i);
+            xor_sprite(out, g->monsters[i].x, g->monsters[i].y, SPRITE_MONSTER,
+                       monster_sprite_index(g->level.index, g->monsters[i].shown_frame));
     for (int i = 0; i < SHOT_COUNT; i++)
         if (g->shots[i].active == 1)
-            draw_shot(&g->shots[i], out);
+            shot_draw(g, i, out);
     for (int i = 0; i < EXPLOSION_COUNT; i++)
         if (g->explosions[i].active == 1)
-            xor_sprite(out, g->explosions[i].x, g->explosions[i].y, SPRITES_SET0, g->explosions[i].frame);
+            xor_sprite(out, g->explosions[i].x, g->explosions[i].y, SPRITE_EXPLOSION, g->explosions[i].frame);
 }
 
 /* The end-of-move redraw shared by every movement branch: erase and redraw
@@ -156,33 +142,9 @@ static int row_offset(int row)
     return -1000000;   /* out of the equivalence contract (never reached) */
 }
 
-/* The byte at flat offset `flat` from the start of the current level's map,
- * as the original's unchecked `g_level[...]` reads it inside g_levels: the
- * live map, then this record's 24-byte tail, then the next record's path;
- * negative offsets read this record's own path. Anything further away is
- * outside the equivalence contract (live BSS after g_levels, level -1:
- * state-model D4) and reads as 0. */
-static int level_byte(const struct game *g, const struct resources *r, int flat)
-{
-    int lv = g->level.index;
-    if (lv < 0 || lv >= LEVEL_COUNT)
-        return 0;
-    if (flat >= 0 && flat < LEVEL_ROWS * LEVEL_COLS)
-        return g->level.map[flat / LEVEL_COLS][flat % LEVEL_COLS];
-    if (flat >= LEVEL_ROWS * LEVEL_COLS && flat < LEVEL_ROWS * LEVEL_COLS + 24)
-        return r->levels[lv].tail[flat - LEVEL_ROWS * LEVEL_COLS];
-    if (flat >= LEVEL_ROWS * LEVEL_COLS + 24 && flat < LEVEL_ROWS * LEVEL_COLS + 24 + LEVEL_PATH_BYTES
-        && lv + 1 < LEVEL_COUNT)
-        return r->levels[lv + 1].path[flat - LEVEL_ROWS * LEVEL_COLS - 24];
-    if (flat < 0 && flat >= -LEVEL_PATH_BYTES)
-        return r->levels[lv].path[LEVEL_PATH_BYTES + flat];
-    return 0;
-}
-
-/* g_tile_attr / g_tile_climbable lookups; ids outside 0..52 come only from
- * the out-of-map bytes above, and read neighbouring tables in the original:
- * outside the equivalence contract (no shipped level reaches them). */
-static int attr_of(int tile) { return tile >= 0 && tile < TILE_IDS ? tile_attr[tile] : 0; }
+/* g_tile_climbable lookup of a raw tile byte. Ids outside 0..52 come only
+ * from out-of-map bytes and read neighbouring tables in the original:
+ * outside the equivalence contract (no shipped level reaches them, N2-1). */
 static int climbable(int tile) { return tile >= 0 && tile < TILE_IDS ? tile_climbable[tile] : 0; }
 
 /* Column of a view pixel. C division truncates toward zero, so the 15
@@ -190,16 +152,15 @@ static int climbable(int tile) { return tile >= 0 && tile < TILE_IDS ? tile_clim
 static int column_at(const struct game *g, int view_x) { return view_x / 16 + g->level.scroll_x; }
 
 /* tile_attr_at(dx, dy): attribute of the tile under Dave + (dx, dy); 0 above
- * the playfield (y < 16) and below row 9. */
+ * the playfield (y < 16) and below row 9. Inside rows 0..9 it is the same
+ * lookup as tile_attr_at_offset (level_probe.c), unchecked columns included. */
 static int tile_attr_at(const struct game *g, const struct resources *r, int dx, int dy)
 {
     if (g->dave.y + dy < 16)
         return 0;
-    int col = column_at(g, dx + g->dave.x);
-    int row = (g->dave.y + dy - 16) / 16;
-    if (row > 9)
+    if ((g->dave.y + dy - 16) / 16 > 9)
         return 0;
-    return attr_of(level_byte(g, r, row_offset(row) + col));
+    return tile_attr_at_offset(g, r, g->dave.x, g->dave.y, (int16_t)dx, (int16_t)dy);
 }
 
 /* tile_at(dx, dy): raw tile id under Dave + (dx, dy); rows 10 and 11 are
@@ -212,17 +173,7 @@ static int tile_at(const struct game *g, const struct resources *r, int dx, int 
     int row = (g->dave.y + dy - 16) / 16;
     if (row > 11)
         return 0;
-    return level_byte(g, r, row_offset(row) + col);
-}
-
-/* tile_attr_at_offset(x, y, dx, dy): attribute at view pixel (x+dx, y+dy),
- * with no range checks at all. */
-static int tile_attr_at_offset(const struct game *g, const struct resources *r,
-                               int x, int y, int dx, int dy)
-{
-    int col = column_at(g, dx + x);
-    int row = (y + dy - 16) / 16;
-    return attr_of(level_byte(g, r, row_offset(row) + col));
+    return level_record_byte(g, r, LEVEL_PATH_BYTES + row_offset(row) + col);
 }
 
 /* ---- shared sub-routines ---------------------------------------------------- */
@@ -247,42 +198,10 @@ static void spawn_explosion(struct game *g, int x, int y, int type, struct frame
             e->frame = 0;
             e->life = 0x6E;
             e->anim = 0xD;
-            xor_sprite(out, x, y, SPRITES_SET0, 0);
+            xor_sprite(out, x, y, SPRITE_EXPLOSION, 0);
             if (type == EXPLOSION_DEATH)
                 g->dave.death_timer = 300;
             break;
-        }
-    }
-}
-
-/* object_exists(id) */
-static int shot_exists(const struct game *g, int owner)
-{
-    for (int i = 0; i < SHOT_COUNT; i++)
-        if (g->shots[i].active == 1 && g->shots[i].owner == owner)
-            return 1;
-    return 0;
-}
-
-/* spawn_object(x, y, dir, kind, owner): unless the tile just below (x, y)
- * is solid, fill the first free shot slot and draw it once. */
-static void spawn_shot(struct game *g, const struct resources *r, int x, int y, int dir, int kind,
-                       int owner, struct frame_output *out)
-{
-    if (tile_attr_at_offset(g, r, x, y, 0, 1) == ATTR_SOLID)
-        return;
-    for (int i = 0; i < SHOT_COUNT; i++) {
-        struct shot *s = &g->shots[i];
-        if (s->active == 0) {
-            s->active = 1;
-            s->x = (int16_t)x;
-            s->y = (int16_t)y;
-            s->owner = (int16_t)owner;
-            s->dir = (int16_t)dir;
-            s->frame = 0;
-            s->kind = (int16_t)kind;
-            draw_shot(s, out);
-            return;
         }
     }
 }
@@ -441,11 +360,11 @@ enum menu_request player_process_input(struct game *g, const struct resources *r
 
     if (g->buttons.fire_repeat == 0 && (d->state & DAVE_ALIVE)) {
         g->buttons.fire_repeat = 30;
-        if (g->inv.has_gun > 0 && !shot_exists(g, SHOT_OWNER_DAVE) && d->y > 8 && d->y < 0xAA) {
+        if (g->inv.has_gun > 0 && !shot_owner_exists(g, SHOT_OWNER_DAVE) && d->y > 8 && d->y < 0xAA) {
             if (d->facing == DIR_LEFT)
-                spawn_shot(g, r, d->x - 10, d->y + 7, 0, SHOT_KIND_DAVE, SHOT_OWNER_DAVE, out);
+                shot_spawn(g, r, (int16_t)(d->x - 10), (int16_t)(d->y + 7), SHOT_LEFT, SHOT_KIND_DAVE, SHOT_OWNER_DAVE, out);
             else
-                spawn_shot(g, r, d->x + 20, d->y + 7, 1, SHOT_KIND_DAVE, SHOT_OWNER_DAVE, out);
+                shot_spawn(g, r, (int16_t)(d->x + 20), (int16_t)(d->y + 7), SHOT_RIGHT, SHOT_KIND_DAVE, SHOT_OWNER_DAVE, out);
         }
     }
 
@@ -963,13 +882,13 @@ void player_update_jetpack(struct game *g, struct frame_output *out)
     if (--g->inv.fuel_tick != 0)
         return;
     g->inv.fuel_tick = 15;
-    xor_sprite(out, g->inv.jetpack_fuel * 2 + 0x4A, 0xAE, SPRITES_METER_BAR, 0);   /* erase a bar */
+    xor_sprite(out, g->inv.jetpack_fuel * 2 + 0x4A, 0xAE, SPRITE_METER_BAR, 0);   /* erase a bar */
     g->inv.jetpack_fuel--;
     if (g->inv.jetpack_fuel == 0) {
         draw_status_meter(g, out);              /* XOR: erases the meter frame */
         d->state = (uint16_t)((d->state & 0xE0) | DAVE_FALL);
         g->inv.has_jetpack = 0;
-        xor_sprite(out, 0, 0xAA, SPRITES_STATUS, 0);                              /* jetpack icon */
+        xor_sprite(out, 0, 0xAA, SPRITE_STATUS, 0);                              /* jetpack icon */
         out_sound(out, SND_FALL);
         consume_dir(d);
         set_pose(g, POSE_FRONT, 0);
@@ -990,15 +909,15 @@ enum death_result player_handle_death(struct game *g, const struct resources *r,
         return DEATH_NOTHING;
 
     if (g->lives > 0)
-        xor_sprite(out, (g->lives - 1) * 16 + 0x100, 0, SPRITES_STATUS, 6);   /* life icon */
+        xor_sprite(out, (g->lives - 1) * 16 + 0x100, 0, SPRITE_STATUS, 6);   /* life icon */
     g->lives--;
     if (g->lives == -1) {
         if (g->inv.has_jetpack == 1) {
-            xor_sprite(out, 0, 0xAA, SPRITES_STATUS, 0);
+            xor_sprite(out, 0, 0xAA, SPRITE_STATUS, 0);
             draw_status_meter(g, out);
         }
         if (g->inv.has_gun == 1)
-            xor_sprite(out, 0xF0, 0xAA, SPRITES_STATUS, 1);
+            xor_sprite(out, 0xF0, 0xAA, SPRITE_STATUS, 1);
         g->game_over = 1;
         restore_level_map(g, r);
         return DEATH_GAME_OVER;

@@ -43,9 +43,7 @@ int dgroup_import_input(struct frame_input *in, const unsigned char *m);
 /* The input settings of a snapshot (D6: outside struct game). */
 void dgroup_import_input_settings(struct input_settings *s, const unsigned char *m);
 
-/* The 24-byte tails of the level records (resources.h); called by
- * dgroup_import_resources. The demo bank is far data outside DGROUP: the
- * bridge reads it from the unpacked DAVE.EXE (bridge.c). */
-void dgroup_import_level_tails(struct resources *r, const unsigned char *m);
+/* (The demo bank is far data outside DGROUP: the bridge reads it from the
+ * unpacked DAVE.EXE, bridge.c load_demo_bank.) */
 
 #endif

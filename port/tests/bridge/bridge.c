@@ -15,6 +15,9 @@
 #include <string.h>
 #include "anim.h"
 #include "dgroup_map.h"
+#include "explosions.h"
+#include "monsters.h"
+#include "shots.h"
 #include "output.h"
 #include "state.h"
 #include "player.h"
@@ -60,6 +63,34 @@ static void run_handle_death(struct game *g, const struct resources *r, struct f
     }
 }
 
+/* Player mutants (tests/test_native.py, the `<name>/mutant` pattern): one
+ * deliberate change of each player subsystem's result that the check must
+ * catch. (tests/test_native.py also builds source-level mutants of player.c.) */
+static void run_process_input_mutant(struct game *g, const struct resources *r, struct frame_output *o) {
+    int8_t before = g->buttons.fire_repeat;
+    run_process_input(g, r, o);
+    if (g->buttons.fire_repeat == 30 && before != 30)   /* fire reload 29 instead of 30 */
+        g->buttons.fire_repeat = 29;
+}
+static void run_move_dave_mutant(struct game *g, const struct resources *r, struct frame_output *o) {
+    player_move(g, r, o);
+    if (g->dave.move_throttle == 3)                     /* movement throttle reload 2 instead of 3 */
+        g->dave.move_throttle = 2;
+}
+static void run_update_jetpack_mutant(struct game *g, const struct resources *r, struct frame_output *o) {
+    (void)r;
+    int16_t before = g->inv.fuel_tick;
+    player_update_jetpack(g, o);
+    if (g->inv.fuel_tick == 15 && before != 15)         /* fuel period 14 instead of 15 */
+        g->inv.fuel_tick = 14;
+}
+static void run_handle_death_mutant(struct game *g, const struct resources *r, struct frame_output *o) {
+    int16_t before = g->dave.death_timer;
+    run_handle_death(g, r, o);
+    if (g->dave.death_timer == before - 1 && g->dave.death_timer > 1)   /* timer steps by 2 */
+        g->dave.death_timer--;
+}
+
 /* The demo bank (far segment 0x0B31 of the load module) from the unpacked
  * DAVE.EXE: $DAVE_UNPACKED_EXE, else build/DAVE_unpacked.exe next to
  * build/port/dave_bridge.exe. */
@@ -91,6 +122,38 @@ static void load_demo_bank(struct resources *res, const char *argv0) {
     fclose(f);
 }
 
+static void run_update_explosions(struct game *g, const struct resources *r, struct frame_output *o) {
+    explosions_step(g, r, o);
+}
+static void run_move_monsters(struct game *g, const struct resources *r, struct frame_output *o) {
+    monsters_step(g, r, o);
+}
+static void run_move_bullets(struct game *g, const struct resources *r, struct frame_output *o) {
+    shots_step(g, r, o);
+}
+
+/* Mutants (tests/test_native.py): a deliberate one-constant change of each
+ * subsystem, reproduced on the native result, which the check must catch. */
+static void run_move_monsters_mutant(struct game *g, const struct resources *r, struct frame_output *o) {
+    monsters_step(g, r, o);
+    for (int i = 0; i < MONSTER_COUNT; i++)      /* move period 4 instead of 5 */
+        if (g->monsters[i].active && g->monsters[i].move_count == 5)
+            g->monsters[i].move_count = 4;
+}
+static void run_move_bullets_mutant(struct game *g, const struct resources *r, struct frame_output *o) {
+    struct game before = *g;
+    shots_step(g, r, o);
+    for (int i = 0; i < SHOT_COUNT; i++)         /* speed 3 instead of 2 */
+        if (g->shots[i].active && g->shots[i].x != before.shots[i].x)
+            g->shots[i].x = (int16_t)(g->shots[i].x + (g->shots[i].x > before.shots[i].x ? 1 : -1));
+}
+static void run_update_explosions_mutant(struct game *g, const struct resources *r, struct frame_output *o) {
+    explosions_step(g, r, o);
+    for (int i = 0; i < EXPLOSION_COUNT; i++)    /* frame period 12 instead of 13 */
+        if (g->explosions[i].active && g->explosions[i].anim == 13)
+            g->explosions[i].anim = 12;
+}
+
 /* Registry: one line per native subsystem, named after the original
  * pipeline call it replaces (tools/oracle.py PIPELINE). */
 static const struct { const char *name; subsystem_fn run; } subsystems[] = {
@@ -101,6 +164,16 @@ static const struct { const char *name; subsystem_fn run; } subsystems[] = {
     {"move_dave", run_move_dave},
     {"update_jetpack", run_update_jetpack},
     {"handle_death", run_handle_death},
+    {"update_explosions", run_update_explosions},
+    {"move_monsters", run_move_monsters},
+    {"move_bullets", run_move_bullets},
+    {"move_monsters/mutant", run_move_monsters_mutant},
+    {"move_bullets/mutant", run_move_bullets_mutant},
+    {"update_explosions/mutant", run_update_explosions_mutant},
+    {"process_input/mutant", run_process_input_mutant},
+    {"move_dave/mutant", run_move_dave_mutant},
+    {"update_jetpack/mutant", run_update_jetpack_mutant},
+    {"handle_death/mutant", run_handle_death_mutant},
 };
 
 static void write_events(FILE *f, long index, const struct frame_output *o) {
