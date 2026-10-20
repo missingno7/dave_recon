@@ -1,0 +1,249 @@
+# Running out of jetpack fuel (docs/FIDELITY.md section 5, M1.3).
+#
+# Levels 1-2 as in levels_1_to_3.txt; level 3 replays built-in demo 0's
+# per-tick input (tools/route.py) up to its jetpack flight, then Left/Down
+# moves inside the pit and no input at all: Dave hovers with the jetpack on
+# until the fuel is gone.
+#
+# Covers: update_jetpack's fuel countdown (one unit and one meter segment
+# every 15 ticks of flight: 60 units = 900 ticks), the empty tank (state
+# 0x21 -> 0x28 falling, has_jetpack 0, the jetpack icon erased, sound 2,
+# input_dir 8, the front-facing pose), the fall and the landing in the
+# emptied pit (x 1073 lands on solid row 9; the plan's first try at x 1083
+# landed on a spike and died in the simulator).
+#
+# Tick ranges / evidence (run1, VGA):
+#   ticks 2-2750      levels 1 and 2 (see levels_1_to_3.txt)
+#   ticks 2751-6321   level 3 (index 2), 66.69-118.49 s
+#     3039            gun (sound 12); 3670, 3937 monsters shot (sound 8)
+#     4812            jetpack + trophy (sounds 12, 7), fuel 60
+#     4886            jetpack on (sound 11), state 0x21 from 4887, x 1063
+#     5785            fuel 0 after 900 flight ticks: sound 2, has_jetpack 0,
+#                     state 0x28 at 110.85 s (x 1073, y 101)
+#     5828            landed (state 0x24, y 144) at 111.47 s
+#
+# retraces: per-retrace capture (M1.6) of the whole run.
+duration 118490
+png_every 500
+retraces 9000
+4049 key space
+11939 keydown right
+12153 keydown pageup
+12253 keyup pageup
+14450 keyup right
+14950 keydown pageup
+14950 keydown right
+15050 keyup pageup
+16148 keyup right
+16505 keydown right
+17204 keyup right
+17504 keydown left
+17504 keydown up
+17604 keyup up
+18346 keyup left
+19002 keydown left
+19002 keydown up
+19102 keyup up
+19844 keyup left
+20300 keydown right
+23297 keyup right
+23297 keydown left
+27491 keyup left
+32999 keydown right
+33156 keyup right
+33170 keydown pageup
+33213 keyup pageup
+33213 keydown right
+33898 keyup right
+33983 keydown right
+33998 keyup right
+34012 keydown up
+34055 keyup up
+34055 keydown left
+34740 keyup left
+34825 keydown pageup
+34868 keyup pageup
+34868 keydown right
+35781 keyup right
+35795 keydown pageup
+35838 keyup pageup
+35838 keydown right
+36181 keyup right
+36609 keydown right
+37636 keyup right
+37793 keydown left
+37807 keyup left
+37993 keydown home
+38035 keyup home
+38035 keydown left
+38720 keyup left
+38834 keydown pageup
+38877 keyup pageup
+38877 keydown right
+40247 keyup right
+40447 keydown left
+40461 keyup left
+40475 keydown pageup
+40518 keyup pageup
+40518 keydown right
+41645 keyup right
+41816 keydown right
+41831 keyup right
+41845 keydown pageup
+41888 keyup pageup
+41888 keydown right
+42801 keyup right
+42815 keydown pageup
+42858 keyup pageup
+42858 keydown right
+44228 keyup right
+44670 keydown left
+44927 keyup left
+44941 keydown home
+44984 keyup home
+44984 keydown left
+46354 keyup left
+46411 keydown home
+46454 keyup home
+46454 keydown left
+46511 keyup left
+47210 keydown right
+47552 keyup right
+47567 keydown pageup
+47609 keyup pageup
+47609 keydown right
+48294 keyup right
+48394 keydown right
+48437 keyup right
+48451 keydown right
+48537 keyup right
+48551 keydown right
+49578 keyup right
+49593 keydown pageup
+49635 keyup pageup
+49635 keydown right
+49864 keyup right
+49878 keydown pageup
+49921 keyup pageup
+49921 keydown right
+50606 keyup right
+50691 keydown pageup
+50734 keyup pageup
+50734 keydown right
+51861 keyup right
+52403 keydown pageup
+52446 keyup pageup
+52446 keydown right
+52789 keyup right
+52803 keydown pageup
+52846 keyup pageup
+52846 keydown right
+53531 keyup right
+53616 keydown home
+53659 keyup home
+53659 keydown left
+55029 keyup left
+55043 keydown up
+55086 keyup up
+55086 keydown right
+55999 keyup right
+56013 keydown right
+57383 keyup right
+57397 keydown right
+58767 keyup right
+58781 keydown pageup
+58824 keyup pageup
+58824 keydown right
+60194 keyup right
+66686 keydown right
+66700 keyup right
+66928 keydown right
+67142 keyup right
+67228 keydown home
+67799 keyup home
+67827 keydown right
+68084 keyup right
+68712 keydown pageup
+69711 keyup pageup
+70253 keydown pageup
+71366 keyup pageup
+71894 keydown up
+72179 keyup up
+72179 keydown pageup
+72307 keyup pageup
+72307 keydown right
+73962 keyup right
+74148 keydown up
+74462 keyup up
+74462 keydown pageup
+74576 keyup pageup
+74576 keydown right
+74747 keydown lctrl
+75004 keyup lctrl
+75047 keyup right
+75789 keydown pageup
+76659 keyup pageup
+77344 keydown pageup
+78542 keyup pageup
+78742 keydown up
+79156 keyup up
+79655 keydown lctrl
+79784 keyup lctrl
+80597 keydown pageup
+81410 keyup pageup
+82309 keydown pageup
+82381 keydown lctrl
+82652 keyup lctrl
+83536 keyup pageup
+84621 keydown pageup
+85491 keyup pageup
+86076 keydown pageup
+87003 keyup pageup
+87745 keydown up
+88059 keyup up
+88059 keydown pageup
+88116 keyup pageup
+88116 keydown right
+89343 keyup right
+90057 keydown up
+90271 keyup up
+90271 keydown pageup
+90414 keyup pageup
+90414 keydown right
+91498 keyup right
+91526 keydown up
+91798 keyup up
+91798 keydown pageup
+91869 keyup pageup
+91869 keydown right
+93010 keyup right
+93096 keydown pageup
+93781 keyup pageup
+93781 keydown right
+94266 keyup right
+94694 keydown pageup
+95165 keyup pageup
+95165 keydown left
+95365 keyup left
+95365 keydown right
+95892 keyup right
+96606 keydown left
+96706 keyup left
+96706 keydown end
+96763 keyup end
+96763 keydown down
+96891 keyup down
+97433 keydown up
+97819 keydown lalt
+97876 keyup up
+98004 keyup lalt
+98261 keydown right
+98432 keyup right
+98504 keydown up
+98803 keyup up
+98817 keydown right
+98932 keyup right
+98932 keydown left
+101072 keyup left
+101072 keydown down
+101214 keyup down

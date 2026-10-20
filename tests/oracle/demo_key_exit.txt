@@ -1,0 +1,45 @@
+# Ending an attract demo with a key, menu keys during play, and F3 restart
+# (docs/FIDELITY.md section 5, M1.3).
+#
+# The title times out (1200 retraces) into demo 1 (level 2). A key that is
+# not a menu key ('a') ends the demo in handle_menu_key's default branch:
+# restore the map (movmem g_tiles -> g_level), g_demo_mode = 0, StopSound,
+# init_game_state (level index 0, lives 3, score 0), load_level,
+# redraw_screen, wait_for_input -- whose `if (bioskey(1)) bioskey(0)` eats the
+# 'a'. Right then leaves wait_for_input: a live game on LEVEL 1 (the demo's
+# level is not kept). During play: F9 pause / F9 resume, Esc -> quit prompt
+# answered N, F1 help left with Esc, and F3 -> "Restart Game?" answered Y,
+# which (g_demo_mode != 3) restores the map, sets g_demo_mode = 3 and stops
+# the sound: the next tick is the title again. A key on that title starts a
+# new game (attract_mode state 3 -> load_level, wait_for_input), left with
+# Right.
+#
+# Every key is a keydown/keyup pair snapped to the middle between two WaitVBL
+# exits (oracle.py --snap with the retraces capture).
+duration 46000
+png_every 50
+retraces 4000
+25995 keydown a
+26066 keyup a
+28007 keydown right
+29005 keyup right
+30004 keydown f9
+30076 keyup f9
+31502 keydown f9
+31574 keyup f9
+32494 keydown esc
+32565 keyup esc
+33198 keydown n
+33269 keyup n
+33999 keydown f1
+34356 keyup f1
+34356 keydown esc
+34770 keyup esc
+35497 keydown f3
+35569 keyup f3
+36197 keydown y
+36268 keyup y
+40006 keydown space
+40077 keyup space
+42004 keydown right
+43002 keyup right

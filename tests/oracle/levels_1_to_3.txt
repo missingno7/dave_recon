@@ -1,0 +1,258 @@
+# Live keyboard play of levels 1-3 to the start of level 4 (docs/FIDELITY.md
+# section 5, M1.3; route planning: tools/route.py).
+#
+# Level 1 is played exactly as in level1_complete.txt (ticks 2-883). The
+# level 2 and 3 routes were planned per tick with tools/route.py (the native
+# port's pipeline chained from this run's tick-head snapshots as a fast
+# simulator, best-first search over walk/jump/jetpack moves, deaths pruned),
+# turned into key events half a retrace before each tick head and snapped
+# with --snap; the original is the judge (the plan is not part of the
+# contract). Level 3 replays the per-tick input of built-in demo 0 (which
+# plays level 3) from the level's first tick, then a searched jetpack flight
+# to the door: live keys reproduce the demo's path (gun, two monsters shot,
+# jetpack + trophy).
+#
+# Covers: level 2 (maze, trophy, door), the level-complete corridor and
+# wait_for_input twice more, level 3 with the gun (sound 12), shooting
+# (Ctrl: release-triggered, U-G9 b) and two monsters killed (sound 8), the
+# jetpack and trophy picked up together from the spike pit (sounds 12, 7),
+# jetpack on with Alt (sound 11, state 0x21) and flight (sound 9), the door
+# reached flying, level 4 start (state 0x28: level flags 40).
+#
+# Tick ranges / evidence (run1, VGA):
+#   ticks 2-883       level 1 (see level1_complete.txt)
+#   ticks 884-2750    level 2 (index 1), 33.15-60.20 s
+#     1209            trophy (sound 7, score 4300) at x 192, y 82
+#     2750            door (sound 10): corridor walk, score 6350
+#   ticks 2751-5002   level 3 (index 2), 66.69-99.67 s
+#     3039            gun (sound 12)
+#     3670, 3937      monsters shot (sound 8)
+#     4812            jetpack + trophy (sounds 12, 7), x 1063, y 128
+#     4886            jetpack on (sound 11): state 0x21 from tick 4887
+#     5002            door while flying (sound 10), score 11250
+#   ticks 5003-5213   level 4 (index 3) from 106.16 s
+#
+# retraces: per-retrace capture (M1.6) of the whole run.
+duration 109159
+png_every 500
+retraces 9000
+4049 key space
+11940 keydown right
+12154 keydown pageup
+12253 keyup pageup
+14451 keyup right
+14950 keydown pageup
+14950 keydown right
+15050 keyup pageup
+16149 keyup right
+16505 keydown right
+17204 keyup right
+17504 keydown left
+17504 keydown up
+17604 keyup up
+18346 keyup left
+19002 keydown left
+19002 keydown up
+19102 keyup up
+19844 keyup left
+20301 keydown right
+23297 keyup right
+23297 keydown left
+27492 keyup left
+32999 keydown right
+33156 keyup right
+33170 keydown pageup
+33213 keyup pageup
+33213 keydown right
+33898 keyup right
+33984 keydown right
+33998 keyup right
+34012 keydown up
+34055 keyup up
+34055 keydown left
+34740 keyup left
+34826 keydown pageup
+34868 keyup pageup
+34868 keydown right
+35781 keyup right
+35796 keydown pageup
+35839 keyup pageup
+35839 keydown right
+36181 keyup right
+36609 keydown right
+37636 keyup right
+37793 keydown left
+37808 keyup left
+37993 keydown home
+38036 keyup home
+38036 keydown left
+38721 keyup left
+38835 keydown pageup
+38878 keyup pageup
+38878 keydown right
+40247 keyup right
+40447 keydown left
+40461 keyup left
+40476 keydown pageup
+40518 keyup pageup
+40518 keydown right
+41646 keyup right
+41817 keydown right
+41831 keyup right
+41845 keydown pageup
+41888 keyup pageup
+41888 keydown right
+42801 keyup right
+42816 keydown pageup
+42858 keyup pageup
+42858 keydown right
+44228 keyup right
+44670 keydown left
+44927 keyup left
+44942 keydown home
+44984 keyup home
+44984 keydown left
+46354 keyup left
+46411 keydown home
+46454 keyup home
+46454 keydown left
+46511 keyup left
+47210 keydown right
+47553 keyup right
+47567 keydown pageup
+47610 keyup pageup
+47610 keydown right
+48295 keyup right
+48394 keydown right
+48437 keyup right
+48452 keydown right
+48537 keyup right
+48551 keydown right
+49579 keyup right
+49593 keydown pageup
+49636 keyup pageup
+49636 keydown right
+49864 keyup right
+49878 keydown pageup
+49921 keyup pageup
+49921 keydown right
+50606 keyup right
+50692 keydown pageup
+50734 keyup pageup
+50734 keydown right
+51862 keyup right
+52404 keydown pageup
+52447 keyup pageup
+52447 keydown right
+52789 keyup right
+52803 keydown pageup
+52846 keyup pageup
+52846 keydown right
+53531 keyup right
+53617 keydown home
+53659 keyup home
+53659 keydown left
+55029 keyup left
+55043 keydown up
+55086 keyup up
+55086 keydown right
+55999 keyup right
+56014 keydown right
+57383 keyup right
+57398 keydown right
+58767 keyup right
+58782 keydown pageup
+58824 keyup pageup
+58824 keydown right
+60194 keyup right
+66686 keydown right
+66686 keyup right
+66929 keydown right
+67143 keyup right
+67228 keydown home
+67799 keyup home
+67828 keydown right
+68084 keyup right
+68712 keydown pageup
+69711 keyup pageup
+70253 keydown pageup
+71366 keyup pageup
+71894 keydown up
+72179 keyup up
+72179 keydown pageup
+72308 keyup pageup
+72308 keydown right
+73963 keyup right
+74148 keydown up
+74462 keyup up
+74462 keydown pageup
+74576 keyup pageup
+74576 keydown right
+74748 keydown lctrl
+75004 keyup lctrl
+75047 keyup right
+75789 keydown pageup
+76659 keyup pageup
+77344 keydown pageup
+78543 keyup pageup
+78743 keydown up
+79156 keyup up
+79656 keydown lctrl
+79784 keyup lctrl
+80597 keydown pageup
+81411 keyup pageup
+82310 keydown pageup
+82381 keydown lctrl
+82652 keyup lctrl
+83537 keyup pageup
+84621 keydown pageup
+85491 keyup pageup
+86076 keydown pageup
+87004 keyup pageup
+87746 keydown up
+88060 keyup up
+88060 keydown pageup
+88117 keyup pageup
+88117 keydown right
+89344 keyup right
+90057 keydown up
+90271 keyup up
+90271 keydown pageup
+90414 keyup pageup
+90414 keydown right
+91498 keyup right
+91527 keydown up
+91798 keyup up
+91798 keydown pageup
+91869 keyup pageup
+91869 keydown right
+93011 keyup right
+93096 keydown pageup
+93781 keyup pageup
+93781 keydown right
+94266 keyup right
+94694 keydown pageup
+95165 keyup pageup
+95165 keydown left
+95365 keyup left
+95365 keydown right
+95893 keyup right
+96606 keydown left
+96706 keyup left
+96706 keydown end
+96763 keyup end
+96763 keydown down
+96892 keyup down
+97434 keydown up
+97819 keydown lalt
+97876 keyup up
+98004 keyup lalt
+98261 keydown right
+98433 keyup right
+98504 keydown up
+98804 keyup up
+98818 keydown right
+99018 keyup right
+99032 keydown up
+99260 keyup up
+99274 keydown up

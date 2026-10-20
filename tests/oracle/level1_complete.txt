@@ -29,9 +29,12 @@
 # sits half-way between two WaitVBL exits (oracle.py --snap with retraces),
 # so neither its tick nor its retrace depends on the emulator jitter; the
 # release of Left at 27494 falls inside the level-complete tick.
+# draws: the original's drawing calls in order, with WaitVBL exits (M1.6,
+# draws.jsonl; oracle.py DRAW_ROUTINES).
 duration 34000
 png_every 100
 retraces 4000
+draws 200000
 4051 key space
 11942 keydown right
 12156 keydown pageup

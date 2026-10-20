@@ -1,0 +1,90 @@
+# Title-screen menu keys (docs/FIDELITY.md section 5, M1.3): every popup
+# handle_menu_key opens from the title, each left without changing anything.
+#
+# The title loop (attract_mode state 3) calls handle_menu_key every 6
+# retraces; it only PEEKS the BIOS key (bioskey(1)), so each popup first reads
+# its own F key back. The INT 9 handler keeps at most one key waiting.
+#   F1   show_help: page 1, space -> page 2, space -> page 3, space -> back
+#   F1   show_help again, Esc on page 1 (early exit, redraw_screen)
+#   F2   control_panel: flush_keyboard, set_video_mode, panel; cursor moved
+#        down, right, up, left (no Enter: nothing selected), Esc -> the saved
+#        settings are written back unchanged, redraw_screen
+#   F3   ask_restart "Restart Game? (Y or N):" answered Y: on the title
+#        (g_demo_mode == 3) Y does NOT restart, it takes the N branch
+#        (redraw_screen, ResumeSound)
+#   F3   ask_restart answered N
+#   F9   pause_game: bioskey(0) eats the F9, waits for a second F9, then
+#        set_video_mode + redraw_screen
+#   Esc  ask_quit "Quit? (Y or N):" answered N (redraw_screen)
+#   F10  ask_quit answered N
+# All of it happens inside title tick 1 (prompts block the tick); its interval
+# is outside the timing contract (title), the state at the next tick head is
+# compared. The title then times out after its 1200 loop retraces (the popups
+# add their own time) and a demo starts.
+#
+# Keys are held ~100 ms (keydown/keyup), 0.6-1 s apart, inside each prompt's
+# poll window; the prompts read the BIOS buffer, so their exact poll phase
+# does not matter (--snap leaves events in the long no-WaitVBL gaps of the
+# bioskey(0) prompts alone).
+#
+# Evidence (run1, VGA): tick 1 title 3.49 s, its pipeline pass ends 31.88 s
+# (popups ~11 s + the 1200-retrace title loop); 1706 WaitVBL calls in 1990
+# retrace periods (bioskey(0) blocks without WaitVBL); ticks 2-570 demo 1,
+# level 2 (srand seed 5998 at 31.87 s). A one-off run with the
+# draw capture (`draws`, oracle.py DRAW_ROUTINES) shows every popup by its
+# print_string calls in order: the three help pages ("f1 = help" ...,
+# "the object of the game is" ..., "watch out for fire, water" ...), help
+# page 1 again, "PC-Arcade Control Panel" with VIDEO:/SOUND:/CONTROL:,
+# "Restart Game? (Y or N):" twice, "Press F9 to end pause:", "Quit? (Y or
+# N):" twice, each followed by the title redraw ("BY JOHN ROMERO" ...).
+# The draw capture is NOT part of this scenario: with its ~90 hooks armed,
+# the popups' video mode sets (control_panel, pause_game -> set_video_mode)
+# shifted the retrace timeline per run (FIDELITY.md section 2), and two runs
+# left the title 190 ms apart; without it the scenario is EQUIVALENT.
+duration 39992
+png_every 0
+retraces 4000
+5006 keydown f1
+5100 keyup f1
+6000 keydown space
+6100 keyup space
+7000 keydown space
+7100 keyup space
+8000 keydown space
+8102 keyup space
+9001 keydown f1
+9100 keyup f1
+10000 keydown esc
+10100 keyup esc
+10999 keydown f2
+11099 keyup f2
+12004 keydown down
+12105 keyup down
+12593 keydown right
+12694 keyup right
+13196 keydown up
+13296 keyup up
+13795 keydown left
+13895 keyup left
+14395 keydown esc
+14495 keyup esc
+15501 keydown f3
+15601 keyup f3
+16205 keydown y
+16305 keyup y
+16995 keydown f3
+17096 keyup f3
+17699 keydown n
+17800 keyup n
+18504 keydown f9
+18604 keyup f9
+19495 keydown f9
+19596 keyup f9
+20501 keydown esc
+20601 keyup esc
+21205 keydown n
+21305 keyup n
+21995 keydown f10
+22096 keyup f10
+22699 keydown n
+22800 keyup n

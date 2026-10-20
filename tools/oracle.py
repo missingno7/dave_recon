@@ -113,6 +113,15 @@ VIDEO = {
     "cga": {"machine": "cga", "fb": (0xB8000, 0x4000), "vbl_ms": 1000 / 59.92, "mode": 1},
 }
 VBL_MS = VIDEO["vga"]["vbl_ms"]     # kept for importers
+# Start-up phase gate: the emulated time of the game's FIRST WaitVBL exit
+# (just after the title tick head, 3485.94 ms). In quiet runs it is
+# 3498.8-3501.2 ms (VGA), 3499.648 (EGA), 3506.792 (CGA); under host load
+# (concurrent oracle runs, the draw hooks) DOSBox-X's VGA frame accounting
+# drifts during DOS boot and it came out 3489-3497 ms, offsetting EVERY later
+# retrace by that much (and moving scripted keys across tick boundaries:
+# FIDELITY.md section 1). run_once kills and restarts such a run.
+PHASE_WINDOW = {"vga": (3498.5, 3501.6), "ega": (3498.0, 3501.3), "cga": (3505.2, 3508.4)}
+PHASE_TRIES = 8
 # EGA true-colour capture: tiles.asm SaveUnderEGA, the instruction after the
 # read-map `out` in @@plane (`mov cx,bp`, cs 0x8545). SaveUnderEGA only READS
 # video memory, so the four dumps of its first line (planes 3,2,1,0, AH = plane,
@@ -126,6 +135,83 @@ EGA_PLANE_SITE = 0x8545
 # (0040:001A head, 001C tail, 001E..003D ring) = the frame's input.
 RETRACE_SITE = 0x7640
 BIOS_KBD = (0x41A, 0x24)
+# The input read of every tick (M3.3 replay): process_input's `call
+# get_player_input` (cs 0x4844). Scripted key events reach the emulated
+# keyboard 0.5-1 ms late and can land between the tick-head snapshot and this
+# read, so the key table AT the read is recorded on every tick
+# (keys_at_read.jsonl), together with the BIOS key buffer at every tick head
+# (ticks.jsonl bios_*; dumped at MAIN_LOOP_HEAD_CS).
+INPUT_READ_CS = 0x4844
+
+# Draw-order capture (`draws <n>`, M1.6, state-model D1): an on_exec hook at
+# the ENTRY of every drawing routine of the original dumps ss:sp (the near
+# return address, then up to 5 argument words), plus for a few routines the
+# DGROUP variables they draw from (`extra`: DS offset, length). The hits of
+# all hooks are merged by emulated time (each hook is a distinct instruction,
+# 50 ns apart at least) into draws.jsonl, with WaitVBL exits (`vbl`) in the
+# same stream. A call is `top` when its return address is NOT inside another
+# hooked routine: comparing the native draw-command stream (port/game/output.h)
+# means taking the top-level calls of the routines that have an `op`; the
+# others are their inner primitives (DrawXor* under xor_sprite, DrawChar
+# under print_string, SaveUnder* under draw_dave ...) or routines output.h has
+# no op for yet (op None). Addresses: docs/semantic-inventory.json.
+#
+# The hooks are armed at DRAWS_ARM_MS, just AFTER the first title tick head
+# (3485.94 ms) and its mode set, not at 0: ~90 extra per-instruction
+# triggers slow the host, and a slow host during DOS boot / DAVE's start-up
+# mode set shifted the whole VGA retrace timeline by 4-10 ms per run
+# (DOSBox-X VGA_VerticalTimer frame accounting, FIDELITY.md section 1), which
+# moved scripted keys across tick boundaries (level1_complete: NOT
+# equivalent with hooks armed at 0, equivalent with 3490). So the first title
+# redraw (redraw_screen of tick 1, < 4 ms after its head) is not in the stream.
+DRAWS_ARM_MS = LAUNCH_MS + 490
+#   name, cs entry, cs end, argument words, output.h op, extra DS dumps
+DRAW_ROUTINES = [
+    # DAVE.C
+    ("restore_background", 0x1890, 0x18CE, 1, None, ()),
+    ("save_background", 0x18CE, 0x1929, 4, None, ()),
+    ("draw_masked_sprite", 0x1929, 0x1984, 4, None, ()),
+    ("draw_tile", 0x1984, 0x19D6, 3, "DRAW_PIC", ()),
+    ("xor_sprite", 0x19D6, 0x1A28, 3, "DRAW_XOR_SPRITE", ()),
+    ("erase_dave", 0x1A28, 0x1A6A, 0, "DRAW_ERASE_DAVE", ()),
+    ("draw_dave", 0x1A6A, 0x1B16, 0, "DRAW_DAVE", ((0x56EA, 4), (0x573E, 2), (0x57E4, 2))),
+    # CONFIG.C
+    ("draw_control_panel", 0x5910, 0x5BD5, 0, None, ()),
+    # HARDWARE.C
+    ("set_video_mode", 0x6B64, 0x6BC2, 1, "DRAW_SET_VIDEO_MODE", ()),
+    ("draw_text_window", 0x6BC2, 0x6CB9, 4, None, ()),
+    ("clear_text_window", 0x6CB9, 0x6CF1, 0, None, ()),
+    ("draw_centered_window", 0x6CF1, 0x6D3B, 2, "DRAW_CENTERED_WINDOW", ()),
+    ("open_window_anim", 0x6D3B, 0x6D9D, 2, None, ()),
+    ("open_window_anim_w", 0x6D9D, 0x6DD1, 2, None, ()),
+    ("open_window_anim_h", 0x6DD1, 0x6E05, 2, None, ()),
+    ("print_string", 0x6E71, 0x6ECB, 1, "DRAW_PRINT_STRING", ((0x8A12, 0x12), (0x1392, 2))),
+    ("print_int", 0x6ECB, 0x6EF8, 1, None, ((0x8A12, 0x12),)),
+    ("print_long", 0x6EF8, 0x6F25, 1, None, ((0x8A12, 0x12),)),
+    # lowlevel.asm
+    ("DrawChar", 0x7678, 0x76B5, 3, None, ()),
+    ("DrawPic", 0x793B, 0x7998, 3, None, ()),
+    # tiles.asm
+    ("DrawMaskedEGA", 0x8325, 0x8426, 4, None, ()),
+    ("RestoreUnderEGA", 0x842A, 0x84A9, 1, None, ()),
+    ("SaveUnderEGA", 0x84A9, 0x8576, 4, None, ()),
+    ("DrawMaskedVGA", 0x8578, 0x862C, 4, None, ()),
+    ("RestoreUnderVGA", 0x862C, 0x8671, 1, None, ()),
+    ("SaveUnderVGA", 0x8671, 0x86FD, 4, None, ()),
+    ("DrawMaskedCGA", 0x86FD, 0x8794, 4, None, ()),
+    ("RestoreUnderCGA", 0x8794, 0x87E6, 1, None, ()),
+    ("SaveUnderCGA", 0x87E6, 0x8888, 4, None, ()),
+    ("DrawXorEGA", 0x8888, 0x899F, 3, None, ()),
+    ("DrawPicEGA", 0x899F, 0x8A66, 3, None, ()),
+    ("DrawXorVGA", 0x8A66, 0x8B17, 3, None, ()),
+    ("DrawPicVGA", 0x8B17, 0x8B8F, 3, None, ()),
+    ("DrawXorCGA", 0x8B95, 0x8C5E, 3, None, ()),
+    ("DrawPicCGA", 0x8C5E, 0x8CDA, 3, None, ()),
+    ("DrawLevelView", 0x8CDA, 0x9011, 0, "DRAW_LEVEL_VIEW", ((0x56F4, 2), (0x57A0, 2))),
+    ("DrawViewBorders", 0x9011, 0x90C7, 0, "DRAW_VIEW_BORDERS", ()),
+    ("DrawTile", 0x90D6, 0x90E9, 3, "DRAW_TILE", ()),
+    ("CacheEGATiles", 0x93D1, 0x9413, 0, None, ()),
+]
 
 FIELDS = {   # decoded into ticks.jsonl; names: docs/UNDERSTANDING_LEDGER.md
     "game_state": (0x00AA, 2, False),     # 0 play, 1 demo, 2 high scores, 3 title
@@ -181,6 +267,7 @@ class Scenario:
     ega_planes: int = 0
     retraces: int = 0
     dscores: str = "none"     # "none": game writes its default table; "user": assets/DSCORES.DAV
+    draws: int = 0            # draw-order capture: max hits per drawing routine (DRAW_ROUTINES)
     inputs: list = field(default_factory=list)
 
 
@@ -207,6 +294,8 @@ def parse_scenario(path: pathlib.Path) -> Scenario:
             sc.retraces = int(parts[1])
         elif parts[0] == "dscores" and len(parts) == 2 and parts[1] in ("none", "user"):
             sc.dscores = parts[1]
+        elif parts[0] == "draws" and len(parts) == 2:
+            sc.draws = int(parts[1])
         elif len(parts) == 3 and parts[1] in ("key", "keydown", "keyup"):
             sc.inputs.append(f"{int(parts[0])} {parts[1]} {parts[2]}")
         else:
@@ -246,10 +335,15 @@ def run_once(work: pathlib.Path, sc: Scenario, calibrate=False):
                      f"{ds_linear:x} {DGROUP_LIVE_LEN:x} tick")
         lines.append(f"0 on_exec {LOAD_SEG:04x}:{PLAYSOUND_CS:04x} 1000000 dump ss:sp+2 2 snd")
         lines.append(f"0 on_exec {LOAD_SEG:04x}:{SRAND_CS:04x} 1000000 dump ss:sp+2 2 seed")
+        lines.append(f"0 on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} 1 dump ss:sp 2 phase")
         lines.append("0 io_watch 40 43 pit.log out")
         lines.append("0 io_watch 61 61 pit.log inout")
         lines.append(f"0 on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump "
                      f"{fb_at:x} {fb_len:x} fb")
+        lines.append(f"0 on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump "
+                     f"{BIOS_KBD[0]:x} {BIOS_KBD[1]:x} tk")
+        lines.append(f"0 on_exec {LOAD_SEG:04x}:{INPUT_READ_CS:04x} 1000000 dump "
+                     f"{ds_linear + KEYDOWN:x} 100 kr")
         if sc.ega_planes:
             # every SaveUnderEGA plane read; collect() keeps the first line's 4
             lines.append(f"0 on_exec {LOAD_SEG:04x}:{EGA_PLANE_SITE:04x} {sc.ega_planes * 400} "
@@ -259,6 +353,14 @@ def run_once(work: pathlib.Path, sc: Scenario, calibrate=False):
                          f"{ds_linear:x} {DGROUP_LIVE_LEN:x} r")
             lines.append(f"0 on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} {sc.retraces} dump "
                          f"{BIOS_KBD[0]:x} {BIOS_KBD[1]:x} k")
+        if sc.draws:
+            arm = DRAWS_ARM_MS
+            for name, cs, _, _, op, extra in DRAW_ROUTINES:
+                lines.append(f"{arm} on_exec {LOAD_SEG:04x}:{cs:04x} {sc.draws} dump ss:sp 0c d{cs:04x}")
+                for k, (off, n) in enumerate(extra):
+                    lines.append(f"{arm} on_exec {LOAD_SEG:04x}:{cs:04x} {sc.draws} dump "
+                                 f"{ds_linear + off:x} {n:x} x{k}{cs:04x}")
+            lines.append(f"{arm} on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} {sc.draws} dump ss:sp 2 dvbl")
         if sc.boundaries:
             for cs, _ in PIPELINE[1:]:    # PIPELINE[0] is the per-tick snapshot itself
                 lines.append(f"0 on_exec {LOAD_SEG:04x}:{cs:04x} {sc.boundaries} dump "
@@ -279,13 +381,44 @@ def run_once(work: pathlib.Path, sc: Scenario, calibrate=False):
         # in the host rendering path and shifted the emulated retrace timeline
         # by whole frames between identical runs (docs/FIDELITY.md section 1).
         "[render]\nframeskip=1\n"
+        # keyboardlayout=auto follows the HOST's layout: on a Czech (QWERTZ)
+        # host the DOS keyboard layer turned the Y key (scan 15h) into BIOS
+        # key 2C7Ah ('z'), so "Y or N" prompts never saw a Y. Pin US.
+        "[dos]\nkeyboardlayout=us\n"
         "[autoexec]\n"
         # The host clock must not leak in (C0S reads it; the game seeds its RNG
         # from time()): pin the emulated date and time.
         f'mount c "{game}"\nc:\nDATE 01/01/1991\nTIME {sc.dos_time}\n')
     env = dict(os.environ, SDL_VIDEODRIVER="dummy", SDL_AUDIODRIVER="dummy")
-    subprocess.run([str(DOSBOX), "-conf", str(work / "oracle.conf"), "-noconsole"],
-                   cwd=work, env=env, capture_output=True, timeout=900 + sc.duration // 20)
+    if calibrate:
+        subprocess.run([str(DOSBOX), "-conf", str(work / "oracle.conf"), "-noconsole"],
+                       cwd=work, env=env, capture_output=True, timeout=900 + sc.duration // 20)
+        return
+    # Start-up phase gate (FIDELITY.md section 1): watch the first WaitVBL
+    # exit; outside PHASE_WINDOW the run's whole retrace timeline is offset
+    # (host-load dependent), so it is killed and started again.
+    import time
+    lo, hi = PHASE_WINDOW[sc.video]
+    p = subprocess.Popen([str(DOSBOX), "-conf", str(work / "oracle.conf"), "-noconsole"],
+                         cwd=work, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    deadline = time.time() + 900 + sc.duration // 20
+    phase = None
+    while p.poll() is None and time.time() < deadline:
+        meta = work / "phase.1.json"
+        if phase is None and meta.exists():
+            try:
+                phase = json.loads(meta.read_text())["emulated_ms"]
+            except (ValueError, KeyError):
+                phase = None      # still being written
+            if phase is not None and not lo <= phase <= hi:
+                p.kill()
+                p.wait()
+                return phase
+        time.sleep(0.2)
+    if p.poll() is None:
+        p.kill()
+        p.wait()
+    return phase
 
 
 def calibrate(out: pathlib.Path, video: str = "vga") -> int:
@@ -358,6 +491,22 @@ def script_keys(sc: Scenario):
     return sorted(ev, key=lambda e: e[0])
 
 
+def bios_pending(buf: bytes) -> list:
+    """The keys waiting in a BIOS keyboard buffer dump (0040:001A, 0x24 bytes:
+    head, tail, 16-word ring at 001E..003D), oldest first, as scan<<8|ascii."""
+    import struct
+    pending = []
+    if len(buf) == BIOS_KBD[1]:
+        head, tail = struct.unpack_from("<HH", buf, 0)
+        while head != tail and len(pending) < 16:
+            off = head - 0x1A
+            if not 4 <= off < len(buf) - 1:
+                break
+            pending.append(struct.unpack_from("<H", buf, off)[0])
+            head = head + 2 if head + 2 < 0x3E else 0x1E
+    return pending
+
+
 def collect_retraces(work: pathlib.Path, sc: Scenario, times: list) -> int:
     """retraces.bin: per captured retrace <u32 index><u32 tick><f64 ms><u32 len>
     zlib(DGROUP XOR previous); retraces.jsonl: per retrace the tick it belongs
@@ -382,16 +531,7 @@ def collect_retraces(work: pathlib.Path, sc: Scenario, times: list) -> int:
             delta = zlib.compress(bytes(x ^ y for x, y in zip(snap, prev)), 6)
             f.write(struct.pack("<IIdI", i + 1, tick, ms, len(delta)) + delta)
             prev = snap
-            buf = kbd[i] if i < len(kbd) else b""
-            pending = []
-            if len(buf) == BIOS_KBD[1]:
-                head, tail = struct.unpack_from("<HH", buf, 0)
-                while head != tail and len(pending) < 16:
-                    off = head - 0x1A
-                    if not 4 <= off < len(buf) - 1:
-                        break
-                    pending.append(struct.unpack_from("<H", buf, off)[0])
-                    head = head + 2 if head + 2 < 0x3E else 0x1E
+            pending = bios_pending(kbd[i] if i < len(kbd) else b"")
             recs.append({"retrace": i + 1, "tick": tick, "emulated_ms": round(ms, 6),
                          "gameplay_sha1": hashlib.sha1(gameplay_view(snap)).hexdigest(),
                          "keys_down": [k for k in range(128)
@@ -399,6 +539,119 @@ def collect_retraces(work: pathlib.Path, sc: Scenario, times: list) -> int:
                          "bios_keys": pending, "script_keys": sorted(held)})
     (work / "retraces.jsonl").write_text("".join(json.dumps(r) + "\n" for r in recs))
     return len(recs)
+
+
+DS_FILE = 0x256D0             # DS:0 in build/DAVE_unpacked.exe (initialised _DATA image)
+
+
+def _c_string(data: bytes, at: int, limit: int = 120) -> str | None:
+    end = data.find(b"\0", at, at + limit)
+    return data[at:end].decode("latin-1") if end >= 0 else None
+
+
+def collect_draws(work: pathlib.Path, times: list) -> list:
+    """draws.jsonl: every hooked drawing call and WaitVBL exit in execution
+    order (see DRAW_ROUTINES). Per record: seq, tick (tick heads <= its time),
+    retrace (WaitVBL exits since that tick head), routine, args, caller (the
+    return address, cs offset), top (caller not inside any hooked routine), op
+    (the routine's output.h op when its caller is not inside a routine that
+    has an op itself, e.g. print_string inside draw_control_panel counts, a
+    draw_text_window inside draw_centered_window does not; else None), and the
+    routine's extra fields (draw_dave: x, y, sprite, mask; DrawLevelView:
+    level, scroll; print_string: text, cursor x/y/left, xor_mask)."""
+    import bisect
+    import struct
+    exe = (ROOT / "build" / "DAVE_unpacked.exe").read_bytes()
+    events = []
+    for idx, (name, cs, _, nargs, op, extra) in enumerate(DRAW_ROUTINES):
+        main_hits = list(_hits(work, f"d{cs:04x}"))
+        extras = [[b for b, _ in _hits(work, f"x{k}{cs:04x}")] for k in range(len(extra))]
+        for n, (b, ms) in enumerate(main_hits):
+            words = list(struct.unpack_from(f"<{len(b) // 2}H", b))
+            events.append((ms, idx, words, [e[n] if n < len(e) else b"" for e in extras]))
+    for b, ms in _hits(work, "dvbl"):
+        events.append((ms, -1, [], []))
+    events.sort(key=lambda e: e[0])
+    ranges = [(lo, hi) for _, lo, hi, _, _, _ in DRAW_ROUTINES]
+    op_ranges = [(lo, hi) for _, lo, hi, _, op, _ in DRAW_ROUTINES if op]
+    recs, retrace, cur_tick, open_print = [], 0, None, None
+    for seq, (ms, idx, words, extras) in enumerate(events, 1):
+        tick = bisect.bisect_right(times, ms)
+        if tick != cur_tick:
+            cur_tick, retrace = tick, 0
+        if idx < 0:
+            retrace += 1
+            recs.append({"seq": seq, "tick": tick, "retrace": retrace, "routine": "WaitVBL",
+                         "emulated_ms": round(ms, 6)})
+            continue
+        name, lo, hi, nargs, op, extra = DRAW_ROUTINES[idx]
+        caller = words[0] if words else None
+        top = caller is not None and not any(a <= caller < b for a, b in ranges)
+        args = [w - 0x10000 if w & 0x8000 else w for w in words[1:1 + nargs]]
+        r = {"seq": seq, "tick": tick, "retrace": retrace, "routine": name, "args": args,
+             "caller": f"{caller:04X}" if caller is not None else None, "top": top,
+             "op": op if caller is not None and not any(a <= caller < b for a, b in op_ranges)
+             else None, "emulated_ms": round(ms, 6)}
+        if name == "draw_dave" and len(extras) == 3:
+            r["x"], r["y"] = struct.unpack("<hh", extras[0])
+            r["sprite"], r["mask"] = struct.unpack("<h", extras[1])[0], struct.unpack("<h", extras[2])[0]
+        elif name == "DrawLevelView" and len(extras) == 2:
+            r["level"], r["scroll"] = struct.unpack("<h", extras[0])[0], struct.unpack("<h", extras[1])[0]
+        elif name in ("print_string", "print_int", "print_long") and extras and len(extras[0]) == 0x12:
+            tx, ty = struct.unpack_from("<hh", extras[0], 0)
+            tleft = struct.unpack_from("<h", extras[0], 0x10)[0]
+            r["cursor"] = [tx, ty, tleft]
+            if len(extras) > 1 and len(extras[1]) == 2:
+                r["xor_mask"] = struct.unpack("<h", extras[1])[0]
+            if name == "print_string" and args:
+                ptr = args[0] & 0xFFFF
+                r["text"] = _c_string(exe, DS_FILE + ptr) if ptr < 0x4C60 else None
+                r["chars"] = ""          # DrawChar calls made inside it, filled below
+                open_print = r
+        if name == "DrawChar" and open_print is not None and caller is not None \
+                and 0x6E71 <= caller < 0x6ECB and len(args) == 3:
+            open_print["chars"] += chr(args[2] & 0xFF)
+        recs.append(r)
+    (work / "draws.jsonl").write_text("".join(json.dumps(r) + "\n" for r in recs))
+    return recs
+
+
+def iter_draw_ops(path: pathlib.Path):
+    """The op-level draw stream of a draws.jsonl (FIDELITY.md section 6), for
+    comparison with the native output.h commands: yields (tick, retrace, op,
+    operands) for every record with an op, where operands are the compared
+    arguments: DRAW_TILE (col, row, tile), DRAW_XOR_SPRITE / DRAW_PIC
+    (x, y, per-mode id), DRAW_DAVE (x, y, sprite, mask), DRAW_LEVEL_VIEW
+    (level, scroll), DRAW_SET_VIDEO_MODE (mode,), DRAW_PRINT_STRING (text or
+    chars, x, y, left, xor_mask), DRAW_CENTERED_WINDOW (w, h), others ()."""
+    for line in pathlib.Path(path).read_text().splitlines():
+        r = json.loads(line)
+        op = r.get("op")
+        if not op:
+            continue
+        a = tuple(r["args"])
+        if op == "DRAW_DAVE":
+            operands = (r.get("x"), r.get("y"), r.get("sprite"), r.get("mask"))
+        elif op == "DRAW_LEVEL_VIEW":
+            operands = (r.get("level"), r.get("scroll"))
+        elif op == "DRAW_PRINT_STRING":
+            text = r.get("text") if r.get("text") is not None else r.get("chars")
+            operands = (text, *r.get("cursor", (None, None, None)), r.get("xor_mask"))
+        elif op in ("DRAW_TILE", "DRAW_XOR_SPRITE", "DRAW_PIC"):
+            operands = a[:3]
+        elif op in ("DRAW_SET_VIDEO_MODE",):
+            operands = a[:1]
+        elif op == "DRAW_CENTERED_WINDOW":
+            operands = a[:2]
+        else:
+            operands = ()
+        yield r["tick"], r["retrace"], op, operands
+
+
+def draws_digest(recs: list) -> str:
+    """SHA-1 of the draw stream without emulated times (analysis only)."""
+    return hashlib.sha1("".join(json.dumps({k: v for k, v in r.items() if k != "emulated_ms"}) + "\n"
+                                for r in recs).encode()).hexdigest()
 
 
 def iter_retraces(path: pathlib.Path):
@@ -518,14 +771,32 @@ def collect(work: pathlib.Path, sc: Scenario) -> dict:
         blob += b
         game_blob += gameplay_view(b)
     (work / "ticks.bin").write_bytes(bytes(blob))
+    for _ in _hits(work, "phase"):      # the start-up phase gate's dump (run_once)
+        pass
     boundary_ticks = 0
     if sc.boundaries:
         L = DGROUP_LIVE_LEN
         boundary_ticks = write_boundaries(work, [bytes(blob[k * L:(k + 1) * L])
                                                  for k in range(len(ticks))])
-    (work / "ticks.jsonl").write_text("".join(json.dumps(r) + "\n" for r in ticks))
-
     times = [r["emulated_ms"] for r in ticks]
+    # BIOS keyboard buffer at every tick head (0040:001A head, 001C tail,
+    # 001E..003D ring): what bioskey(1) / handle_menu_key will see
+    for rec, (buf, _) in zip(ticks, _hits(work, "tk")):
+        if len(buf) == BIOS_KBD[1]:
+            rec["bios_head"], rec["bios_tail"] = int.from_bytes(buf[0:2], "little"), \
+                int.from_bytes(buf[2:4], "little")
+            rec["bios_buffer"] = buf[4:].hex()
+            rec["bios_keys"] = bios_pending(buf)
+    # key_down[] at process_input's read of every tick (INPUT_READ_CS)
+    import bisect
+    reads = []
+    for buf, ms in _hits(work, "kr"):
+        k = bisect.bisect_right(times, ms)
+        keys = [i for i in range(min(128, len(buf) // 2)) if buf[2 * i] | buf[2 * i + 1]]
+        reads.append({"tick": k, "emulated_ms": round(ms, 6), "keys_down": keys,
+                      "same_as_head": 1 <= k <= len(ticks) and keys == ticks[k - 1]["keys_down"]})
+    (work / "keys_at_read.jsonl").write_text("".join(json.dumps(r) + "\n" for r in reads))
+
     sounds = []
     for b, ms in _hits(work, "snd"):
         k = sum(1 for t in times if t <= ms)          # tick in which PlaySound ran
@@ -546,6 +817,21 @@ def collect(work: pathlib.Path, sc: Scenario) -> dict:
             pixels.write_png(frame_pixels(sc.video, data), work / f"tick{k:05d}.png", pal)
     (work / "frames.txt").write_text("".join(f"{h}\n" for h in frame_hashes))
     retraces = collect_retraces(work, sc, times) if sc.retraces else 0
+    if retraces:
+        # WaitVBL calls between consecutive tick heads (frames_since_prev counts
+        # elapsed retrace periods, which can be more: a CGA scroll makes 16
+        # WaitVBL calls in 31 retraces, U-P1); ticks past the capture: absent
+        calls = {}
+        last = None
+        for line in (work / "retraces.jsonl").read_text().splitlines():
+            r = json.loads(line)
+            calls[r["tick"]] = calls.get(r["tick"], 0) + 1
+            last = r["tick"]
+        for rec in ticks[1:]:
+            if last is not None and rec["tick"] - 1 < last:
+                rec["waitvbl_since_prev"] = calls.get(rec["tick"] - 1, 0)
+    (work / "ticks.jsonl").write_text("".join(json.dumps(r) + "\n" for r in ticks))
+    draws = collect_draws(work, times) if sc.draws else []
     ega = collect_ega_planes(work, times, sc.ega_planes, bool(sc.png_every)) if sc.ega_planes else []
 
     files = {}
@@ -574,6 +860,8 @@ def collect(work: pathlib.Path, sc: Scenario) -> dict:
         "boundary_ticks": boundary_ticks,
         "retraces": retraces,
         "retrace_ms_mean": round(span_ms / span_frames, 6) if span_frames else None,
+        "draw_records": len(draws),
+        "draws_sha1": draws_digest(draws) if draws else None,
         "files": files,
     }
     (work / "summary.json").write_text(json.dumps(summary, indent=1))
@@ -601,6 +889,25 @@ def compare_runs(a: pathlib.Path, b: pathlib.Path) -> list:
             problems.append(f"tick {x['tick']}: {x['frames_since_prev']} vs "
                             f"{y['frames_since_prev']} retraces since previous tick")
             break
+        if x.get("waitvbl_since_prev") != y.get("waitvbl_since_prev") and not exempt:
+            problems.append(f"tick {x['tick']}: {x.get('waitvbl_since_prev')} vs "
+                            f"{y.get('waitvbl_since_prev')} WaitVBL calls since previous tick")
+            break
+        if x.get("bios_keys") != y.get("bios_keys"):
+            problems.append(f"tick {x['tick']}: BIOS key buffer {x.get('bios_keys')} vs "
+                            f"{y.get('bios_keys')} at the tick head")
+            break
+    ka, kb = a / "keys_at_read.jsonl", b / "keys_at_read.jsonl"
+    if ka.exists() and kb.exists():
+        n = min(len(ta), len(tb))
+        ra = [(r["tick"], r["keys_down"]) for r in map(json.loads, ka.read_text().splitlines())
+              if r["tick"] < n]
+        rb = [(r["tick"], r["keys_down"]) for r in map(json.loads, kb.read_text().splitlines())
+              if r["tick"] < n]
+        if ra != rb:
+            k = next((i for i, (x, y) in enumerate(zip(ra, rb)) if x != y), min(len(ra), len(rb)))
+            problems.append(f"key table at process_input's read differs at read {k + 1} "
+                            f"({ra[k] if k < len(ra) else None} vs {rb[k] if k < len(rb) else None})")
     sa = (a / "sounds.jsonl").read_text().splitlines()
     sb = (b / "sounds.jsonl").read_text().splitlines()
     n = min(len(ta), len(tb))
@@ -620,6 +927,8 @@ def compare_runs(a: pathlib.Path, b: pathlib.Path) -> list:
             break
     if (a / "retraces.jsonl").exists() and (b / "retraces.jsonl").exists():
         problems += compare_retraces(a, b, ta)
+    if (a / "draws.jsonl").exists() and (b / "draws.jsonl").exists():
+        problems += compare_draws(a, b, ta)
     if (a / "ega_planes.jsonl").exists() or (b / "ega_planes.jsonl").exists():
         ea = (a / "ega_planes.jsonl").read_text().splitlines()
         eb = (b / "ega_planes.jsonl").read_text().splitlines()
@@ -657,6 +966,41 @@ def compare_retraces(a: pathlib.Path, b: pathlib.Path, ta: list) -> list:
             sa, sb = da.get(k, []), db.get(k, [])
             j = next((j for j, (x, y) in enumerate(zip(sa, sb)) if x != y), min(len(sa), len(sb)))
             return [f"per-retrace state differs in tick {k} at retrace {j + 1} ({len(sa)} vs {len(sb)} retraces)"]
+    return []
+
+
+def compare_draws(a: pathlib.Path, b: pathlib.Path, ta: list) -> list:
+    """Draw-order contract (M1.6): per tick, the same drawing calls with the
+    same arguments in the same order, and the same WaitVBL positions between
+    them; in ticks outside the timing contract (title / high-score waits) the
+    WaitVBL records and retrace indices are left out (their count varies)."""
+    def by_tick(path):
+        d = {}
+        for line in path.read_text().splitlines():
+            r = json.loads(line)
+            d.setdefault(r["tick"], []).append(r)
+        return d
+    da, db = by_tick(a / "draws.jsonl"), by_tick(b / "draws.jsonl")
+    last = min(max(da, default=0), max(db, default=0))     # the last tick may be cut off
+    for k in sorted(set(da) | set(db)):
+        if k >= last:
+            break
+        exempt = 1 <= k < len(ta) and (ta[k - 1]["game_state"] in TIMING_EXEMPT_STATES
+                                       or ta[k]["game_state"] == 3)
+
+        def view(rs):
+            out = []
+            for r in rs:
+                if exempt and r["routine"] == "WaitVBL":
+                    continue
+                out.append({x: y for x, y in r.items()
+                            if x not in ("emulated_ms", "seq") and not (exempt and x == "retrace")})
+            return out
+        va, vb = view(da.get(k, [])), view(db.get(k, []))
+        if va != vb:
+            j = next((j for j, (x, y) in enumerate(zip(va, vb)) if x != y), min(len(va), len(vb)))
+            return [f"draw stream differs in tick {k} at call {j + 1}: "
+                    f"{va[j] if j < len(va) else None} vs {vb[j] if j < len(vb) else None}"]
     return []
 
 
@@ -731,9 +1075,13 @@ def snap_scenario(path: pathlib.Path, run: pathlib.Path) -> int:
         # two retraces around T keeps T's sampling point and is half a
         # retrace away from any sample.
         rt = [json.loads(l)["emulated_ms"] for l in (run / "retraces.jsonl").read_text().splitlines()]
+        # Events in a longer gap between WaitVBL exits (a prompt blocking in
+        # bioskey(0), which polls no retrace) stay where they are: those
+        # prompts read the BIOS buffer, and moving several events of one gap
+        # to its middle would collapse their order.
         for i, t in events:
             n = bisect.bisect_left(rt, t)
-            if 0 < n < len(rt):
+            if 0 < n < len(rt) and rt[n] - rt[n - 1] < 1.5 * vbl:
                 t_new = int(round((rt[n - 1] + rt[n]) / 2))
                 code, _, comment = lines[i].partition("#")
                 parts = code.split()
@@ -790,9 +1138,18 @@ def main():
     seg = calibrate(out, sc.video)
     if seg != LOAD_SEG:
         raise SystemExit(f"load segment moved: {seg:#x} != {LOAD_SEG:#x}; update LOAD_SEG")
+    lo, hi = PHASE_WINDOW[sc.video]
     for r in range(1, args.repeat + 1):
-        run_once(out / f"run{r}", sc)
+        for attempt in range(1, PHASE_TRIES + 1):
+            phase = run_once(out / f"run{r}", sc)
+            if phase is not None and lo <= phase <= hi:
+                break
+            print(f"run{r}: start-up phase {phase} ms outside [{lo}, {hi}]: restarted")
+        else:
+            raise SystemExit(f"run{r}: no run with a start-up phase in [{lo}, {hi}] in {PHASE_TRIES} tries")
         s = collect(out / f"run{r}", sc)
+        s["startup_phase_ms"], s["attempts"] = phase, attempt
+        (out / f"run{r}" / "summary.json").write_text(json.dumps(s, indent=1))
         print(f"run{r}: {s['ticks']} ticks, {s['sound_requests']} sound requests, "
               f"{s['pit_events']} PIT/speaker events, {s['frames']} frames, "
               f"gameplay {s['gameplay_sha1'][:12]}, files "

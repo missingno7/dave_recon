@@ -113,10 +113,18 @@ the oracle traces (`tools/oracle.py`).
   EGADAVE.DAV (there is no DSCORES.DAV in `assets/`: the game writes its
   default table at start-up), DAVE typed at emulated 3000 ms. The load
   segment (0x0824) is re-derived on every run.
+- Pinned keyboard layout: `[dos] keyboardlayout=us`. The default `auto`
+  follows the HOST: on a Czech (QWERTZ) Windows host the DOS keyboard layer
+  turned the Y key (scan 15h, correctly set in `key_down[]`) into BIOS key
+  2C7Ah ('z'), so every "Y or N" prompt ignored a scripted `y`
+  (found 2026-10-20 with `demo_key_exit.txt`: F3 -> Y froze the game in
+  `ask_restart`). Letters other than y/z were unaffected, so the earlier
+  corpus results stand.
 - Scenario options: `duration`, `png_every`, `boundaries <n>` (M1.2),
   `video vga|ega|cga` (machine svga_s3 / ega / cga; the game's `VideoID`
   then picks mode 13h / 0Dh / 4), `dos_time HH:MM:SS`, `ega_planes <n>`,
-  `retraces <n>` (M1.6), and `<ms> key|keydown|keyup <mapper name>`.
+  `retraces <n>` (M1.6), `draws <n>` (M1.6, below), and
+  `<ms> key|keydown|keyup <mapper name>`.
 - Captures, per **game tick** (hit of `main`'s loop head, cs 0x0283):
   - the complete live DGROUP (DS 0x0000-0x9F20), raw (`ticks.bin`) and with
     named fields decoded (`ticks.jsonl`, incl. `keys_down`, the scan codes
@@ -125,7 +133,20 @@ the oracle traces (`tools/oracle.py`).
     A000:0000 8000 bytes of the bit plane the graphics controller's read map
     selects at that instant (a CPU read of planar memory sees one plane; in
     practice plane 0, which every EGA blitter leaves selected);
-  - the number of retraces since the previous tick.
+  - the number of retraces since the previous tick (`frames_since_prev`,
+    elapsed retrace periods) and, with a `retraces` capture, the number of
+    `WaitVBL` calls since the previous tick (`waitvbl_since_prev`; they
+    differ when a frame's work takes longer than a retrace: a CGA scroll
+    makes 16 calls while 31 periods elapse, U-P1);
+  - the BIOS keyboard buffer (`bios_head`, `bios_tail`, `bios_buffer` =
+    0040:001E..003D hex, `bios_keys` = the pending keys oldest first), i.e.
+    what `bioskey(1)` / `handle_menu_key` sees.
+- Per tick, at the input read itself (`keys_at_read.jsonl`): `key_down[]`
+  dumped at process_input's `call get_player_input` (cs 0x4844), with its
+  time and whether it equals the tick-head table. Scripted key events reach
+  the emulated keyboard 0.5-1 ms late and can land between the tick-head
+  snapshot and this read (native replay finding at n3 tick 210), so a replay
+  takes its per-tick input from here.
 - **EGA 4-plane images** (`ega_planes <n>`): the acceptance build can only
   dump guest memory through the CPU's view, so the true planes are read
   where the game itself selects each plane for reading: `SaveUnderEGA`
@@ -142,6 +163,20 @@ the oracle traces (`tools/oracle.py`).
   (XOR-delta + zlib, `oracle.iter_retraces`) and `retraces.jsonl` (per
   retrace: the tick it belongs to, gameplay hash, `keys_down`, pending BIOS
   keys, and the keys the scenario script holds at that time).
+- **Draw-order capture** (`draws <n>`, M1.6, state-model D1): an `on_exec`
+  hook at the entry of every drawing routine of the original
+  (`oracle.py DRAW_ROUTINES`, addresses from docs/semantic-inventory.json)
+  dumps `ss:sp` (near return address + up to 5 argument words), plus the
+  DGROUP variables a few routines draw from; the hits of all hooks and the
+  `WaitVBL` exits are merged by emulated time into `draws.jsonl` (section 6).
+  The hooks are armed at 3490 ms, just after the first title tick head: armed
+  at 0, the ~90 extra per-instruction triggers slowed the host during DOS
+  boot and DAVE's start-up mode set enough to shift the VGA retrace timeline
+  by 4-10 ms per run, and level1_complete's keys crossed tick boundaries
+  (not equivalent); armed at 3490 the timeline equals a run without hooks
+  (tick 2 at 12090.35 / 12091.35 ms vs 12089.3-12090.4) and the contract
+  holds. The first title redraw (< 4 ms after tick 1's head) is therefore not
+  in the stream.
 - Per event: every `PlaySound(n)` with its tick (`sounds.jsonl`), every
   `srand(seed)` with its tick (`seeds.jsonl`), the raw PIT/speaker port
   stream (`pit.log`).
@@ -158,6 +193,12 @@ the oracle traces (`tools/oracle.py`).
   state is compared (a 50 ms tap is 3.504 VGA retraces long, so its release
   lands on a retrace edge); press and release keys of blocking prompts
   (title, high-score initials, Enter) well inside their poll windows.
+  Events inside a gap of more than 1.5 retraces between two `WaitVBL` exits
+  (a prompt blocking in `bioskey(0)`, e.g. the F1 help pages) are left where
+  they are: those prompts read the BIOS buffer, and moving several events of
+  one gap to its middle collapsed their order (title_popups' three help-page
+  spaces landed on one millisecond).
+- **Scripted routes** (`tools/route.py`, `tools/route_sim.c`): see section 5.
 
 ## 3. Equivalence contract (as implemented in `compare_runs`)
 
@@ -168,6 +209,9 @@ Two runs are equivalent when:
 | gameplay state | per-tick DGROUP | byte-exact, excluding DS [0x1384,0x1392) (INT 8 driver phase: TickDivide, TickCount, TimerRate, SoundPtr, SoundPriority, saved copies) |
 | per-retrace state | DGROUP + key table at every `WaitVBL` exit (when captured) | byte-exact (same exclusion), per tick, for every tick whose interval is under the timing rule |
 | timing | retraces between consecutive ticks | exact, except the interval after a title tick (game_state 3) and the interval ending at a title tick (game over: high-score table and initials) |
+| input | key table at process_input's read of every tick (`keys_at_read`); BIOS key buffer at every tick head | exact |
+| WaitVBL calls | `waitvbl_since_prev` (with a `retraces` capture) | exact, same exemption as timing |
+| draw order | `draws.jsonl` per tick: routine, arguments, caller, extra fields, WaitVBL positions (when captured) | exact; inside timing-exempt intervals without the WaitVBL records |
 | sound | sequence of (tick, sound id) | exact |
 | visuals | per-tick framebuffer; EGA 4-plane captures | byte-exact |
 | persistence | every file of the game directory after the run | name, size, SHA-1 equal |
@@ -237,3 +281,52 @@ Not yet in the corpus (open, PORT_ROADMAP M1.3):
   tick must be snapped like any other input.
 - EGA/CGA live play (the VGA scenarios' times do not carry over: retraces
   are 17% longer, re-snap per mode).
+
+## 6. Draw-order capture (M1.6, state-model D1)
+
+`draws <n>` in a scenario (hooks armed at 3490 ms, section 2) writes
+`draws.jsonl`: one record per call of a hooked drawing routine and per
+`WaitVBL` exit, in execution order (merged by emulated time; every hook is a
+distinct instruction, so no two records share a time).
+
+| field | meaning |
+|---|---|
+| `seq` | position in the stream |
+| `tick` | tick heads at or before the call (the call belongs to that tick's pipeline pass) |
+| `retrace` | `WaitVBL` exits since that tick head (D2: the retrace the call precedes) |
+| `routine` | original routine (`WaitVBL` records have only seq/tick/retrace) |
+| `args` | its stack arguments, signed 16-bit (C convention: first argument at ss:sp+2) |
+| `caller` | the near return address (cs offset) |
+| `top` | the caller is not inside any hooked routine |
+| `op` | the output.h op, set when the routine has one AND its caller is not inside a routine that has one (a `print_string` inside `draw_control_panel` counts; a `draw_text_window` inside `draw_centered_window` does not) |
+| extras | `draw_dave`: `x`, `y`, `sprite`, `mask` (g_player_x/y, g_dave_sprite/mask at the call); `DrawLevelView`: `level`, `scroll`; `print_string`/`print_int`/`print_long`: `cursor` = [g_text_x, g_text_y, g_text_left], `xor_mask` (print_string); `print_string`: `text` (the string, for pointers into initialised data) and `chars` (the characters its DrawChar calls drew: covers stack buffers) |
+
+To compare with the native stream (port/game/output.h) take the records
+with `op` set, in order, and map:
+
+| output.h op | original routine (entry, cs) | arguments compared | inner routines (op None) |
+|---|---|---|---|
+| DRAW_TILE | `DrawTile` (tiles.asm, 0x90D6) | col, row, tile | (DrawTileAt, not hooked) |
+| DRAW_XOR_SPRITE | `xor_sprite` (DAVE.C, 0x19D6) | x, y, per-mode sprite id (the bridge maps (set, index) to it, D3) | DrawXorCGA/EGA/VGA |
+| DRAW_PIC | `draw_tile` (DAVE.C, 0x1984) | x, y, per-mode pic id (PIC_DIGIT / PIC_TITLE_ANIM resolved per mode) | DrawPicCGA/EGA/VGA |
+| DRAW_ERASE_DAVE | `erase_dave` (0x1A28) | - | restore_background, RestoreUnder* |
+| DRAW_DAVE | `draw_dave` (0x1A6A) | x, y from the extras | save_background, SaveUnder*, DrawMasked* |
+| DRAW_SET_DAVE_SPRITE | (an assignment, not a call) | compare with `sprite`/`mask` of the next `draw_dave` record | - |
+| DRAW_LEVEL_VIEW | `DrawLevelView` (0x8CDA) | level, scroll extras | - |
+| DRAW_VIEW_BORDERS | `DrawViewBorders` (0x9011) | - | - |
+| DRAW_SET_VIDEO_MODE | `set_video_mode` (HARDWARE.C, 0x6B64) | mode | CacheEGATiles (called by redraw_screen next to it in EGA: op None) |
+| DRAW_TEXT_CURSOR / DRAW_TEXT_XOR | (assignments) | compare with `cursor` / `xor_mask` of the next print_string | - |
+| DRAW_PRINT_STRING | `print_string` (0x6E71) | text (`text`, or `chars` for stack buffers) | DrawChar |
+| DRAW_CENTERED_WINDOW | `draw_centered_window` (0x6CF1) | w, h | draw_text_window |
+| DRAW_HISCORE_ROW | four `print_string` calls of `show_high_scores` on stack buffers (score digits, initials, level, "\n\n\r") | `chars` | DrawChar |
+
+Hooked without an op yet (they appear with `op` None at top level):
+`draw_masked_sprite` (help screen pictures), `DrawChar` from
+`wait_key_cursor` (the blinking prompt cursor) and the control panel,
+`DrawPic` (control panel), `draw_text_window` / `clear_text_window` /
+`open_window_anim*` / `draw_control_panel` (control panel and windows),
+`print_int` / `print_long`.
+
+Verified reproducible (2 runs each, `draws.jsonl` equal per the contract):
+attract_boundaries (3,139 records over 238 ticks), level1_complete (5,791
+records over 944 ticks), title_popups (help, control panel, prompts).

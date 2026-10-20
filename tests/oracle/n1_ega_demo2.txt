@@ -3,8 +3,12 @@
 # time than in VGA) picks demo 2 (level 4, monsters that fire), with
 # per-subsystem boundary snapshots on every tick: checks the bridge's
 # per-mode monster sprite ids (shown_frame, state-model D3) in mode 0Dh.
+# retraces: per-retrace capture at every WaitVBL exit, so WaitVBL counts
+# (ticks.jsonl waitvbl_since_prev) are compared here too; in CGA a 15-column
+# scroll makes 16 WaitVBL calls while 31 retrace periods elapse (U-P1).
 duration 42000
 png_every 0
 video ega
 dos_time 00:00:25
 boundaries 1200
+retraces 3000
