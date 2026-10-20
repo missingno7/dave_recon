@@ -78,6 +78,18 @@ the oracle traces (`tools/oracle.py`).
   shifts. `frameskip=9` made it worse (6 of 8 runs shifted by a frame).
   Remaining jitter: a per-run constant of up to 2.7 ms after each video mode
   set; the input-snapping rule below absorbs it.
+- **Emulator finding 2 (2026-10-20): the host's load still reaches the VGA
+  retrace phase.** With the host busy during DOS boot (concurrent oracle
+  runs, or ~90 extra `on_exec` triggers checked on every instruction) the
+  game's first `WaitVBL` exit came at 3489-3497 ms instead of 3498.8-3501.2
+  ms (quiet runs; EGA 3499.648 and CGA 3506.792 never varied), offsetting
+  every later retrace and moving snapped keys across tick boundaries. The
+  oracle now arms every hook and port watch at 3000 ms (when DAVE is typed;
+  nothing of the game runs before), arms the draw hooks at 3490 ms, and
+  restarts a run whose first `WaitVBL` exit falls outside the quiet window
+  (`PHASE_WINDOW`, up to 12 tries; summary.json `startup_phase_ms`,
+  `attempts`). Under the draw hooks a video mode set later in the run can
+  still shift the phase (UNDERSTANDING_LEDGER U-O3).
 - **Input sampling.** `process_input` reads the key table right after the
   tick head; `fire`/`jetpack` act on the button's release (or every 30 held
   ticks: `g_fire_repeat` / `g_jetpack_repeat`). `g_input_dir` keeps the last
@@ -208,7 +220,7 @@ Two runs are equivalent when:
 |---|---|---|
 | gameplay state | per-tick DGROUP | byte-exact, excluding DS [0x1384,0x1392) (INT 8 driver phase: TickDivide, TickCount, TimerRate, SoundPtr, SoundPriority, saved copies) |
 | per-retrace state | DGROUP + key table at every `WaitVBL` exit (when captured) | byte-exact (same exclusion), per tick, for every tick whose interval is under the timing rule |
-| timing | retraces between consecutive ticks | exact, except the interval after a title tick (game_state 3) and the interval ending at a title tick (game over: high-score table and initials) |
+| timing | retraces between consecutive ticks | exact, except the interval after a high-score tick (game_state 2: a demo ended; show_high_scores(1) with WaitSound and the title in one pass) or a title tick (game_state 3), and the interval ending at a title tick (game over: high-score table and initials) |
 | input | key table at process_input's read of every tick (`keys_at_read`); BIOS key buffer at every tick head | exact |
 | WaitVBL calls | `waitvbl_since_prev` (with a `retraces` capture) | exact, same exemption as timing |
 | draw order | `draws.jsonl` per tick: routine, arguments, caller, extra fields, WaitVBL positions (when captured) | exact; inside timing-exempt intervals without the WaitVBL records |
@@ -223,6 +235,13 @@ title). It was widened on 2026-10-20 to the interval that ENDS at a title
 tick: that interval is game over -> `check_high_score` (table with
 `WaitSound`, "You got a high score!", initials, Enter), the same kind of
 wait as the already-exempt one. The state inside them is still compared.
+Widened again (oracle lane, same date) to the interval after a game_state 2
+tick: when a demo ends, the next pass shows the high scores with
+`WaitSound`, the title and starts the next demo, and n3_attract_demos'
+tick 821 measured 2250 vs 2249 retraces in two runs (attract_all_demos had
+passed by chance). A run's last tick may also be cut by the run's end in one
+run and not the other (per-run phase): one extra tick head within 1.5
+retraces of `duration` is not a difference.
 
 Not part of the contract, and kept for analysis only: absolute emulated
 times (section 1: a constant per-run offset of up to 2.7 ms), the raw PIT
@@ -262,25 +281,57 @@ evidence for each claim are in each file's header.
 | `game_over_highscore.txt` | VGA | level 1 as above, then four deaths in level 2's fire (killed tick without a retrace, 300-tick death timer, restart, lives), game over, high-score table, initials, DSCORES.DAV rewritten and compared | 2237 ticks, 66 s | yes |
 | `ega_attract.txt` | EGA | mode 0Dh, retrace rate, per-tick plane capture, 40 true 4-plane images | 509 ticks, 32 s | - |
 | `cga_attract.txt` | CGA | mode 4, retrace rate, full CGA framebuffer | 509 ticks, 32 s | - |
+| `title_popups.txt` | VGA | every menu key from the title, each left unchanged: F1 help (3 pages; again with Esc), F2 control panel (cursor moved, Esc), F3 restart -> Y (no effect on the title) and -> N, F9 pause / F9, Esc and F10 quit prompts -> N; then the title timeout and demo 1 | 570 ticks, 40 s | yes |
+| `demo_key_exit.txt` | VGA | a non-menu key ends demo 1 into a live game on level 1; F9 pause, Esc -> N, F1 -> Esc and F3 -> Y during play (back to the title); a key on the title starts a new game | 985 ticks, 46 s | yes |
+| `levels_1_to_3.txt` | VGA | live play of levels 1-3 (routes planned with tools/route.py): level 2's maze, trophy and door; level 3 with the gun, shooting (two monsters killed), jetpack + trophy, flight to the door; level 4 start | 5213 ticks, 109 s | yes |
+| `jetpack_fuel_out.txt` | VGA | levels 1-2, level 3 to the jetpack, then hovering 900 flight ticks until the tank is empty (sound 2, state 0x21 -> 0x28), the fall and landing | 6321 ticks, 118 s | yes |
+| `warp_zone_level5.txt` | VGA | levels 1-4 (level 4: jetpack needed for the trophy), level 5: the U-G9 (a) multi-bit states (0x2A climb + fall on a jump's last step, then 0x26, 0x32), the tree climbed above row 0, the warp tube into the warp zone (level 2's map), the zone's trophy and door, the return to level 5 | 14181 ticks, 258 s | yes |
+| `warp_zone_death.txt` | VGA | as warp_zone_level5 to the warp, then a death in the zone (spikes at the shaft's bottom), the death timer, handle_death's warp-zone restart (lives 2), play on in the zone | 12550 ticks, 228 s | yes |
+
+Further scenarios of the native lanes (each EQUIVALENT under `--repeat 2`
+with the oracle of 2026-10-20, headers in the files): `n1_ega_demo2` /
+`n1_cga_demo2` (now with `retraces`), `n2_buttons`, `n2_death`,
+`n2_demos`, `n3_level1_complete`, `n3_attract_demos`,
+`n3_out_of_range_demo`, `inv_demos`, `inv_demos_all`.
+
+**Scripted routes (tools/route.py).** Long routes are planned per tick, not
+written in milliseconds: `route_sim.c` chains the native port's pipeline
+calls (port/game, read-only) from one tick-head DGROUP snapshot of an
+oracle run; `route.search` is a best-first search (optionally A* toward a
+target, a time bucket so places can be revisited when monsters have moved)
+over macro moves from decision states (walk n ticks, jumps N/NE/NW with air
+control, climbing, jetpack flight and toggles, Ctrl taps when Dave has the
+gun), pruning deaths; built-in demo input can be replayed live
+(`route.demo_inputs`). `route.plan_events` turns the per-tick plan into
+key events half a retrace before each tick head (a wait the plan does not
+end by a held direction gets its key just before the poll, and that key is
+still held at the next read); the scenario is then run, `--snap`ped and
+repeated. The original is the judge: `route.plan_check` compares the plan
+with the run tick by tick (every segment of the corpus followed its plan
+exactly), and `python tools/route.py check RUN` replays a run's own key
+tables through the simulator (4,329 live ticks of levels 2-4 agree).
 
 Not yet in the corpus (open, PORT_ROADMAP M1.3):
 
-- **Live play of levels 2-10.** Scripted play beyond level 1 has to be
-  written level by level (level 2 is a maze with deadly weeds; from level 3
-  on monsters shoot). Jetpack, gun/shooting and climbing are covered by the
-  demos (same game logic, demo input instead of keys), not yet by keys.
-- **Warp zones and the level -1 warp** (U-M3). Reachable only from levels
-  5, 8, 9, 10 (intended warps; level 5's starts at the tree at the start
-  position) and, for the level -1 warp, levels whose top row is open at a
-  level edge (level 6: the gems at row 0, columns 85-98, then right past
-  x 0x132 at view 80; collision tests return 0 above the playfield). Needs
-  the live play above. state-model.md D4 already keeps the level -1 warp
-  outside the byte contract.
-- Configuration screens (F2 control panel, key/joystick/mouse set-up),
-  F1 help, F9 pause, F3 restart, Esc quit: each is entered by a key whose
-  tick must be snapped like any other input.
+- **The level -1 warp** (U-M3). Level 3's top-row opening (columns 72-74)
+  is NOT a route: it opens only into a pocket (row 1 columns 73-75 and the
+  row-2 gem corridor 74-97) closed below by row 3's wall, reachable only
+  from above the screen (exhaustive jetpack search from level 3's jetpack).
+  The candidate is level 6 (gem block entered at row 4 column 84, row 0
+  open at columns 85-98, then right past x 0x132 at view 80). Level 6 is
+  reached in the simulator (levels 1-5 completed, see UNDERSTANDING_LEDGER
+  "Oracle lane, second pass"), but its bottom corridor holds three monsters
+  that shoot, the gun is reachable only with the jetpack, and the planner
+  has not yet found a route through them to the gem block.
+- **Live play of levels 6-10**, the warp zones of levels 8, 9 and 10, the
+  ending after level 10 (U-G8). The planner reaches level 6; levels beyond
+  need the monster handling above.
+- Control-panel CHANGES (video mode switch, sound off, key redefinition,
+  joystick/mouse set-up): only entering and leaving unchanged is covered.
 - EGA/CGA live play (the VGA scenarios' times do not carry over: retraces
   are 17% longer, re-snap per mode).
+- The draw capture in scenarios with video mode sets after the title
+  (F2 / F9): its hook load shifted the retrace timeline (U-O3).
 
 ## 6. Draw-order capture (M1.6, state-model D1)
 

@@ -86,3 +86,29 @@ None in the game. Test-only verification code (never linked into the game):
 | `port/game/player.c` `player_handle_death()` | `handle_death` (DAVE.C, F_15A5) incl. its `wait_for_input` | Readable, Native, Decoupled; the closing wait is the world lane's `wait_for_input` (level.c, polled through `struct world_io`, one `frame_input` per poll), start positions through `level_start_position` / `warp_start_position` (shared with load_level / the warp). Verified on the four runs: n2_death covers the 300-tick timer, 3 restarts (21 retraces each) and the game over (lives -1, map restored); the warp-zone restart branch is in no corpus tick: unverified | bridge mutant `handle_death/mutant` and source mutant (timer step 2) caught at n2_death tick 920, DS 0x6546; restart facing left caught at tick 1219, DS 0x5740 |
 | `port/platform/input_map.c` `input_from_keyboard()` | `read_keyboard_input` (HARDWARE.C, F_63AF) | Native, pure settings decoding (bindings `g_key_scans`): the one implementation, used by the bridge's world input (world_io.c) for every waiting loop and process_input, and by the future platform layer | exercised by every process_input / handle_death tick of `n2_death` and `n2_buttons` |
 | `port/game/game.c` `game_tick()` | main()'s inner loop body (DAVE.C `main`: `do { attract_mode(); ... handle_death(); } while (g_game_over == 0)`) | Readable, Native, Decoupled: the 13 native subsystems in the original order on one `struct game`, one `frame_output` per pass (draw commands and sound requests in call order across subsystems, `retraces` = WaitVBL calls since the tick head, which is also the time the waiting loops poll `struct world_io` at); returns TICK_GAME_OVER (inner loop exit) or TICK_MENU (process_input asked for a popup / demo end by key: the pass stops there, not modelled). Nothing added to struct game: every value crossing subsystems or ticks was already in it. **Verified FREE-RUNNING** (one import at tick 1, then inputs only): game view equal after every pass, PlaySound sequence equal per pass, WaitVBL calls equal per pass, on `n3_level1_complete` (943 passes), `game_over_highscore` (2,235, to the game-over pass), `inv_demos_all` (5,387), `n2_demos` (11,440), `n1_ega_demo2` / `n1_cga_demo2` (819 each); elapsed retraces equal except WaitSound / title passes (contract exemptions) and one CGA scroll pass (16 WaitVBL over 31 retraces, U-P1). Also from mid-run starts (e.g. n2_demos tick 5000, game_over_highscore tick 921) | `tools/native_replay.py --run <run>`, `tests/test_native.py NativeFreeRunTest`; mutants: move_bullets before move_monsters caught at n1_ega_demo2 tick 525 (DS 0x56F8 `g_shots[0].x`, 0x5796), gem value 110 caught at n3_level1_complete tick 107 (DS 0x4C60 `g_score`) |
+
+## Oracle lane notes for the native lanes (2026-10-20)
+
+Not a verification claim (the native lanes own those): the route planner
+(tools/route.py, tools/route_sim.c) chains the native pipeline calls from an
+oracle snapshot with its own input model, and the original then followed
+every planned segment at every tick head (x, y, state, level, view column,
+score; `route.plan_check`). This touched native code the corpus had not
+reached before, so it hints where the native code already matches, and the
+new scenarios are the place to verify it properly:
+
+- `check_warp_transition` entering a real warp zone (level 5 -> level 2's
+  map), `level_complete`'s warp-zone return, `handle_death`'s warp-zone
+  restart: warp_zone_level5 ticks 11760-13901, warp_zone_death ticks
+  11760-12285 (the simulator's states equal the original's at those heads;
+  the 265-retrace warp tick also matched).
+- U-G9 (a) multi-bit states 0x2A / 0x26 / 0x32 in `player_move`
+  (warp_zone_level5 ticks 11514-11537).
+- `update_jetpack` running the tank empty (jetpack_fuel_out tick 5785).
+- Live play of levels 2-5 with the gun, shots, monsters that fire and the
+  jetpack (levels_1_to_3, warp_zone_level5): `python tools/route.py check
+  RUN` found no tick-head mismatch over 4,329 live ticks of levels 2-4.
+- Menus inside process_input (U-P2): title_popups, demo_key_exit.
+- New oracle captures for the free run: keys_at_read.jsonl (key table at
+  process_input's read, every tick), ticks.jsonl `bios_*` (BIOS key buffer
+  at every head), `waitvbl_since_prev`, draws.jsonl (draw order, M1.6).

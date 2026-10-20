@@ -66,16 +66,29 @@ names in `src/asm`); data-module provenance unknowable (D-2).
       DSCORES.DAV compared, the out-of-range demo quirk; persistence is in
       the contract. Open: live play beyond level 1, warp zones, level -1
       warp, config screens (FIDELITY.md section 5, ledger U-O1).
+      *Second pass (2026-10-20, oracle lane):* scripted routes planned with
+      tools/route.py (native pipeline as simulator, original as judge):
+      levels_1_to_3, jetpack_fuel_out, warp_zone_level5 (levels 1-4, level 5's
+      warp zone in and out, the U-G9 a multi-bit tree grab), warp_zone_death;
+      title_popups (F1/F2/F3/F9/Esc/F10 left unchanged), demo_key_exit (demo
+      ended by a key, menus in play, F3 restart). Level -1: see FIDELITY.md
+      section 5.
 - [x] M1.4 CGA/EGA capture: `video ega|cga`; CGA B800 dump is complete;
       EGA per-tick read-map plane + true 4-plane images inside
       `SaveUnderEGA` (`ega_planes`); retrace rates measured (59.92 Hz).
       A 4-plane image at every tick head needs an emulator command (U-O2).
-- [ ] M1.6 Retrace-granularity observation (state-model.md D2): a capture
+- [x] M1.6 Retrace-granularity observation (state-model.md D2): a capture
       point at `WaitVBL`, per-frame input reconstruction from scenario
       scripts, draw-order capture for the D1 draw-command contract.
       *Partial:* `retraces <n>` captures DGROUP + BIOS key buffer at every
       `WaitVBL` exit with the script's held keys, and a per-retrace contract
       (level1_complete, game_over_highscore). Open: draw-order capture.
+      *Done (2026-10-20):* `draws <n>` writes draws.jsonl (every drawing
+      routine's entry with its arguments, merged with the WaitVBL exits,
+      leaf/wrapper marking and the output.h op per call; FIDELITY.md
+      section 6), reproducible on attract_boundaries and level1_complete;
+      plus per-tick key table at process_input's read (keys_at_read.jsonl),
+      the BIOS key buffer at every tick head and WaitVBL counts per tick.
 - [x] M1.5 `tests/test_oracle.py` (opt-in: DAVE_ORACLE_TESTS=1): repeat-run contract.
 **Gate:** every corpus scenario passes the repeat-run contract.
 

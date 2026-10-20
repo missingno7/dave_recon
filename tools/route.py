@@ -265,6 +265,10 @@ def macros(r, jetpack=False, fine=False):
         for d in range(8):
             for n in (2, 4, 8, 16, 32):
                 out.append([(d, 0, 0)] * n)
+        if r.get("gun"):
+            for d in (E, W):
+                out.append([(d, 0, 0), (NONE, 1, 0), (NONE, 1, 0), (NONE, 0, 0)])
+        out.append([(NONE, 0, 1), (NONE, 0, 0)])    # toggle off (Alt tap): Dave falls
         return out
     if s & 0x02:          # climbing
         for d in (N, S, E, W, NE, NW):
@@ -283,6 +287,11 @@ def macros(r, jetpack=False, fine=False):
         out.append([(d, 0, 0)] * 4)
     if jetpack and r["jetpack"]:
         out.append([(NONE, 0, 1), (NONE, 0, 0)])    # toggle on: Alt tap (release triggers)
+    if r.get("gun"):          # face left / right, then a Ctrl tap (the release fires)
+        for d in (E, W):
+            out.append([(d, 0, 0), (NONE, 1, 0), (NONE, 1, 0), (NONE, 0, 0)])
+        for d in (E, W):      # fire while walking
+            out.append([(d, 1, 0)] * 2 + [(d, 0, 0)] * 10)
     return out
 
 
@@ -390,7 +399,11 @@ def plan_events(heads0: float, period: float, inputs: list, results: list, held_
     for r in results:
         heads.append(heads[-1] + r["retraces"] * period)
     ev, held = [], set(held_before)
+    forced_prev = False
     for k, (d, f, j) in enumerate(inputs):
+        if d == NONE and forced_prev:      # route_sim.c holds the waited-for key one more tick
+            d = wait_dir
+        forced_prev = False
         want = set()
         if d in DIR_KEYS:
             want.add(DIR_KEYS[d])
@@ -410,6 +423,7 @@ def plan_events(heads0: float, period: float, inputs: list, results: list, held_
             ms = int(round(heads[k] + (fp - 0.5) * period))
             ev.append((ms, "keydown", DIR_KEYS[wait_dir]))
             held = {DIR_KEYS[wait_dir]}
+            forced_prev = True
     return ev, heads
 
 

@@ -54,12 +54,20 @@ Scenario files (tests/oracle/*.txt):
                                     writes its default table) or assets/DSCORES.DAV
   ega_planes <n>                    EGA only: capture up to n true 4-plane
                                     images (at SaveUnderEGA, see EGA_PLANE_SITE)
+  draws <n>                         draw-order capture (M1.6): every drawing routine's
+                                    entry with its arguments, merged with the WaitVBL
+                                    exits into draws.jsonl (DRAW_ROUTINES, up to n
+                                    hits per routine)
   <ms> key|keydown|keyup <name>     input (DOSBox-X mapper key names)
 
 Usage:  python tools/oracle.py tests/oracle/attract.txt [--repeat 2]
         python tools/oracle.py --report build/oracle/attract/run1
 Output: build/oracle/<scenario>/run<N>/{ticks.bin,ticks.jsonl,sounds.jsonl,
-        seeds.jsonl,pit.log,frames.txt,tick*.png,summary.json,game/}
+        seeds.jsonl,pit.log,frames.txt,tick*.png,summary.json,game/,
+        keys_at_read.jsonl, and with the options boundaries.bin, retraces.bin,
+        retraces.jsonl, draws.jsonl, ega_planes.jsonl}
+Every run is gated on its start-up retrace phase (PHASE_WINDOW) and
+restarted when the host's load offset it (docs/FIDELITY.md section 1).
 """
 from __future__ import annotations
 
@@ -100,9 +108,12 @@ LAUNCH_MS = 3000              # emulated time at which "DAVE<enter>" is typed
 TIME_TOLERANCE_MS = 0.01
 # Ticks whose length includes a wait on the asynchronous PIT sound driver
 # (WaitSound in show_high_scores) or on keyboard prompts: the interval after a
-# title tick (game_state 3), and the interval that ends at a title tick (game
-# over -> check_high_score). Their retrace count varies with the PIT phase.
-TIMING_EXEMPT_STATES = (3,)
+# high-score tick (game_state 2: a demo ended, show_high_scores(1) with
+# WaitSound, then the title, inside one pass) or a title tick (game_state 3),
+# and the interval that ends at a title tick (game over -> check_high_score).
+# Their retrace count varies with the PIT phase (n3_attract_demos tick 821:
+# 2250 vs 2249 retraces in two runs; state 2 was not exempt before).
+TIMING_EXEMPT_STATES = (2, 3)
 
 # Per adapter: DOSBox-X machine, video memory captured per tick (linear,
 # length), nominal retrace period (measured, docs/FIDELITY.md section 1),
@@ -120,8 +131,12 @@ VBL_MS = VIDEO["vga"]["vbl_ms"]     # kept for importers
 # drifts during DOS boot and it came out 3489-3497 ms, offsetting EVERY later
 # retrace by that much (and moving scripted keys across tick boundaries:
 # FIDELITY.md section 1). run_once kills and restarts such a run.
-PHASE_WINDOW = {"vga": (3498.5, 3501.6), "ega": (3498.0, 3501.3), "cga": (3505.2, 3508.4)}
-PHASE_TRIES = 8
+PHASE_WINDOW = {"vga": (3498.5, 3502.2), "ega": (3498.0, 3501.3), "cga": (3505.2, 3508.4)}
+PHASE_TRIES = 12
+# Every hook and port watch is armed when DAVE is typed (no game code runs
+# before): fewer per-instruction trigger checks and no pit.log writes during
+# the DOS boot, the stretch whose host speed decides the start-up phase.
+HOOK_ARM_MS = LAUNCH_MS
 # EGA true-colour capture: tiles.asm SaveUnderEGA, the instruction after the
 # read-map `out` in @@plane (`mov cx,bp`, cs 0x8545). SaveUnderEGA only READS
 # video memory, so the four dumps of its first line (planes 3,2,1,0, AH = plane,
@@ -331,27 +346,27 @@ def run_once(work: pathlib.Path, sc: Scenario, calibrate=False):
         lines.append(f"{LAUNCH_MS + 1500} dump 0 a0000 mem.bin")
         lines.append(f"{LAUNCH_MS + 1600} exit")
     else:
-        lines.append(f"0 on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump "
+        lines.append(f"{HOOK_ARM_MS} on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump "
                      f"{ds_linear:x} {DGROUP_LIVE_LEN:x} tick")
-        lines.append(f"0 on_exec {LOAD_SEG:04x}:{PLAYSOUND_CS:04x} 1000000 dump ss:sp+2 2 snd")
-        lines.append(f"0 on_exec {LOAD_SEG:04x}:{SRAND_CS:04x} 1000000 dump ss:sp+2 2 seed")
-        lines.append(f"0 on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} 1 dump ss:sp 2 phase")
-        lines.append("0 io_watch 40 43 pit.log out")
-        lines.append("0 io_watch 61 61 pit.log inout")
-        lines.append(f"0 on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump "
+        lines.append(f"{HOOK_ARM_MS} on_exec {LOAD_SEG:04x}:{PLAYSOUND_CS:04x} 1000000 dump ss:sp+2 2 snd")
+        lines.append(f"{HOOK_ARM_MS} on_exec {LOAD_SEG:04x}:{SRAND_CS:04x} 1000000 dump ss:sp+2 2 seed")
+        lines.append(f"{HOOK_ARM_MS} on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} 1 dump ss:sp 2 phase")
+        lines.append(f"{HOOK_ARM_MS} io_watch 40 43 pit.log out")
+        lines.append(f"{HOOK_ARM_MS} io_watch 61 61 pit.log inout")
+        lines.append(f"{HOOK_ARM_MS} on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump "
                      f"{fb_at:x} {fb_len:x} fb")
-        lines.append(f"0 on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump "
+        lines.append(f"{HOOK_ARM_MS} on_exec {LOAD_SEG:04x}:{MAIN_LOOP_HEAD_CS:04x} 1000000 dump "
                      f"{BIOS_KBD[0]:x} {BIOS_KBD[1]:x} tk")
-        lines.append(f"0 on_exec {LOAD_SEG:04x}:{INPUT_READ_CS:04x} 1000000 dump "
+        lines.append(f"{HOOK_ARM_MS} on_exec {LOAD_SEG:04x}:{INPUT_READ_CS:04x} 1000000 dump "
                      f"{ds_linear + KEYDOWN:x} 100 kr")
         if sc.ega_planes:
             # every SaveUnderEGA plane read; collect() keeps the first line's 4
-            lines.append(f"0 on_exec {LOAD_SEG:04x}:{EGA_PLANE_SITE:04x} {sc.ega_planes * 400} "
+            lines.append(f"{HOOK_ARM_MS} on_exec {LOAD_SEG:04x}:{EGA_PLANE_SITE:04x} {sc.ega_planes * 400} "
                          f"dump a0000 1f40 ep")
         if sc.retraces:
-            lines.append(f"0 on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} {sc.retraces} dump "
+            lines.append(f"{HOOK_ARM_MS} on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} {sc.retraces} dump "
                          f"{ds_linear:x} {DGROUP_LIVE_LEN:x} r")
-            lines.append(f"0 on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} {sc.retraces} dump "
+            lines.append(f"{HOOK_ARM_MS} on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} {sc.retraces} dump "
                          f"{BIOS_KBD[0]:x} {BIOS_KBD[1]:x} k")
         if sc.draws:
             arm = DRAWS_ARM_MS
@@ -363,7 +378,7 @@ def run_once(work: pathlib.Path, sc: Scenario, calibrate=False):
             lines.append(f"{arm} on_exec {LOAD_SEG:04x}:{RETRACE_SITE:04x} {sc.draws} dump ss:sp 2 dvbl")
         if sc.boundaries:
             for cs, _ in PIPELINE[1:]:    # PIPELINE[0] is the per-tick snapshot itself
-                lines.append(f"0 on_exec {LOAD_SEG:04x}:{cs:04x} {sc.boundaries} dump "
+                lines.append(f"{HOOK_ARM_MS} on_exec {LOAD_SEG:04x}:{cs:04x} {sc.boundaries} dump "
                              f"{ds_linear:x} {DGROUP_LIVE_LEN:x} b{cs:04x}")
         lines += sc.inputs
         lines.append(f"{sc.duration} exit")
@@ -847,6 +862,7 @@ def collect(work: pathlib.Path, sc: Scenario) -> dict:
     span_ms = sum(b["emulated_ms"] - a["emulated_ms"] for a, b in span)
     summary = {
         "video": sc.video,
+        "duration_ms": sc.duration,
         "ticks": len(ticks),
         "gameplay_sha1": hashlib.sha1(game_blob).hexdigest(),
         "sound_requests": len(sounds),
@@ -874,7 +890,14 @@ def compare_runs(a: pathlib.Path, b: pathlib.Path) -> list:
     ta = [json.loads(l) for l in (a / "ticks.jsonl").read_text().splitlines()]
     tb = [json.loads(l) for l in (b / "ticks.jsonl").read_text().splitlines()]
     if len(ta) != len(tb):
-        problems.append(f"tick count {len(ta)} vs {len(tb)}")
+        # a tick head within 1.5 retraces of the run's end is a cut artifact
+        # (the per-run retrace phase differs by up to ~3 ms), not a divergence
+        sa_ = json.loads((a / "summary.json").read_text())
+        end, vbl = sa_.get("duration_ms"), VIDEO[sa_.get("video", "vga")]["vbl_ms"]
+        longer = ta if len(ta) > len(tb) else tb
+        extra = longer[min(len(ta), len(tb)):]
+        if not (end and len(extra) == 1 and extra[0]["emulated_ms"] > end - 1.5 * vbl):
+            problems.append(f"tick count {len(ta)} vs {len(tb)}")
     for x, y in zip(ta, tb):
         if x["gameplay_sha1"] != y["gameplay_sha1"]:
             named = {k: (x[k], y[k]) for k in FIELDS if x[k] != y[k]}

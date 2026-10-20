@@ -561,3 +561,99 @@ date). Evidence for every item: those runs plus the replay's report.
   retraces) are compared there; (c) the tick head's BIOS key buffer (as
   `retraces` records it) on every tick, for the persistent one-key buffer
   the free run models from the key events (N2-5).
+
+## Oracle lane, second pass (M1.3 gaps, M1.6 draw order), 2026-10-20
+
+Appended by the oracle worker (owner of tools/oracle.py, tests/oracle/).
+Evidence: the scenarios named (all EQUIVALENT under `--repeat 2` with the
+oracle of this date) and docs/FIDELITY.md sections 1, 2, 5 and 6.
+
+### Closed (with evidence)
+
+- **U-O1 (most of it) Live keyboard play beyond level 1.** Routes are
+  planned per tick with tools/route.py (the native port's pipeline chained
+  from an oracle tick-head snapshot as a fast simulator; best-first search
+  over walk / jump / climb / jetpack moves, deaths pruned) and judged by the
+  original: levels_1_to_3 (levels 2 and 3 to level 4's start),
+  jetpack_fuel_out, warp_zone_level5 / warp_zone_death (levels 1-4 to level
+  5, its warp zone, back). In every planned segment the original followed
+  the plan tick for tick (x, y, state, level, view column, score at every
+  tick head; route.py plan_check), and `route.py check` replays an oracle
+  run's own key tables through the simulator with no mismatch over 4,329
+  live ticks of levels 2-4 (monsters, shots, gun, jetpack, level
+  transitions). Built-in demo input replayed live reproduces the demo
+  (demo 0 on level 3: gun, both monsters shot, jetpack + trophy).
+- **Level 3's top-row opening is not a way out.** Columns 72-74 of row 0
+  open into a pocket (row 1 columns 73-75, the row-2 gem corridor 74-97)
+  that is closed below by row 3's wall (columns 71-99) and to the left by
+  columns 70-73: it is reachable only from above the screen, so it gives no
+  route to the level -1 warp (the jetpack search from the level-3 jetpack
+  exhausted every reachable state without getting above row 0). U-O1's
+  "cheapest route" note was wrong; level 6's gem block (row 4 column 84
+  entrance, row 0 open at columns 85-98) stays the candidate (U-M3).
+- **Level 4's trophy needs the jetpack.** The trophy room (row 1, columns
+  1-6) opens only through the column 1-2 shaft from row 3, and row 3
+  between columns 2 and 8 lies over a spike pocket (row 4 columns 3-6, row
+  5 columns 3-4 deadly) under a row-2 ceiling (columns 3-7) that ends every
+  jump at once: no walk, jump or fall crosses it. Route used: jetpack (69,4),
+  walk back, fly across row 3 and up the shaft (183 ticks of fuel), walk
+  back to the door (97,2).
+- **U-G9 (a) observed** (warp_zone_level5 / warp_zone_death, level 5 ticks
+  11514-11537): Dave at x 52 next to the tree trunk (column 4) jumps
+  straight up, Right is pressed only for the jump's LAST step (jump_pos 45,
+  the 0x80 terminator): the horizontal probe grabs the tree (state & 0xEF
+  | 2) and the terminator then sets the fall bit: state 0x2A (climb + fall).
+  move_dave's branch order runs the FALL branch (0x08 before 0x02): Dave
+  drops 2 px and lands, `& 0xF7 | 4`: state 0x26 (climb + walk), kept while
+  standing; a jump from there gives 0x32 (jump + climb), then 0x22.
+- **Warp zone, level 5 -> level 2's map** (warp_zone_level5): climbing the
+  start tree above row 0 (y wraps to 251 in the 8-bit jump arithmetic, U-G2)
+  and leaving at x < 2 with view 0 runs check_warp_transition: one tick of
+  265 retraces (tube, the 180-step fall with sound 2, the blank screens,
+  load_level of index 1, wait_for_input), then play at view 42, x 144, y 16,
+  state 0x28, warp_return_level 4. The zone's shaft (column 51) ends on
+  spikes and must be left to the right at row 6; trophy (98,8), door (68,6):
+  level_complete prints no message in a warp zone and returns to level 5
+  (index 4) from its start, warp marked used.
+- **Dying inside a warp zone** (warp_zone_death): falling straight down the
+  zone's shaft hits the row-9 spikes (sound 3, killed tick without a
+  retrace); after the 300-tick death timer handle_death's warp branch puts
+  Dave back at the warp start of the RETURN level's table (view 42, x 144,
+  y 16, state 0x28) in the zone, lives 3 -> 2.
+- **Jetpack fuel** (jetpack_fuel_out): 60 units, one per 15 flight ticks:
+  900 ticks after Alt turned it on, update_jetpack empties the tank (sound
+  2, state 0x28, has_jetpack 0, icon erased); Dave falls and lands.
+- **Menus** (title_popups, demo_key_exit; closes the corpus side of U-P2):
+  every handle_menu_key popup opens from the title and from play and is left
+  unchanged; F3 -> Y on the TITLE takes ask_restart's N branch (redraw,
+  ResumeSound) because g_demo_mode is already 3; in play it restores the map
+  and sets the title state. A non-menu key during a demo ends it into a live
+  game on LEVEL 1 (init_game_state resets the level); wait_for_input's
+  `if (bioskey(1)) bioskey(0)` eats that key. The last key pressed stays in
+  the BIOS buffer for the rest of play (nothing consumes it outside
+  prompts): `bios_keys` at the tick heads after a level start holds the
+  Right that ended wait_for_input.
+- **Draw order** (draws.jsonl, FIDELITY.md section 6): the title's popups
+  draw through print_string with their literal strings; per tick the
+  original draws in pipeline order (erase_dave/draw_dave pairs inside
+  move_dave around its WaitVBL, animate_tiles' DrawTile calls, xor_sprite
+  pairs of monsters and shots). U-R1 (exact draw order per tick) is now
+  observable; the native comparison is the open part.
+
+### Open
+
+- **U-O3 Host load leaks into the VGA retrace phase.** DOSBox-X's
+  VGA_VerticalTimer drift compensation counts frames in its rendering path;
+  when the host is busy during DOS boot (concurrent oracle runs; ~90 draw
+  hooks) the first WaitVBL exit after the title head came at 3489-3497 ms
+  instead of 3498.8-3501.2 ms, offsetting every later retrace (keys then
+  land in other ticks). Mitigated, not removed: hooks and port watches are
+  armed at 3000 ms (not 0), the draw hooks at 3490 ms, and a start-up phase
+  gate restarts any run whose first WaitVBL exit is outside the quiet
+  window (oracle.py PHASE_WINDOW; EGA and CGA never varied). With the draw
+  hooks armed, a video mode set during a run (F2 control panel, F9 pause)
+  can still shift the timeline (title_popups with draws: two runs left the
+  title 190 ms apart), so the draw capture is used only in scenarios
+  without such mode sets. A real fix needs an emulator change (frame
+  accounting on the emulated timeline only).
+- **U-M3 (b) the level -1 warp**: see the level-6 attempt below.

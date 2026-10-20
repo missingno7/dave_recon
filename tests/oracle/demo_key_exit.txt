@@ -16,6 +16,23 @@
 #
 # Every key is a keydown/keyup pair snapped to the middle between two WaitVBL
 # exits (oracle.py --snap with the retraces capture).
+#
+# Tick ranges / evidence (run1, VGA):
+#   tick 1            title, 3.49 s (1201 retraces)
+#   ticks 2-379       demo 1, level 2 (index 1), 20.62-26.00 s
+#   tick 379          'a': demo ends inside process_input; the pass takes 161
+#                     retraces (load_level, redraw, wait_for_input left by
+#                     Right at 28.0 s); the next head's BIOS buffer still
+#                     holds Right (4DE0h): nothing consumes it in play
+#   ticks 380-705     live play, LEVEL 1 (index 0), score 0, lives 3
+#     500             F9 pause: 106 retraces until the second F9
+#     569             Esc -> "Quit? (Y or N)" -> N: 51 retraces
+#     624             F1 help, Esc on page 1: 25 retraces but 1 WaitVBL
+#                     (show_help blocks in bioskey(0))
+#     705             F3 -> "Restart Game?" -> Y: 51 retraces, game_state 3
+#   tick 706          title again, 36.23 s; Space starts a game: 406 retraces
+#                     (405 WaitVBL) incl. wait_for_input left by Right
+#   ticks 707-985     live play, level 1, from 42.03 s
 duration 46000
 png_every 50
 retraces 4000
