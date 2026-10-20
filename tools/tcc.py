@@ -19,6 +19,8 @@ import re
 import shutil
 import subprocess
 
+import dosrun
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TOOLCHAIN = json.loads((ROOT / "layout" / "toolchain.json").read_text())
 BASE_FLAGS = "-c -ms -1- -f- -N -G"
@@ -61,6 +63,13 @@ def compile_many(sources, work: pathlib.Path | None = None, extra_flags: str = "
         (work / f"{stem}.C").write_bytes(text.replace("\r\n", "\n").replace("\n", "\r\n").encode("latin1"))
         flags = f"{BASE_FLAGS} {source_flags(text)} {extra_flags}".strip()
         lines.append(f"C:\\BIN\\TCC.EXE {flags} -IC:\\INCLUDE {stem}.C > {stem}.LOG")
+        if dosrun.use_msdos():
+            _, log = dosrun.run([ROOT / "toolchain" / "BIN" / "TCC.EXE", *flags.split(),
+                                 "-I" + str(ROOT / "toolchain" / "INCLUDE"), f"{stem}.C"],
+                                cwd=work, tool_dirs=[ROOT / "toolchain" / assembler_dir()])
+            (work / f"{stem}.LOG").write_text(log, encoding="latin1")
+    if dosrun.use_msdos():
+        return [(work / f"{s}.OBJ") if (work / f"{s}.OBJ").exists() else None for s in stems]
     lines.append("EXIT")
     (work / "GO.BAT").write_bytes(("\r\n".join(lines) + "\r\n").encode("ascii"))
     conf = work / "dosbox.conf"

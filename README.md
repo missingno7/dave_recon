@@ -31,6 +31,11 @@ The toolchain source defaults to `C:/tools/borland-turbo-c++-1.00/files`
 (override with `DAVE_TOOLCHAIN_SRC`); assets default to the primary checkout's
 `assets/` (override with `DAVE_ASSETS`). Works in fresh git worktrees.
 
+Compiler, assembler and linker run under MS-DOS Player
+(`C:/tools/nmlgcdos/msdos.exe`, `tools/dosrun.py`); LZEXE and the behavioural
+oracle run under DOSBox-X. `DAVE_DOS_HOST=dosbox` forces DOSBox-X everywhere
+as a cross-check.
+
 ## Layout
 
 ```text
