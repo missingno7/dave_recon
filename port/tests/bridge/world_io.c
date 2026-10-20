@@ -8,11 +8,14 @@
  *  - $DAVE_BRIDGE_INPUTS (written by tools/native_check.py from the run's
  *    script and ticks.jsonl):
  *        event <ms> down|up <scan>       the scenario's key events
- *        pair <index> start <ms> time <u32>
+ *        pair <index> start <ms> time <u32> [keys <scan,...|->]
  *    `start` is the emulated time of the tick head of the verified call;
  *    the poll after r retraces of the call is placed at start + r retrace
  *    periods (exact for attract_mode, the first call of the tick; later
- *    calls are verified with keys held across them). `time` is time(NULL)
+ *    calls are verified with keys held across them). `keys`, when given,
+ *    replaces the snapshot's key table: the table the call read (for
+ *    process_input, the table after it; UNDERSTANDING_LEDGER M3-2).
+ *    `time` is time(NULL)
  *    as the original's srand saw it (the oracle's seeds.jsonl records the
  *    srand argument, the low word of time(); state-model D7).
  *  - the BIOS key buffer is not in the snapshot: it is modelled as empty at
@@ -38,7 +41,7 @@
 #define POLL_LIMIT 200000            /* a wait the input never ends: give up (reported) */
 
 struct key_event { double ms; int down; int scan; };
-struct pair_info { int known; double start; uint32_t time; };
+struct pair_info { int known; double start; uint32_t time; int has_keys; uint8_t keys[128]; };
 
 static struct key_event events[MAX_EVENTS];
 static int n_events;
@@ -103,7 +106,7 @@ void bridge_world_load(struct resources *r)
         fprintf(stderr, "dave_bridge: cannot read %s\n", inputs);
         return;
     }
-    char line[256], kind[16];
+    char line[1024], kind[16], keys[601];
     while (fgets(line, sizeof line, f)) {
         double ms;
         int scan;
@@ -118,6 +121,12 @@ void bridge_world_load(struct resources *r)
             pairs[k].known = 1;
             pairs[k].start = ms;
             pairs[k].time = (uint32_t)t;
+            if (sscanf(line, "pair %*d start %*f time %*u keys %600s", keys) == 1) {
+                pairs[k].has_keys = 1;
+                for (char *tok = strtok(keys, ","); tok; tok = strtok(NULL, ","))
+                    if (strcmp(tok, "-") != 0 && atoi(tok) >= 0 && atoi(tok) < 128)
+                        pairs[k].keys[atoi(tok)] = 1;
+            }
         }
     }
     fclose(f);
@@ -132,6 +141,9 @@ void bridge_world_begin(long index, const unsigned char *snap, struct game *g, s
     if (pairs && index >= 0 && index < MAX_PAIRS && pairs[index].known) {
         cur.start = pairs[index].start;
         cur.time = pairs[index].time;
+        if (pairs[index].has_keys)       /* the table the call read (native_check.py) */
+            for (int sc = 0; sc < 128; sc++)
+                cur.kb.keydown[sc] = pairs[index].keys[sc];
         while (cur.next_event < n_events && events[cur.next_event].ms <= cur.start)
             cur.next_event++;
     } else {

@@ -438,5 +438,98 @@ class WorldEquivalenceTest(unittest.TestCase):
                     "return (int8_t)r->demo_overrun[pos - DEMO_BANK_BYTES + 1];")
 
 
+# ---- M3.3: the native game runs FREE (port/game/game.c game_tick) ----------
+# tools/native_replay.py imports the original state once (tick 1, the title)
+# and then runs game_tick() on the inputs alone (key table at the first poll
+# of each pass, key events, tick-head times, time(NULL)); every tick's game
+# view, sound requests and retraces are compared with the original. Runs:
+# the commands in the sections above (absolute --out), plus
+#   python tools/oracle.py tests/oracle/game_over_highscore.txt --out <abs>/build/oracle/game_over_highscore
+FREE_RUNS = {name: ROOT / "build" / "oracle" / name / "run1"
+             for name in ("n3_level1_complete", "game_over_highscore", "demos_all", "n2_demos",
+                          "n1_ega_demo2", "n1_cga_demo2")}
+
+
+class NativeFreeRunTest(unittest.TestCase):
+    results = {}
+
+    def _replay(self, name):
+        import native_replay
+        run = FREE_RUNS[name]
+        if not (run / "ticks.bin").exists():
+            self.skipTest(f"no oracle run {name}")
+        if name not in self.results:
+            self.results[name] = native_replay.replay(run, name="test_" + name)
+        return self.results[name]
+
+    def _free_run(self, name, stopped="end of run"):
+        r = self._replay(name)
+        self.assertTrue(r["state_equivalent"], r["state_divergence"])
+        self.assertTrue(r["sounds_equivalent"], r["sound_divergence"])
+        self.assertTrue(r["waitvbl_calls_equivalent"], r["waitvbl_divergences"])
+        self.assertEqual(r["stopped"], stopped, r)
+        # every pass of the run is compared: up to the last tick head, or up
+        # to the pass that ends the inner loop (its successor is check_high_score's)
+        self.assertEqual(r["last_compared_tick"], r["run_ticks"] - (2 if stopped == "game_over" else 1), r)
+        self.assertGreater(r["sound_requests_compared"], 0, r)
+        self.assertEqual(r["stderr"], "", r)
+        return r
+
+    def test_level1_complete_then_level2(self):
+        r = self._free_run("n3_level1_complete")
+        self.assertTrue(r["retraces_equivalent"], r["retrace_divergences"])
+
+    def test_deaths_and_game_over(self):
+        r = self._free_run("game_over_highscore", stopped="game_over")
+        self.assertTrue(r["retraces_equivalent"], r["retrace_divergences"])
+        self.assertGreater(r["waitvbl_ticks_compared"], 2000, r)    # per-retrace capture
+
+    def test_all_demos(self):
+        for name in ("demos_all", "n2_demos"):
+            with self.subTest(run=name):
+                r = self._free_run(name)
+                self.assertTrue(r["retraces_equivalent"], r["retrace_divergences"])
+                # the high-score + title passes: WaitSound only adds time
+                self.assertTrue(all(why.startswith(("WaitSound", "title"))
+                                    for *_, why in r["timing_exempt"]), r["timing_exempt"])
+
+    def test_ega_demo2(self):
+        r = self._free_run("n1_ega_demo2")
+        self.assertTrue(r["retraces_equivalent"], r["retrace_divergences"])
+
+    def test_cga_demo2(self):
+        """State and sounds equal. Retraces: the scroll pass's 15 WaitVBLs each
+        follow a full-view CGA redraw that takes longer than a CGA frame on the
+        oracle's emulated 386, so each waits for the NEXT retrace (WaitVBL is
+        edge-triggered): 16 WaitVBL calls (as native; a per-retrace capture
+        shows the 16 exits) span 31 retraces. Open item U-P1 (ledger)."""
+        import json
+        r = self._free_run("n1_cga_demo2")
+        rows = {json.loads(l)["tick"]: json.loads(l)
+                for l in (FREE_RUNS["n1_cga_demo2"] / "ticks.jsonl").read_text().splitlines()}
+        self.assertLessEqual(r["retrace_divergence_count"], 1, r["retrace_divergences"])
+        for t, native, original in r["retrace_divergences"]:
+            self.assertEqual((native, original), (16, 2 * 15 + 1))
+            self.assertNotEqual(rows[t]["view_column"], rows[t + 1]["view_column"])   # a scroll
+
+    def test_free_run_mutants_caught(self):
+        """game_tick's composition (subsystem order) and a subsystem constant:
+        the free run must report a divergence."""
+        import native_replay
+        for name, path, old, new in [
+                ("n1_ega_demo2", "game/game.c",
+                 "    monsters_step(g, r, out);\n    shots_step(g, r, out);",
+                 "    shots_step(g, r, out);\n    monsters_step(g, r, out);"),
+                ("n3_level1_complete", "game/items.c",
+                 "{2000, 0, 0, 1000, 100,", "{2000, 0, 0, 1000, 110,")]:
+            run = FREE_RUNS[name]
+            if not (run / "ticks.bin").exists():
+                self.skipTest(f"no oracle run {name}")
+            with self.subTest(run=name, mutant=new):
+                r = native_replay.replay(run, mutation=(path, old, new), name="test_mutant_" + name)
+                self.assertFalse(r["equivalent"], f"mutant not caught: {new!r}")
+                self.assertIsNotNone(r["state_divergence"])
+
+
 if __name__ == "__main__":
     unittest.main()

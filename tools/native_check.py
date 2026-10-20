@@ -153,6 +153,12 @@ def build_mutant(mutation: tuple) -> pathlib.Path:
     return build_port(src, ROOT / "build" / "mutant" / "build")
 
 
+def held_keys(snapshot: bytes) -> list:
+    """g_keydown (DS 0x8A32, int[128]): the scan codes held."""
+    k = oracle.KEYDOWN
+    return [i for i in range(128) if snapshot[k + 2 * i] | snapshot[k + 2 * i + 1]]
+
+
 def time_from_seed(seed: int) -> int:
     """The time(NULL) value whose low word srand received (D7)."""
     return DOS_EPOCH_1991 + ((seed - DOS_EPOCH_1991) & 0xFFFF)
@@ -192,8 +198,11 @@ def key_events(run: pathlib.Path) -> list:
     return sorted(events)
 
 
-def write_world_inputs(run: pathlib.Path, ticks: list, work: pathlib.Path) -> dict:
-    """The bridge's world input file and demo bank (port/tests/bridge/world_io.c)."""
+def write_world_inputs(run: pathlib.Path, ticks: list, work: pathlib.Path,
+                       read_keys: list | None = None) -> dict:
+    """The bridge's world input file and demo bank (port/tests/bridge/world_io.c).
+    read_keys[k]: the key table (scan codes held) the call of pair k read at
+    its first poll, when known better than the pre-call snapshot's."""
     head = {}
     if (run / "ticks.jsonl").exists():
         for line in (run / "ticks.jsonl").read_text().splitlines():
@@ -204,7 +213,10 @@ def write_world_inputs(run: pathlib.Path, ticks: list, work: pathlib.Path) -> di
     for k, tick in enumerate(ticks):
         if tick in head:
             t = time_from_seed(seeds[tick]) if tick in seeds else DOS_EPOCH_1991
-            lines.append(f"pair {k} start {head[tick]} time {t}")
+            keys = ""
+            if read_keys is not None:
+                keys = " keys " + (",".join(map(str, read_keys[k])) or "-")
+            lines.append(f"pair {k} start {head[tick]} time {t}{keys}")
     (work / "inputs.txt").write_text("\n".join(lines) + "\n")
     import far_data
     import levels
@@ -246,7 +258,13 @@ def check(subsystem: str, run: pathlib.Path, mutation: tuple | None = None,
     (work / "pre.bin").write_bytes(b"".join(p for _, p, _ in pairs))
     exe = build_mutant(mutation) if mutation else build_port()
     env = dict(os.environ, PATH=MINGW + os.pathsep + os.environ["PATH"])
-    env.update(write_world_inputs(run, [t for t, _, _ in pairs], work))
+    # process_input never writes g_keydown, so the table after the call is the
+    # one its get_player_input read; the pre-call snapshot can miss a key
+    # delivery that lands between the dump and the read (UNDERSTANDING_LEDGER
+    # M3-2: n3_level1_complete tick 210 of a run whose tick head is 0.6 ms
+    # after a scripted event)
+    read_keys = [held_keys(post) for _, _, post in pairs] if subsystem == "process_input" else None
+    env.update(write_world_inputs(run, [t for t, _, _ in pairs], work, read_keys))
     subprocess.run([str(exe), variant or subsystem, str(work / "pre.bin"), str(work / "native.bin"),
                     str(work / "events.txt")], env=env, check=True)
     native = (work / "native.bin").read_bytes()

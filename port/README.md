@@ -12,6 +12,7 @@ memory. Plan: `docs/PORT_ROADMAP.md`; state design: `docs/state-model.md`
 | `present/` (later) | original logical presentation: framebuffer per video mode, draw-command interpreter, sound scheduler | game/ |
 | `platform/` (later) | SDL3 and headless backends | game/, present/ |
 | `tests/bridge/` | TEST-ONLY bridge to original DGROUP snapshots | everything; nothing depends on it |
+| `tests/replay/` | TEST-ONLY free-running replay (`dave_replay`): one import, then `game_tick()` on inputs alone | everything; nothing depends on it |
 
 ## Rules for native code
 
@@ -42,6 +43,12 @@ memory. Plan: `docs/PORT_ROADMAP.md`; state design: `docs/state-model.md`
    `tests/test_native.py`.
 7. Every quirk reproduced on purpose is listed in the subsystem's header
    comment with its ledger reference.
+8. **The composition is verified free-running.** `game/game.c` `game_tick()`
+   is one pass of main()'s inner loop; `python tools/native_replay.py --run
+   <oracle run>` imports the original state once and then runs on inputs
+   alone, comparing the game view, the sound requests and the retraces
+   after every pass (`tests/test_native.py NativeFreeRunTest`). A change to
+   any subsystem must keep the free runs equal too.
 
 ## Build
 

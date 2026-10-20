@@ -475,3 +475,89 @@ below (`tests/test_native.py` NativePlayerTest), and code reading.
   that follows the demo bank in the load module (never modified at run
   time); the native resources carry them as `demo_overrun` and
   process_input matches the original on that run.
+
+## Native integration (M3.3) additions (2026-10-20)
+
+Free-running replay of the native `game_tick()` (port/game/game.c,
+tools/native_replay.py) over n3_level1_complete, game_over_highscore,
+inv_demos_all, n2_demos, n1_ega_demo2 and n1_cga_demo2 (fresh runs of this
+date). Evidence for every item: those runs plus the replay's report.
+
+### Closed (with evidence)
+
+- **M3-1 The pipeline needs no state outside struct game.** Imported once at
+  tick 1 and then driven by inputs alone, the native game equals the
+  original on the whole game view after each of 21,643 passes (title -> game
+  start, level 1, the level-complete corridor, level 2, four deaths, game
+  over; all five demos with their high-score / title cycles and the
+  time(NULL) demo choices; EGA and CGA). Values that cross subsystems within
+  a pass (input_dir latched by process_input and consumed by move_dave, the
+  killed bit set by check_collisions and acted on by move_dave next tick,
+  the death timer armed by spawn_explosion, level.done, the map restore of a
+  demo end followed by the same pass's pick_up_items, N2-6) were all already
+  struct game fields. The composition added only the inner loop's exit
+  (game_over) and the stop on a menu request.
+- **M3-2 The input sample is the key table at the read, not at the tick
+  head.** The oracle's dump points (tick head, boundary snapshots) are
+  instants; a scripted key event is delivered to the INT 9 handler some
+  0.5-1 ms after its scripted time, one scan code at a time, so it can land
+  between a dump and the next read: in this date's n3_level1_complete run
+  the PageUp release scripted at 15052 ms is not in g_keydown at the tick
+  210 head (15052.60 ms) nor at the process_input boundary, but
+  process_input read it (input_dir became 2, not 1; g_keydown at the
+  move_dave boundary is [0x4D]). process_input never writes g_keydown, so
+  the table after it is what it read. The free run therefore takes, for
+  play/demo passes, g_keydown at the move_dave boundary when the run has
+  boundary snapshots (1 of 943 n3_level1_complete passes differs from the
+  head table), else at the tick head. The same delivery made
+  `tools/native_check.py process_input` fail on that run at tick 210
+  (the bridge used the pre-call table): an input-reconstruction limit of
+  the bridge (U-W1), not a native behaviour difference; fixed the same way
+  (native_check passes the post-call g_keydown as the `keys` of each
+  process_input pair, world_io.c uses it). The main
+  checkout's earlier run of the scenario has the tick 210 head at
+  15056.78 ms, 4.8 ms after the event (the per-run phase, FIDELITY.md 1),
+  and passes; in this run the 15052 ms event sits 0.6 ms before a sampling
+  edge (`--snap` would move it).
+- **M3-3 (closes U-T3's +-1) A title pass that times out is always 1200 + 1
+  WaitVBL calls; frames_since_prev is elapsed time.** frames_since_prev =
+  round(elapsed / nominal period) between two tick heads, while the game
+  counts WaitVBL calls (edge-triggered: wait for the end of the current
+  retrace, then for the next start). Per-retrace captures count the calls
+  exactly: 1201 WaitVBL exits in the title pass of a CGA run of
+  n1_cga_demo2.txt with `retraces 2000` added (scratch run; elapsed
+  20056.0 ms = 1201.8 CGA periods -> "1202") and 1201 natively (603 = 603
+  in game_over_highscore, whose title Space ends); inv_demos_all's VGA
+  title pass (native 1201) measures
+  "1200" because the head lies just before a retrace edge after the mode
+  set and redraw. Not an INT 8 effect.
+
+### Open
+
+- **U-P1 Elapsed retraces exceed WaitVBL calls when a frame's work
+  overruns the retrace period.** n1_cga_demo2 tick 521 (scroll by 15
+  columns): native and original both call WaitVBL 16 times (a per-retrace
+  capture of the same scenario shows 16 exits, the 15 scroll steps 2.00
+  CGA periods apart), but each step's full-view CGA redraw (DrawLevelView +
+  draw_actors) takes longer than one 16.69 ms frame on the oracle's emulated
+  386 (cycles fixed 20000), so each wait catches the NEXT retrace: 31
+  retraces elapse. Not in VGA or EGA (all scroll passes 16). It is a
+  property of the original's CPU cost on that machine, not of the game
+  logic: a native frame is one WaitVBL (D2). Reproducing the elapsed time
+  needs a per-draw cost model in present/ (or declaring elapsed-time
+  equivalence in CGA outside the contract); decide with D2's timing design.
+- **U-P2 Menus and the demo end by a key inside a pass.** handle_menu_key
+  runs its popups (F1/F2/F3/F9/F10/Esc) and the demo exit (restore map,
+  play mode, StopSound, init_game_state, load_level, redraw_screen,
+  wait_for_input) INSIDE process_input, before move_dave of the same pass.
+  game_tick stops the pass after process_input and returns the request
+  (TICK_MENU); no corpus pass reaches it. Needs the D2 resumable sequence
+  and a scenario that presses a key during a demo / a menu key in play.
+- **Oracle feature requests (for the owner of tools/oracle.py):** (a) a
+  per-tick capture of g_keydown (256 bytes) at process_input's
+  get_player_input call (or right after process_input), so runs without
+  boundary snapshots give the exact input sample of M3-2; (b) `retraces`
+  captures in the EGA/CGA scenarios, so WaitVBL counts (not only elapsed
+  retraces) are compared there; (c) the tick head's BIOS key buffer (as
+  `retraces` records it) on every tick, for the persistent one-key buffer
+  the free run models from the key events (N2-5).

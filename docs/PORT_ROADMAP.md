@@ -105,9 +105,37 @@ names in `src/asm`); data-module provenance unknowable (D-2).
 - M3.2 Translate subsystems into `port/game/` one at a time, each verified
   against M1.2 boundary snapshots: pure logic first (tiles/collision,
   items, levels/warps, monsters, shots, player, death, demo input), then
-  menus/high scores.
+  menus/high scores. *Done for the pipeline (2026-10-20):* all 13 pipeline
+  subsystems are native and verified in isolation (NATIVIZATION_LEDGER D).
+- M3.3 Compose the native subsystems into a native game tick and run the
+  native game FREE against the original. *Done 2026-10-20:*
+  `port/game/game.c` `game_tick()` = one pass of main()'s inner loop (the 13
+  calls in the original order, one `frame_output` per pass, the inner loop's
+  exit on game_over); `port/tests/replay/replay.c` + `tools/native_replay.py`
+  import the original state ONCE (tick 1, the title) and then run on inputs
+  only (key table at each pass's first poll, the scenario's key events,
+  tick-head times, time(NULL)). Every pass of the corpus is equal on the
+  game view (native_check's mask), the PlaySound sequence and the WaitVBL
+  count: `n3_level1_complete` 943 passes (title, level 1, corridor, level 2),
+  `game_over_highscore` 2,235 (four deaths, game over; stops at the
+  game-over pass, whose successor is check_high_score's), `inv_demos_all`
+  5,387 and `n2_demos` 11,440 (all five demos, high-score/title cycles,
+  demo choices by time(NULL)), `n1_ega_demo2` / `n1_cga_demo2` 819 each.
+  Elapsed retraces (`frames_since_prev`) equal too, except where the
+  original's elapsed time is not its WaitVBL count: WaitSound (asynchronous
+  sound driver) and the title prompt (FIDELITY.md 3), and one CGA scroll pass
+  whose redraws overrun a CGA frame (U-P1). No struct game field was
+  missing; nothing is re-read from the original between ticks.
+  `tests/test_native.py NativeFreeRunTest` (+ mutants: subsystem order,
+  gem value). Outside the pipeline, not yet native: check_high_score,
+  init_game_once, the menus/popups and the demo end by a key (game_tick
+  stops the pass and returns the request, game.h).
 **Gate:** the whole tick pipeline is native and per-tick equivalent on the
-corpus (state level).
+corpus (state level). *Met 2026-10-20 for the pipeline* (M3.3: free-running,
+state + sound requests + WaitVBL counts, 21,643 passes over six runs incl.
+EGA and CGA); open for the code outside it (check_high_score, menus, demo
+exit by key, init_game_once) and for the corpus gaps (U-O1: warps, levels
+3-10 by keyboard, the ending).
 
 ### Phase 4 -- assembly algorithms -> C
 Rendering (tiles, masked sprites, save/restore-under, view, text, pictures),

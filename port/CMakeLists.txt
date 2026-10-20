@@ -30,3 +30,10 @@ add_library(dave_platform STATIC platform/input_map.c)
 target_include_directories(dave_platform PUBLIC platform)
 target_link_libraries(dave_platform PUBLIC dave_game)
 target_link_libraries(dave_bridge PRIVATE dave_platform)
+
+# M3.3: game_tick (one pass of main's inner loop) and the TEST-ONLY
+# free-running replay (imports one snapshot, then runs on inputs alone)
+target_sources(dave_game PRIVATE game/game.c)
+add_executable(dave_replay tests/replay/replay.c tests/bridge/dgroup_map.c tests/bridge/world_io.c)
+target_include_directories(dave_replay PRIVATE tests/bridge)
+target_link_libraries(dave_replay PRIVATE dave_game dave_platform)
