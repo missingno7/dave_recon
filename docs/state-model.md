@@ -369,3 +369,16 @@ decision 5 is updated accordingly.
   `srand(time(NULL))` choosing the demo at the title timeout; the frame input
   carries the DOS seconds-of-day value for that frame, supplied by the
   platform clock and pinned in tests (the oracle pins 1991-01-01 00:00:00).
+
+- **D8 (2026-10-20, from N2-6) All ten level maps are live game state for the
+  whole program run.** The original edits its g_levels records in place:
+  `load_level` backs the current record up into g_tiles
+  (`movmem(g_level, g_tiles)`) and play edits the record; the six restore
+  sites copy g_tiles back. An edit made after a restore (a pickup on the tick a
+  demo ends) therefore persists into later visits of that level. Native:
+  `struct game.level_maps[10]` (seeded from the resources by
+  `level_maps_init` at program start), `level.backup` (g_tiles),
+  `level_live_map(g)` = the current record (`stray_map` for level -1, D4).
+  Verified: bridge identity over all 160,160 n2_demos snapshots (it failed at
+  tick 10264 before), full native suite green; the comparison view now covers
+  all ten records.

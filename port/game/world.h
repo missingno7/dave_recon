@@ -86,6 +86,9 @@ void warp_start_position(int16_t level, int16_t *scroll_x, int16_t *x);
  * (attract_mode, process_input); see attract.c for out-of-bank reads. */
 int8_t demo_byte(const struct resources *r, int32_t pos);
 void load_level(struct game *g, const struct resources *r, struct frame_output *out);
+/* Program start: the live maps of all levels begin as the resource maps (D8). */
+void level_maps_init(struct game *g, const struct resources *r);
+
 /* movmem(g_tiles, g_level, 1000): put the pristine map back into the live one */
 void restore_level_map(struct game *g, const struct resources *r);
 void draw_actors(const struct game *g, struct frame_output *out);

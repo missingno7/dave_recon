@@ -36,7 +36,7 @@ static const int16_t pickup_points[PICKUP_KINDS] = {2000, 0, 0, 1000, 100, 50, 1
 static void clear_tile(struct game *g, int32_t offset)
 {
     if (offset >= 0 && offset < LEVEL_ROWS * LEVEL_COLS)
-        g->level.map[offset / LEVEL_COLS][offset % LEVEL_COLS] = 0;
+        level_live_map(g)[offset / LEVEL_COLS][offset % LEVEL_COLS] = 0;
 }
 
 static void collect(struct game *g, int k, int16_t tile, int32_t offset,

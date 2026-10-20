@@ -4,7 +4,8 @@
  * Level records come from the original g_levels array (docs/data-layout.md,
  * codec tools/levels.py): per level a 256-byte monster path (signed dx,dy
  * pairs, 0xEA restarts the path) and the pristine 10x100 tile map. The live,
- * editable map is struct game.level.map; the pristine one here is what
+ * editable maps are struct game.level_maps (D8, seeded from these at program
+ * start by level_maps_init); the pristine one here is what
  * load_level copies and what the original keeps in g_tiles.
  *
  * Who fills it: the platform layer from the user's DAVE.EXE data (via the

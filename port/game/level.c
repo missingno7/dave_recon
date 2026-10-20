@@ -82,22 +82,22 @@ void level_start_position(int16_t level, uint16_t *state, int16_t *x, int16_t *y
     *y = valid ? level_start_y[level] : LEVEL_M1_START_Y;
 }
 
-/* The pristine map of the current level (g_tiles). Level -1: the D4 stand-in. */
-static void pristine_map(const struct game *g, const struct resources *r,
-                         int8_t map[LEVEL_ROWS][LEVEL_COLS])
+void level_maps_init(struct game *g, const struct resources *r)
 {
-    if (level_valid(g->level.index))
-        memcpy(map, r->levels[g->level.index].map, LEVEL_ROWS * LEVEL_COLS);
-    else
-        memset(map, 0, LEVEL_ROWS * LEVEL_COLS);
+    /* program start (the original's g_levels as DAVE.EXE loads it) */
+    for (int lv = 0; lv < LEVEL_COUNT; lv++)
+        memcpy(g->level_maps[lv], r->levels[lv].map, LEVEL_ROWS * LEVEL_COLS);
+    memset(g->stray_map, 0, sizeof g->stray_map);
+    memset(g->level.backup, 0, sizeof g->level.backup);
+    g->level.pristine_loaded = 0;
 }
 
 void restore_level_map(struct game *g, const struct resources *r)
 {
-    if (g->level.pristine_loaded)
-        pristine_map(g, r, g->level.map);
-    else
-        memset(g->level.map, 0, sizeof g->level.map);   /* g_tiles never filled: zeros */
+    (void)r;
+    /* movmem(g_tiles, g_level, 1000): the backup (all zero before the first
+     * load_level) goes back into the live record */
+    memcpy(level_live_map(g), g->level.backup, LEVEL_ROWS * LEVEL_COLS);
 }
 
 void init_game_state(struct game *g, struct frame_output *out)
@@ -137,15 +137,16 @@ void load_level(struct game *g, const struct resources *r, struct frame_output *
     for (int i = 0; i < ANIM_MAX_TILES; i++)
         g->anim.tiles[i].active = 0;
 
-    /* the live map is a fresh copy of the level resource (g_tiles keeps the pristine one) */
-    pristine_map(g, r, g->level.map);
-    g->level.pristine_loaded = 1;
+    /* the live map is the level's record as it stands (D8: edits that escaped
+     * a restore persist, N2-6); g_tiles gets its copy at the END of the
+     * original load_level, after the animated tiles are scanned */
+    int8_t (*live)[LEVEL_COLS] = level_live_map(g);
 
     /* animated tiles, in map order, each with a random start frame */
     int n = 0;
     for (int row = 0; row < LEVEL_ROWS; row++) {
         for (int col = 0; col < LEVEL_COLS; col++) {
-            int16_t tile = g->level.map[row][col];       /* signed char */
+            int16_t tile = live[row][col];               /* signed char */
             for (int k = 0; k < ANIMATED_KINDS; k++) {
                 if (animated_tile_ids[k] != tile)
                     continue;
@@ -182,6 +183,9 @@ void load_level(struct game *g, const struct resources *r, struct frame_output *
         m->shown_frame = 0;            /* g_monsters.sprite = frame 0 of this level (D3) */
     }
 
+    /* movmem(g_level, g_tiles, 1000): back up the live record */
+    memcpy(g->level.backup, live, LEVEL_ROWS * LEVEL_COLS);
+    g->level.pristine_loaded = 1;
     g->level.scroll_x = 0;
     if (g->inv.has_gun == 1)
         out_draw(out, DRAW_XOR_SPRITE, 0xF0, 0xAA, SPRITE_STATUS, 1);

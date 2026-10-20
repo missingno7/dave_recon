@@ -85,15 +85,15 @@ struct explosion {           /* g_actors (first 14 bytes; the 300-byte tail is n
 
 struct level_state {
     int16_t index;           /* g_current_level: 0-based; -1 is reachable (U-M3) */
-    int8_t  map[LEVEL_ROWS][LEVEL_COLS];  /* the live map (pickups edit it) */
+    int8_t  backup[LEVEL_ROWS][LEVEL_COLS];  /* g_tiles: copy of the current level's live
+                                map taken by load_level; restore_level_map copies it back */
     int16_t scroll_x;        /* g_scroll_x: first visible column, 0..80 */
     int16_t done;            /* g_level_done */
     int16_t in_warp_zone;    /* g_in_warp_zone */
     int16_t warp_return;     /* g_warp_return_level */
     int16_t warp_used[LEVEL_COUNT];       /* g_level_visited */
-    int16_t pristine_loaded; /* g_tiles: 1 once a level was loaded (it then holds the pristine
-                                map of `index`, a resource); 0 before the first load_level,
-                                when the original's g_tiles is still all zero */
+    int16_t pristine_loaded; /* 1 once a level was loaded (backup valid); 0 before the first
+                                load_level, when the original's g_tiles is still all zero */
 };
 
 struct buttons {             /* process_input's release-triggered buttons (U-G9) */
@@ -122,6 +122,13 @@ struct game {
     struct player dave;
     struct inventory inv;
     struct level_state level;
+    /* D8: the live maps of ALL levels for the whole program run (the
+     * original's g_levels records, edited in place). They start as the
+     * resource maps; pickups edit the current one; restore_level_map undoes
+     * edits from level.backup. An edit made after a restore persists into
+     * later visits of that level (N2-6), exactly as in the original. */
+    int8_t level_maps[LEVEL_COUNT][LEVEL_ROWS][LEVEL_COLS];
+    int8_t stray_map[LEVEL_ROWS][LEVEL_COLS];   /* live map of level -1 (D4 stand-in) */
     struct anim_state anim;  /* g_anim_tiles, g_anim_tick_divider */
     struct monster monsters[MONSTER_COUNT];
     struct shot shots[SHOT_COUNT];
@@ -134,6 +141,18 @@ struct game {
      * the retrace-level step function. */
 };
 
+
+/* The live map of the current level (D8). */
+static inline int8_t (*level_live_map(struct game *g))[LEVEL_COLS]
+{
+    return g->level.index >= 0 && g->level.index < LEVEL_COUNT
+        ? g->level_maps[g->level.index] : g->stray_map;
+}
+static inline const int8_t (*level_live_map_c(const struct game *g))[LEVEL_COLS]
+{
+    return g->level.index >= 0 && g->level.index < LEVEL_COUNT
+        ? g->level_maps[g->level.index] : g->stray_map;
+}
 
 /* What Dave looks like (struct player.pose), named after the original's
  * per-mode sprite/mask tables (src/DAVE.C). Animated poses index a frame

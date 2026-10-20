@@ -35,7 +35,7 @@ enum draw_op {
                              a = -2 / -3: g_spr_jump_left / g_spr_jump_right (+ their masks).
                              Emitted together with game.dave.pose by dave_set_pose (player.c) */
     DRAW_LEVEL_VIEW = 25, /* DrawLevelView(): a = level index, b = scroll column; the 20x10
-                             view of the live map (game.level.map: no world call edits the
+                             view of the live map (level_live_map(g): no world call edits the
                              map after this command within the same step) */
     DRAW_VIEW_BORDERS = 26, /* DrawViewBorders() */
     DRAW_SET_VIDEO_MODE = 27, /* set_video_mode(g_video_mode) (+ CacheEGATiles in EGA):

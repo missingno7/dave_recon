@@ -10,7 +10,7 @@
  *   g_death_pause -> dave.move_throttle g_bonus_timer -> dave.death_timer
  *   g_input_dir   -> dave.input_dir     g_prev_dir    -> dave.prev_dir
  *   g_dave_sprite + g_dave_mask         -> dave.pose + dave.pose_frame (D3)
- *   g_scroll_x    -> level.scroll_x     g_level (live map) -> level.map
+ *   g_scroll_x    -> level.scroll_x     g_level (live map) -> level_live_map(g) (D8)
  *   g_actors      -> explosions         g_shots       -> shots
  */
 #include "player.h"

@@ -459,8 +459,8 @@ below (`tests/test_native.py` NativePlayerTest), and code reading.
   reads it. During play the arrow keys stay in the buffer: handle_menu_key
   sees e.g. 0x4D, which is inert outside demos; wait_for_input's flush
   removes it. The input model carries it as `frame_input.menu_key`.
-- **N2-6 A level record can keep an edit after a demo ends** (open, world
-  model). When a demo's end byte (0x30) is read, process_input restores the
+- **N2-6 A level record can keep an edit after a demo ends** (CLOSED
+  2026-10-20 by state-model D8: all level maps are live state). When a demo's end byte (0x30) is read, process_input restores the
   live map from g_tiles, but the same tick's pick_up_items still runs and can
   remove a pickup from the record in g_levels; the next attract_mode loads
   another level, so the edit stays in that level's record for the rest of the

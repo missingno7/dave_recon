@@ -37,10 +37,8 @@ int8_t level_record_byte(const struct game *g, const struct resources *r, int32_
     if (at < LEVEL_PATH_BYTES)
         return r->levels[lv].path[at];
     at -= LEVEL_PATH_BYTES;
-    if (at < LEVEL_ROWS * LEVEL_COLS) {
-        const int8_t *map = lv == g->level.index ? &g->level.map[0][0] : &r->levels[lv].map[0][0];
-        return map[at];
-    }
+    if (at < LEVEL_ROWS * LEVEL_COLS)
+        return g->level_maps[lv][at / LEVEL_COLS][at % LEVEL_COLS];   /* live records (D8) */
     return r->levels[lv].trailer[at - LEVEL_ROWS * LEVEL_COLS];
 }
 

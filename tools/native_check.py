@@ -71,8 +71,10 @@ for _k, _c in enumerate("1234567890"):
     SCANCODES[_c] = 0x02 + _k
 
 def game_view_mask(snapshot: bytes, post: bytes | None = None) -> bytes:
-    """The compared bytes: game_state objects plus the live record of the
-    current level before and (when given) after the call."""
+    """The compared bytes: game_state objects, the live maps of ALL ten level
+    records (state-model D8: g_levels is mutable program state), and the
+    record address of the current level before and (when given) after the
+    call (which covers level -1's out-of-range record)."""
     level = int.from_bytes(snapshot[0x56F4:0x56F6], "little", signed=True)
     after = int.from_bytes(post[0x56F4:0x56F6], "little", signed=True) if post is not None else level
     return _game_view_mask_for_levels(level, after)
@@ -96,7 +98,7 @@ def _base_mask() -> bytes:
 @functools.lru_cache(maxsize=None)
 def _game_view_mask_for_levels(level: int, after: int) -> bytes:
     mask = bytearray(_base_mask())
-    for lv in {level, after}:
+    for lv in set(range(10)) | {level, after}:
         m = (0x173A + 0x500 * lv + 0x100) & 0xFFFF
         for i in range(m, min(m + 1000, len(mask))):
             mask[i] = 1

@@ -112,9 +112,16 @@ void dgroup_import(struct game *g, const unsigned char *m) {
             memcpy(dst, src, f->width);      /* both sides little endian (checked by the test) */
         }
     }
-    unsigned ds = map_ds(g->level.index);
-    if (ds + LEVEL_ROWS * LEVEL_COLS <= DGROUP_LEN)
-        memcpy(g->level.map, m + ds, LEVEL_ROWS * LEVEL_COLS);
+    /* D8: every level's live map is its g_levels record; level -1's live map
+     * is what its (out-of-range) record address holds; g_tiles is the backup */
+    for (int lv = 0; lv < LEVEL_COUNT; lv++)
+        memcpy(g->level_maps[lv], m + map_ds((int16_t)lv), LEVEL_ROWS * LEVEL_COLS);
+    if (g->level.index < 0 || g->level.index >= LEVEL_COUNT) {
+        unsigned ds = map_ds(g->level.index);
+        if (ds + LEVEL_ROWS * LEVEL_COLS <= DGROUP_LEN)
+            memcpy(g->stray_map, m + ds, LEVEL_ROWS * LEVEL_COLS);
+    }
+    memcpy(g->level.backup, m + 0x615C, LEVEL_ROWS * LEVEL_COLS);
     dgroup_import_player_view(g, m);
     import_monster_frames(g, m);
 }
@@ -127,9 +134,14 @@ void dgroup_export(const struct game *g, unsigned char *m) {
             memcpy(m + f->ds + k * f->ds_stride, src, f->width);
         }
     }
-    unsigned ds = map_ds(g->level.index);
-    if (ds + LEVEL_ROWS * LEVEL_COLS <= DGROUP_LEN)
-        memcpy(m + ds, g->level.map, LEVEL_ROWS * LEVEL_COLS);
+    for (int lv = 0; lv < LEVEL_COUNT; lv++)
+        memcpy(m + map_ds((int16_t)lv), g->level_maps[lv], LEVEL_ROWS * LEVEL_COLS);
+    if (g->level.index < 0 || g->level.index >= LEVEL_COUNT) {
+        unsigned ds = map_ds(g->level.index);
+        if (ds + LEVEL_ROWS * LEVEL_COLS <= DGROUP_LEN)
+            memcpy(m + ds, g->stray_map, LEVEL_ROWS * LEVEL_COLS);
+    }
+    memcpy(m + 0x615C, g->level.backup, LEVEL_ROWS * LEVEL_COLS);
     dgroup_export_player_view(g, m);
     export_monster_frames(g, m);
 }
@@ -238,14 +250,9 @@ void dgroup_import_world(struct game *g, struct resources *r, const unsigned cha
 }
 
 void dgroup_export_levels(const struct game *g, const struct resources *r, unsigned char *m) {
-    for (int lv = 0; lv < LEVEL_COUNT; lv++)
-        if (lv != g->level.index)
-            memcpy(m + G_LEVELS_DS + LEVEL_RECORD_BYTES * lv + LEVEL_PATH_BYTES,
-                   r->levels[lv].map, LEVEL_ROWS * LEVEL_COLS);
-    if (g->level.pristine_loaded && g->level.index >= 0 && g->level.index < LEVEL_COUNT)
-        memcpy(m + G_TILES_DS, r->levels[g->level.index].map, LEVEL_ROWS * LEVEL_COLS);
-    else if (!g->level.pristine_loaded)
-        memset(m + G_TILES_DS, 0, LEVEL_ROWS * LEVEL_COLS);
+    /* D8: the live records and the g_tiles backup are game state, exported by
+     * dgroup_export itself; nothing is rebuilt from the resource any more */
+    (void)g; (void)r; (void)m;
 }
 
 void dgroup_import_keyboard(struct dgroup_keyboard *k, const unsigned char *m) {
