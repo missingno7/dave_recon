@@ -13,7 +13,8 @@
  *    the poll after r retraces of the call is placed at start + r retrace
  *    periods (exact for attract_mode, the first call of the tick; later
  *    calls are verified with keys held across them). `time` is time(NULL)
- *    as the original's srand saw it at the end of the call.
+ *    as the original's srand saw it (the oracle's seeds.jsonl records the
+ *    srand argument, the low word of time(); state-model D7).
  *  - the BIOS key buffer is not in the snapshot: it is modelled as empty at
  *    the start of the call and holding the last key pressed DURING the call
  *    (the INT 9 handler empties the buffer before the BIOS adds the new key);

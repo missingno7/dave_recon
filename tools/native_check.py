@@ -50,16 +50,18 @@ DEFERRED: dict = {}
 DEFERRED_RANGES = [(0x5742 + 5 * 8, 0x5742 + 6 * 8,
                     "g_monsters.sprite[4]: per-mode presentation id (state-model D3)")]
 
-# Borland time(): local time + timezone (TZ unset: EST, 5 h); the oracle pins
-# the DOS clock to 1991-01-01 00:00:00 in its autoexec.
+# Borland time(): local time + timezone (TZ unset: EST, 5 h) on the pinned DOS
+# date 1991-01-01. time(NULL) is an INPUT (state-model D7): the DOS clock runs
+# slow while sounds play (U-S3), so it is not a function of emulated time; the
+# oracle records every srand argument (seeds.jsonl), and the srand(time) seed
+# is the low word of time() = (DOS_EPOCH_1991 + seconds) & 0xFFFF.
 DOS_EPOCH_1991 = 662688000 + 5 * 3600
-# Emulated ms at which the pinned DOS clock reads 00:00:00 (the autoexec's
-# TIME command), calibrated on the attract demo choices (docs/NATIVIZATION_LEDGER.md D).
-DOS_CLOCK_ZERO_MS = 0.0
+LEVEL_SEED = 100      # load_level's srand(100)
 
 # DOSBox-X mapper names used in scenarios -> PC scan codes (set 1)
 SCANCODES = {"esc": 0x01, "enter": 0x1C, "lctrl": 0x1D, "lshift": 0x2A, "lalt": 0x38,
              "space": 0x39, "up": 0x48, "left": 0x4B, "right": 0x4D, "down": 0x50,
+             "home": 0x47, "pageup": 0x49, "end": 0x4F, "pagedown": 0x51,
              "f1": 0x3B, "f2": 0x3C, "f3": 0x3D, "f9": 0x43, "f10": 0x44}
 for _row, _first in (("qwertyuiop", 0x10), ("asdfghjkl", 0x1E), ("zxcvbnm", 0x2C)):
     for _k, _c in enumerate(_row):
@@ -68,6 +70,7 @@ for _k, _c in enumerate("1234567890"):
     SCANCODES[_c] = 0x02 + _k
 
 _BASE_MASK = None
+_FULL_BYTE = bytes([0] + [0xFF] * 255)     # bytes.translate table: nonzero mask byte -> 0xFF
 
 
 def _base_mask() -> bytearray:
@@ -113,8 +116,8 @@ def build_mutant(mutation: tuple) -> pathlib.Path:
     """port/ with one textual replacement (path relative to port/, old, new)."""
     rel, old, new = mutation
     src = ROOT / "build" / "mutant" / "port"
-    if src.exists():
-        shutil.rmtree(src)
+    if src.parent.exists():       # clean build: copytree keeps mtimes, make would reuse objects
+        shutil.rmtree(src.parent)
     shutil.copytree(ROOT / "port", src)
     f = src / rel
     text = f.read_text()
@@ -124,8 +127,21 @@ def build_mutant(mutation: tuple) -> pathlib.Path:
     return build_port(src, ROOT / "build" / "mutant" / "build")
 
 
-def borland_time(ms: float) -> int:
-    return DOS_EPOCH_1991 + int((ms - DOS_CLOCK_ZERO_MS) // 1000)
+def time_from_seed(seed: int) -> int:
+    """The time(NULL) value whose low word srand received (D7)."""
+    return DOS_EPOCH_1991 + ((seed - DOS_EPOCH_1991) & 0xFFFF)
+
+
+def time_seeds(run: pathlib.Path) -> dict:
+    """tick -> the first srand argument of that tick that is not load_level's
+    srand(100): attract_mode's srand(time(NULL))."""
+    out = {}
+    if (run / "seeds.jsonl").exists():
+        for line in (run / "seeds.jsonl").read_text().splitlines():
+            s = json.loads(line)
+            if s["seed"] != LEVEL_SEED and s["tick"] not in out:
+                out[s["tick"]] = s["seed"]
+    return out
 
 
 def key_events(run: pathlib.Path) -> list:
@@ -158,12 +174,11 @@ def write_world_inputs(run: pathlib.Path, ticks: list, work: pathlib.Path) -> di
             r = json.loads(line)
             head[r["tick"]] = r["emulated_ms"]
     lines = [f"event {ms} {kind} {scan}" for ms, kind, scan in key_events(run)]
+    seeds = time_seeds(run)
     for k, tick in enumerate(ticks):
         if tick in head:
-            # srand(time(NULL)) is the end of the call; the next tick head
-            # follows within about one retrace (move_dave's WaitVBL)
-            end = head.get(tick + 1, head[tick]) - oracle.VBL_MS
-            lines.append(f"pair {k} start {head[tick]} time {borland_time(end)}")
+            t = time_from_seed(seeds[tick]) if tick in seeds else DOS_EPOCH_1991
+            lines.append(f"pair {k} start {head[tick]} time {t}")
     (work / "inputs.txt").write_text("\n".join(lines) + "\n")
     import far_data
     import levels
@@ -208,7 +223,7 @@ def check(subsystem: str, run: pathlib.Path, mutation: tuple | None = None) -> d
     for k, (tick, pre, post) in enumerate(pairs):
         mine = native[k * L:(k + 1) * L]
         mask = game_view_mask(pre, post) if subsystem != "identity" else full
-        m = int.from_bytes(mask, "little")
+        m = int.from_bytes(bytes(mask).translate(_FULL_BYTE), "little")   # 1 -> 0xFF per byte
         changes = int.from_bytes(pre, "little") ^ int.from_bytes(post, "little")
         if changes & m:
             changed_in_original += 1
@@ -218,10 +233,30 @@ def check(subsystem: str, run: pathlib.Path, mutation: tuple | None = None) -> d
             diff = [i for i in range(L) if mask[i] and mine[i] != post[i]]
             return {"subsystem": subsystem, "ticks": len(pairs), "equivalent": False,
                     "first_divergence": {"tick": tick, "ds_offsets": [hex(i) for i in diff[:16]]}}
+    events = (work / "events.txt").read_text().splitlines()
     return {"subsystem": subsystem, "ticks": len(pairs), "equivalent": True,
             "ticks_where_original_changed_game_state": changed_in_original,
             "non_game_bytes_changed_by_original": presentation_bytes,
-            "events": len((work / "events.txt").read_text().splitlines())}
+            "events": len(events),
+            "retraces": retrace_report(run, [t for t, _, _ in pairs], events)}
+
+
+def retrace_report(run: pathlib.Path, ticks: list, events: list) -> list:
+    """(tick, retraces the native call reported, retraces between this tick head
+    and the next one in the oracle): informational, since the rest of the tick
+    adds its own waits (usually move_dave's one WaitVBL)."""
+    interval = {}
+    if (run / "ticks.jsonl").exists():
+        for line in (run / "ticks.jsonl").read_text().splitlines():
+            r = json.loads(line)
+            interval[r["tick"] - 1] = r["frames_since_prev"]
+    out = []
+    for e in events:
+        k, kind, *rest = e.split()
+        if kind == "retraces" and len(out) < 20:
+            tick = ticks[int(k)]
+            out.append((tick, int(rest[0]), interval.get(tick)))
+    return out
 
 
 def main():
