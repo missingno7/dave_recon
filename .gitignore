@@ -22,3 +22,7 @@
 __pycache__/
 *.pyc
 /.claude/
+
+# Emulator memory dumps (contain the game image): never commit
+*.bin
+!tests/fixtures/*.bin
