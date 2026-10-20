@@ -288,11 +288,13 @@ evidence for each claim are in each file's header.
 | `warp_zone_level5.txt` | VGA | levels 1-4 (level 4: jetpack needed for the trophy), level 5: the U-G9 (a) multi-bit states (0x2A climb + fall on a jump's last step, then 0x26, 0x32), the tree climbed above row 0, the warp tube into the warp zone (level 2's map), the zone's trophy and door, the return to level 5 | 14181 ticks, 258 s | yes |
 | `warp_zone_death.txt` | VGA | as warp_zone_level5 to the warp, then a death in the zone (spikes at the shaft's bottom), the death timer, handle_death's warp-zone restart (lives 2), play on in the zone | 12550 ticks, 228 s | yes |
 
-Further scenarios of the native lanes (each EQUIVALENT under `--repeat 2`
-with the oracle of 2026-10-20, headers in the files): `n1_ega_demo2` /
-`n1_cga_demo2` (now with `retraces`), `n2_buttons`, `n2_death`,
-`n2_demos`, `n3_level1_complete`, `n3_attract_demos`,
-`n3_out_of_range_demo`, `inv_demos`, `inv_demos_all`.
+Further scenarios of the native lanes (headers in the files). Re-run
+`--repeat 2` with this date's final oracle: `n1_ega_demo2` / `n1_cga_demo2`
+(now with `retraces`), `n2_buttons`, `n2_death`, `n3_level1_complete`,
+`n3_out_of_range_demo`, `inv_demos`, `attract_all_demos` EQUIVALENT;
+`n3_attract_demos` EQUIVALENT under the widened state-2 timing exemption
+(its two runs re-compared, not re-run); `n2_demos` and `inv_demos_all` NOT
+re-run with the new oracle (stopped for time).
 
 **Scripted routes (tools/route.py).** Long routes are planned per tick, not
 written in milliseconds: `route_sim.c` chains the native port's pipeline
