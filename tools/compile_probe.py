@@ -30,6 +30,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import omf  # noqa: E402
+import dosrun  # noqa: E402
 
 TOOLCHAIN = json.loads((ROOT / "layout" / "toolchain.json").read_text())
 
@@ -53,6 +54,14 @@ def run(source: pathlib.Path, model: str, extra_flags: str):
     # instruction-for-instruction (see docs/flag-investigation.md). Do not
     # revert this to -N- without fresh evidence.
     flags = f"-c {MODEL_FLAG[model]} -1- -f- -N -G {extra_flags}".strip()
+    if dosrun.use_msdos():
+        _, log = dosrun.run([ROOT / "toolchain" / "BIN" / "TCC.EXE", *flags.split(),
+                             "-I" + str(ROOT / "toolchain" / "INCLUDE"), f"{stem}.C"], cwd=work)
+        (work / "BUILD.LOG").write_text(log, encoding="latin1")
+        obj_path = work / f"{stem}.OBJ"
+        if not obj_path.exists():
+            raise SystemExit(f"compile failed:\n{log}")
+        return obj_path
     bat = work / "GO.BAT"
     bat.write_text(
         "@ECHO OFF\r\n"

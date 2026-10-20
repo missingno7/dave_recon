@@ -30,6 +30,9 @@ import json
 import pathlib
 import shutil
 import subprocess
+
+import dosrun
+import tcc as tcc_driver
 import sys
 from dataclasses import dataclass
 
@@ -71,7 +74,8 @@ class Result:
 
 def compile_many(jobs, workdir: pathlib.Path | None = None, asm: bool = False,
                  timeout: int = 600) -> dict:
-    """Compile every (name, source, flags) job in one DOSBox-X session."""
+    """Compile every (name, source, flags) job: under MS-DOS Player by default
+    (tools/dosrun.py), or in one DOSBox-X session with DAVE_DOS_HOST=dosbox."""
     jobs = list(jobs)
     work = workdir or (ROOT / "build" / "tcc_batch")
     if work.exists():
@@ -89,6 +93,24 @@ def compile_many(jobs, workdir: pathlib.Path | None = None, asm: bool = False,
             lines.append(f"C:\\BIN\\TCC.EXE -S {flags} -IC:\\INCLUDE {stem}.C > NUL")
     lines.append("ECHO DONE > DONE.TXT")
     lines.append("EXIT")
+    if dosrun.use_msdos():
+        tcc_exe, inc = TOOLCHAIN_DIR / "BIN" / "TCC.EXE", "-I" + str(TOOLCHAIN_DIR / "INCLUDE")
+        tasm_dir = TOOLCHAIN_DIR / tcc_driver.assembler_dir()
+        for name, (stem, flags) in stems.items():
+            _, log = dosrun.run([tcc_exe, "-c", *flags.split(), inc, f"{stem}.C"], cwd=work,
+                                tool_dirs=[tasm_dir])
+            (work / f"{stem}.LOG").write_text(log, encoding="latin1")
+            if asm:
+                dosrun.run([tcc_exe, "-S", *flags.split(), inc, f"{stem}.C"], cwd=work,
+                           tool_dirs=[tasm_dir])
+        (work / "DONE.TXT").write_text("DONE\r\n")
+    else:
+        _run_dosbox(work, lines, timeout)
+    return _collect(work, stems)
+
+
+def _run_dosbox(work: pathlib.Path, lines: list, timeout: int):
+    """Cross-check host (DAVE_DOS_HOST=dosbox): one DOSBox-X session for all jobs."""
     (work / "GO.BAT").write_text("\r\n".join(lines) + "\r\n")
     (work / "dosbox.conf").write_text(
         "[sdl]\nautolock=false\n\n"
@@ -102,6 +124,9 @@ def compile_many(jobs, workdir: pathlib.Path | None = None, asm: bool = False,
                    cwd=ROOT, timeout=timeout)
     if not (work / "DONE.TXT").exists():
         raise RuntimeError(f"DOSBox-X batch did not finish; see {work}")
+
+
+def _collect(work: pathlib.Path, stems: dict) -> dict:
     out = {}
     for name, (stem, flags) in stems.items():
         obj = work / f"{stem}.OBJ"

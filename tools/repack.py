@@ -15,6 +15,7 @@ import json
 import pathlib
 import shutil
 import subprocess
+
 import sys
 import uuid
 
@@ -37,7 +38,10 @@ def pack(unpacked: bytes) -> bytes:
     try:
         (w / "IN.EXE").write_bytes(unpacked)
         shutil.copy(lzexe_path(), w / "LZEXE.EXE")
-        (w / "GO.BAT").write_bytes(b"@ECHO OFF\r\nD:\r\nCD \\r\nLZEXE.EXE IN.EXE > LZ.LOG\r\nEXIT\r\n")
+        # LZEXE stays on DOSBox-X: under MS-DOS Player it hangs before any
+        # output in every compatibility mode (-d, -i, -m, -v3.30; 2026-10-20),
+        # while the compiler, assembler and linker run there (tools/dosrun.py).
+        (w / "GO.BAT").write_bytes(b"@ECHO OFF\r\nD:\r\nCD \\\r\nLZEXE.EXE IN.EXE > LZ.LOG\r\nEXIT\r\n")
         (w / "dosbox.conf").write_text("[sdl]\nautolock=false\n\n[cpu]\ncycles=max\n\n[autoexec]\n"
                                        f'mount d "{w}"\nd:\nGO.BAT\nexit\n')
         subprocess.run([PACKER["dosbox"], "-conf", str(w / "dosbox.conf"), "-noconsole", "-exit"],

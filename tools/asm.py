@@ -22,6 +22,8 @@ import re
 import shutil
 import subprocess
 
+import dosrun
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TOOLCHAIN = json.loads((ROOT / "layout" / "toolchain.json").read_text())
 CONFIG_PATH = ROOT / "layout" / "assembler.json"
@@ -89,6 +91,14 @@ def assemble_many(sources, key: str | None = None, options: str | None = None,
             text.replace("\r\n", "\n").replace("\n", "\r\n").encode("latin1"))
         flags = f"{options} {source_flags(text)}".strip()
         lines.append(command(key, flags, stem))
+        if dosrun.use_msdos():
+            tail = (f"{stem}.ASM,{stem}.OBJ,{stem}.LST" if KEYS[key][1] == "tasm"
+                    else f"{stem}.ASM,{stem}.OBJ,{stem}.LST,NUL;")
+            _, log = dosrun.run([exe, *flags.split(), tail], cwd=work)
+            (work / f"{stem}.LOG").write_text(log, encoding="latin1")
+    if dosrun.use_msdos():
+        return [(work / f"{s}.OBJ") if (work / f"{s}.OBJ").exists()
+                and (work / f"{s}.OBJ").stat().st_size > 0 else None for s in stems]
     lines.append("EXIT")
     (work / "GO.BAT").write_bytes(("\r\n".join(lines) + "\r\n").encode("ascii"))
     conf = work / "dosbox.conf"

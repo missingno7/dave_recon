@@ -16,6 +16,8 @@ import pathlib
 import shutil
 import subprocess
 
+import dosrun
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TOOLCHAIN = json.loads((ROOT / "layout" / "toolchain.json").read_text())
 
@@ -31,6 +33,20 @@ def link(objs, work: pathlib.Path, options: str = "/m", startup: str = "C0S",
         o = pathlib.Path(o)
         shutil.copyfile(o, work / o.name.upper())
         names.append(o.stem.upper())
+    if dosrun.use_msdos():
+        # MS-DOS Player: the startup object and libraries are copied next to
+        # the objects (DOS 8.3 names, no long host paths in the response file)
+        shutil.copyfile(ROOT / "toolchain" / "LIB" / f"{startup}.OBJ", work / f"{startup}.OBJ")
+        for l in libs:
+            shutil.copyfile(ROOT / "toolchain" / "LIB" / f"{l}.LIB", work / f"{l}.LIB")
+        rsp = f"{options} {' '.join([startup] + names)}\r\n{out}\r\n{out}\r\n{' '.join(libs)}\r\n"
+        (work / "LINK.RSP").write_bytes(rsp.encode("ascii"))
+        _, log = dosrun.run([ROOT / "toolchain" / "BIN" / "TLINK.EXE", "@LINK.RSP"], cwd=work,
+                            timeout=timeout)
+        (work / "LINK.LOG").write_text(log, encoding="latin1")
+        exe, mp = work / f"{out}.EXE", work / f"{out}.MAP"
+        return (exe if exe.exists() else None,
+                mp.read_text(errors="replace") if mp.exists() else "", log)
     objs_part = " ".join([f"C:\\LIB\\{startup}"] + names)
     libs_part = " ".join(f"C:\\LIB\\{l}" for l in libs)
     # TLINK response file: objs, exe, map, libs
